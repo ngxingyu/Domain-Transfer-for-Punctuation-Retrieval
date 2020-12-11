@@ -12,7 +12,7 @@ def validate_file(f):
 
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
-speakertag=r'(?<=[^\w\d \",] )(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
+speakertag=r'(?<=[^\w\d \",]) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
 parenthesestoremove=r'\(([^\w]*[^\(\)]+[\w ]+)\):?'
 parenthesesaroundsentence=r'\(([^\w]*[^\(\)]+\W*)\):?'
 squarebracketsaroundsentence=r'\[([^\[\]]+)\]' #generic since it seems like the square brackets just denote unclear speech.
@@ -72,6 +72,9 @@ def combinerepeatedpunct(text):
         newtext[i%2]=re.sub(r'([^\w\d]+) *\1+','\g<1> ',newtext[(1+i)%2])
     return newtext[i%2]
 
+def endashtohyphen(text):
+    return re.sub('–','-',text)
+
 def preprocess(tedtalks):
     print('removing speaker tags')
     tedtalks=tedtalks.apply(removespeakertags)
@@ -96,6 +99,9 @@ def preprocess(tedtalks):
 
     print('removing non-sentence punctuation')
     tedtalks=tedtalks.apply(removenonsentencepunct)
+    
+    print('endash to hyphen')
+    tedtalks=tedtalks.apply(endashtohyphen)
 
     print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
@@ -116,4 +122,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     df=pd.read_csv(args.filename)[['talk_id','transcript']]
     df.transcript=preprocess(df.transcript)
+    df=df[df.transcript.map(lambda x:len(x.split())>=10)]
     df.to_csv(args.output, index=False)
