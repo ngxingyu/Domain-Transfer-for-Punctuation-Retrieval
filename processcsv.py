@@ -12,7 +12,7 @@ def validate_file(f):
 
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
-speakertag=r'(?<=[^\w\d \",]) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
+speakertag=r'((?<=[^\w\d \",])|^) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z\d][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
 parenthesestoremove=r'\(([^\w]*[^\(\)]+[\w ]+)\):?'
 parenthesesaroundsentence=r'\(([^\w]*[^\(\)]+\W*)\):?'
 squarebracketsaroundsentence=r'\[([^\[\]]+)\]' #generic since it seems like the square brackets just denote unclear speech.
@@ -49,6 +49,7 @@ def removemusic(text):
     return re.sub(r'♪( *[^♫ ])+ *♪', ' ',text)
 
 def reducewhitespaces(text):
+    text=re.sub(r'(?<=[.?!,;:\—\-]) *(?=[.?!,;:\—\-])','',text)
     return re.sub(r'\s+', ' ',text)
 
 def removeemptyquotes(text):
@@ -120,7 +121,17 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output csv filepath", metavar="FILE")
     args = parser.parse_args()
-    df=pd.read_csv(args.filename)[['talk_id','transcript']]
+    df=pd.read_csv(args.filename,dtype='string')[['talk_id','transcript']]
+    df=df[-df.transcript.isna()]
     df.transcript=preprocess(df.transcript)
     df=df[df.transcript.map(lambda x:len(x.split())>=10)]
-    df.to_csv(args.output, index=False)
+    df=df.sample(frac=1,random_state=42).reset_index(drop=True)
+    split_1=int(0.8 * len(df))
+    split_2=int(0.9 * len(df))
+    train = df[:split_1]
+    dev = df[split_1:split_2]
+    test = df[split_2:]
+    paths=os.path.splitext(args.output)
+    train.to_csv(paths[0]+'.train'+paths[1],index=False)
+    dev.to_csv(paths[0]+'.dev'+paths[1],index=False)
+    test.to_csv(paths[0]+'.test'+paths[1],index=False)
