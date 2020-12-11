@@ -13,7 +13,7 @@ def validate_file(f):
 
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
-speakertag=r'(?<=[^\w\d \",]) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
+speakertag=r'((?<=[^\w\d \",])|^) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z\d][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
 parenthesestoremove=r'\(([^\w]*[^\(\)]+[\w ]+)\):?'
 parenthesesaroundsentence=r'\(([^\w]*[^\(\)]+\W*)\):?'
 squarebracketsaroundsentence=r'\[([^\[\]]+)\]' #generic since it seems like the square brackets just denote unclear speech.
@@ -50,6 +50,7 @@ def removemusic(text):
     return re.sub(r'♪( *[^♫ ])+ *♪', ' ',text)
 
 def reducewhitespaces(text):
+    text=re.sub(r'(?<=[.?!,;:\—\-]) *(?=[.?!,;:\—\-])','',text)
     return re.sub(r'\s+', ' ',text)
 
 def removeemptyquotes(text):
