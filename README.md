@@ -6,7 +6,7 @@ The chosen datasources for this project are:
 3. BookCorpusOpen from Huggingface Datasets, a precompiled collection of 17868 books.
 
 
-##Preprocessing
+## Preprocessing
 The following steps are taken for preprocessing the data to a useable form.
 
 1. (Important in the case of TED dataset) Remove speaker tags i.e. Narrator: ... which will not be spoken.
@@ -24,7 +24,7 @@ as a large portion of these do not contain appropriate punctuation information, 
 11. Random shuffle with seed 42
 12. Perform train dev test split of 0.9 0.1 0.1.
 
-###Punctuation proportion
+### Punctuation proportion
 Train | Val | Test
 --- | --- | ---
 . 328524 0.3951103702581199 | 42582 0.40382755154296984 | 39051 0.39807745236954506
@@ -37,7 +37,7 @@ Train | Val | Test
 — 26974 0.03244118276698971 | 3497 0.03316389431557385 | 2904 0.029602748244120736
 
 
-##Processing part-2
+## Processing part-2
 The punctuation to be classified are as follows: , . ! ? - hyphen — emdash : :
 There are occurences of consecutive punctuation. This includes: 
 1. ., : period after abbreviation or initial
