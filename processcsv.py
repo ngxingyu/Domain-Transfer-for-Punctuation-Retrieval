@@ -3,7 +3,6 @@
 import pandas as pd
 import regex as re
 import argparse, os, csv
-import xml.etree.ElementTree as ET
 
 def validate_file(f):
     if not os.path.exists(f):
@@ -74,52 +73,47 @@ def combinerepeatedpunct(text):
     return newtext[i%2]
 
 def preprocess(tedtalks):
-    #print('removing speaker tags')
+    print('removing speaker tags')
     tedtalks=tedtalks.apply(removespeakertags)
 
-    #print('removing non-sentence parenthesis')
+    print('removing non-sentence parenthesis')
     tedtalks=tedtalks.apply(removeparentheses)
 
-    #print('removing parenthesis')
+    print('removing parenthesis')
     tedtalks=tedtalks.apply(removeparenthesesaroundsentence)
 
-    #print('removing square brackets')
+    print('removing square brackets')
     tedtalks=tedtalks.apply(removesquarebrackets)
 
-    #print('removing music lyrics')
+    print('removing music lyrics')
     tedtalks=tedtalks.apply(removemusic)
 
-    #print('removing empty tags')
+    print('removing empty tags')
     tedtalks=tedtalks.apply(removeemptyquotes)
 
-    #print('change to unicode ellipsis')
+    print('change to unicode ellipsis')
     tedtalks=tedtalks.apply(ellipsistounicode)
 
-    #print('removing non-sentence punctuation')
+    print('removing non-sentence punctuation')
     tedtalks=tedtalks.apply(removenonsentencepunct)
 
-    #print('combine repeated punctuation')
+    print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
 
-    #print('reduce whitespaces')
+    print('reduce whitespaces')
     tedtalks=tedtalks.apply(reducewhitespaces)
 
-    #print('--done--')
+    print('--done--')
     return tedtalks
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='Enter xml file location.')
+    parser = argparse.ArgumentParser(description='Enter csv file location. Extracts the "talk_id" and "transcript" column from csv and preprocesses transcript to the format for sentence punctuation prediction')
     parser.add_argument("-i", "--input", dest="filename", required=True, type=validate_file,
                         help="input file", metavar="FILE")
-    parser.add_argument("-o", "--output", dest="filename", required=True,
-                        help="output file", metavar="FILE")
-
+    parser.add_argument("-o", "--output", dest="output", required=True,
+                        help="output csv filepath", metavar="FILE")
     args = parser.parse_args()
-    tree=ET.parse(args.filename)
-    rows=[]
-    for child in tree.getroot():
-        rows.append(''.join([x.strip() for x in list(child.itertext())]))
-    with open (args.output, 'a') as f:
-        writer=csv.writer(f)
-        writer.writerow((args.filename,' '.join(preprocess(pd.Series(rows[:-1])))))
+    df=pd.read_csv(args.filename)[['talk_id','transcript']]
+    df.transcript=preprocess(df.transcript)
+    df.to_csv(args.output, index=False)
