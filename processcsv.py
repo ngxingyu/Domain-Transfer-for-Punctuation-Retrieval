@@ -76,6 +76,9 @@ def combinerepeatedpunct(text):
 def endashtohyphen(text):
     return re.sub('–','-',text)
 
+def pronouncesymbol(text):
+    return re.sub('(?<=\d)\.(?=\d)',' point ',text)
+
 def preprocess(tedtalks):
     print('removing speaker tags')
     tedtalks=tedtalks.apply(removespeakertags)
@@ -107,12 +110,25 @@ def preprocess(tedtalks):
     print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
 
+    print('pronounce decimal')
+    tedtalks=tedtalks.apply(pronouncesymbol)
+
     print('reduce whitespaces')
     tedtalks=tedtalks.apply(reducewhitespaces)
 
     print('--done--')
     return tedtalks
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+        
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Enter csv file location. Extracts the "talk_id" and "transcript" column from csv and preprocesses transcript to the format for sentence punctuation prediction')
@@ -120,12 +136,15 @@ if __name__ == "__main__":
                         help="input file", metavar="FILE")
     parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output csv filepath", metavar="FILE")
+    parser.add_argument("-p","--preprocess", type=str2bool, nargs='?',
+                        const=True, default=True,
+                        help="requires preprocess?")
     args = parser.parse_args()
     df=pd.read_csv(args.filename,dtype='string')[['talk_id','transcript']]
     df=df[-df.transcript.isna()]
-    df.transcript=preprocess(df.transcript)
+    if args.preprocess: df.transcript=preprocess(df.transcript)
     df=df[df.transcript.map(lambda x:len(x.split())>=10)]
-    df=df.sample(frac=1,random_state=42).reset_index(drop=True)
+    df=df.sort_values('talk_id').sample(frac=1,random_state=42).reset_index(drop=True)
     split_1=int(0.8 * len(df))
     split_2=int(0.9 * len(df))
     train = df[:split_1]

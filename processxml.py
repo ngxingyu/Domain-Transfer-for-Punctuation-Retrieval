@@ -10,7 +10,7 @@ def validate_file(f):
         raise argparse.ArgumentTypeError("{0} does not exist".format(f))
     return f
 
-
+tags=list('.?!,;:-—…')
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
 speakertag=r'((?<=[^\w\d \",])|^) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z\d][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
@@ -77,49 +77,32 @@ def combinerepeatedpunct(text):
 def endashtohyphen(text):
     return re.sub('–','-',text)
 
+def pronouncesymbol(text):
+    return re.sub('(?<=\d)\.(?=\d)',' point ',text)
+
+
 def preprocess(tedtalks):
-    #print('removing speaker tags')
-    tedtalks=tedtalks.apply(removespeakertags)
-
-    #print('removing non-sentence parenthesis')
-    tedtalks=tedtalks.apply(removeparentheses)
-
-    #print('removing parenthesis')
-    tedtalks=tedtalks.apply(removeparenthesesaroundsentence)
-
-    #print('removing square brackets')
-    tedtalks=tedtalks.apply(removesquarebrackets)
-
-    #print('removing music lyrics')
-    tedtalks=tedtalks.apply(removemusic)
-
-    #print('removing empty tags')
-    tedtalks=tedtalks.apply(removeemptyquotes)
-
-    #print('change to unicode ellipsis')
-    tedtalks=tedtalks.apply(ellipsistounicode)
-
-    #print('removing non-sentence punctuation')
-    tedtalks=tedtalks.apply(removenonsentencepunct)
-    
-    #print('endash to hyphen')
-    tedtalks=tedtalks.apply(endashtohyphen)
-
-    #print('combine repeated punctuation')
-    tedtalks=tedtalks.apply(combinerepeatedpunct)
-
-    #print('reduce whitespaces')
-    tedtalks=tedtalks.apply(reducewhitespaces)
-
-    #print('--done--')
+    tedtalks=removespeakertags(tedtalks)
+    tedtalks=removeparentheses(tedtalks)
+    tedtalks=removeparenthesesaroundsentence(tedtalks)
+    tedtalks=removesquarebrackets(tedtalks)
+    tedtalks=removemusic(tedtalks)
+    tedtalks=removeemptyquotes(tedtalks)
+    tedtalks=ellipsistounicode(tedtalks)
+    tedtalks=removenonsentencepunct(tedtalks)
+    tedtalks=endashtohyphen(tedtalks)
+    tedtalks=combinerepeatedpunct(tedtalks)
+    tedtalks=pronouncesymbol(tedtalks)
+    tedtalks=reducewhitespaces(tedtalks)
     return tedtalks
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Enter xml file location.')
     parser.add_argument("-i", "--input", dest="filename", required=True, type=validate_file,
                         help="input file", metavar="FILE")
-    parser.add_argument("-o", "--output", dest="filename", required=True,
+    parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output file", metavar="FILE")
 
     args = parser.parse_args()
@@ -129,4 +112,4 @@ if __name__ == "__main__":
         rows.append(''.join([x.strip() for x in list(child.itertext())]))
     with open (args.output, 'a') as f:
         writer=csv.writer(f)
-        writer.writerow((args.filename,' '.join(preprocess(pd.Series(rows[:-1])))))
+        writer.writerow((args.filename,preprocess(' '.join([i for i in rows if i.strip()[-1] in tags]))))
