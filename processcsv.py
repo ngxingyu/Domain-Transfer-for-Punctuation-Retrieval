@@ -143,7 +143,7 @@ if __name__ == "__main__":
     df=pd.read_csv(args.filename,dtype='string')[['talk_id','transcript']]
     df=df[-df.transcript.isna()]
     if args.preprocess: df.transcript=preprocess(df.transcript)
-    df=df[df.transcript.map(lambda x:len(x.split())>=10)]
+    df=df[df.transcript.map(lambda x:len(x.split())>=1)]
     df=df.sort_values('talk_id').sample(frac=1,random_state=42).reset_index(drop=True)
     split_1=int(0.8 * len(df))
     split_2=int(0.9 * len(df))
