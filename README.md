@@ -29,14 +29,15 @@ as a large portion of these do not contain appropriate punctuation information, 
 For TED corpus
 Train | Val | Test
 --- | --- | ---
-. 327534 0.3945194589320774 | 42447 0.40324327405380755 | 38920  0.39807745236954506
-? 29405 0.035418749473024896 | 3825 0.036337209302325583 | 3544 0.03618837560756443
-! 2698 0.003249780176100023 | 278 0.0026409788721690228 | 301 0.003073561246579259
-, 397931 0.47931366762626326 | 49507 0.47031273749810004 | 47137 0.4813237756810848
-; 4770 0.005745534262415534 | 602 0.005718954248366013 | 474 0.004840093125842421
-: 10120  0.012189686946676142 | 1295 0.012302401580787353 | 1178 0.012028754646080954
-\- 30778 0.03707254790956505 | 3813 0.036223210214318284 | 3474 0.03547359392231344
-— 26974 0.03249057467387769 | 3497 0.033221234230126157 | 2904 0.029653228770983947
+. 325322 0.39519049371783144 | 42673 0.3981581697394939 | 40906 0.39620320596639064
+? 29249 0.035530725714070524 | 3779 0.03525975964768232 | 3746 0.03628262869872633
+! 2618 0.0031802605189728416 | 355 0.003312308725834142 | 304 0.002944452515860332
+, 394500 0.47922565879861956 | 50863 0.47457453161155483 | 49212 0.4766526224030219
+; 4633 0.0056280164187934205 | 651 0.0060741210718817645 | 562 0.0054433628747154825
+: 10138 0.012315309832447162 | 1366 0.012745390759125176 | 1308 0.012668894377451693
+- 30341 0.03685725149203781 | 3966 0.03700455325819213 | 3757 0.03638917138844496
+— 26402 0.03207228350722726 | 3523 0.03287116518623572 | 3450 0.03341566177538864
+words 5842593 | 757511 | 733686
 
 For subtitles corpus
 Train | Val | Test
@@ -51,8 +52,15 @@ Train | Val | Test
 — 9564 9.313874049622575e-05 | 591 4.6013609751334976e-05 | 1210 9.403039855134125e-05
 
 ## Processing part-2
-The punctuation to be classified are as follows: , . ! ? - hyphen — emdash : :
+The punctuation to be classified are as follows: {1: '!', 2: ',', 3: '-', 4: '.', 5: ':', 6: ';', 7: '?', 8: '—', 9: '…'}
+8 is the emdash.
 There are occurences of consecutive punctuation. This includes: 
 1. ., : period after abbreviation or initial
 2. ?, or !— etc. where the first punctuation applies to a local scope and the 2nd applies to a larger context.
-In most cases, it makes more sense to classify the punctuations from right to left, so I'll append punctuations to the previous word and predict the punctuation at the top of the stack.:
+3. anomalies i.e. ?! or !! or even a hyphen leading the next sentence
+In most cases, it makes more sense to classify the punctuations from right to left, so I will append punctuations to the previous word and predict the punctuation at the top of the stack.:
+
+The process of converting continuous text is as follows:
+1. Taking the text and degree, split the text into 2 lists - the first being a list of words, and the second being a list of previously classified punctuations or spaces dividing the text. (i.e. when degree is 0, the 2nd list contains all empty strings.)
+2. Intialize 2 new lists, a and b. Process both lists alternately beginning with the words list, identifying the trailing punctuation and stripping all punctuations from the tail. The word will be appended to a and the id of the punctuation identified will be appended to b.
+3. 
