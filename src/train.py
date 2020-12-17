@@ -9,8 +9,8 @@ from model import EntityModel
 
 
 #torch.set_default_tensor_type(torch.cuda.FloatTensor)
-#device = torch.device("cuda" if torch.cuda.is_available() else 'cpu')
-device=torch.device('cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else 'cpu')
+#device=torch.device('cpu')
 train_dataset=torch.load('../../data/ted-train.pt')
 dev_dataset=torch.load('../../data/ted-dev.pt')
 train_dataloader=torch.utils.data.DataLoader(train_dataset, batch_size=config.TRAIN_BATCH_SIZE, num_workers=4)
@@ -60,7 +60,7 @@ for epoch in range(config.EPOCHS):
         scheduler
     )
     test_loss = eval_fn(
-        valid_dataloader,
+        dev_dataloader,
         model,
         device
     )

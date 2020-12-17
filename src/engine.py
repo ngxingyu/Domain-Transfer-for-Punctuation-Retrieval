@@ -5,8 +5,9 @@ def train_fn(data_loader, model, optimizer, device, scheduler):
     model.train()
     final_loss = 0
     for data in tqdm(data_loader, total=len(data_loader)):
-        for v in data:
-            v = v.to(device,non_blocking=True)
+        if torch.cuda.is_available(): data=[_data.to(device) for _data in data]
+        #for _data in data:
+        #    print(_data.is_cuda)
         _, loss = model(data)
         loss.backward()
         optimizer.step()
@@ -19,8 +20,7 @@ def eval_fn(data_loader, model, device):
     model.eval()
     final_loss = 0
     for data in tqdm(data_loader, total=len(data_loader)):
-        for v in data:
-            v = v.to(device)
+        if torch.cuda.is_available(): data=[_data.to(device) for _data in data]
         _, loss = model(data)
         final_loss += loss.item()
     return final_loss / len(data_loader)
