@@ -2,27 +2,29 @@ import numpy as np
 from transformers import AdamW
 from torchcontrib.optim import SWA
 from transformers import get_linear_schedule_with_warmup
-from ..utils.logger import get_logger
+from .utils.logger import get_logger
 import subprocess
 import datetime
 import torch
-from config import *
-from engine import *
-from model import EntityModel
+from .config import *
+from .engine import *
+from .model import EntityModel
 
-logger=get_logger('bert1')
-
+starttime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+logger=get_logger(config.MODEL_NAME,start_time=starttime)
+logger.info(vars(config))
 logger.info(subprocess.check_output(['git', 'describe', '--always']))
-logger.warning(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
-
+logger.warning(starttime)
+logger.info('cuda available: {}'.format(torch.cuda.is_available()))
 device = torch.device("cuda" if torch.cuda.is_available() else 'cpu')
+logger.info('using device: {}'.format(device))
 train_dataset=torch.load(config.TRAIN_DATASET)
 dev_dataset=torch.load(config.DEV_DATASET)
 train_dataloader=torch.utils.data.DataLoader(train_dataset, batch_size=config.TRAIN_BATCH_SIZE, num_workers=4)
 dev_dataloader=torch.utils.data.DataLoader(dev_dataset, batch_size=config.DEV_BATCH_SIZE, num_workers=2)
 weight=1
 
-model = EntityModel(num_punct=10,weight=weight)
+model = BertBLSTMCRFModel(num_punct=10, embedding_dim=config.EMBEDDING_DIM, hidden_dim=config.HIDDEN_DIM, use_crf=config.USE_CRF, logger=logger)
 for i,param in enumerate(model.bert.parameters()):
     if i<198-config.UNFROZEN_LAYERS:
         param.requires_grad = False
@@ -78,7 +80,7 @@ for epoch in range(config.EPOCHS):
         device
     )
     optimizer.swap_swa_sgd()
-    print(f"Train Loss = {train_loss} Valid Loss = {test_loss}")
+    logger.info(f"Train Loss = {train_loss} Valid Loss = {test_loss}")
     if test_loss < best_loss:
-        torch.save(model.state_dict(), config.MODEL_PATH)
+        torch.save(model.state_dict(), config.MODEL_PATH+config.MODEL_NAME+'-'+start_time+'.bin')
         best_loss = test_loss

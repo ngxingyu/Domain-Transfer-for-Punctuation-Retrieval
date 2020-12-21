@@ -1,5 +1,5 @@
 import torch
-import model
+from .model import *
 from tqdm import tqdm
 def train_fn(data_loader, model, optimizer, device, scheduler):
     model.train()

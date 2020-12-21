@@ -1,10 +1,10 @@
-from config import *
+from .config import *
 import torch
 import transformers
 from torch import nn
 import torch.nn.functional as F
 from typing import Optional
-from torchcrf import CRF
+from .CRF import *
 
 class DiceLoss(nn.Module):
     r"""
@@ -76,20 +76,42 @@ def loss_fn(output, target, mask, num_labels, weight=None):
 
 
 class BertBLSTMCRFModel(nn.Module):
-    def __init__(self,num_punct, embedding_dim, hidden_dim):
+    def __init__(self,num_punct, embedding_dim, hidden_dim, use_lstm=True, use_crf=True, logger=None):
         super(BertBLSTMCRFModel, self).__init__()
         self.num_punct=num_punct
         self.embedding_dim=embedding_dim
         self.hidden_dim=hidden_dim
+        self.use_lstm = use_lstm
+        self.use_crf = use_crf
+        self.logger=logger
         self.bert = transformers.BertModel.from_pretrained(
             config.BASE_MODEL_PATH
         )
         self.bert_drop_1 = nn.Dropout(config.hidden_dropout_prob)
-        if use_lstm:
+        if self.use_lstm:
             self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
-        self.hidden2tag = nn.Linear(self.hidden_dim, self.num_punct)
-        self.crf= CRF(self.num_punct)
-        
+        self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
+        if self.use_crf:
+            self.crf= DiceCRF(self.num_punct)
+    
+    def forward(self, data):
+        o1 = self.bert(
+                data[0],				#ids
+                attention_mask=data[1],	#mask,
+        )[0]
+        sequence_output = self.bert_drop_1(o1)
+        #self.logger.info('bert output shape: {}'.format(sequence_output.shape))
+        if self.use_lstm:
+            sequence_output=self.lstm(sequence_output)[0]
+            #self.logger.info('lstm output shape: {}'.format(sequence_output.shape))
+        punct = self.out_punct(sequence_output)
+        if self.use_crf:
+            loss= -1*self.crf(punct, data[2], data[1])
+        else:
+            loss = loss_fn(punct, data[2], data[1], self.num_punct,1)
+        #loss = (loss_tag + loss_pos) / 2
+
+        return punct, loss
         
 class EntityModel(nn.Module):
     def __init__(self, num_punct, weight=None):

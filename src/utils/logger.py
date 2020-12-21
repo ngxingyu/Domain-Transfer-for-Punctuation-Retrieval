@@ -1,7 +1,7 @@
 import logging
 import yaml
 
-def get_logger(name: str, create_file:bool = True):
+def get_logger(name: str, start_time:str, create_file:bool = True):
     """Logs a message
     Args:
     name(str): name of logger
@@ -10,7 +10,7 @@ def get_logger(name: str, create_file:bool = True):
     formatter=logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
-    fh = logging.FileHandler('{}.log'.format(name), 'w', 'utf-8')
+    fh = logging.FileHandler('{}-{}.log'.format(name,start_time), 'w', 'utf-8')
     fh.setFormatter(formatter)
     ch = logging.StreamHandler()
     ch.setLevel(level=logging.DEBUG)
