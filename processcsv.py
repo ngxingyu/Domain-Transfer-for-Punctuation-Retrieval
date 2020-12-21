@@ -29,8 +29,7 @@ def displayinstances(col,exp):
     begins with a caps. Drawback:This doesnt properly capture
     places where the following term is caps due to it being a
     proper noun, where the prefix will be removed regardless
-    but will not break the syntax.
-'''
+    but will not break the syntax. '''
 
 def removespeakertags(text):
     return re.sub(speakertag,' ',text)

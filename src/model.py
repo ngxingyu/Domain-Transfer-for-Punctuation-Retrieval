@@ -4,6 +4,7 @@ import transformers
 from torch import nn
 import torch.nn.functional as F
 from typing import Optional
+from torchcrf import CRF
 
 class DiceLoss(nn.Module):
     r"""
@@ -74,6 +75,22 @@ def loss_fn(output, target, mask, num_labels, weight=None):
     return loss
 
 
+class BertBLSTMCRFModel(nn.Module):
+    def __init__(self,num_punct, embedding_dim, hidden_dim):
+        super(BertBLSTMCRFModel, self).__init__()
+        self.num_punct=num_punct
+        self.embedding_dim=embedding_dim
+        self.hidden_dim=hidden_dim
+        self.bert = transformers.BertModel.from_pretrained(
+            config.BASE_MODEL_PATH
+        )
+        self.bert_drop_1 = nn.Dropout(config.hidden_dropout_prob)
+        if use_lstm:
+            self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
+        self.hidden2tag = nn.Linear(self.hidden_dim, self.num_punct)
+        self.crf= CRF(self.num_punct)
+        
+        
 class EntityModel(nn.Module):
     def __init__(self, num_punct, weight=None):
         super(EntityModel, self).__init__()
