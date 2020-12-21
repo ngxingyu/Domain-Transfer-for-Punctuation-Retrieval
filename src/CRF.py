@@ -4,13 +4,16 @@ import torch
 import torch.nn as nn
 from torch import BoolTensor, FloatTensor, LongTensor
 
-class BiLSTMCRF(nn.Module):
+
+class DiceCRF(nn.Module):
+
     def __init__(
-        self, num_labels: int = 10, pad_idx: Optional[int] = None, embedding_dim : int = 5, hidden_dim : int =4, #use_gpu: bool = True
+        self, num_labels: int, pad_idx: Optional[int] = None,
     ) -> None:
         """
+
         :param num_labels: number of labels
-        :param pad_idx padding index. default None1
+        :param pad_idxL padding index. default None
         :return None
         """
 
@@ -19,12 +22,7 @@ class BiLSTMCRF(nn.Module):
 
         super().__init__()
         self.num_labels = num_labels
-        self.embedding_dim = embedding_dim
-        self.hidden_dim = hidden_dim
-        #self._use_gpu = torch.cuda.is_available() and use_gpu
 
-        self.lstm = nn.LSTM(embedding_dim, hidden_dim // 2,
-                            num_layers=1, bidirectional=True)
         # transition matrix setting
         # transition matrix format (source, destination)
         self.trans_matrix = nn.Parameter(torch.empty(num_labels, num_labels))
@@ -38,6 +36,7 @@ class BiLSTMCRF(nn.Module):
         self, h: FloatTensor, labels: LongTensor, mask: BoolTensor
     ) -> FloatTensor:
         """
+
         :param h: hidden matrix (batch_size, seq_len, num_labels)
         :param labels: answer labels of each sequence
                        in mini batch (batch_size, seq_len)
@@ -131,6 +130,7 @@ class BiLSTMCRF(nn.Module):
 
     def _compute_denominator_log_likelihood(self, h: FloatTensor, mask: BoolTensor):
         """
+
         compute the denominator term for the log-likelihood
         :param h: hidden matrix (batch_size, seq_len, num_labels)
         :param mask: mask tensor of each sequence
