@@ -1,1 +1,3 @@
-./src/model.bin
+/src/model.bin
+/logs/models/**
+/data/**

@@ -2,28 +2,24 @@ import numpy as np
 from transformers import AdamW
 from torchcontrib.optim import SWA
 from transformers import get_linear_schedule_with_warmup
-
+from ..utils.logger import get_logger
+import subprocess
+import datetime
 import torch
 from config import *
 from engine import *
 from model import EntityModel
+
+logger=get_logger('bert1')
+
+logger.info(subprocess.check_output(['git', 'describe', '--always']))
+logger.warning(datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
 
 device = torch.device("cuda" if torch.cuda.is_available() else 'cpu')
 train_dataset=torch.load(config.TRAIN_DATASET)
 dev_dataset=torch.load(config.DEV_DATASET)
 train_dataloader=torch.utils.data.DataLoader(train_dataset, batch_size=config.TRAIN_BATCH_SIZE, num_workers=4)
 dev_dataloader=torch.utils.data.DataLoader(dev_dataset, batch_size=config.DEV_BATCH_SIZE, num_workers=2)
-# weight=torch.Tensor([0.06991771051950575,
-#  0.8684900102905428,
-#  0.3884940460347374,
-#  0.1632070966173379,
-#  0.3837762350309036,
-#  0.17404046311724222,
-#  0.5530579155791235,
-#  0.7180157013921196,
-#  0.4019843071440322,
-#  1.0])
-# weight=weight.to(device)
 weight=1
 
 model = EntityModel(num_punct=10,weight=weight)
