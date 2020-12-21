@@ -2,24 +2,83 @@ from config import *
 import torch
 import transformers
 from torch import nn
+import torch.nn.functional as F
+from typing import Optional
 
-def loss_fn(output, target, mask, num_labels):
-    lfn = nn.CrossEntropyLoss()
+class DiceLoss(nn.Module):
+    r"""
+    Creates a criterion that optimizes a multi-class Self-adjusting Dice Loss
+    ("Dice Loss for Data-imbalanced NLP Tasks" paper)
+    Args:
+        alpha (float): a factor to push down the weight of easy examples
+        gamma (float): a factor added to both the nominator and the denominator for smoothing purposes
+    """
+    def __init__(self,
+                 smooth: Optional[float] = 1e-8,
+                 square_denominator: Optional[bool] = False,
+                 self_adjusting: Optional[bool] = False,
+                #  with_logits: Optional[bool] = True,
+                 reduction: Optional[str] = "mean",
+                 alpha: float = 1.0,
+                 ignore_index: int = -100,
+                 weight=1,
+                 ) -> None:
+        super(DiceLoss, self).__init__()
+        self.ignore_index = ignore_index
+        self.reduction = reduction
+        self.self_adjusting = self_adjusting
+        self.alpha = alpha
+        self.smooth = smooth
+        self.square_denominator = square_denominator
+        self.weight=weight
+    
+    def forward(self,
+                input: torch.Tensor,
+                target: torch.Tensor,
+                mask: Optional[torch.Tensor] = None,
+                num_classes: int = 10,
+                ) -> torch.Tensor:
+
+        input_soft = torch.softmax(input[target!=-100],dim=1)
+        target_one_hot=F.one_hot(target[target!=-100],num_classes=num_classes)
+        input_factor = ((1-input_soft) ** self.alpha) if self.self_adjusting else 1
+        if mask is not None:
+            mask = mask.view(-1).float()
+            input_soft = input_soft * mask
+            target_one_hot = target_one_hot * mask
+        
+        intersection = torch.sum(input_factor*input_soft * target_one_hot, 0)
+        cardinality = torch.sum(input_factor*torch.square(input_soft,) + torch.square(target_one_hot,), 0) if self.square_denominator else torch.sum(input_factor*input_soft + target_one_hot, 0)
+        dice_score = 1. - 2. * intersection / (cardinality + self.smooth) * self.weight
+        if self.reduction == "mean":
+            return dice_score.mean()
+        elif self.reduction == "sum":
+            return dice_score.sum()
+        elif self.reduction == "none" or self.reduction is None:
+            return dice_score
+        else:
+            raise NotImplementedError(f"Reduction `{self.reduction}` is not supported.")
+    def __str__(self):
+        return f"Dice Loss smooth:{self.smooth}"
+
+def loss_fn(output, target, mask, num_labels, weight=None):
+    lfn = DiceLoss(square_denominator=config.SQUARE_DENOMINATOR,self_adjusting=config.SELF_ADJUSTING,alpha=config.ALPHA,weight=weight)
     active_loss = mask.view(-1) == 1
     active_logits = output.view(-1, num_labels)
     active_labels = torch.where(
         active_loss,
         target.view(-1),
-        torch.tensor(lfn.ignore_index).type_as(target)
+        torch.tensor(-100).type_as(target)
     )
-    loss = lfn(active_logits, active_labels)
+    loss = lfn(active_logits, active_labels,num_classes=num_labels)
     return loss
 
 
 class EntityModel(nn.Module):
-    def __init__(self, num_punct):
+    def __init__(self, num_punct, weight=None):
         super(EntityModel, self).__init__()
         self.num_punct = num_punct
+        self.weight = weight
         self.bert = transformers.BertModel.from_pretrained(
             config.BASE_MODEL_PATH
         )
@@ -29,21 +88,14 @@ class EntityModel(nn.Module):
     def forward(
         self,
         data,
-        #ids,
-        #mask,
-        #token_type_ids,
-        #target_punct,
     ):
         o1 = self.bert(
-            data[0],#ids,
-            attention_mask=data[1],#mask,
-            #token_type_ids=token_type_ids
+            data[0],				#ids
+            attention_mask=data[1],	#mask,
         )[0]
         bo_punct = self.bert_drop_1(o1)
-
         punct = self.out_punct(bo_punct)
-
-        loss_punct = loss_fn(punct, data[2], data[1], self.num_punct)
+        loss_punct = loss_fn(punct, data[2], data[1], self.num_punct,self.weight)
 
         loss = loss_punct
         #loss = (loss_tag + loss_pos) / 2
