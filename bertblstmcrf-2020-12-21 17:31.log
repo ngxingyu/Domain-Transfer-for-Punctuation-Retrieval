@@ -1,0 +1,20 @@
+2020-12-21 17:31:38,515 [INFO] {'__module__': 'src.config', 'MAX_LEN': 128, 'OVERLAP': 126, 'TRAIN_BATCH_SIZE': 64, 'DEV_BATCH_SIZE': 128, 'EPOCHS': 15, 'BASE_MODEL_PATH': 'distilbert-base-uncased', 'DATA_DIR': '/home/nxingyu/project/data/', 'TRAIN_DATASET': '/home/nxingyu/project/data/ted_talks_processed.train.pt', 'DEV_DATASET': '/home/nxingyu/project/data/ted_talks_processed.dev.pt', 'ALPHA': 0.8, 'hidden_dropout_prob': 0.3, 'EMBEDDING_DIM': 768, 'HIDDEN_DIM': 128, 'LEARNING_RATE': 1e-05, 'SELF_ADJUSTING': True, 'SQUARE_DENOMINATOR': True, 'USE_CRF': False, 'MODEL_NAME': 'bertblstmcrf', 'MODEL_PATH': '/home/nxingyu/project/logs/models/', 'UNFROZEN_LAYERS': 0, 'TOKENIZER': PreTrainedTokenizerFast(name_or_path='distilbert-base-uncased', vocab_size=30522, model_max_len=512, is_fast=True, padding_side='right', special_tokens={'unk_token': '[UNK]', 'sep_token': '[SEP]', 'pad_token': '[PAD]', 'cls_token': '[CLS]', 'mask_token': '[MASK]'}), '__dict__': <attribute '__dict__' of 'config' objects>, '__weakref__': <attribute '__weakref__' of 'config' objects>, '__doc__': None}
+2020-12-21 17:31:38,537 [INFO] b'9a76521\n'
+2020-12-21 17:31:38,538 [WARNING] 2020-12-21 17:31
+2020-12-21 17:31:38,538 [INFO] cuda available: True
+2020-12-21 17:31:38,539 [INFO] using device: cuda:3
+2020-12-21 17:37:01,978 [INFO] Train Loss = 0.8900475104136472 Valid Loss = 0.8819539633236433
+2020-12-21 17:42:19,407 [INFO] Train Loss = 0.8817260324903647 Valid Loss = 0.8803606550944479
+2020-12-21 17:47:37,089 [INFO] Train Loss = 0.8799564524727788 Valid Loss = 0.8790487937237087
+2020-12-21 17:52:56,067 [INFO] Train Loss = 0.8786634524047221 Valid Loss = 0.8780150640951959
+2020-12-21 17:58:15,717 [INFO] Train Loss = 0.8776787430124997 Valid Loss = 0.8771795504971555
+2020-12-21 18:03:35,888 [INFO] Train Loss = 0.8769695122215277 Valid Loss = 0.8764872150985819
+2020-12-21 18:08:55,934 [INFO] Train Loss = 0.8763968807474279 Valid Loss = 0.8759008842079263
+2020-12-21 18:14:16,369 [INFO] Train Loss = 0.8759061715707607 Valid Loss = 0.8753878474235535
+2020-12-21 18:19:36,580 [INFO] Train Loss = 0.8755026311837426 Valid Loss = 0.8749383680130306
+2020-12-21 18:24:57,835 [INFO] Train Loss = 0.8751807600439467 Valid Loss = 0.8745389988547877
+2020-12-21 18:30:18,651 [INFO] Train Loss = 0.8749092981078109 Valid Loss = 0.8741832085345921
+2020-12-21 18:35:39,716 [INFO] Train Loss = 0.874707112992046 Valid Loss = 0.8738654585261094
+2020-12-21 18:41:01,057 [INFO] Train Loss = 0.8745490203737494 Valid Loss = 0.8735833599379188
+2020-12-21 18:46:22,489 [INFO] Train Loss = 0.8744580737482772 Valid Loss = 0.8733335756941846
+2020-12-21 18:51:45,600 [INFO] Train Loss = 0.8743889739963128 Valid Loss = 0.8731135333839216
