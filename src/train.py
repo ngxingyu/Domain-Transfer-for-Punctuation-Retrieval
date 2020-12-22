@@ -10,11 +10,11 @@ from .config import *
 from .engine import *
 from .model import EntityModel
 
-starttime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
-logger=get_logger(config.MODEL_NAME,start_time=starttime)
+start_time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
+logger=get_logger(config.MODEL_NAME,start_time=start_time)
 logger.info(vars(config))
 logger.info(subprocess.check_output(['git', 'describe', '--always']))
-logger.warning(starttime)
+logger.warning(start_time)
 logger.info('cuda available: {}'.format(torch.cuda.is_available()))
 device = torch.device("cuda:3" if torch.cuda.is_available() else 'cpu')
 logger.info('using device: {}'.format(device))
