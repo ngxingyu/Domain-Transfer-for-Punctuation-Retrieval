@@ -76,7 +76,7 @@ def loss_fn(output, target, mask, num_labels, weight=None):
 
 
 class BertBLSTMCRFModel(nn.Module):
-    def __init__(self,num_punct, embedding_dim, hidden_dim, use_lstm=True, use_crf=True, logger=None):
+    def __init__(self,num_punct, embedding_dim, hidden_dim, use_lstm=False, use_crf=True, logger=None):
         super(BertBLSTMCRFModel, self).__init__()
         self.num_punct=num_punct
         self.embedding_dim=embedding_dim
