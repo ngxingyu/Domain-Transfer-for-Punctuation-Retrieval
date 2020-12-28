@@ -39,16 +39,100 @@
   volume={abs/2004.00248}
 }
 
-@article{nguyen2020adaptive,
-      title={Adaptive Name Entity Recognition under Highly Unbalanced Data}, 
-      author={Thong Nguyen and Duy Nguyen and Pramod Rao},
-      year={2020},
-      eprint={2003.10296},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
+@misc{bertcrf,
+    title={Portuguese Named Entity Recognition using BERT-CRF},
+    author={Fábio Souza and Rodrigo Nogueira and Roberto Lotufo},
+    year={2019},
+    eprint={1909.10649},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
 }
 
-@inproceedings{courtland-etal-2020-efficient,
+@inproceedings{chinesebertbilstm,
+  title={Using bidirectional LSTM with BERT for Chinese punctuation prediction},
+  author={Fang, Mingfeng and Zhao, Haifeng and Song, Xiao and Wang, Xin and Huang, Shilei},
+  booktitle={2019 IEEE International Conference on Signal, Information and Data Processing (ICSIDP)},
+  pages={1--5},
+  year={2019},
+  organization={IEEE}
+}
+
+@inproceedings{glove,
+    title = "{G}lo{V}e: Global Vectors for Word Representation",
+    author = "Pennington, Jeffrey  and
+      Socher, Richard  and
+      Manning, Christopher",
+    booktitle = "Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing ({EMNLP})",
+    month = oct,
+    year = "2014",
+    address = "Doha, Qatar",
+    publisher = "Association for Computational Linguistics",
+    url = "https://www.aclweb.org/anthology/D14-1162",
+    doi = "10.3115/v1/D14-1162",
+    pages = "1532--1543",
+}
+
+@article{floater,
+  title={Learning to Encode Position for Transformer with Continuous Dynamical Model},
+  author={Liu, Xuanqing and Yu, Hsiang-Fu and Dhillon, Inderjit and Hsieh, Cho-Jui},
+  journal={arXiv preprint arXiv:2003.09229},
+  year={2020},
+  note={Code available at \url{https://github.com/xuanqing94/FLOATER}}
+}
+
+@article{positionembedding,
+  title={What Do Position Embeddings Learn? An Empirical Study of Pre-Trained Language Model Positional Encoding},
+  author={Wang, Yu-An and Chen, Yun-Nung},
+  journal={arXiv preprint arXiv:2010.04903},
+  year={2020}
+}
+
+@inproceedings{mecrf,
+    title = "Capturing Long-range Contextual Dependencies with Memory-enhanced Conditional Random Fields",
+    author = "Liu, Fei  and
+      Baldwin, Timothy  and
+      Cohn, Trevor",
+    booktitle = "Proceedings of the Eighth International Joint Conference on Natural Language Processing (Volume 1: Long Papers)",
+    month = nov,
+    year = "2017",
+    address = "Taipei, Taiwan",
+    publisher = "Asian Federation of Natural Language Processing",
+    url = "https://www.aclweb.org/anthology/I17-1056",
+    pages = "555--565",
+    abstract = "Despite successful applications across a broad range of NLP tasks, conditional random fields ({``}CRFs{''}), in particular the linear-chain variant, are only able to model local features. While this has important benefits in terms of inference tractability, it limits the ability of the model to capture long-range dependencies between items. Attempts to extend CRFs to capture long-range dependencies have largely come at the cost of computational complexity and approximate inference. In this work, we propose an extension to CRFs by integrating external memory, taking inspiration from memory networks, thereby allowing CRFs to incorporate information far beyond neighbouring steps. Experiments across two tasks show substantial improvements over strong CRF and LSTM baselines.",
+}
+
+@inproceedings{lstmbase,
+  title={LSTM for punctuation restoration in speech transcripts},
+  author={Tilk, Ottokar and Alum{\"a}e, Tanel},
+  booktitle={Sixteenth annual conference of the international speech communication association},
+  year={2015}
+}
+
+@inproceedings{memnet,   
+  title={Memnet: A persistent memory network for image restoration},
+  author={Tai, Ying and Yang, Jian and Liu, Xiaoming and Xu, Chunyan},
+  booktitle={Proceedings of the IEEE international conference on computer vision},
+  pages={4539--4547},
+  year={2017}
+}
+
+@article{adaptivenerunbalanceddata,
+  title={Adaptive Name Entity Recognition under Highly Unbalanced Data},
+  author={Nguyen, Thong and Nguyen, Duy and Rao, Pramod},
+  journal={arXiv preprint arXiv:2003.10296},
+  year={2020}
+}
+
+@inproceedings{attentionisallyouneed,
+  title={Attention is all you need},
+  author={Vaswani, Ashish and Shazeer, Noam and Parmar, Niki and Uszkoreit, Jakob and Jones, Llion and Gomez, Aidan N and Kaiser, {\L}ukasz and Polosukhin, Illia},
+  booktitle={Advances in neural information processing systems},
+  pages={5998--6008},
+  year={2017}
+}
+
+@inproceedings{efficientbertrobust,
     title = "Efficient Automatic Punctuation Restoration Using Bidirectional Transformers with Robust Inference",
     author = "Courtland, Maury  and
       Faulkner, Adam  and
