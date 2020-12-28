@@ -90,7 +90,9 @@ class BertBLSTMCRFModel(nn.Module):
         self.bert_drop_1 = nn.Dropout(config.hidden_dropout_prob)
         if self.use_lstm:
             self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
-        self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
+            self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
+        else:
+            self.out_punct = nn.Linear(self.embedding_dim, self.num_punct)
         if self.use_crf:
             self.crf= DiceCRF(self.num_punct)
     
@@ -105,6 +107,7 @@ class BertBLSTMCRFModel(nn.Module):
             sequence_output=self.lstm(sequence_output)[0]
             #self.logger.info('lstm output shape: {}'.format(sequence_output.shape))
         punct = self.out_punct(sequence_output)
+        #self.logger.info('punct shape: {}'.format(punct.shape))
         if self.use_crf:
             loss= -1*self.crf(punct, data[2], data[1])
         else:
