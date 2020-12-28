@@ -6,6 +6,15 @@
 \usepackage{natbib}
 \bibliographystyle{apalike}
 
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+
 \usepackage{hyperref}
 \title{Review of research conducted for Punctuation Retrieval.}
 \author{Ng Xing Yu}
@@ -66,16 +75,25 @@ Prior to the release of the BERT models, BiLSTMs were among the best performing 
 The use of word embeddings pre-trained using a large generic corpus (e.g. wikipedia or common crawl) allows the model to perform better on unseen examples as words with similar meaning would have a closer representation, allowing the model to generalise on unseen examples.
 Both \citet{birnnattention} and \citet{kim_2019} obtained visible F1 score improvements when using pre-trained GloVe \citep{glove} embeddings as compared to randomly initialised word embeddings. 
 \subsubsection{BERT}
-The BERT model features is pre-trained on two tasks: Masked Language modelling (MLM) and Next Sentence Prediction (NSP), which allows the model to learn bidirectional representations.
-The attention mechanism captures sequential information using positional encodings, represented by sine and cosine functions of different frequencies: 
+The BERT model features is pre-trained on two tasks: Masked Language modelling (MLM) and Next Sentence Prediction (NSP), which allows the model to learn bidirectional representations. Being pre-trained on a large corpus allows the model to contain a preliminary understanding of the language, reducing training time and increasing performance on the fine-tuned task.
+\paragraph{Self-attention}
+The use of self-attention brings many benefits over RNNs. It reduces the computational complexity of each layer, increase parallelism of the model, and reduces the path lengths of long-range dependencies, allowing the model to better learn these long-range dependencies \citep{attentionisallyouneed}.
+\paragraph{Positional Encodings}
+The attention mechanism captures sequential information using positional encodings. The implementation by \cite{attentionisallyouneed} suggests a possible fixed representation of sine and cosine functions of different frequencies: 
 
 $PE_{(2i)} = \sin{(pos/10000^{2i/d_{\text{model}}})}$
 
 $PE_{(2i+1)} = \cos{(pos/10000^{2i/d_{\text{model}}})}$. 
 
-This 
+The paper also claims that using learned positional embedding produces similar levels of performance. \cite{positionembedding} performs an analysis on the ability of transformer models to learn the meaning of positions, and discover that BERT and RoBERTa performs much worse than Generative Pre-Training (GPT-2) and sinusoid in learning positional information.
 
-\subsection{BERT-(BiLSTM)-CRF}
+\cite{floater} presents an alternative approach --- FLOATER --- to encode positional information for non-recurrent models that can potentially improve on the performance of punctuation retrieval. The paper propose to use a dynamical system to model the position representations, characterised by the function: \[p(t)=p(s)+\int_s^t{ h(\tau,p(\tau);\theta_h)d\tau}, 0\leq s \leq t < \infty\]
+The model appears to perform better on the task of machine translation, and appears inductive, performing well on long sentences as well. While the method adds a non-negligible time and memory overhead, the paper proposes several methods to streamline the process, allowing for minimal overhead when applying it to fine-tune BERT models.
+
+\paragraph{BERT variants}
+\cite{medicalasr} and \cite{efficientbertrobust} perform a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pre-training corpus, or the removal of the NSP task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}.
+
+\subsubsection{BERT-(BiLSTM)-CRF}
 A common model used in many papers feature the BERT-BiLSTM-CRF. However, there is little evidence of the effectiveness of adding a BiLSTM layer to increase the performance of the tagger. \cite{bertcrf} performed a comparison between different combinations of BERT with BiLSTM and CRF, and the addition of the BiLSTM layer led to a drop in performance of the model. \cite{chinesebertbilstm} presented the BERT-BiLSTM and BERT-BiLSTM-CRF model but not the BERT-CRF or BERT model, providing no information about the effectiveness of the BiLSTM layer.
 
 \subsection{Multi-task learning}
