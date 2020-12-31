@@ -1,7 +1,7 @@
 \documentclass[a4paper]{article}
 \usepackage{commath}
 \usepackage[utf8x]{inputenc}
-\usepackage[left=1.5in,right=1.5in,top=1in,bottom=1in]{geometry}
+\usepackage[left=0.8in,right=.8in,top=1in,bottom=1in]{geometry}
 \usepackage{verbatim} %comments
 \usepackage{natbib}
 \bibliographystyle{apalike}
@@ -17,11 +17,18 @@
 
 \usepackage{hyperref}
 \title{Review of research conducted for Punctuation Retrieval.}
-\author{Ng Xing Yu}
+\author{Xing Yu Ng}
 \date{}
+
+\usepackage{multicol}
+\setlength{\columnsep}{1cm}
+
 \begin{document}
+
 \maketitle
 
+
+\begin{multicols}{2}
 \section{Introduction}
 \label{introduction}
 Punctuation Retrieval is an important aspect in any Automatic Speech Recognition (ASR) pipeline for two reasons: to improve readability of auto-generated transcripts for videos or podcast subtitling or voice dictation applications, and to better capture the meaning of speech transcripts to improve the performance of downstream Natural Language Processing (NLP) tasks.
@@ -60,11 +67,23 @@ Other possible noise injection techniques include splitting of words into subwor
 \section{Models}
 There are two categories of models that have been applied to the task of punctuation retrieval: Recurrent Neural Networks and feed-forward networks.
 The current state of the art models as of 2020 features a BERT (variant) base layer with a variety of layer combinations above it. These models take a sequence of text represented as tokens or word embedding as input and output a sequence of corresponding punctuation labels, similar to other sequence tagging tasks like Part-of-speech (POS) or Named-Entity Recognition (NER) tagging.
-\subsection{Conditional Random Fields (CRF)}
-\cite{dynamiccrf} adopts a multi-task approach, training the model on punctuation prediction and sentence boundary labelling. They demonstrate the effectiveness of the factorial-CRF in improving performance of punctuation prediction, by learning a sentence boundary tag (e.g. start of question sentence or within declarative sentence) along with the punctuation tags.
+\subsection{Tag decoders}
+The final stage of the punctuation retrieval consists of a decoder which generates a sequence of punctuation labels from a sequence of representations.
+\subsubsection{Conditional Random Fields (CRF)}
+CRFs \citep{crf} are discriminative, undirected
+Markov models which represents a conditional probability distribution of a structured output
+variable y given an observation x. These are commonly used as an alternative to the Multi-layer perceptron (MLP) head for models. 
 
-\cite{mecrf} evaluates the ability of various CRF models to capture long-range dependencies effectively, to better represent the input text. Their proposed Memory-Enhanced CRF takes inspiration from \cite{memnet}, and features a memory layer ???
-\subsection{Recurrent Neural Networks (RNN) / Multi-layered RNN}
+\cite{dynamiccrf} trained the model on punctuation prediction and sentence boundary labelling. They demonstrate the effectiveness of the dynamic CRF in improving performance of punctuation prediction, by learning a sentence boundary tag (e.g. start of question sentence or within declarative sentence) along with the punctuation tags. The introduction of sentence boundary information allows for long-range dependencies to be captured by the model, and helps to relax the strong dependency assumptions associated with linear-chain CRFs.
+
+Likewise, \cite{crfhighorderdependencies} demonstrate that High order CRFs and semi-Markov CRFs outperforms Linear Chain CRFs and first-order semi-Markov CRFs on the punctuation-prediction task. They proposed introducing new tags denoting the start of sequences, similar to the second set of labels introduced by \citet{dynamiccrf}, which allows the model to better capture long-range dependencies.
+
+\cite{hybridsemimarkovcrf} presents a similar model that also features performance gains over the linear chain and Gated Recursive
+Semi-Markov CRFs (grSemi-CRF) \citep{grsemicrf} in the NER task. 
+
+
+
+\subsection{\texorpdfstring{Recurrent Neural Network / \\ Multi-layered RNN}{Recurrent Neural Network / Multi-layered RNN}}
 Prior to the release of the BERT models, BiLSTMs were among the best performing models for NLP, being able to utilise information from both sides to predict the tokens of the output sequence. The introduction of gates within the Long short-term memory (LSTM) or Gated recurrent unit (GRU) cells allows the model to preserve information across time-steps, giving the model the ability to capture long-term dependencies.  
 \cite{birnnattention} demonstrates the effectiveness of bi-directionality in improving the performance of punctuation retrieval, as punctuation relies on cues from words in both directions. They also observed a slight improvement in restoration of question-marks when an attention mechanism is added to determine the relative importance of each BiLSTM output in determining each output label.
 
@@ -88,7 +107,7 @@ $PE_{(2i+1)} = \cos{(pos/10000^{2i/d_{\text{model}}})}$.
 The paper also claims that using learned positional embedding produces similar levels of performance. \cite{positionembedding} performs an analysis on the ability of transformer models to learn the meaning of positions, and discover that BERT and RoBERTa performs much worse than Generative Pre-Training (GPT-2) and sinusoid in learning positional information.
 
 \cite{floater} presents an alternative approach --- FLOATER --- to encode positional information for non-recurrent models that can potentially improve on the performance of punctuation retrieval. The paper propose to use a dynamical system to model the position representations, characterised by the function: \[p(t)=p(s)+\int_s^t{ h(\tau,p(\tau);\theta_h)d\tau}, 0\leq s \leq t < \infty\]
-The model appears to perform better on the task of machine translation, and appears inductive, performing well on long sentences as well. While the method adds a non-negligible time and memory overhead, the paper proposes several methods to streamline the process, allowing for minimal overhead when applying it to fine-tune BERT models.
+The model appears to perform better on the task of machine translation, and claims to be inductive, performing well on long sentences as well. While the method adds a non-negligible time and memory overhead, the paper proposes several methods to streamline the process, allowing for minimal overhead when applying it to fine-tune BERT models.
 
 \paragraph{BERT variants}
 \cite{medicalasr} and \cite{efficientbertrobust} perform a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pre-training corpus, or the removal of the NSP task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}.
@@ -96,37 +115,56 @@ The model appears to perform better on the task of machine translation, and appe
 \subsubsection{BERT-(BiLSTM)-CRF}
 A common model used in many papers feature the BERT-BiLSTM-CRF. However, there is little evidence of the effectiveness of adding a BiLSTM layer to increase the performance of the tagger. \cite{bertcrf} performed a comparison between different combinations of BERT with BiLSTM and CRF, and the addition of the BiLSTM layer led to a drop in performance of the model. \cite{chinesebertbilstm} presented the BERT-BiLSTM and BERT-BiLSTM-CRF model but not the BERT-CRF or BERT model, providing no information about the effectiveness of the BiLSTM layer.
 
+Find evidence that CRF helps improve BERT model accuracy
+
+I hypothesise that the BERT layer with a high-order semi-Markov CRF tag decoder is able to outperform the BERT-BiLSTM-(Linear) CRF model. *** Correction, while a standalone high-order/semi-markov CRF model is able to outperform the linear-chain CRF, the presence of an attention mechanism within the BERT layer might already be able to represent high-level dependencies, reducing the effectiveness of the high-order/semi-markov CRF when compared to the linear-chain CRF. Considering the current and next input might be more effective than just the current input? since the label is also highly dependent on the subsequent word. Is this what 2nd-order CRF does or something else? CRF jointly predicts the sequence of punctuation labels rather than individually, making the sequence more common.
+
+Semi-Markov vs Weak semi markov crf?
+
+Would training on text with inserted punctuation with all labels 0 help? Would it result in the blank label being over represented? soft self-adjusting dice with weight?
+
 \subsection{Multi-task learning}
-Punctuation with POS-tagger, adversarial learning
+\begin{enumerate}
+\item Punctuation with POS-tagger, adversarial learning \citep{adversarial}
 
-Capitalization
+\item Capitalization \citep{jointlearningcorrbirnn}, \citep{chunkmerging}
 
-Sentence Boundary \cite{dynamiccrf}
+\item Sentence Boundary \cite{dynamiccrf}
 
-Use of acoustic features
-
+\item Use of acoustic features
+\end{enumerate}
 
 \section{Training process}
-\subsection{Chunking}
+\subsection{Overlapping chunks}
+\citet{chunkmerging} looks into the impact of overlapping successive chunks that are fed into the model for inference, and observed that labels at the ends of the output sequence tend to perform worse than at the middle. Thus, using a 50\% stride and discarding all overlapped heads or tails of sequences contributed to a substantial improvement in their punctuation retrieval model.
 \subsection{Dealing with class imbalance}
 There are various possible approaches to dealing with imbalance across punctuation classes. The bulk of research conducted deals with this class imbalance by absorbing the minority classes into a more generic class like period or comma. This is feasible as most punctuation can be generalised into two classes --- periods for sentence boundaries and commas for separating different parts of a sentence. However, this simply avoids the problem of class imbalance with punctuation like (?) being underrepresented. Dealing with class imbalance can improve the performance on weaker classes like (?) or (!) and can even allow for the training of a system that can retrieve other classes of punctuation like (``") or (---). 
 \subsubsection{Weighted Cross-entropy (W-CEL)}
 The multiplication of the component losses by a weight inversely proportional to the class frequency within the corpus will allow the model to converge faster on the weaker classes. A general formula for this loss function is given by: \[
 J_{wcel}=-\frac{1}{M}\sum_{k=1}^{K}\sum_{m=1}^{M}w_k \times y_m^k \times log(f(x_m))
-\] where \newline
-$w_k$ represents the class weights, often taken to be the reciprocal of the class proportion within the training data \newline
+\] where $w_k$ represents the class weights \newline
 $M$ represents the number of training examples \newline
-$K$ represents the number of classes.
+$K$ represents the number of classes. \newline
 This approach was utilised by \cite{adaptivenerunbalanceddata} in his binary classifier to identify weaker classes. \citet{efficientbertrobust} mentions that their implementation of focal loss or class weights did not outperform the generic cross-entropy loss. This might be due to the use of just three punctuation classes with only a slightly weaker (?) class, making any gains less pronounced. The lack of parameter tuning in their experiment may also reduce the performance of the models using focal loss or class weights.
 
-\subsubsection{Sørensen–Dice coefficient / F1 Score}
-\citet{li2020dice} proposed the use of a self-adjusting dice loss as an alternative to cross-entropy loss. The Sørensen–Dice coefficient (DSC): $DSC(A,B)=\frac{2 \times\abs{A \cap B}}{\abs{A} + \abs{B}}$ aims to maximise the F1 score of the model. Their proposed loss function introduces a decaying factor to the DSC function to increase the importance of less confident classes and allowing the training process to focus on those classes. Their proposed loss function is as follows: \[
-DSC(x_i)=\frac{2{(1-p_{i1})}^{\alpha}p_{i1}\cdot y_{i1}+\lambda}{{(1-p_{i1})}^{\alpha}p_{i1}+ y_{i1}+\lambda}\], with $p$ being the probability of a token being assigned to a label $i$, and $y$ representing the actual label of the token matching label $i$.
-The model trained with the DSC loss achieved a higher F1 score across all evaluated tasks as compared to Focal Loss and Dice Loss. The results obtained when trained on datasets of varying levels of imbalance further supported the hypothesis that the DSC loss is effective in combating the issue of class imbalance. While providing a breakdown of scores per class would be most effective in demonstrating the impact of using DSC on the weaker classes, the results presented makes the use of DSC worth considering as a loss function in punctuation retrieval.
+\subsubsection{Focal Loss}
+\citet{focallosspunct} demonstrated the effectiveness of Focal Loss over Cross-entropy loss, obtaining a clear improvement both in their controlled experiments and when compared to the Bert Punct (Base) model \citep{pandababa}.
 
+\subsubsection{Sørensen–Dice coefficient / F1 Score}
+%On the Bayes-Optimality of F-Measure Maximizers
+
+
+%Optimization for Medical Image Segmentation: Theory and Practice When Evaluating With Dice Score or Jaccard Index 
+
+
+\citet{li2020dice} proposed the use of a self-adjusting soft dice loss as an alternative to cross-entropy loss. The Sørensen–Dice coefficient (DSC): $DSC(A,B)=\frac{2 \times\abs{A \cap B}}{\abs{A} + \abs{B}}$ is used to measure the similarity of the 2 sequences. The proposed loss function introduces a decaying factor to the DSC function to increase the importance of less confident classes and allowing the training process to focus on those classes. Their proposed loss function is as follows: \[
+DSC(x_i)=\frac{2{(1-p_{i1})}^{\alpha}p_{i1}\cdot y_{i1}+\lambda}{{(1-p_{i1})}^{\alpha}p_{i1}+ y_{i1}+\lambda} ,\] with $p$ being the probability of a token being assigned to a label $i$, and $y$ representing the actual label of the token matching label $i$.
+The model trained with the DSC loss achieved a higher F1 score across all evaluated tasks as compared to Focal Loss and Dice Loss. The results obtained when trained on datasets of varying levels of imbalance further supports the hypothesis that the DSC loss is effective in combating the issue of class imbalance. 
+
+% \citet{dicescorejaccardindex}
 
 % \section*{}
 
 \bibliography{asr.bib}
-
+\end{multicols}
 \end{document}
