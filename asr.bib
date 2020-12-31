@@ -17,9 +17,9 @@
 
 @article{kim_2019, title={Deep Recurrent Neural Networks with Layer-wise Multi-head Attentions for Punctuation Restoration}, DOI={10.1109/icassp.2019.8682418}, journal={ICASSP 2019 - 2019 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)}, author={Kim, Seokhwan}, year={2019}, month={Apr}} 
 
-@article{nguyen_nguyen_nguyen_phuong_nguyen_do_mai_2019, title={Fast and Accurate Capitalization and Punctuation for Automatic Speech Recognition Using Transformer and Chunk Merging}, DOI={10.1109/o-cocosda46868.2019.9041202}, journal={2019 22nd Conference of the Oriental COCOSDA International Committee for the Co-ordination and Standardisation of Speech Databases and Assessment Techniques (O-COCOSDA)}, author={Nguyen, Binh and Nguyen, Vu Bao Hung and Nguyen, Hien and Phuong, Pham Ngoc and Nguyen, The-Loc and Do, Quoc Truong and Mai, Luong Chi}, year={2019}, month={Aug}}
+@article{chunkmerging, title={Fast and Accurate Capitalization and Punctuation for Automatic Speech Recognition Using Transformer and Chunk Merging}, DOI={10.1109/o-cocosda46868.2019.9041202}, journal={2019 22nd Conference of the Oriental COCOSDA International Committee for the Co-ordination and Standardisation of Speech Databases and Assessment Techniques (O-COCOSDA)}, author={Nguyen, Binh and Nguyen, Vu Bao Hung and Nguyen, Hien and Phuong, Pham Ngoc and Nguyen, The-Loc and Do, Quoc Truong and Mai, Luong Chi}, year={2019}, month={Aug}}
 
-@INPROCEEDINGS{pandababa,  author={K. {Makhija} and T. {Ho} and E. {Chng}},  booktitle={2019 Asia-Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)},   title={\href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9023200}{Transfer Learning for Punctuation Prediction}},   year={2019},  volume={},  number={},  pages={268-273},  note={Code available at \url{https://github.com/panda-baba/bert\_punct}}, doi={10.1109/APSIPAASC47483.2019.9023200}}
+@inproceedings{pandababa,  author={K. {Makhija} and T. {Ho} and E. {Chng}},  booktitle={2019 Asia-Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)},   title={\href{https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9023200}{Transfer Learning for Punctuation Prediction}},   year={2019},  volume={},  number={},  pages={268-273},  note={Code available at \url{https://github.com/panda-baba/bert\_punct}}, doi={10.1109/APSIPAASC47483.2019.9023200}}
 
 @INPROCEEDINGS{2009,
   author={A. {Gravano} and M. {Jansche} and M. {Bacchiani}},
@@ -80,6 +80,45 @@
   note={Code available at \url{https://github.com/xuanqing94/FLOATER}}
 }
 
+@article{memnet,
+  title={End-to-end memory networks},
+  author={Sukhbaatar, Sainbayar and Weston, Jason and Fergus, Rob and others},
+  journal={Advances in neural information processing systems},
+  volume={28},
+  pages={2440--2448},
+  year={2015}
+}
+
+@conference{crf, title={{Conditional random fields: Probabilistic models for segmenting and labeling sequence data}}, author={Lafferty, J. and McCallum, A. and Pereira, F.}, booktitle={MACHINE LEARNING : INTERNATIONAL WORKSHOP THEN CONFERENCE }, pages={282—289}, year={2001}, organization={Citeseer} }
+
+@article{crfhighorderdependencies,
+  author  = {Nguyen Viet Cuong and Nan Ye and Wee Sun Lee and Hai Leong Chieu},
+  title   = {Conditional Random Field with High-order Dependencies for Sequence Labeling and Segmentation},
+  journal = {Journal of Machine Learning Research},
+  year    = {2014},
+  volume  = {15},
+  number  = {28},
+  pages   = {981-1009},
+  url     = {http://jmlr.org/papers/v15/cuong14a.html}
+}
+
+@article{hybridsemimarkovcrf,
+  title={Hybrid semi-markov crf for neural sequence labeling},
+  author={Ye, Zhi-Xiu and Ling, Zhen-Hua},
+  journal={arXiv preprint arXiv:1805.03838},
+  year={2018}
+}
+
+@inproceedings{grsemicrf,
+  title={Segment-level sequence modeling using gated recursive semi-markov conditional random fields},
+  author={Zhuo, Jingwei and Cao, Yong and Zhu, Jun and Zhang, Bo and Nie, Zaiqing},
+  booktitle={Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)},
+  pages={1413--1423},
+  year={2016}
+}
+
+@ARTICLE{dicescorejaccardindex,  author={T. {Eelbode} and J. {Bertels} and M. {Berman} and D. {Vandermeulen} and F. {Maes} and R. {Bisschops} and M. B. {Blaschko}},  journal={IEEE Transactions on Medical Imaging},   title={Optimization for Medical Image Segmentation: Theory and Practice When Evaluating With Dice Score or Jaccard Index},   year={2020},  volume={39},  number={11},  pages={3679-3690},  doi={10.1109/TMI.2020.3002417}}
+
 @article{positionembedding,
   title={What Do Position Embeddings Learn? An Empirical Study of Pre-Trained Language Model Positional Encoding},
   author={Wang, Yu-An and Chen, Yun-Nung},
@@ -130,6 +169,16 @@
   booktitle={Advances in neural information processing systems},
   pages={5998--6008},
   year={2017}
+}
+
+@inproceedings{focallosspunct,
+  author={Jiangyan Yi and Jianhua Tao and Zhengkun Tian and Ye Bai and Cunhang Fan},
+  title={{Focal Loss for Punctuation Prediction}},
+  year=2020,
+  booktitle={Proc. Interspeech 2020},
+  pages={721--725},
+  doi={10.21437/Interspeech.2020-1638},
+  url={http://dx.doi.org/10.21437/Interspeech.2020-1638}
 }
 
 @inproceedings{efficientbertrobust,
