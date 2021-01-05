@@ -75,24 +75,24 @@ def loss_fn(output, target, mask, num_labels, weight=None):
     return loss
 
 
-class BertBLSTMCRFModel(nn.Module):
+class BertCRFModel(nn.Module):
     def __init__(self,num_punct, embedding_dim, hidden_dim, use_lstm=False, use_crf=True, logger=None):
-        super(BertBLSTMCRFModel, self).__init__()
+        super(BertCRFModel, self).__init__()
         self.num_punct=num_punct
         self.embedding_dim=embedding_dim
         self.hidden_dim=hidden_dim
-        self.use_lstm = use_lstm
+        #self.use_lstm = use_lstm
         self.use_crf = use_crf
         self.logger=logger
         self.bert = transformers.BertModel.from_pretrained(
             config.BASE_MODEL_PATH
         )
         self.bert_drop_1 = nn.Dropout(config.hidden_dropout_prob)
-        if self.use_lstm:
-            self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
-            self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
-        else:
-            self.out_punct = nn.Linear(self.embedding_dim, self.num_punct)
+        #if self.use_lstm:
+        #    self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
+        #    self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
+        #else:
+		self.out_punct = nn.Linear(self.embedding_dim, self.num_punct)
         if self.use_crf:
             self.crf= DiceCRF(self.num_punct)
     
@@ -103,9 +103,9 @@ class BertBLSTMCRFModel(nn.Module):
         )[0]
         sequence_output = self.bert_drop_1(o1)
         #self.logger.info('bert output shape: {}'.format(sequence_output.shape))
-        if self.use_lstm:
-            sequence_output=self.lstm(sequence_output)[0]
-            #self.logger.info('lstm output shape: {}'.format(sequence_output.shape))
+        #if self.use_lstm:
+        #    sequence_output=self.lstm(sequence_output)[0]
+        #    self.logger.info('lstm output shape: {}'.format(sequence_output.shape))
         punct = self.out_punct(sequence_output)
         #self.logger.info('punct shape: {}'.format(punct.shape))
         if self.use_crf:

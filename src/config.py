@@ -20,8 +20,7 @@ class config:
     HIDDEN_DIM = 128
     SELF_ADJUSTING=True
     SQUARE_DENOMINATOR=False
-    USE_LSTM=False
-    USE_CRF=False
+    USE_CRF=True
     MODEL_NAME = 'bertcrf'
     MODEL_PATH = "/home/nxingyu/project/logs/models/"
 

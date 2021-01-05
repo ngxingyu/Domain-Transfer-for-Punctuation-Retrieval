@@ -8,7 +8,6 @@ import datetime
 import torch
 from .config import *
 from .engine import *
-from .model import EntityModel
 
 start_time=datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
 logger=get_logger(config.MODEL_NAME,start_time=start_time)
@@ -22,9 +21,8 @@ train_dataset=torch.load(config.TRAIN_DATASET)
 dev_dataset=torch.load(config.DEV_DATASET)
 train_dataloader=torch.utils.data.DataLoader(train_dataset, batch_size=config.TRAIN_BATCH_SIZE, num_workers=4)
 dev_dataloader=torch.utils.data.DataLoader(dev_dataset, batch_size=config.DEV_BATCH_SIZE, num_workers=2)
-weight=1
 
-model = BertBLSTMCRFModel(num_punct=10, embedding_dim=config.EMBEDDING_DIM, hidden_dim=config.HIDDEN_DIM, use_lstm=config.USE_LSTM, use_crf=config.USE_CRF, logger=logger)
+model = BertCRFModel(num_punct=10, embedding_dim=config.EMBEDDING_DIM, hidden_dim=config.HIDDEN_DIM, use_crf=config.USE_CRF, logger=logger)
 
 for i,param in enumerate(model.bert.parameters()):
     param.requires_grad = False
