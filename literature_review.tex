@@ -89,12 +89,12 @@ Prior to the release of the BERT models, BiLSTMs were among the best performing 
 
 \cite{kim_2019} built upon this research, utilising a Deep-RNN model with a multi-head attention mechanism as proposed by \cite{attentionisallyouneed}. It relies on the stacked RNNs to extract sequential context before using the multi-head attention to focus on the context at each time-step. The use of multiple RNN layers would allow the model to learn various representations of the sequence. Based on the results obtained, there is a positive relationship between the number of RNN layers and the F1 score of the model. The paper does not provide any source code or details regarding the training process. Even so, the sequential nature of the model and its depth makes the model harder to tune and takes longer to train as compared to a single BiLSTM layer and possibly even a BERT model. Further research has to be conducted to evaluate the efficiency and performance of utilising the stacked RNN layers as compared to the BERT model.
 
-\subsection{Pre-trained models}
+\subsection{pretrained models}
 \subsubsection{GloVe}
-The use of word embeddings pre-trained using a large generic corpus (e.g. wikipedia or common crawl) allows the model to perform better on unseen examples as words with similar meaning would have a closer representation, allowing the model to generalise on unseen examples.
-Both \citet{birnnattention} and \citet{kim_2019} obtained visible F1 score improvements when using pre-trained GloVe \citep{glove} embeddings as compared to randomly initialised word embeddings. 
+The use of word embeddings pretrained using a large generic corpus (e.g. wikipedia or common crawl) allows the model to perform better on unseen examples as words with similar meaning would have a closer representation, allowing the model to generalise on unseen examples.
+Both \citet{birnnattention} and \citet{kim_2019} obtained visible F1 score improvements when using pretrained GloVe \citep{glove} embeddings as compared to randomly initialised word embeddings. 
 \subsubsection{BERT}
-The BERT model features is pre-trained on two tasks: Masked Language modelling (MLM) and Next Sentence Prediction (NSP), which allows the model to learn bidirectional representations. Being pre-trained on a large corpus allows the model to contain a preliminary understanding of the language, reducing training time and increasing performance on the fine-tuned task.
+The BERT model features is pretrained on two tasks: Masked Language modelling (MLM) and Next Sentence Prediction (NSP), which allows the model to learn bidirectional representations. Being pretrained on a large corpus allows the model to contain a preliminary understanding of the language, reducing training time and increasing performance on the fine-tuned task.
 \paragraph{Self-attention}
 The use of self-attention brings many benefits over RNNs. It reduces the computational complexity of each layer, increase parallelism of the model, and reduces the path lengths of long-range dependencies, allowing the model to better learn these long-range dependencies \citep{attentionisallyouneed}.
 \paragraph{Positional Encodings}
@@ -104,18 +104,20 @@ $PE_{(2i)} = \sin{(pos/10000^{2i/d_{\text{model}}})}$
 
 $PE_{(2i+1)} = \cos{(pos/10000^{2i/d_{\text{model}}})}$. 
 
-The paper also claims that using learned positional embedding produces similar levels of performance. \cite{positionembedding} performs an analysis on the ability of transformer models to learn the meaning of positions, and discover that BERT and RoBERTa performs much worse than Generative Pre-Training (GPT-2) and sinusoid in learning positional information.
+The paper also claims that using learned positional embedding produces similar levels of performance. \cite{positionembedding} performs an analysis on the ability of transformer models to learn the meaning of positions, and discover that BERT and RoBERTa performs much worse than Generative pretraining (GPT-2) and sinusoid in learning positional information.
 
 \cite{floater} presents an alternative approach --- FLOATER --- to encode positional information for non-recurrent models that can potentially improve on the performance of punctuation retrieval. The paper propose to use a dynamical system to model the position representations, characterised by the function: \[p(t)=p(s)+\int_s^t{ h(\tau,p(\tau);\theta_h)d\tau}, 0\leq s \leq t < \infty\]
 The model appears to perform better on the task of machine translation, and claims to be inductive, performing well on long sentences as well. While the method adds a non-negligible time and memory overhead, the paper proposes several methods to streamline the process, allowing for minimal overhead when applying it to fine-tune BERT models.
 
 \paragraph{BERT variants}
-\cite{medicalasr} and \cite{efficientbertrobust} perform a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pre-training corpus, or the removal of the NSP task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}.
+\cite{medicalasr} and \cite{efficientbertrobust} perform a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pretraining corpus, or the removal of the NSP task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}.
 
 \subsubsection{BERT-(BiLSTM)-CRF}
 A common model used in many papers feature the BERT-BiLSTM-CRF. However, there is little evidence of the effectiveness of adding a BiLSTM layer to increase the performance of the tagger. \cite{bertcrf} performed a comparison between different combinations of BERT with BiLSTM and CRF, and the addition of the BiLSTM layer led to a drop in performance of the model. \cite{chinesebertbilstm} presented the BERT-BiLSTM and BERT-BiLSTM-CRF model but not the BERT-CRF or BERT model, providing no information about the effectiveness of the BiLSTM layer.
 
-Find evidence that CRF helps improve BERT model accuracy
+Likewise, \citet{rosvall2019comparison} observed a slight performance gain when using the CRF layer over BERT rather than a feedforward network on the task of NER.
+
+\citet{tuneornottotune} demonstrates that the BERT-CRF model can outpeform the BERT-BiLSTM-CRF model when the base layer is unfrozen, and gradual unfreezing (unfreezing single layers and training for 1 epoch, from the last to the first layer) is necessary to match the performance of frozen BERT-BiLSTM-CRF. This paper demonstrates the ability of the BERT model's attention mechanism to act as a substitute for the BiLSTM layer if trained properly.
 
 I hypothesise that the BERT layer with a high-order semi-Markov CRF tag decoder is able to outperform the BERT-BiLSTM-(Linear) CRF model. *** Correction, while a standalone high-order/semi-markov CRF model is able to outperform the linear-chain CRF, the presence of an attention mechanism within the BERT layer might already be able to represent high-level dependencies, reducing the effectiveness of the high-order/semi-markov CRF when compared to the linear-chain CRF. Considering the current and next input might be more effective than just the current input? since the label is also highly dependent on the subsequent word. Is this what 2nd-order CRF does or something else? CRF jointly predicts the sequence of punctuation labels rather than individually, making the sequence more common.
 
@@ -162,6 +164,23 @@ DSC(x_i)=\frac{2{(1-p_{i1})}^{\alpha}p_{i1}\cdot y_{i1}+\lambda}{{(1-p_{i1})}^{\
 The model trained with the DSC loss achieved a higher F1 score across all evaluated tasks as compared to Focal Loss and Dice Loss. The results obtained when trained on datasets of varying levels of imbalance further supports the hypothesis that the DSC loss is effective in combating the issue of class imbalance. 
 
 % \citet{dicescorejaccardindex}
+
+\subsection{Transfer learning for unseen domain}
+\citet{medicalasr} demonstrated the effectiveness of fine-tuning the pretrained BERT model on medical-domain data in improving the performance of medical transcript punctuation retrieval. This has proven effective, but also highlighted the inability of the BERT model trained on non-medical data to generalise to the medical domain, obtaining a F1 score of 0.2 and 0.39 on the Period and Comma classes respectively. This shows the importance of selecting a training corpus similar to the target domain with fewer unknown tokens in the test set, to allow the model to learn surface features which will improve performance on the target domain. This section will look further into possible ways to improve performance on unseen domains, or domains with minimal training data, where the target-domain contains minimal out-of-vocabulary tokens.
+
+\subsubsection{Attaining linguistic generalisation}
+\citet{robertaAcquireLinguisticPreference} performs a study of the ability of RoBERTa in preferring linguistic over surface generalisations in the pretraining phase. They obtain the following results: 
+(1) models learn to represent both surface features and linguistic features with relatively little data; 
+(2) RoBERTa begins to acquire a linguistic bias with over 1B words of pretraining data; 
+(3) increasing pretraining data strengthens linguistic bias; 
+(4) there is considerable variation in models’ preferences between specific pairs of linguistic and surface features \citep{robertaAcquireLinguisticPreference}. 
+In addition, their inclusion of manually designed inoculation data ranging from 0\% to 1\% allowed the models to attain stronger linguistic generalisation. Thus, increasing the amount of training data and the inclusion of some inoculating data manually or programmatically are possible approaches for punctuation retrieval transfer learning.
+
+\textbf{Multi-task learning} An approach taken by various researchers \citep{adversarial,jointlearningcorrbirnn, dynamiccrf} use multi-task learning (i.e. POS tagging, Capitalisation prediction, Sentence boundary prediction) to guide the model towards a more linguistically generalised solution.
+
+\citet{domainAdaptationBERT} presents a method to improve domain adaptation on unlabelled target data, but requires some examples of target data before training begins. The method features a BERT classifier to sort source data in decreasing order of similarity to target data. This sorted source data is then fed into the learning algorithm, allowing the model to learn examples of increasing difficulty.
+
+\citet{clim} tackles the same issue using a different approach. They propose 
 
 % \section*{}
 
