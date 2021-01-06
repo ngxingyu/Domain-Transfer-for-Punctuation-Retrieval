@@ -1,5 +1,5 @@
 #%autoindent
-
+#%%
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -13,6 +13,7 @@ import regex as re
 import numpy as np
 from tqdm import tqdm
 
+#%%
 ted=load_dataset('csv',data_files={'train':'/home/nxingyu/project/data/ted_talks_processed.train.csv',
                                    'dev':'/home/nxingyu/project/data/ted_talks_processed.dev.csv',
                                    'test':'/home/nxingyu/project/data/ted_talks_processed.test.csv'})

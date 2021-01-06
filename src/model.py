@@ -32,14 +32,12 @@ class DiceLoss(nn.Module):
         self.smooth = smooth
         self.square_denominator = square_denominator
         self.weight=weight
-    
     def forward(self,
                 input: torch.Tensor,
                 target: torch.Tensor,
                 mask: Optional[torch.Tensor] = None,
                 num_classes: int = 10,
                 ) -> torch.Tensor:
-
         input_soft = torch.softmax(input[target!=-100],dim=1)
         target_one_hot=F.one_hot(target[target!=-100],num_classes=num_classes)
         input_factor = ((1-input_soft) ** self.alpha) if self.self_adjusting else 1
@@ -47,7 +45,6 @@ class DiceLoss(nn.Module):
             mask = mask.view(-1).float()
             input_soft = input_soft * mask
             target_one_hot = target_one_hot * mask
-        
         intersection = torch.sum(input_factor*input_soft * target_one_hot, 0)
         cardinality = torch.sum(input_factor*torch.square(input_soft,) + torch.square(target_one_hot,), 0) if self.square_denominator else torch.sum(input_factor*input_soft + target_one_hot, 0)
         dice_score = 1. - 2. * intersection / (cardinality + self.smooth) * self.weight
@@ -62,16 +59,16 @@ class DiceLoss(nn.Module):
     def __str__(self):
         return f"Dice Loss smooth:{self.smooth}"
 
-def loss_fn(output, target, mask, num_labels, weight=None):
-    lfn = DiceLoss(square_denominator=config.SQUARE_DENOMINATOR,self_adjusting=config.SELF_ADJUSTING,alpha=config.ALPHA,weight=weight)
+def loss_fn(output, target, mask, weight=None):
+    lfn = DiceLoss(square_denominator=config.square_denominator,self_adjusting=config.self_adjusting,alpha=config.alpha,weight=weight)
     active_loss = mask.view(-1) == 1
-    active_logits = output.view(-1, num_labels)
+    active_logits = output.view(-1, config.num_labels)
     active_labels = torch.where(
         active_loss,
         target.view(-1),
         torch.tensor(-100).type_as(target)
     )
-    loss = lfn(active_logits, active_labels,num_classes=num_labels)
+    loss = lfn(active_logits, active_labels,num_classes=config.num_labels)
     return loss
 
 
@@ -85,17 +82,17 @@ class BertCRFModel(nn.Module):
         self.use_crf = use_crf
         self.logger=logger
         self.bert = transformers.BertModel.from_pretrained(
-            config.BASE_MODEL_PATH
+            config.base_model_path
         )
         self.bert_drop_1 = nn.Dropout(config.hidden_dropout_prob)
         #if self.use_lstm:
         #    self.lstm=nn.LSTM(embedding_dim, hidden_dim//2, num_layers=1, bidirectional=True)
         #    self.out_punct = nn.Linear(self.hidden_dim, self.num_punct)
         #else:
-		self.out_punct = nn.Linear(self.embedding_dim, self.num_punct)
+        self.out_punct = nn.Linear(self.embedding_dim, self.num_punct)
         if self.use_crf:
             self.crf= DiceCRF(self.num_punct)
-    
+
     def forward(self, data):
         o1 = self.bert(
                 data[0],				#ids
@@ -112,34 +109,6 @@ class BertCRFModel(nn.Module):
             loss= -1*self.crf(punct, data[2], data[1])
         else:
             loss = loss_fn(punct, data[2], data[1], self.num_punct,1)
-        #loss = (loss_tag + loss_pos) / 2
-
-        return punct, loss
-        
-class EntityModel(nn.Module):
-    def __init__(self, num_punct, weight=None):
-        super(EntityModel, self).__init__()
-        self.num_punct = num_punct
-        self.weight = weight
-        self.bert = transformers.BertModel.from_pretrained(
-            config.BASE_MODEL_PATH
-        )
-        self.bert_drop_1 = nn.Dropout(0.3)
-        self.out_punct = nn.Linear(768, self.num_punct)
-
-    def forward(
-        self,
-        data,
-    ):
-        o1 = self.bert(
-            data[0],				#ids
-            attention_mask=data[1],	#mask,
-        )[0]
-        bo_punct = self.bert_drop_1(o1)
-        punct = self.out_punct(bo_punct)
-        loss_punct = loss_fn(punct, data[2], data[1], self.num_punct,self.weight)
-
-        loss = loss_punct
         #loss = (loss_tag + loss_pos) / 2
 
         return punct, loss
