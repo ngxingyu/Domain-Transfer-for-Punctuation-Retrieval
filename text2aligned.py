@@ -43,8 +43,8 @@ tokenizer = transformers.DistilBertTokenizerFast.from_pretrained('distilbert-bas
 def text2masks(n):
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
-        if n==0:
-            refilter="(?<=[.?!,;:\-—… ])(?=[^.?!,;:\-—… ])|$"
+        if n==0: 
+            refilter="(?<=[.?!,;:\-—… ])(?=[^.?!,;:\-—… ])|$" 
         else:
             refilter="[.?!,;:\-—…]{1,%d}(?= *[^.?!,;:\-—…]+|$)|(?<=[^.?!,;:\-—…]) +(?=[^.?!,;:\-—…])"%(n)
         word=re.split(refilter,text, flags=re.V1)
@@ -78,29 +78,33 @@ def chunk_examples_with_degree(n):
     return chunk_examples
 assert(chunk_examples_with_degree(0)({'transcript':['Hello!Bye…']})=={'texts': [['Hello', 'Bye']], 'tags': [[0, 1, 9]]})
 
+
 def encode_tags(encodings, docs, max_length, overlap):
     encoded_labels = []
     doc_id=0
-    label_offset=1
-#     print(encodings.keys())
+    label_offset=0
     for doc_offset,current_doc_id in zip(encodings.offset_mapping,encodings['overflow_to_sample_mapping']):
-#         print(doc_id, end=' ')
         if current_doc_id>doc_id:
             doc_id+=1
             label_offset=0
             print('.', end='')
         doc_enc_labels = np.ones(len(doc_offset),dtype=int) * 0 #-100
-        doc_enc_labels[0]=docs[doc_id][label_offset-1] # Set leading punctuation class
-#         print([id2tag[t] if t>0 else '' for t in docs[doc_id][label_offset:label_offset+len(doc_offset)]])
         arr_offset = np.array(doc_offset)
-        arr_mask = (arr_offset[:,0] == 0) & (arr_offset[:,1] != 0) # Gives the labels that should be assigned punctuation
+        if arr_offset[1,0]!=0: #Resolution if first token belongs to previous word.
+            label_offset+=1
+        # Gives the labels that should be assigned punctuation 
+        # (after the tok before word prefixes: arr_offset :(0,i) where i>0)
+        arr_mask = ((arr_offset[:,0] == 0) & (arr_offset[:,1] != 0))[1:].tolist()+[False] 
+        #Get index of last non-sep/unk/pad word
+        sep_idx=np.argwhere(arr_offset.sum(1)>0)[-1,0]
+        arr_mask[sep_idx]=True
         doc_enc_labels[arr_mask] = docs[doc_id][label_offset:label_offset+sum(arr_mask)]
         encoded_labels.append(doc_enc_labels)
-        label_offset+=sum(arr_mask[:max_length-overlap-1])
+        label_offset+=sum(arr_mask[:max_length-overlap-1])-1 #-1 Assuming the last token is standalone word
     return encoded_labels
 
-def process_dataset(dataset, split, max_length=128, overlap=63):
-    data=dataset[split].map(chunk_examples_with_degree(0), batched=True, batch_size=max_length,remove_columns=dataset[split].column_names)
+def process_dataset(dataset, split, max_length=128, overlap=63, degree=0):
+    data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=max_length,remove_columns=dataset[split].column_names)
     encodings=tokenizer(data['texts'], is_split_into_words=True, return_offsets_mapping=True,
               return_overflowing_tokens=True, padding=True, truncation=True, max_length=max_length, stride=overlap)
     labels=encode_tags(encodings, data['tags'], max_length, overlap)
@@ -121,6 +125,7 @@ if __name__ == "__main__":
                         help="max sequence length", default=63, type=int)
     parser.add_argument("-s", "--split", dest="splits", required=False,
                         help="single split, train dev test if empty", default='', type=str)
+    parser.add_argument("-d", "--degree", dest="degree", required=False, help="Degree of labels", default=1, type=int)
 
     args = parser.parse_args()
     if (args.splits==''):

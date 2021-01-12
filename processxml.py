@@ -1,15 +1,15 @@
 #!/usr/bin/env python
-
+#%%
 import pandas as pd
 import regex as re
 import argparse, os, csv
 import xml.etree.ElementTree as ET
-
+#%%
 def validate_file(f):
     if not os.path.exists(f):
         raise argparse.ArgumentTypeError("{0} does not exist".format(f))
     return f
-
+#%%
 tags=list('.?!,;:-—…')
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
