@@ -44,7 +44,7 @@ def text2masks(n):
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
         if n==0: 
-            refilter="(?<=[.?!,;:\-—… ])(?=[^.?!,;:\-—… ])|$" 
+            refilter="(?<=[.?!,;:\-—… ])(?=[^.?!,;:\-—… ])|$"
         else:
             refilter="[.?!,;:\-—…]{1,%d}(?= *[^.?!,;:\-—…]+|$)|(?<=[^.?!,;:\-—…]) +(?=[^.?!,;:\-—…])"%(n)
         word=re.split(refilter,text, flags=re.V1)
@@ -103,8 +103,8 @@ def encode_tags(encodings, docs, max_length, overlap):
         label_offset+=sum(arr_mask[:max_length-overlap-1])-1 #-1 Assuming the last token is standalone word
     return encoded_labels
 
-def process_dataset(dataset, split, max_length=128, overlap=63, degree=0):
-    data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=max_length,remove_columns=dataset[split].column_names)
+def process_dataset(dataset, split, max_length=128, overlap=63, degree=0, threads=1):
+    data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=128,remove_columns=dataset[split].column_names, num_proc=threads)
     encodings=tokenizer(data['texts'], is_split_into_words=True, return_offsets_mapping=True,
               return_overflowing_tokens=True, padding=True, truncation=True, max_length=max_length, stride=overlap)
     labels=encode_tags(encodings, data['tags'], max_length, overlap)
@@ -125,7 +125,8 @@ if __name__ == "__main__":
                         help="max sequence length", default=63, type=int)
     parser.add_argument("-s", "--split", dest="splits", required=False,
                         help="single split, train dev test if empty", default='', type=str)
-    parser.add_argument("-d", "--degree", dest="degree", required=False, help="Degree of labels", default=1, type=int)
+    parser.add_argument("-d", "--degree", dest="degree", required=False, help="Degree of labels", default=0, type=int)
+    parser.add_argument("-t", "--multithread", dest="threads", required=False, help="num of threads", default=1, type=int)
 
     args = parser.parse_args()
     if (args.splits==''):
@@ -137,6 +138,6 @@ if __name__ == "__main__":
         filename=paths[0]+'.'+split+paths[1]
         print(validate_file(filename+'.csv'))
         ted=load_dataset('csv',data_files={split:filename+'.csv'})
-        dataset=process_dataset(ted,split,args.max_length,args.overlap_length)
+        dataset=process_dataset(ted,split,args.max_length,args.overlap_length,args.threads)
         torch.save(dataset, filename+'.pt')
 
