@@ -78,41 +78,89 @@ def chunk_examples_with_degree(n):
     return chunk_examples
 assert(chunk_examples_with_degree(0)({'transcript':['Hello!Bye…']})=={'texts': [['Hello', 'Bye']], 'tags': [[0, 1, 9]]})
 
+def flatten(list_of_lists):
+    for list in list_of_lists:
+        for item in list:
+            yield item
 
-def encode_tags(encodings, docs, max_length, overlap):
-    encoded_labels = []
-    doc_id=0
-    label_offset=0
-    for doc_offset,current_doc_id in zip(encodings.offset_mapping,encodings['overflow_to_sample_mapping']):
-        if current_doc_id>doc_id:
-            doc_id+=1
-            label_offset=0
-            print('.', end='')
-        doc_enc_labels = np.ones(len(doc_offset),dtype=int) * 0 #-100
-        arr_offset = np.array(doc_offset)
-        if arr_offset[1,0]!=0: #Resolution if first token belongs to previous word.
-            label_offset+=1
-        # Gives the labels that should be assigned punctuation 
-        # (after the tok before word prefixes: arr_offset :(0,i) where i>0)
-        arr_mask = ((arr_offset[:,0] == 0) & (arr_offset[:,1] != 0))[1:].tolist()+[False] 
-        #Get index of last non-sep/unk/pad word
-        sep_idx=np.argwhere(arr_offset.sum(1)>0)[-1,0]
-        arr_mask[sep_idx]=True
-        doc_enc_labels[arr_mask] = docs[doc_id][label_offset:label_offset+sum(arr_mask)]
-        encoded_labels.append(doc_enc_labels)
-        label_offset+=sum(arr_mask[:max_length-overlap-1])-1 #-1 Assuming the last token is standalone word
-    return encoded_labels
+def subword_tokenize(tokens):
+    subwords = list(map(tokenizer.tokenize, tokens))
+    subword_lengths = list(map(len, subwords))
+    subwords = list(flatten(subwords))
+    token_end_idxs = np.cumsum([0]+subword_lengths[:-1])+np.array(subword_lengths)-1
+    return subwords, token_end_idxs
 
-def process_dataset(dataset, split, max_length=128, overlap=63, degree=0, threads=1):
+def position_to_mask(max_length,indices):
+    o=np.zeros(max_length,dtype=np.int)
+    o[indices%(max_length-2)+1]=1
+    return o
+
+def pad_ids_to_len(max_length,ids):
+    o=np.zeros(max_length, dtype=np.int)
+    o[:len(ids)]=np.array(ids)
+    return o
+
+def chunk_to_len(max_length,tokens,labels):
+    subwords,token_end_idxs = subword_tokenize(tokens)
+    teim=token_end_idxs%(max_length-2)
+    split_token_end_idxs=np.array_split(token_end_idxs,(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
+    split_subwords=np.array_split(subwords,token_end_idxs[np.argwhere((teim[1:])<teim[:-1]).flatten()+1].tolist())
+    split_labels=np.array_split(labels[1:],(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
+    ids=torch.tensor([pad_ids_to_len(max_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)[:max_length-2]+['[SEP]'])) for _ in split_subwords], dtype=torch.long)
+    masks=torch.tensor([position_to_mask(max_length,_) for _ in split_token_end_idxs], dtype=torch.long)
+    padded_labels=torch.tensor([pad_ids_to_len(max_length,[0]+list(_)[:max_length-2]+[0]) for _ in split_labels], dtype=torch.long)
+    return ids,masks,padded_labels
+
+def chunk_to_len_batch(max_length,tokens,labels, filename):
+    batch_ids=[]
+    batch_masks=[]
+    batch_labels=[]
+    f=open(filename,"ab")
+    for i,_ in enumerate(zip(tokens,labels)):
+        # a,b,c=chunk_to_len(max_length,*_)
+        # batch_ids.append(a)
+        # batch_masks.append(b)
+        # batch_labels.append(c)
+        np.savetxt(f,torch.hstack([*chunk_to_len(max_length,*_)]),fmt='%i')
+        print('.', end='')
+    f.close()
+    # return PunctuationDataset(torch.cat(batch_ids), torch.cat(batch_masks), torch.cat(batch_labels))
+
+# def encode_tags(encodings, docs, max_length, overlap):
+#     encoded_labels = []
+#     doc_id=0
+#     label_offset=0
+#     for doc_offset,current_doc_id in zip(encodings.offset_mapping,encodings['overflow_to_sample_mapping']):
+#         if current_doc_id>doc_id:
+#             doc_id+=1
+#             label_offset=0
+#             print('.', end='')
+#         doc_enc_labels = np.ones(len(doc_offset),dtype=int) * 0 #-100
+#         arr_offset = np.array(doc_offset)
+#         if arr_offset[1,0]!=0: #Resolution if first token belongs to previous word.
+#             label_offset+=1
+#         # Gives the labels that should be assigned punctuation 
+#         # (after the tok before word prefixes: arr_offset :(0,i) where i>0)
+#         arr_mask = ((arr_offset[:,0] == 0) & (arr_offset[:,1] != 0))[1:].tolist()+[False] 
+#         #Get index of last non-sep/unk/pad word
+#         sep_idx=np.argwhere(arr_offset.sum(1)>0)[-1,0]
+#         arr_mask[sep_idx]=True
+#         doc_enc_labels[arr_mask] = docs[doc_id][label_offset:label_offset+sum(arr_mask)]
+#         encoded_labels.append(doc_enc_labels)
+#         label_offset+=sum(arr_mask[:max_length-overlap-1])-1 #-1 Assuming the last token is standalone word
+#     return encoded_labels
+#
+def process_dataset(dataset, split, filename, max_length=128, overlap=63, degree=0, threads=1):
     data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=128,remove_columns=dataset[split].column_names, num_proc=threads)
-    encodings=tokenizer(data['texts'], is_split_into_words=True, return_offsets_mapping=True,
-              return_overflowing_tokens=True, padding=True, truncation=True, max_length=max_length, stride=overlap)
-    labels=encode_tags(encodings, data['tags'], max_length, overlap)
-    encodings.pop("offset_mapping")
-    encodings.pop("overflow_to_sample_mapping")
-    return PunctuationDataset(torch.tensor(encodings['input_ids'],dtype=torch.long),
-        torch.tensor(encodings['attention_mask'],dtype=torch.long),
-        torch.tensor(labels,dtype=torch.long))
+    return chunk_to_len_batch(max_length,data['texts'],data['tags'], filename)
+    # encodings=tokenizer(data['texts'], is_split_into_words=True, return_offsets_mapping=True,
+    #           return_overflowing_tokens=True, padding=True, truncation=True, max_length=max_length, stride=overlap)
+    # labels=encode_tags(encodings, data['tags'], max_length, overlap)
+    # encodings.pop("offset_mapping")
+    # encodings.pop("overflow_to_sample_mapping")
+    # return PunctuationDataset(torch.tensor(encodings['input_ids'],dtype=torch.long),
+    #     torch.tensor(encodings['attention_mask'],dtype=torch.long),
+    #     torch.tensor(labels,dtype=torch.long))
 
 if __name__ == "__main__":
 
@@ -138,6 +186,6 @@ if __name__ == "__main__":
         filename=paths[0]+'.'+split+paths[1]
         print(validate_file(filename+'.csv'))
         ted=load_dataset('csv',data_files={split:filename+'.csv'})
-        dataset=process_dataset(ted,split,args.max_length,args.overlap_length,args.threads)
-        torch.save(dataset, filename+'.pt')
+        dataset=process_dataset(ted,split,filename+'-batched.csv',args.max_length,args.overlap_length,args.threads)
+        # torch.save(dataset, filename+'.pt')
 
