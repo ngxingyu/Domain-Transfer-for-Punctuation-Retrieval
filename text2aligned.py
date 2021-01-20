@@ -127,7 +127,7 @@ def chunk_to_len_batch(max_length,tokens,labels, filename):
 
 def process_dataset(dataset, split, filename, max_length=128, overlap=63, degree=0, threads=1):
     data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=128,remove_columns=dataset[split].column_names, num_proc=threads)
-    return chunk_to_len_batch(max_length,data['texts'],data['tags'], filename)
+    chunk_to_len_batch(max_length,data['texts'],data['tags'], filename)
 
 if __name__ == "__main__":
 
@@ -153,4 +153,4 @@ if __name__ == "__main__":
         filename=paths[0]+'.'+split+paths[1]
         print(validate_file(filename+'.csv'))
         ted=load_dataset('csv',data_files={split:filename+'.csv'})
-        dataset=process_dataset(ted,split,filename+'-batched.csv',args.max_length,args.overlap_length,args.threads)
+        process_dataset(ted,split,filename+'-batched.csv',args.max_length,args.overlap_length,args.threads)
