@@ -4,6 +4,11 @@ import pandas as pd
 import regex as re
 import argparse, os, csv
 
+from tqdm import tqdm
+import subprocess
+
+# import dask.dataframe as dd
+
 def validate_file(f):
     if not os.path.exists(f):
         raise argparse.ArgumentTypeError("{0} does not exist".format(f))
@@ -31,14 +36,21 @@ def displayinstances(col,exp):
     proper noun, where the prefix will be removed regardless
     but will not break the syntax. '''
 
-def removespeakertags(text):
-    return re.sub(speakertag,' ',text)
+# def removespeakertags(text):
+#     return re.sub(speakertag,' ',text)
+
+def removenametags(text):
+    # return re.sub(r"(?<=[a-z][.?!;]) *[ A-z.,\-']{1,25}:",' ',text)
+    return re.sub(r"(?<=[a-z][.?!;])([\(\[]* *)[ A-z.,\-']{1,25}:", "\g<1>",text)
 
 def removeparentheses(text):
     return re.sub(parenthesestoremove, ' ',text)
 
 def removeparenthesesaroundsentence(text):
     return re.sub(parenthesesaroundsentence,r'\g<1>',text)
+
+def removedashafterpunct(text):
+    return re.sub(r"([^A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+ *)-+( *[^- ])",r"\g<1> \g<2>",text)
 
 def removesquarebrackets(text):
     return re.sub(squarebracketsaroundsentence, r'\g<1>',text)
@@ -75,12 +87,20 @@ def combinerepeatedpunct(text):
 def endashtohyphen(text):
     return re.sub('–','-',text)
 
+def removedashafterpunct(text):
+    return re.sub(r"([^A-z0-9 ]+ *)-+( *[^- ])",r"\g<1> \g<2>",text)
+
 def pronouncesymbol(text):
     return re.sub('(?<=\d)\.(?=\d)',' point ',text)
 
+def stripleadingpunctuation(text):
+    return re.sub(r'^[^A-z0-9]+','',text)
+
 def preprocess(tedtalks):
-    print('removing speaker tags')
-    tedtalks=tedtalks.apply(removespeakertags)
+    # print('removing speaker tags')
+    # tedtalks=tedtalks.apply(removespeakertags)
+    print('removing name tags')
+    tedtalks=tedtalks.apply(removenametags)
 
     print('removing non-sentence parenthesis')
     tedtalks=tedtalks.apply(removeparentheses)
@@ -106,6 +126,9 @@ def preprocess(tedtalks):
     print('endash to hyphen')
     tedtalks=tedtalks.apply(endashtohyphen)
 
+    print('remove hyphen after punct')
+    tedtalks=tedtalks.apply(removedashafterpunct)
+
     print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
 
@@ -114,6 +137,9 @@ def preprocess(tedtalks):
 
     print('reduce whitespaces')
     tedtalks=tedtalks.apply(reducewhitespaces)
+
+    print('strip leading')
+    tedtalks=tedtalks.apply(stripleadingpunctuation)
 
     print('--done--')
     return tedtalks
@@ -135,21 +161,27 @@ if __name__ == "__main__":
                         help="input file", metavar="FILE")
     parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output csv filepath", metavar="FILE")
-    parser.add_argument("-p","--preprocess", type=str2bool, nargs='?',
-                        const=True, default=True,
-                        help="requires preprocess?")
+    # parser.add_argument("-p","--preprocess", type=str2bool, nargs='?',
+    #                     const=True, default=True,
+    #                     help="requires preprocess?")
+    parser.add_argument('-c',"--chunksize", dest='chunksize', type=int, required=False, default=2000)
     args = parser.parse_args()
-    df=pd.read_csv(args.filename,dtype='string')[['talk_id','transcript']]
-    df=df[-df.transcript.isna()]
-    if args.preprocess: df.transcript=preprocess(df.transcript)
-    df=df[df.transcript.map(lambda x:len(x.split())>=1)]
-    df=df.sort_values('talk_id').sample(frac=1,random_state=42).reset_index(drop=True)
-    split_1=int(0.8 * len(df))
-    split_2=int(0.9 * len(df))
-    train = df[:split_1]
-    dev = df[split_1:split_2]
-    test = df[split_2:]
-    paths=os.path.splitext(args.output)
-    train.to_csv(paths[0]+'.train'+paths[1],index=False)
-    dev.to_csv(paths[0]+'.dev'+paths[1],index=False)
-    test.to_csv(paths[0]+'.test'+paths[1],index=False)
+    
+    
+    nb_samples=int(subprocess.Popen(['wc', '-l', args.filename], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+    total = int(nb_samples / args.chunksize)
+    o=pd.read_csv(args.filename,
+                  dtype='str',
+                  # columns=['talk_id','transcript']
+                  skiprows=range(1,(0 * total)*args.chunksize+1),
+                  chunksize=args.chunksize)
+    # paths=os.path.splitext(args.output)
+    open(args.output, 'w').close()
+    with open(args.output, 'a') as f:
+      for i in tqdm(o,total=total):
+          i = i.loc[:,['talk_id','transcript']]
+          i.dropna(inplace=True)
+          i.transcript = preprocess(i.transcript.astype(str))
+          i=i[i.transcript.map(lambda x:len(x.split())>=1)]
+          i.to_csv(f, mode='a', index=False, header=False)
+
