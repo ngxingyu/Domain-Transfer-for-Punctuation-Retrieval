@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import pandas as pd
 import torch
 import numpy as np
@@ -37,8 +38,9 @@ def str2bool(v):
 
 tags=sorted(list('.?!,;:-—…'))
 tag2id = {tag: id+1 for id, tag in enumerate(tags)}
+tag2id['']=0
 id2tag = {id: tag for tag, id in tag2id.items()}
-tokenizer = transformers.ElectraTokenizerFast.from_pretrained('google/electra-base-discriminator')
+tokenizer = transformers.ElectraTokenizerFast.from_pretrained('/home/nxingyu/data/electra-base-discriminator')
 
 def text2masks(n):
     def text2masks(text):
@@ -100,6 +102,10 @@ def pad_ids_to_len(max_length,ids):
     o[:len(ids)]=np.array(ids)
     return o
 
+def labels_to_position(mask,labels):
+    mask[mask>0]=torch.tensor(labels)
+    return mask.tolist()
+
 def chunk_to_len(max_length,tokens,labels):
     subwords,token_end_idxs = subword_tokenize(tokens)
     teim=token_end_idxs%(max_length-2)
@@ -107,8 +113,9 @@ def chunk_to_len(max_length,tokens,labels):
     split_subwords=np.array_split(subwords,np.arange(max_length-2,len(subwords),max_length-2)) #token_end_idxs[np.argwhere((teim[1:])<teim[:-1]).flatten()+1].tolist()
     split_labels=np.array_split(labels[1:],(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
     ids=torch.tensor([pad_ids_to_len(max_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords], dtype=torch.long)
-    masks=torch.tensor([position_to_mask(max_length,_) for _ in split_token_end_idxs], dtype=torch.long)
-    padded_labels=torch.tensor([pad_ids_to_len(max_length,[0]+list(_)+[0]) for _ in split_labels], dtype=torch.long)
+    masks=[position_to_mask(max_length,_) for _ in split_token_end_idxs]
+    padded_labels=torch.tensor([pad_ids_to_len(max_length,labels_to_position(*_)) for _ in zip(masks,split_labels)], dtype=torch.long)
+    masks=torch.tensor(masks,dtype=torch.long)
     return ids,masks,padded_labels
 
 def chunk_to_len_batch(max_length,tokens,labels, filename):
@@ -132,7 +139,7 @@ def process_dataset(dataset, split, filename, max_length=128, overlap=63, degree
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Enter csv file location. Extracts the "talk_id" and "transcript" column from csv and preprocesses transcript to the format for sentence punctuation prediction')
-    parser.add_argument("-i", "--input", dest="filename", required=True,
+    parser.add_argument("-i", "--input", dest="path", required=True,
                         help="input file (Omit .train .dev .test .csv)", metavar="FILE")
     parser.add_argument("-m", "--max", dest="max_length", required=False,
                         help="max sequence length", default=128, type=int)
@@ -149,8 +156,9 @@ if __name__ == "__main__":
     else:
         splits=[args.splits]
     for split in splits:
-        paths=os.path.splitext(args.filename)
-        filename=paths[0]+'.'+split+paths[1]
+        # paths=os.path.splitext(args.filename)
+        filename=args.path+'.'+split
         print(validate_file(filename+'.csv'))
-        ted=load_dataset('csv',data_files={split:filename+'.csv'})
-        process_dataset(ted,split,filename+'-batched.csv',args.max_length,args.overlap_length,args.threads)
+        ted=load_dataset('csv',data_files={split:filename+'.csv'}, column_names=['id','transcript'])
+        open(filename+'-batched.csv', 'w').close()
+        process_dataset(ted,split,filename+'-batched.csv',max_length=args.max_length,overlap=args.overlap_length,degree=args.degree, threads=args.threads)
