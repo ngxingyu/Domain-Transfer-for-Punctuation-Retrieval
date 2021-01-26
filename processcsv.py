@@ -41,7 +41,7 @@ def displayinstances(col,exp):
 
 def removenametags(text):
     # return re.sub(r"(?<=[a-z][.?!;]) *[ A-z.,\-']{1,25}:",' ',text)
-    return re.sub(r"(?<=[a-z][.?!;])([\(\[]* *)[ A-z.,\-']{1,25}:", "\g<1>",text)
+    return re.sub(r"(?<=[a-z][.?!;])([\(\[]* *)[ A-Za-z.,\-']{1,25}:", "\g<1>",text)
 
 def removeparentheses(text):
     return re.sub(parenthesestoremove, ' ',text)
@@ -88,13 +88,13 @@ def endashtohyphen(text):
     return re.sub('–','-',text)
 
 def removedashafterpunct(text):
-    return re.sub(r"([^A-z0-9 ]+ *)-+( *[^- ])",r"\g<1> \g<2>",text)
+    return re.sub(r"([^A-Za-z0-9 ]+ *)-+( *[^- ])",r"\g<1> \g<2>",text)
 
 def pronouncesymbol(text):
     return re.sub('(?<=\d)\.(?=\d)',' point ',text)
 
 def stripleadingpunctuation(text):
-    return re.sub(r'^[^A-z0-9]+','',text)
+    return re.sub(r'^[^A-Za-z0-9]+','',text)
 
 def preprocess(tedtalks):
     # print('removing speaker tags')

@@ -67,3 +67,11 @@ The process of converting continuous text is as follows:
 1. Taking the text and degree, split the text into 2 lists - the first being a list of words, and the second being a list of previously classified punctuations or spaces dividing the text. (i.e. when degree is 0, the 2nd list contains all empty strings.)
 2. Intialize 2 new lists, a and b. Process both lists alternately beginning with the words list, identifying the trailing punctuation and stripping all punctuations from the tail. The word will be appended to a and the id of the punctuation identified will be appended to b.
 3. 
+
+
+## Log for 26/1/2020
+
+Found a bug in regex pattern: A-z also includes punctuation characters, use A-Za-z instead.
+Worked on creating the model in python instead of ipynb.
+python -m pip install git+https://github.com/gruns/icecream.git
+
