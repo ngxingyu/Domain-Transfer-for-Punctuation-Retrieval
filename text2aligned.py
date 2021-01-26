@@ -159,6 +159,7 @@ if __name__ == "__main__":
         # paths=os.path.splitext(args.filename)
         filename=args.path+'.'+split
         print(validate_file(filename+'.csv'))
+        print('maxlen',args.max_length)
         ted=load_dataset('csv',data_files={split:filename+'.csv'}, column_names=['id','transcript'])
         open(filename+'-batched.csv', 'w').close()
         process_dataset(ted,split,filename+'-batched.csv',max_length=args.max_length,overlap=args.overlap_length,degree=args.degree, threads=args.threads)

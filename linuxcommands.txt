@@ -47,3 +47,8 @@ git clone git@github.com:ngxingyu/dotfiles.git
 
 echo 'alias nv="~/nvim.appimage"' >> ~/.bashrc
 source ~/.profile
+
+
+
+
+pip install git+https://github.com/gruns/icecream.git
