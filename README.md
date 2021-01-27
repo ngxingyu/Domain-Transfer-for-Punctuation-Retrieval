@@ -75,3 +75,20 @@ Found a bug in regex pattern: A-z also includes punctuation characters, use A-Za
 Worked on creating the model in python instead of ipynb.
 python -m pip install git+https://github.com/gruns/icecream.git
 
+
+## Log for 27/1/2020
+
+Use code-server
+```console
+user@instance:~$ fuser -k 9999/tcp
+user@instance:~$ code-server --bind-addr 127.0.0.1:9999 --auth none &
+```
+
+To convert all to lowercse.
+To strip leading before first Uppercase, after last sentence punctuation.
+
+Repeated starts are possible i.e. similar show but different episodes. Perhaps better to remove the shuffling and just split by order? yes. I'll do this instead.
+
+Some of the regexes are flawed, to check if spare time?
+
+Convert from huggingface load dataset which loads all to memory to pandas chunking map save.
