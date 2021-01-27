@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#%%
 import pandas as pd
 import regex as re
 import argparse, os, csv
@@ -18,8 +18,8 @@ def validate_file(f):
 parentheses=r'\([^)(]+[^)( ] *\)'
 parenthesestokeep=r'\([^)(]+[^)(.!?—\-, ] *\)'
 speakertag=r'((?<=[^\w\d \",])|^) *(?![?\.,!:\-\—\[\]\(\)])(?:[A-Z\d][^\s.?!\[\]\(\)]*\s?)*:(?=[^\w]*[A-Z])'#lookahead keeps semicolon in false cases.
-parenthesestoremove=r'\(([^\w]*[^\(\)]+[\w ]+)\):?'
-parenthesesaroundsentence=r'\(([^\w]*[^\(\)]+\W*)\):?'
+parenthesestoremove=r'\(([^\(\)]+[\w ]+)\):?'
+parenthesesaroundsentence=r'\(([^\w]*[^\(\)]+[_^\W]+)\):?'
 squarebracketsaroundsentence=r'\[([^\[\]]+)\]' #generic since it seems like the square brackets just denote unclear speech.
 
 def displayinstances(col,exp):
@@ -36,8 +36,8 @@ def displayinstances(col,exp):
     proper noun, where the prefix will be removed regardless
     but will not break the syntax. '''
 
-# def removespeakertags(text):
-#     return re.sub(speakertag,' ',text)
+def removespeakertags(text):
+    return re.sub(speakertag,' ',text)
 
 def removenametags(text):
     # return re.sub(r"(?<=[a-z][.?!;]) *[ A-z.,\-']{1,25}:",' ',text)
@@ -64,10 +64,10 @@ def reducewhitespaces(text):
     return re.sub(r'\s+', ' ',text)
 
 def removeemptyquotes(text):
-    text= re.sub(r"'[^\w\d]*'",' ',text)
-    text= re.sub(r"\([^\w\d]*\)",' ',text)
-    text= re.sub(r"\[[^\w\d]*\]",' ',text)
-    return re.sub(r'"[^\w\d]*"',' ',text)
+    text= re.sub(r"'[_^\W]*'",' ',text)
+    text= re.sub(r"\([_^\W]*\)",' ',text)
+    text= re.sub(r"\[[_^\W]*\]",' ',text)
+    return re.sub(r'"[_^\W]*"',' ',text)
 
 def ellipsistounicode(text):
     text = re.sub(r'\.{3,}(?= )','…',text) #ellipsis without trailing punctuation
@@ -77,11 +77,11 @@ def removenonsentencepunct(text):
     return re.sub(r'[^\w\d\s,.!?;:$#%&^+•=€²£¥…@\-\–\—\/](?!\w)|(?<!\w)[^\w\d\s,.!?;:$#%&^+•=€²£¥…@\-\–\—\/]',' ',text)
 
 def combinerepeatedpunct(text):
-    newtext=[text,re.sub(r'([^\w\d]+) *\1+','\g<1> ',text)]
+    newtext=[text,re.sub(r'([_^\W]+) *\1+','\g<1> ',text)]
     i=1
     while (newtext[0]!=newtext[1]):
         i+=1
-        newtext[i%2]=re.sub(r'([^\w\d]+) *\1+','\g<1> ',newtext[(1+i)%2])
+        newtext[i%2]=re.sub(r'([_^\W]+) *\1+','\g<1> ',newtext[(1+i)%2])
     return newtext[i%2]
 
 def endashtohyphen(text):
@@ -94,52 +94,44 @@ def pronouncesymbol(text):
     return re.sub('(?<=\d)\.(?=\d)',' point ',text)
 
 def stripleadingpunctuation(text):
-    return re.sub(r'^[^A-Za-z0-9]+','',text)
+    return re.sub(r'^[^A-Z]+','',text)
+
+def striptrailingtext(text):
+    return re.sub(r'[^!.?…;]+$','',text)
 
 def preprocess(tedtalks):
-    # print('removing speaker tags')
-    # tedtalks=tedtalks.apply(removespeakertags)
+    print('removing speaker tags')
+    tedtalks=tedtalks.apply(removespeakertags)
     print('removing name tags')
-    tedtalks=tedtalks.apply(removenametags)
-
+    tedtalks=tedtalks.apply(removenametags) # Remove *Mr Brown: *Hi!
     print('removing non-sentence parenthesis')
-    tedtalks=tedtalks.apply(removeparentheses)
-
+    tedtalks=tedtalks.apply(removeparentheses) # Remove (Whispers) without punct
     print('removing parenthesis')
-    tedtalks=tedtalks.apply(removeparenthesesaroundsentence)
-
+    tedtalks=tedtalks.apply(removeparenthesesaroundsentence) #Remove -> (<- Hi Everyone! ->)<-
     print('removing square brackets')
-    tedtalks=tedtalks.apply(removesquarebrackets)
-
+    tedtalks=tedtalks.apply(removesquarebrackets) #Remove entire [unclear text]
     print('removing music lyrics')
     tedtalks=tedtalks.apply(removemusic)
-
     print('removing empty tags')
     tedtalks=tedtalks.apply(removeemptyquotes)
-
     print('change to unicode ellipsis')
     tedtalks=tedtalks.apply(ellipsistounicode)
-
     print('removing non-sentence punctuation')
     tedtalks=tedtalks.apply(removenonsentencepunct)
-    
     print('endash to hyphen')
     tedtalks=tedtalks.apply(endashtohyphen)
-
     print('remove hyphen after punct')
     tedtalks=tedtalks.apply(removedashafterpunct)
-
     print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
-
     print('pronounce decimal')
     tedtalks=tedtalks.apply(pronouncesymbol)
-
     print('reduce whitespaces')
     tedtalks=tedtalks.apply(reducewhitespaces)
-
     print('strip leading')
     tedtalks=tedtalks.apply(stripleadingpunctuation)
+    print('strip trailing')
+    tedtalks=tedtalks.apply(striptrailingtext)
 
     print('--done--')
     return tedtalks
@@ -165,23 +157,63 @@ if __name__ == "__main__":
     #                     const=True, default=True,
     #                     help="requires preprocess?")
     parser.add_argument('-c',"--chunksize", dest='chunksize', type=int, required=False, default=2000)
+    parser.add_argument('-s',"--header", dest='header', type=int, required=False, default=1)
     args = parser.parse_args()
     
     
     nb_samples=int(subprocess.Popen(['wc', '-l', args.filename], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
-    total = int(nb_samples / args.chunksize)
+    total = int((nb_samples+args.chunksize) / args.chunksize)
+    print(total,nb_samples,args.chunksize)
     o=pd.read_csv(args.filename,
                   dtype='str',
                   # columns=['talk_id','transcript']
-                  skiprows=range(1,(0 * total)*args.chunksize+1),
+                  skiprows=range(0,args.header),
+                  header=None,
                   chunksize=args.chunksize)
     # paths=os.path.splitext(args.output)
     open(args.output, 'w').close()
     with open(args.output, 'a') as f:
       for i in tqdm(o,total=total):
-          i = i.loc[:,['talk_id','transcript']]
-          i.dropna(inplace=True)
-          i.transcript = preprocess(i.transcript.astype(str))
-          i=i[i.transcript.map(lambda x:len(x.split())>=1)]
+          i = i.iloc[:,[0,-1]]
+          i.columns=['id','transcript']
+        #   print(i)
+          i=i.loc[~i.transcript.isnull()]
+          i.loc[:,'transcript'] = preprocess(i.transcript.astype(str))
+        #   print(1,i.transcript)
+          i=i.loc[i.transcript.map(lambda x:len(x.split())>=1)]
+        #   print(2)
           i.to_csv(f, mode='a', index=False, header=False)
 
+
+
+#%%
+
+'''
+import pandas as pd
+
+filename='../data/ted_talks_en.csv'
+chunksize=4
+header=1
+total=0
+o=pd.read_csv(filename,
+                dtype='str',
+                # columns=['talk_id','transcript'],
+                skiprows=range(0,header),
+                header=None,
+                chunksize=chunksize)
+
+i=next(iter(o)).iloc[:,[0,-1]]
+i.columns=['talk_id','transcript']
+i
+# paths=os.path.splitext(args.output)
+# open(args.output, 'w').close()
+# with open(args.output, 'a') as f:
+#     for i in tqdm(o,total=total):
+#         i = i.iloc[:,[0,-1]]
+#         print(i)
+#         i.dropna(inplace=True)
+#         i.iloc[:,1] = preprocess(i.iloc[:,1].astype(str))
+#         i=i[i.iloc[:,-1].map(lambda x:len(x.split())>=1)]
+#         i.to_csv(f, mode='a', index=False, header=False)
+
+#%%'''
