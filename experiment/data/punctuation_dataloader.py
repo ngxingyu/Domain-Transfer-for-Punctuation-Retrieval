@@ -1,13 +1,15 @@
 from pytorch_lightning import LightningDataModule
 from torch import dtype
-from data import PunctuationDataset, PunctuationDatasets
+from data import PunctuationDomainDataset, PunctuationDomainDatasets
 from typing import List
 import pandas as pd
 import os
 import torch
+from nemo.utils import logging
 
 class PunctuationDataModule(LightningDataModule):
     def __init__(self, 
+            tokenizer,
             labelled: List[str], 
             unlabelled: List[str], 
             train_batch_size: int,
@@ -15,15 +17,18 @@ class PunctuationDataModule(LightningDataModule):
             val_batch_size:int = 256, 
             num_workers:int = 1,
             pin_memory:bool = False,
-            drop_last:bool = False):
+            drop_last:bool = False
+            ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
         self.labelled=labelled
+        self.tokenizer=tokenizer
         self.unlabelled=unlabelled
         self.num_domains=len(labelled)+len(unlabelled)
         self.train_batch_size = max(1,train_batch_size//self.num_domains)
-        ic(self.train_batch_size)
+        logging.info(f"using training batch_size of {self.train_batch_size} for each domain")
         self.val_batch_size = max(1,val_batch_size//self.num_domains)
+        logging.info(f"using dev batch_size of {self.train_batch_size} for each domain")
         self.max_seq_length = max_seq_length
         self.num_workers=num_workers
         self.pin_memory = pin_memory
@@ -41,37 +46,36 @@ class PunctuationDataModule(LightningDataModule):
                     with open("{}.train-stride.csv".format(p),'r') as f:
                         s=len(f.readline().split(' '))//3
                 except IOError:
-                    print('nofile')
                     s=0
-                ic(s)
                 if (s!=self.max_seq_length):
+                    logging.info(f"copying train file from {p}.train-batched.csv to {p}.train-stride.csv")
                     os.system("cp {} {}".format(p+'.train-batched.csv',p+'.train-stride.csv'))
                     if (self.max_seq_length!=256):
-                        ic('generating strides:',self.max_seq_length)
+                        logging.info(f'generating training strides: {self.max_seq_length}')
                         n=np.loadtxt(open(p+".train-stride.csv", "rb"))
                         np.savetxt(p+".train-stride.csv", self.with_stride_split(n,self.max_seq_length),fmt='%d')
 
                 if stage=='fit' or None:
-                    self.train_dataset[domain] = PunctuationDataset(p+'.train-stride.csv', num_samples=self.train_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled))
-                    self.dev_dataset[domain] =  PunctuationDataset(p+'.dev-batched.csv', num_samples=self.val_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled))
+                    self.train_dataset[domain] = PunctuationDomainDataset(p+'.train-stride.csv', num_samples=self.train_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled), tokenizer=self.tokenizer)
+                    self.dev_dataset[domain] =  PunctuationDomainDataset(p+'.dev-batched.csv', num_samples=self.val_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled), tokenizer=self.tokenizer)
                     ic(self.train_dataset[domain].shuffle(sorted=True))
                     ic(self.train_dataset[domain].shuffle())
 
                 if stage == 'test' or stage is None:
-                    self.test_dataset[domain] =  PunctuationDataset(p+'.test-batched.csv', num_samples=self.val_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled))
+                    self.test_dataset[domain] =  PunctuationDomainDataset(p+'.test-batched.csv', num_samples=self.val_batch_size, max_seq_length=self.max_seq_length, domain = domain, labelled=bool(1-unlabelled), tokenizer=self.tokenizer)
 
     def shuffle(self):
         for dataset in self.train_dataset.values():
             dataset.shuffle()
 
     def train_dataloader(self):
-        return DataLoader(PunctuationDatasets(*self.train_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
+        return DataLoader(PunctuationDomainDatasets(*self.train_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def val_dataloader(self):
-        return DataLoader(PunctuationDatasets(*self.dev_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
+        return DataLoader(PunctuationDomainDatasets(*self.dev_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def test_dataloader(self):
-        return DataLoader(PunctuationDatasets(*self.test_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
+        return DataLoader(PunctuationDomainDatasets(*self.test_dataset.values()),batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def with_stride_split(n,l):
         def with_stride(t,l):

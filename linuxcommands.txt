@@ -1,4 +1,4 @@
-sudo -l
+
 nvidia-smi --list-gpus # list gpus
 
 
