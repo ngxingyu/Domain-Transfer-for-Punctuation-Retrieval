@@ -80,10 +80,12 @@ def chunk_examples_with_degree(n):
         for sentence in examples:
             text,tag=text2masks(n)(sentence)
             output['texts'].append(text)
-            output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
+            output['tags'].append(tag)
+            # output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
+            # not necessary since all the leading punctuations are stripped
         return output
     return chunk_examples
-assert(chunk_examples_with_degree(0)(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[0, 1, 9]]})
+assert(chunk_examples_with_degree(0)(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 9]]})
 
 #%%
 def flatten(list_of_lists):
@@ -117,7 +119,7 @@ def chunk_to_len(max_length,tokens,labels):
     teim=token_end_idxs%(max_length-2)
     split_token_end_idxs=np.array_split(token_end_idxs,(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
     split_subwords=np.array_split(subwords,np.arange(max_length-2,len(subwords),max_length-2)) #token_end_idxs[np.argwhere((teim[1:])<teim[:-1]).flatten()+1].tolist()
-    split_labels=np.array_split(labels[1:],(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
+    split_labels=np.array_split(labels,(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
     ids=torch.tensor([pad_ids_to_len(max_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords], dtype=torch.long)
     masks=[position_to_mask(max_length,_) for _ in split_token_end_idxs]
     padded_labels=torch.tensor([pad_ids_to_len(max_length,labels_to_position(*_)) for _ in zip(masks,split_labels)], dtype=torch.long)
@@ -146,18 +148,27 @@ def process_dataset(transcript, filename, max_length=128, overlap=63, degree=0, 
 
 # filename='../data/ted_talks_processed'
 # split='train'
-# chunksize=10
+# chunksize=2000
+# header=0
 # t=pd.read_csv(filename+'.'+split+'.csv',
 #                 dtype='str',
 #                 # columns=['talk_id','transcript'],
-#                 # skiprows=range(0,header),
+#                 skiprows=range(0,header+chunksize*0),
 #                 header=None,
 #                 chunksize=chunksize)
 # degree=0
 # data=chunk_examples_with_degree(degree)(next(iter(t))[1])
-# #%%
-# max_length=256
-# chunk_to_len_batch(max_length,data['texts'],data['tags'])
+#%%
+# from icecream import install
+# install()
+# ic.configureOutput(argToStringFunction=lambda x:str(x))
+
+
+# max_length=1024
+# data_proc=chunk_to_len_batch(max_length,[data['texts'][1190]],[data['tags'][1190]])
+
+
+
 
 #%%
 

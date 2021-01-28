@@ -28,3 +28,6 @@ from core.config.schedulers import (
     get_scheduler_config,
     register_scheduler_params,
 )
+
+from core.classification_report import ClassificationReport
+from core.models import NLPModel
