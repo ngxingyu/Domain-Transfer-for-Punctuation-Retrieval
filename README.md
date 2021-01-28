@@ -68,6 +68,24 @@ The process of converting continuous text is as follows:
 2. Intialize 2 new lists, a and b. Process both lists alternately beginning with the words list, identifying the trailing punctuation and stripping all punctuations from the tail. The word will be appended to a and the id of the punctuation identified will be appended to b.
 3. 
 
+# Preprocessing commands
+'''console
+
+bash ~/project/get-data.sh
+
+python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
+bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
+python ~/project/text2aligned.py -i ./ted_talks_processed -d 0 -c 2000 #without any split or filetype
+
+python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
+bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+python ~/project/text2aligned.py -i ./open_subtitles-processed -d 0 -c 2000
+
+## python installs
+pip install conda
+pip install nemo_toolkit[all]==1.0.0b2
+
+
 
 ## Log for 26/1/2020
 
@@ -92,3 +110,6 @@ Repeated starts are possible i.e. similar show but different episodes. Perhaps b
 Some of the regexes are flawed, to check if spare time?
 
 Convert from huggingface load dataset which loads all to memory to pandas chunking map save.
+
+## Log for 28/1/2020
+Found an arabic character in one of the texts "Co ِ perative" which broke the tokenizer parsing. To go through the preprocessing step in greater detail now.

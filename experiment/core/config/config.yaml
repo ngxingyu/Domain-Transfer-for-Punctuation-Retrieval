@@ -24,11 +24,17 @@ exp_manager:
 
 model:
     transformer_path: ${base_path}/electra-base-discriminator # filename to save the model and associated artifacts to .nemo file
-    punct_label_ids: null # will be filled during training
-    domain_label_ids: null # will be filled during training
-
-    class_labels:
-        punct_labels_file: punct_label_ids.csv
+    punct_label_ids:
+        - "",
+        - "!",
+        - ",",
+        - "-",
+        - ".",
+        - ":",
+        - ";",
+        - "?",
+        - "—",
+        - "…",
 
     dataset:
         data_dir: ${base_path} # /path/to/training/data
@@ -37,8 +43,8 @@ model:
         unlabelled:
             - ${base_path}/open_subtitles_processed
             # parameters for dataset preprocessing
-        max_seq_length: 256
-        pad_label: 'O'
+        max_seq_length: 128
+        pad_label: ''
         ignore_extra_tokens: false
         ignore_start_end: false
         use_cache: true

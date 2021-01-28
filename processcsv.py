@@ -3,6 +3,7 @@
 import pandas as pd
 import regex as re
 import argparse, os, csv
+import unicodedata
 
 from tqdm import tqdm
 import subprocess
@@ -35,6 +36,10 @@ def displayinstances(col,exp):
     places where the following term is caps due to it being a
     proper noun, where the prefix will be removed regardless
     but will not break the syntax. '''
+
+def strip_accents(s):
+   return ''.join(c for c in unicodedata.normalize('NFKD', s)
+                  if unicodedata.category(c) != 'Mn')
 
 def removespeakertags(text):
     return re.sub(speakertag,' ',text)
@@ -74,7 +79,7 @@ def ellipsistounicode(text):
     return re.sub(r'\.{3,}([^\w\s])','…\g<1>',text) #ellipsis with trailing punctuation
 
 def removenonsentencepunct(text):
-    return re.sub(r'[^\w\d\s,.!?;:$#%&^+•=€²£¥…@\-\–\—\/](?!\w)|(?<!\w)[^\w\d\s,.!?;:$#%&^+•=€²£¥…@\-\–\—\/]',' ',text)
+    return re.sub(r'[^A-Za-z\d\s$%&+=€²£¢¥…,.!?;:\-\–\—\']',' ',text)
 
 def combinerepeatedpunct(text):
     newtext=[text,re.sub(r'([_^\W]+) *\1+','\g<1> ',text)]
@@ -91,15 +96,29 @@ def removedashafterpunct(text):
     return re.sub(r"([^A-Za-z0-9 ]+ *)-+( *[^- ])",r"\g<1> \g<2>",text)
 
 def pronouncesymbol(text):
-    return re.sub('(?<=\d)\.(?=\d)',' point ',text)
+    text=re.sub("\$ *([\d](\.[\d])?+)", "\g<1> dollars ",text)
+    text=re.sub('\£ *([\d](\.[\d])?+)', " pounds ",text)
+    text=re.sub("\$", " dollars ",text)
+    text=re.sub("\£", " pounds ",text)
+    text=re.sub('€', " euro ",text)
+    text=re.sub('¥', " yen ",text)
+    text=re.sub("¢"," cents ",text)
+    text=re.sub('(?<=\d)\.(?=\d)',' point ',text)
+    text=re.sub('\+',' plus ',text)
+    text=re.sub('%',' percent ',text)
+    text=re.sub('²',' squared ',text)
+    text=re.sub('&', ' and ',text)
+    return text
 
 def stripleadingpunctuation(text):
-    return re.sub(r'^[^A-Z]+','',text)
+    return re.sub(r'^[^A-Z]*','',text)
 
 def striptrailingtext(text):
-    return re.sub(r'[^!.?…;]+$','',text)
+    return re.sub(r'[^!.?…;]*$','',text)
 
 def preprocess(tedtalks):
+    print('stripping accents')
+    tedtalks=tedtalks.apply(strip_accents)
     print('removing speaker tags')
     tedtalks=tedtalks.apply(removespeakertags)
     print('removing name tags')
@@ -114,24 +133,27 @@ def preprocess(tedtalks):
     tedtalks=tedtalks.apply(removemusic)
     print('removing empty tags')
     tedtalks=tedtalks.apply(removeemptyquotes)
-    print('change to unicode ellipsis')
-    tedtalks=tedtalks.apply(ellipsistounicode)
     print('removing non-sentence punctuation')
     tedtalks=tedtalks.apply(removenonsentencepunct)
+    print('change to unicode ellipsis')
+    tedtalks=tedtalks.apply(ellipsistounicode)
     print('endash to hyphen')
     tedtalks=tedtalks.apply(endashtohyphen)
     print('remove hyphen after punct')
     tedtalks=tedtalks.apply(removedashafterpunct)
     print('combine repeated punctuation')
     tedtalks=tedtalks.apply(combinerepeatedpunct)
-    print('pronounce decimal')
+    print('pronounce symbol')
     tedtalks=tedtalks.apply(pronouncesymbol)
-    print('reduce whitespaces')
-    tedtalks=tedtalks.apply(reducewhitespaces)
     print('strip leading')
     tedtalks=tedtalks.apply(stripleadingpunctuation)
     print('strip trailing')
     tedtalks=tedtalks.apply(striptrailingtext)
+    print('reduce whitespaces')
+    tedtalks=tedtalks.apply(reducewhitespaces)
+    
+    print('tolower')
+    tedtalks=tedtalks.str.lower()
 
     print('--done--')
     return tedtalks
