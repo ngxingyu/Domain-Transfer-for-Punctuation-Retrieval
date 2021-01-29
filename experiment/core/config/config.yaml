@@ -1,4 +1,4 @@
-base_path: /home/nxingyu/data
+base_path: /home/nxingyu2/data
 
 trainer:
     gpus: 1 # the number of gpus, 0 for CPU
@@ -25,16 +25,16 @@ exp_manager:
 model:
     transformer_path: ${base_path}/electra-base-discriminator # filename to save the model and associated artifacts to .nemo file
     punct_label_ids:
-        - "",
-        - "!",
-        - ",",
-        - "-",
-        - ".",
-        - ":",
-        - ";",
-        - "?",
-        - "—",
-        - "…",
+        - ""
+        - "!"
+        - ","
+        - "-"
+        - "."
+        - ":"
+        - ";"
+        - "?"
+        - "—"
+        - "…"
 
     dataset:
         data_dir: ${base_path} # /path/to/training/data
