@@ -3,7 +3,7 @@ from nemo.core.neural_types import ChannelType, LabelsType, MaskType, NeuralType
 
 import numpy as np
 from typing import List, Optional, Dict
-from data import chunk_to_len_batch, chunk_examples_with_degree
+from core.utils import chunk_examples_with_degree, chunk_to_len_batch
 import pandas as pd
 import os
 import torch
@@ -13,11 +13,12 @@ class PunctuationDomainDataset(Dataset):
 
     @property
     def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        """Returns definitions of module output ports.
-               """
+        """Returns definitions of module output ports."""
+
         return {
             "input_ids": NeuralType(('B', 'T'), ChannelType()),
             "attention_mask": NeuralType(('B', 'T'), ChannelType()),
+            "subtoken_mask": NeuralType(('B', 'T'), ChannelType()),
             "labels": NeuralType(('B', 'T'), ChannelType()),
             "domain": NeuralType(('B'), ChannelType()),
         }
@@ -31,6 +32,7 @@ class PunctuationDomainDataset(Dataset):
         punct_label_ids: Dict[str, int] = None,
         domain=0,
         labelled=True,
+        randomize=True,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -52,6 +54,7 @@ class PunctuationDomainDataset(Dataset):
         self.labelled=  labelled
         self.tokenizer= tokenizer
         self.degree=degree
+        self.randomize=randomize
 
     def __getitem__(self, idx):
         batch = next(
@@ -64,10 +67,13 @@ class PunctuationDomainDataset(Dataset):
                 ))[1]
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
-        num_samples=batched['domain'].shape[0]
-        batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
-        rand=torch.randperm(num_samples)
-        return {k:v[rand] for k,v in batched.items()}
+        num_samples=batched['labels'].shape[0]
+        batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.short)
+        if self.randomize:
+            rand=torch.randperm(num_samples)
+            return {k:v[rand] for k,v in batched.items()}
+        else:
+            return batched
 
 
     def set_num_samples(self,csv_file,num_samples):
@@ -79,8 +85,8 @@ class PunctuationDomainDataset(Dataset):
     def __len__(self):
         return self.len
     
-    def shuffle(self, sorted=False, seed=42):
-        os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {}'.format(self.csv_file, self.csv_file, ['false','true'][sorted], seed))
+    def shuffle(self, randomize=True, seed=42):
+        os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.csv_file, self.csv_file, ['true','false'][randomize], seed, '100M'))
 
 
 class PunctuationDomainDatasets(Dataset):
@@ -103,35 +109,44 @@ class PunctuationDomainDatasets(Dataset):
                  punct_label_ids: Dict[str, int],
                  labelled: List[str],
                  unlabelled: List[str],
-                 tokenizer):
+                 tokenizer,
+                 randomize:bool=True):
         
         self.datasets = []
+        self.randomize=randomize
         for i,path in enumerate(labelled):
             self.datasets.append(PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=i,labelled=True,))
+                    punct_label_ids=punct_label_ids,domain=i,labelled=True,randomize=randomize))
             
         for i,path in enumerate(unlabelled):
             self.datasets.append(PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,))
+                    punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,randomize=randomize))
 
     def __getitem__(self, i):
         ds=[d[i] for d in self.datasets]
-        min_batch=1000000
-        for d in ds:
-            size=d['domain'].shape[0]
-            if size<min_batch:
-                min_batch=size
-        #Ensure all domains are evenly represented
-        b={k:torch.vstack([d[k][:min_batch] for d in ds]) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
-        rand=torch.randperm(b['labels'].shape[0])
-        return {k:v[rand] for k,v in b.items()}
+        if self.randomize:
+            min_batch=1000000
+            for d in ds:
+                size=d['domain'].shape[0]
+                if size<min_batch:
+                    min_batch=size
+            #Ensure all domains are evenly represented
+            b={k:torch.vstack([d[k][:min_batch] for d in ds]) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+            rand=torch.randperm(b['labels'].shape[0])
+            return {k:v[rand] for k,v in b.items()}
+        else:
+            return {k:torch.vstack([d[k] for d in ds]) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
         return max(len(d) for d in self.datasets)
+
+    def shuffle(self, randomize=True, seed=42):
+        for _ in self.datasets:
+            _.shuffle(randomize,seed)
 
 class PunctuationInferenceDataset(Dataset):
     """

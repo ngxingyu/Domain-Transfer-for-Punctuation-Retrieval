@@ -53,20 +53,18 @@ model:
         pin_memory: false
         drop_last: false
 
-    
-
     train_ds:
         shuffle: true
         num_samples: -1
-        batch_size: 64
+        batch_size: 16
 
     validation_ds:
         # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
         # evaluationis needed, specify ds_item, otherwise by default data_dir is used
-        ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
-        shuffle: false
+        # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
+        shuffle: true
         num_samples: -1
-        batch_size: 64
+        batch_size: 16
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
