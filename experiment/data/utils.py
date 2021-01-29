@@ -112,4 +112,3 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
               'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)*labelled}
     output['labels']=torch.as_tensor(batch_labels,dtype=torch.short) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.short)
     return output
-    
