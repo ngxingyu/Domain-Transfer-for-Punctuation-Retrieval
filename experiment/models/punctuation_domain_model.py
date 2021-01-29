@@ -6,13 +6,12 @@ import pytorch_lightning as pl
 from typing import List, Optional, Sequence, Union, Callable, Dict, Any, Tuple
 from nemo.core.neural_types import LogitsType, NeuralType
 from core import ClassificationReport
-from core.models import NLPModel
 from nemo.collections.common.losses import AggregatorLoss, CrossEntropyLoss
 from nemo.collections.nlp.parts.utils_funcs import tensor2list
 
 __all__ = ['PunctuationDomainModel']
 
-class PunctuationDomainModel(NLPModel, Exportable):
+class PunctuationDomainModel(pl.LightningModule):
 
     @property
     def input_types(self) -> Optional[Dict[str, NeuralType]]:
@@ -26,7 +25,7 @@ class PunctuationDomainModel(NLPModel, Exportable):
             "domain_logits": NeuralType(('B', 'D'), LogitsType()),
         }
 
-    def __init__(self, cfg: DictConfig, trainer: Trainer = None): 
+    def __init__(self, cfg: DictConfig): 
         # num_labels: int = 10, 
         # embedding_dim: int = 768, 
         # lossfn: str = '', 
@@ -39,7 +38,7 @@ class PunctuationDomainModel(NLPModel, Exportable):
         # gamma='2',
         # lbd=1, #coefficient of gradient reversal.
         # domains: int = 1):
-        self.setup_tokenizer(cfg.tokenizer)
+        # self.setup_tokenizer(cfg.tokenizer)
         super().__init__(cfg=cfg, trainer=trainer)
 
         self._cfg.punct_label_ids=OmegaConf.create(sorted(self._cfg.punct_label_ids))
