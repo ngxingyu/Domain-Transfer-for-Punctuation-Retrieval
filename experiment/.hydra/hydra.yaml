@@ -110,11 +110,11 @@ hydra:
     hydra: []
     task: []
   job:
-    name: ipython-input-4-eb45b15d184c
+    name: main
     override_dirname: ''
     id: ???
     num: ???
-    config_name: core/config/config.yaml
+    config_name: config
     env_set: {}
     env_copy: []
     config:
@@ -124,5 +124,5 @@ hydra:
         exclude_keys: []
   runtime:
     version: 1.0.5
-    cwd: /home/nxingyu/project/DomainAdversarialPunctuation
+    cwd: /home/nxingyu2/project/experiment
   verbose: false

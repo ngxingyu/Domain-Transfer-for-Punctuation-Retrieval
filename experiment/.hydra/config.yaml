@@ -1,4 +1,4 @@
-base_path: /home/nxingyu/data
+base_path: /home/nxingyu2/data
 trainer:
   gpus: 1
   num_nodes: 1
@@ -21,18 +21,25 @@ exp_manager:
   create_checkpoint_callback: true
 model:
   transformer_path: ${base_path}/electra-base-discriminator
-  punct_label_ids: null
-  domain_label_ids: null
-  class_labels:
-    punct_labels_file: punct_label_ids.csv
+  punct_label_ids:
+  - ''
+  - '!'
+  - ','
+  - '-'
+  - .
+  - ':'
+  - ;
+  - '?'
+  - —
+  - …
   dataset:
     data_dir: ${base_path}
     labelled:
     - ${base_path}/ted_talks_processed
     unlabelled:
     - ${base_path}/open_subtitles_processed
-    max_seq_length: 256
-    pad_label: O
+    max_seq_length: 128
+    pad_label: ''
     ignore_extra_tokens: false
     ignore_start_end: false
     use_cache: true
@@ -42,12 +49,11 @@ model:
   train_ds:
     shuffle: true
     num_samples: -1
-    batch_size: 64
+    batch_size: 16
   validation_ds:
-    ds_item: null
-    shuffle: false
+    shuffle: true
     num_samples: -1
-    batch_size: 64
+    batch_size: 16
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
