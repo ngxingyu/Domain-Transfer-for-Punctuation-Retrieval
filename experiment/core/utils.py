@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import regex as re
 
+__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'view_aligned']
+
 def flatten(list_of_lists):
     for l in list_of_lists:
         for item in l:
@@ -112,3 +114,28 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
               'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)*labelled}
     output['labels']=torch.as_tensor(batch_labels,dtype=torch.short) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.short)
     return output
+
+
+def transformer_weights_init(module, std_init_range=0.02, xavier=True):
+    """
+    Initialize different weights in Transformer model.
+    Args:
+        module: torch.nn.Module to be initialized
+        std_init_range: standard deviation of normal initializer
+        xavier: if True, xavier initializer will be used in Linear layers
+            as was proposed in AIAYN paper, otherwise normal initializer
+            will be used (like in BERT paper)
+    """
+
+    if isinstance(module, nn.Linear):
+        if xavier:
+            nn.init.xavier_uniform_(module.weight)
+        else:
+            nn.init.normal_(module.weight, mean=0.0, std=std_init_range)
+        if module.bias is not None:
+            nn.init.constant_(module.bias, 0.0)
+    elif isinstance(module, nn.Embedding):
+        nn.init.normal_(module.weight, mean=0.0, std=std_init_range)
+    elif isinstance(module, nn.LayerNorm):
+        nn.init.constant_(module.weight, 1.0)
+        nn.init.constant_(module.bias, 0.0)
