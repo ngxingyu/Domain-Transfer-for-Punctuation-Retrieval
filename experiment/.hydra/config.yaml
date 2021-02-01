@@ -1,0 +1,95 @@
+base_path: /home/nxingyu2/data
+trainer:
+  gpus: 1
+  num_nodes: 1
+  max_epochs: 3
+  max_steps: null
+  accumulate_grad_batches: 1
+  gradient_clip_val: 0.0
+  amp_level: O0
+  precision: 16
+  accelerator: ddp
+  checkpoint_callback: false
+  logger: true
+  log_every_n_steps: 1
+  val_check_interval: 1.0
+  resume_from_checkpoint: null
+exp_manager:
+  exp_dir: null
+  name: Punctuation_with_Domain_discriminator
+  create_tensorboard_logger: true
+  create_checkpoint_callback: true
+model:
+  transformer_path: ${base_path}/electra-base-discriminator
+  punct_label_ids:
+  - ''
+  - '!'
+  - ','
+  - '-'
+  - .
+  - ':'
+  - ;
+  - '?'
+  - —
+  - …
+  dataset:
+    data_dir: ${base_path}
+    labelled:
+    - ${base_path}/ted_talks_processed
+    unlabelled:
+    - ${base_path}/open_subtitles_processed
+    max_seq_length: 128
+    pad_label: ''
+    ignore_extra_tokens: false
+    ignore_start_end: false
+    use_cache: true
+    num_workers: 2
+    pin_memory: false
+    drop_last: false
+  train_ds:
+    shuffle: true
+    num_samples: -1
+    batch_size: 16
+  validation_ds:
+    shuffle: true
+    num_samples: -1
+    batch_size: 16
+  tokenizer:
+    tokenizer_name: ${model.language_model.pretrained_model_name}
+    vocab_file: null
+    tokenizer_model: null
+    special_tokens: null
+  language_model:
+    pretrained_model_name: ${model.transformer_path}
+    lm_checkpoint: null
+    config_file: null
+    config: null
+    unfrozen_layers: 0
+  punct_head:
+    punct_num_fc_layers: 1
+    fc_dropout: 0.1
+    activation: relu
+    use_transformer_init: true
+    loss: cel
+  domain_head:
+    domain_num_fc_layers: 1
+    fc_dropout: 0.1
+    activation: relu
+    log_softmax: true
+    use_transformer_init: true
+    loss: cel
+    lbd: 1
+  dice_loss:
+    alpha: 0.8
+    gamma: 2
+  optim:
+    name: adam
+    lr: 0.0001
+    weight_decay: 0.0
+  sched:
+    name: WarmupAnnealing
+    warmup_steps: null
+    warmup_ratio: 0.1
+    last_epoch: -1
+    monitor: val_loss
+    reduce_on_plateau: false

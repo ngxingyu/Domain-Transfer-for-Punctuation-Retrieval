@@ -1,6 +1,11 @@
 #  gdown https://drive.google.com/uc?id=1-Cpoy9ms5Jizu76n50tXtduzyBxxfeWx
-python ~/project/processcsv.py -i ./opensubtitles.csv -o ./open_subtitles_processed.csv -c 2000
-bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
-python ~/project/text2aligned.py -i ./open_subtitles_processed -s 'test' -m 256 -o 0 -d 0 -t 2
-python ~/project/text2aligned.py -i ./open_subtitles_processed -s 'dev' -m 256 -o 0 -d 0 -t 2
-python ~/project/text2aligned.py -i ./open_subtitles_processed -s 'train' -m 256 -o 0 -d 0 -t 2
+if [ "$1" == "-h" ] ; then
+    echo "Usage: `basename $0` [-h] inputfilename, chunksize, split 1, split 2, split 3, max_len, degree, threads"
+    exit 0
+fi
+
+python ~/project/processcsv.py -i $1 -o "${1%.csv}_processed.csv" -c $2
+bash ~/project/bin/processandsplit.sh "${1%.csv}_processed.csv" $3 $4 $5
+python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'test' -m $6 -o 0 -d $7 -t $8
+python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'dev' -m $6 -o 0 -d $7 -t $8
+python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'train' -m $6 -o 0 -d $7 -t $8
