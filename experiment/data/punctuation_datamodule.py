@@ -4,6 +4,7 @@ from transformers import AutoTokenizer
 from typing import List, Dict
 import logging
 from torch.utils.data import DataLoader
+import torch
 
 class PunctuationDataModule(LightningDataModule):
     def __init__(self, 
@@ -19,6 +20,7 @@ class PunctuationDataModule(LightningDataModule):
             drop_last:bool = False, #Not Implemented
             train_shuffle:bool = True,
             val_shuffle:bool = False,
+            seed: int = 42
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -42,6 +44,7 @@ class PunctuationDataModule(LightningDataModule):
         self.train_dataset={}
         self.dev_dataset={}
         self.test_dataset={}
+        self.seed=seed
         
     def setup(self, stage=None):
         if stage=='fit' or None:
@@ -73,7 +76,7 @@ class PunctuationDataModule(LightningDataModule):
 
         logging.info(f"shuffling train set")
         self.train_dataset.shuffle(randomize=False)
-        self.train_dataset.shuffle(randomize=True, seed=torch.seed)
+        self.train_dataset.shuffle(randomize=True, seed=self.seed)
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)

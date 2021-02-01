@@ -1,5 +1,5 @@
 import torch
-from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
+# from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
 
 __all__ = ['CrossEntropyLoss']
 
@@ -8,22 +8,21 @@ class CrossEntropyLoss(torch.nn.CrossEntropyLoss):
     """
     CrossEntropyLoss
     """
+    # @property
+    # def input_types(self):
+    #     """Returns definitions of module input ports.
+    #     """
+    #     return {
+    #         "logits": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 1), LogitsType()),
+    #         "labels": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 2), LabelsType()),
+    #         "loss_mask": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 2), MaskType(), optional=True),
+    #     }
 
-    @property
-    def input_types(self):
-        """Returns definitions of module input ports.
-        """
-        return {
-            "logits": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 1), LogitsType()),
-            "labels": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 2), LabelsType()),
-            "loss_mask": NeuralType(['B'] + ['ANY'] * (self._logits_dim - 2), MaskType(), optional=True),
-        }
-
-    @property
-    def output_types(self):
-        """Returns definitions of module output ports.
-        """
-        return {"loss": NeuralType(elements_type=LossType())}
+    # @property
+    # def output_types(self):
+    #     """Returns definitions of module output ports.
+    #     """
+    #     return {"loss": NeuralType(elements_type=LossType())}
 
     def __init__(self, logits_ndim=2, weight=None, reduction='mean'):
         """

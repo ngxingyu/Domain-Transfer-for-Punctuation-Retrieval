@@ -9,7 +9,7 @@ from transformers import AutoTokenizer
 
 from data import PunctuationDataModule, PunctuationInferenceDataset
 
-# from models import PunctuationDomainModel
+from models import PunctuationDomainModel
 
 # from nemo.core.config import hydra_runner
 # from nemo.utils import logging
@@ -28,11 +28,14 @@ ic.configureOutput(argToStringFunction=toString)
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig)->None:
-    
+    print(torch.cuda.current_device())
     ic(cfg)
     cfg.model.punct_label_ids=OmegaConf.create(sorted(cfg.model.punct_label_ids))
     labels_to_ids = {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)}
-    ids_to_labels = {_[0]:_[1] for _ in enumerate(cfg.model.punct_label_ids)}
+    cfg.model.dataset.num_labels=len(cfg.model.punct_label_ids)
+    cfg.model.dataset.labelled = OmegaConf.create([] if cfg.model.dataset.labelled==None else cfg.model.dataset.labelled)
+    cfg.model.dataset.unlabelled = OmegaConf.create([] if cfg.model.dataset.unlabelled==None else cfg.model.dataset.unlabelled)
+    cfg.model.dataset.num_domains = len(cfg.model.dataset.labelled)+len(cfg.model.dataset.unlabelled)
     dm=PunctuationDataModule(
             tokenizer= cfg.model.transformer_path,
             labelled= list(cfg.model.dataset.labelled),
@@ -45,10 +48,19 @@ def main(cfg: DictConfig)->None:
             pin_memory= cfg.model.dataset.pin_memory,
             train_shuffle= cfg.model.train_ds.shuffle,
             val_shuffle= cfg.model.validation_ds.shuffle,
+            seed=cfg.seed,
     )
     dm.setup('fit')
     dl=dm.train_dataloader()
-    ic(next(iter(dl)))
+    # ic(next(iter(dl)))
+    checkpoint_callback = pl.callbacks.ModelCheckpoint(
+        monitor='val_loss',
+        dirpath='checkpoints/',
+        filename='dbunfreeze1-{epoch:02d}-{val_loss:.2f}')
+
+    trainer = pl.Trainer(callbacks=[checkpoint_callback],**cfg.trainer)
+    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, train_dataloader=dl)
+    trainer.fit(model, dm)
     # ic(next(iter(dm.train_dataloader())))
     
 
