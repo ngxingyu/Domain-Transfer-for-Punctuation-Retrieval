@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+#%%
+from tqdm import tqdm
 import pandas as pd
 import torch
 import numpy as np
@@ -6,6 +8,7 @@ import regex as re
 import argparse, os, csv
 from datasets import load_dataset
 import transformers
+import subprocess
 
 class PunctuationDataset(torch.utils.data.Dataset):
     def __init__(self, input_ids, attention_mask, labels):
@@ -40,7 +43,7 @@ tags=sorted(list('.?!,;:-—…'))
 tag2id = {tag: id+1 for id, tag in enumerate(tags)}
 tag2id['']=0
 id2tag = {id: tag for tag, id in tag2id.items()}
-tokenizer = transformers.ElectraTokenizerFast.from_pretrained('/home/nxingyu/data/electra-base-discriminator')
+tokenizer = transformers.ElectraTokenizerFast.from_pretrained('/home/nxingyu2/data/electra-base-discriminator')
 
 def text2masks(n):
     def text2masks(text):
@@ -66,20 +69,25 @@ assert(text2masks(0)('"Hello!!')==(['"Hello'], [1]))
 assert(text2masks(1)('"Hello!!')==(['"Hello', '!'], [1, 0]))
 assert(text2masks(0)('"Hello!!, I am human.')==(['"Hello','I','am','human'], [2,0,0,4]))
 assert(text2masks(2)('"Hello!!, I am human.')==(['"Hello', '!,','I','am','human','.'], [1,0,0,0,0,0]))
+
+#%%
 def chunk_examples_with_degree(n):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
         output['texts']=[]
         output['tags']=[]
-        for sentence in examples['transcript']:
+        for sentence in examples:
             text,tag=text2masks(n)(sentence)
             output['texts'].append(text)
-            output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
+            output['tags'].append(tag)
+            # output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
+            # not necessary since all the leading punctuations are stripped
         return output
     return chunk_examples
-assert(chunk_examples_with_degree(0)({'transcript':['Hello!Bye…']})=={'texts': [['Hello', 'Bye']], 'tags': [[0, 1, 9]]})
+assert(chunk_examples_with_degree(0)(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 9]]})
 
+#%%
 def flatten(list_of_lists):
     for list in list_of_lists:
         for item in list:
@@ -111,7 +119,7 @@ def chunk_to_len(max_length,tokens,labels):
     teim=token_end_idxs%(max_length-2)
     split_token_end_idxs=np.array_split(token_end_idxs,(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
     split_subwords=np.array_split(subwords,np.arange(max_length-2,len(subwords),max_length-2)) #token_end_idxs[np.argwhere((teim[1:])<teim[:-1]).flatten()+1].tolist()
-    split_labels=np.array_split(labels[1:],(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
+    split_labels=np.array_split(labels,(np.argwhere((teim[1:])<teim[:-1]).flatten()+1).tolist())
     ids=torch.tensor([pad_ids_to_len(max_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords], dtype=torch.long)
     masks=[position_to_mask(max_length,_) for _ in split_token_end_idxs]
     padded_labels=torch.tensor([pad_ids_to_len(max_length,labels_to_position(*_)) for _ in zip(masks,split_labels)], dtype=torch.long)
@@ -124,17 +132,45 @@ def chunk_to_len_batch(max_length,tokens,labels, filename):
     batch_labels=[]
     f=open(filename,"ab")
     for i,_ in enumerate(zip(tokens,labels)):
-        # a,b,c=chunk_to_len(max_length,*_)
-        # batch_ids.append(a)
-        # batch_masks.append(b)
-        # batch_labels.append(c)
+        a,b,c=chunk_to_len(max_length,*_)
+        batch_ids.append(a)
+        batch_masks.append(b)
+        batch_labels.append(c)
         np.savetxt(f,torch.hstack([*chunk_to_len(max_length,*_)]),fmt='%i')
         print('.', end='')
     f.close()
 
-def process_dataset(dataset, split, filename, max_length=128, overlap=63, degree=0, threads=1):
-    data=dataset[split].map(chunk_examples_with_degree(degree), batched=True, batch_size=128,remove_columns=dataset[split].column_names, num_proc=threads)
+def process_dataset(transcript, filename, max_length=128, overlap=63, degree=0, threads=1):
+    data=chunk_examples_with_degree(degree)(transcript)
     chunk_to_len_batch(max_length,data['texts'],data['tags'], filename)
+
+#%%
+
+# filename='../data/ted_talks_processed'
+# split='train'
+# chunksize=2000
+# header=0
+# t=pd.read_csv(filename+'.'+split+'.csv',
+#                 dtype='str',
+#                 # columns=['talk_id','transcript'],
+#                 skiprows=range(0,header+chunksize*0),
+#                 header=None,
+#                 chunksize=chunksize)
+# degree=0
+# data=chunk_examples_with_degree(degree)(next(iter(t))[1])
+#%%
+# from icecream import install
+# install()
+# ic.configureOutput(argToStringFunction=lambda x:str(x))
+
+
+# max_length=1024
+# data_proc=chunk_to_len_batch(max_length,[data['texts'][1190]],[data['tags'][1190]])
+
+
+
+
+#%%
 
 if __name__ == "__main__":
 
@@ -148,7 +184,8 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--split", dest="splits", required=False,
                         help="single split, train dev test if empty", default='', type=str)
     parser.add_argument("-d", "--degree", dest="degree", required=False, help="Degree of labels", default=0, type=int)
-    parser.add_argument("-t", "--multithread", dest="threads", required=False, help="num of threads", default=1, type=int)
+    # parser.add_argument("-t", "--multithread", dest="threads", required=False, help="num of threads", default=1, type=int)
+    parser.add_argument('-c',"--chunksize", dest='chunksize', type=int, required=False, default=2000)
 
     args = parser.parse_args()
     if (args.splits==''):
@@ -156,10 +193,24 @@ if __name__ == "__main__":
     else:
         splits=[args.splits]
     for split in splits:
-        # paths=os.path.splitext(args.filename)
         filename=args.path+'.'+split
+        output_filename=filename+'-batched.csv'
         print(validate_file(filename+'.csv'))
+        nb_samples=int(subprocess.Popen(['wc', '-l', filename+'.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        total = int((nb_samples+args.chunksize) / args.chunksize)
         print('maxlen',args.max_length)
-        ted=load_dataset('csv',data_files={split:filename+'.csv'}, column_names=['id','transcript'])
-        open(filename+'-batched.csv', 'w').close()
-        process_dataset(ted,split,filename+'-batched.csv',max_length=args.max_length,overlap=args.overlap_length,degree=args.degree, threads=args.threads)
+        open(output_filename, 'w').close()
+        o=pd.read_csv(filename+'.csv',
+                  dtype='str',
+                  header=None,
+                  chunksize=args.chunksize)
+        for i in tqdm(o,total=total):
+            process_dataset(i[1],output_filename)
+
+        # paths=os.path.splitext(args.filename)
+        
+        # ted=load_dataset('csv',data_files={split:filename+'.csv'}, column_names=['id','transcript'])
+        
+        # process_dataset(ted,split,filename+'-batched.csv',max_length=args.max_length,overlap=args.overlap_length,degree=args.degree, threads=args.threads)
+
+# %%
