@@ -8,7 +8,7 @@ from nemo.core.neural_types import LogitsType, NeuralType
 from core import ClassificationReport
 from core.layers import *
 from transformers import AutoModel
-from logging
+import logging
 # from nemo.collections.common.losses import AggregatorLoss, CrossEntropyLoss
 # from nemo.collections.nlp.parts.utils_funcs import tensor2list
 
