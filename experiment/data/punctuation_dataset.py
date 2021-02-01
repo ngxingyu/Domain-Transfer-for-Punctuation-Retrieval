@@ -68,7 +68,7 @@ class PunctuationDomainDataset(Dataset):
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
         num_samples=batched['labels'].shape[0]
-        batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.short)
+        batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
         if self.randomize:
             rand=torch.randperm(num_samples)
             return {k:v[rand] for k,v in batched.items()}
@@ -86,6 +86,7 @@ class PunctuationDomainDataset(Dataset):
         return self.len
     
     def shuffle(self, randomize=True, seed=42):
+        print('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.csv_file, self.csv_file, ['true','false'][randomize], seed, '100M'))
         os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.csv_file, self.csv_file, ['true','false'][randomize], seed, '100M'))
 
 
@@ -135,11 +136,11 @@ class PunctuationDomainDatasets(Dataset):
                 if size<min_batch:
                     min_batch=size
             #Ensure all domains are evenly represented
-            b={k:torch.vstack([d[k][:min_batch] for d in ds]) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+            b={k:torch.cat([d[k][:min_batch] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
             rand=torch.randperm(b['labels'].shape[0])
             return {k:v[rand] for k,v in b.items()}
         else:
-            return {k:torch.vstack([d[k] for d in ds]) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+            return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
         return max(len(d) for d in self.datasets)
