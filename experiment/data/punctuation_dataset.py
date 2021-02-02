@@ -1,6 +1,6 @@
-from torch.utils.data import Dataset
+from torch.utils.data import IterableDataset, Dataset
 from nemo.core.neural_types import ChannelType, LabelsType, MaskType, NeuralType
-
+import gc
 import numpy as np
 from typing import List, Optional, Dict
 from core.utils import chunk_examples_with_degree, chunk_to_len_batch
@@ -8,8 +8,10 @@ import pandas as pd
 import os
 import torch
 import subprocess
+from time import time
+from itertools import cycle
 
-class PunctuationDomainDataset(Dataset):
+class PunctuationDomainDataset(IterableDataset):
 
     @property
     def output_types(self) -> Optional[Dict[str, NeuralType]]:
@@ -33,6 +35,7 @@ class PunctuationDomainDataset(Dataset):
         domain=0,
         labelled=True,
         randomize=True,
+        target_file='',
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -55,25 +58,66 @@ class PunctuationDomainDataset(Dataset):
         self.tokenizer= tokenizer
         self.degree=degree
         self.randomize=randomize
+        self.target_file=target_file
+        os.system(f'cp {self.csv_file} {self.target_file}')
 
-    def __getitem__(self, idx):
-        batch = next(
-            pd.read_csv(
+    def __iter__(self):
+        self.dataset=iter(pd.read_csv(
                 self.csv_file,
-                skiprows=(idx % self.len)*self.num_samples,
+                skiprows=(0 % self.len)*self.num_samples,
                 header=None,
                 dtype=str,
                 chunksize=self.num_samples,
-                ))[1]
+                ))
+        return self
+        
+
+    def __next__(self):
+        batch = next(self.dataset)[1]
+        l=batch.str.split().map(len).values
+        a=np.maximum((l-self.max_seq_length*8).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+        b=np.minimum(l,a+self.max_seq_length*8)
+        batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
+        gc.collect()
         if self.randomize:
             rand=torch.randperm(num_samples)
             return {k:v[rand] for k,v in batched.items()}
         else:
             return batched
+
+
+    # def __getitem__(self, idx):
+    #     batch = next(
+    #         pd.read_csv(
+    #             self.csv_file,
+    #             skiprows=(idx % self.len)*self.num_samples,
+    #             header=None,
+    #             dtype=str,
+    #             chunksize=self.num_samples,
+    #             ))[1]
+    #     l=batch.str.split().map(len).values
+    #     time0=time()
+    #     a=np.maximum((l-self.max_seq_length*4).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+    #     b=np.minimum(l,a+self.max_seq_length*4)
+    #     batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+    #     time1=time()
+    #     ic('batch',time1-time0)
+    #     chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
+    #     time2=time()
+    #     ic('chunked',time2-time1)
+    #     batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
+    #     num_samples=batched['labels'].shape[0]
+    #     batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
+    #     gc.collect()
+    #     if self.randomize:
+    #         rand=torch.randperm(num_samples)
+    #         return {k:v[rand] for k,v in batched.items()}
+    #     else:
+    #         return batched
 
 
     def set_num_samples(self,csv_file,num_samples):
@@ -86,11 +130,17 @@ class PunctuationDomainDataset(Dataset):
         return self.len
     
     def shuffle(self, randomize=True, seed=42):
-        print('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.csv_file, self.csv_file, ['true','false'][randomize], seed, '100M'))
-        os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.csv_file, self.csv_file, ['true','false'][randomize], seed, '100M'))
+        ic(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M')))
+        self.dataset=iter(pd.read_csv(
+                self.target_file,
+                skiprows=(0 % self.len)*self.num_samples,
+                header=None,
+                dtype=str,
+                chunksize=self.num_samples,
+                ))
 
 
-class PunctuationDomainDatasets(Dataset):
+class PunctuationDomainDatasets(IterableDataset):
     
     @property
     def output_types(self) -> Optional[Dict[str, NeuralType]]:
@@ -111,24 +161,43 @@ class PunctuationDomainDatasets(Dataset):
                  labelled: List[str],
                  unlabelled: List[str],
                  tokenizer,
-                 randomize:bool=True):
+                 randomize:bool=True,
+                 data_id=''):
         
         self.datasets = []
+        self.iterables=[]
         self.randomize=randomize
         for i,path in enumerate(labelled):
-            self.datasets.append(PunctuationDomainDataset(
+            dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=i,labelled=True,randomize=randomize))
+                    punct_label_ids=punct_label_ids,domain=i,labelled=True,
+                    randomize=randomize,
+                    target_file=f'{path}.{split}.{data_id}.csv')
+            self.datasets.append(dataset)
+            self.iterables.append(cycle(dataset))
             
         for i,path in enumerate(unlabelled):
-            self.datasets.append(PunctuationDomainDataset(
+            dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,randomize=randomize))
+                    punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,
+                    randomize=randomize,
+                    target_file=f'{path}.{split}.{data_id}.csv')
+            self.datasets.append(dataset)
+            self.iterables.append(cycle(dataset))
 
-    def __getitem__(self, i):
-        ds=[d[i] for d in self.datasets]
+    # def __getitem__(self, i):
+    #     ds=[d[i] for d in self.datasets]
+
+    def __iter__(self):
+        self.iterables=[]
+        for dataset in self.datasets:
+            self.iterables.append(cycle(dataset))
+        return self
+
+    def __next__(self):
+        ds=[next(d) for d in self.iterables]
         if self.randomize:
             min_batch=1000000
             for d in ds:
@@ -143,7 +212,7 @@ class PunctuationDomainDatasets(Dataset):
             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
-        return max(len(d) for d in self.datasets)
+        return ic(max(len(d) for d in self.datasets))
 
     def shuffle(self, randomize=True, seed=42):
         for _ in self.datasets:

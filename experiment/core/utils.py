@@ -18,8 +18,14 @@ def pad_to_len(max_seq_length,ids):
 
 def position_to_mask(max_seq_length:int,indices:list):
     '''[0, 2, 5] -> array([0, 1, 0, 1, 0, 0, 1, 0, 0, 0])'''
+    assert(isinstance(max_seq_length,int))
+
     o=np.zeros(max_seq_length,dtype=np.int)
-    o[np.array(indices)%(max_seq_length-2)+1]=1
+    try:
+        o[np.array(indices)%(max_seq_length-2)+1]=1
+    except:
+        ic('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
+        o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
 def align_labels_to_mask(mask,labels):
