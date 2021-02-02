@@ -1,9 +1,10 @@
 import torch
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
 from core.utils import transformer_weights_init
+from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType, LogprobsType
+from typing import Optional, Dict
 
 class SequenceClassifier(torch.nn.Module):
-    @property
     def output_types(self) -> Optional[Dict[str, NeuralType]]:
         if not self.log_softmax:
             return {"logits": NeuralType(('B', 'D'), LogitsType())}

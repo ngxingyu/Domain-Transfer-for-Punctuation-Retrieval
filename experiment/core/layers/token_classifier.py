@@ -1,6 +1,8 @@
 import torch
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
 from core.utils import transformer_weights_init
+from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
+from typing import Optional, Dict
 
 class TokenClassifier(torch.nn.Module):
     """
