@@ -258,4 +258,4 @@ dependencies:
     - yarg==0.1.9
     - yarl==1.6.3
     - youtokentome==1.0.6
-prefix: /home/nxingyu2/miniconda3/envs/NLP
+prefix: /home/nxingyu/miniconda3/envs/NLP
