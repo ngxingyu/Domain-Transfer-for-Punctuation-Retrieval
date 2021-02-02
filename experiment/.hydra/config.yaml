@@ -2,15 +2,15 @@ seed: 42
 trainer:
   gpus: 1
   num_nodes: 1
-  max_epochs: 3
+  max_epochs: 2
   max_steps: null
   accumulate_grad_batches: 1
   gradient_clip_val: 0.0
   amp_level: O0
   precision: 16
   accelerator: ddp
-  checkpoint_callback: true
-  logger: true
+  checkpoint_callback: false
+  logger: false
   log_every_n_steps: 1
   val_check_interval: 1.0
   resume_from_checkpoint: null
@@ -21,7 +21,9 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu/data
 model:
-  transformer_path: distilbert-base-uncased
+  nemo_path: null
+  transformer_path: google/electra-small-discriminator
+  initial_unfrozen: 1
   punct_label_ids:
   - ''
   - '!'
@@ -34,29 +36,28 @@ model:
   - —
   - …
   dataset:
-    data_dir: ${base_path}
+    data_dir: /home/nxingyu/data
     labelled:
     - ${base_path}/ted_talks_processed
-    unlabelled:
-    - ${base_path}/open_subtitles_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
     ignore_start_end: false
-    use_cache: true
+    use_cache: false
     num_workers: 4
-    pin_memory: false
+    pin_memory: true
     drop_last: false
     num_labels: 10
     num_domains: 2
-  train_ds:
-    shuffle: true
-    num_samples: -1
-    batch_size: 4
-  validation_ds:
-    shuffle: true
-    num_samples: -1
-    batch_size: 16
+    train_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 4
+    validation_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 4
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
@@ -67,14 +68,13 @@ model:
     lm_checkpoint: null
     config_file: null
     config: null
-    unfrozen_layers: 0
   punct_head:
     punct_num_fc_layers: 1
     fc_dropout: 0.1
     activation: relu
     log_softmax: false
     use_transformer_init: true
-    loss: dice
+    loss: cel
   domain_head:
     domain_num_fc_layers: 1
     fc_dropout: 0.1

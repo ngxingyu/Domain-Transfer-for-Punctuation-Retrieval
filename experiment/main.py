@@ -8,12 +8,15 @@ from omegaconf import DictConfig, OmegaConf
 from transformers import AutoTokenizer
 
 from data import PunctuationDataModule, PunctuationInferenceDataset
-
+import os
 from models import PunctuationDomainModel
 
 # from nemo.core.config import hydra_runner
 # from nemo.utils import logging
-# from nemo.utils.exp_manager import exp_manager
+from nemo.utils.exp_manager import exp_manager
+from time import time
+
+import atexit
 
 def toString(obj):
     if isinstance(obj, np.ndarray):
@@ -28,40 +31,27 @@ ic.configureOutput(argToStringFunction=toString)
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig)->None:
-    print(torch.cuda.current_device())
+    data_id = str(int(time()))
+    def savecounter():
+        ic(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
+    atexit.register(savecounter)
     ic(cfg)
-    cfg.model.punct_label_ids=OmegaConf.create(sorted(cfg.model.punct_label_ids))
-    labels_to_ids = {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)}
-    cfg.model.dataset.num_labels=len(cfg.model.punct_label_ids)
-    cfg.model.dataset.labelled = OmegaConf.create([] if cfg.model.dataset.labelled==None else cfg.model.dataset.labelled)
-    cfg.model.dataset.unlabelled = OmegaConf.create([] if cfg.model.dataset.unlabelled==None else cfg.model.dataset.unlabelled)
-    cfg.model.dataset.num_domains = len(cfg.model.dataset.labelled)+len(cfg.model.dataset.unlabelled)
-    dm=PunctuationDataModule(
-            tokenizer= cfg.model.transformer_path,
-            labelled= list(cfg.model.dataset.labelled),
-            unlabelled= list(cfg.model.dataset.unlabelled),
-            punct_label_ids= labels_to_ids,
-            train_batch_size= cfg.model.train_ds.batch_size,
-            max_seq_length= cfg.model.dataset.max_seq_length,
-            val_batch_size= cfg.model.validation_ds.batch_size,
-            num_workers= cfg.model.dataset.num_workers,
-            pin_memory= cfg.model.dataset.pin_memory,
-            train_shuffle= cfg.model.train_ds.shuffle,
-            val_shuffle= cfg.model.validation_ds.shuffle,
-            seed=cfg.seed,
-    )
-    dm.setup('fit')
-    dl=dm.train_dataloader()
-    # ic(next(iter(dl)))
-    checkpoint_callback = pl.callbacks.ModelCheckpoint(
-        monitor='val_loss',
-        dirpath='checkpoints/',
-        filename='dbunfreeze1-{epoch:02d}-{val_loss:.2f}')
+    trainer = pl.Trainer(**cfg.trainer)
+    exp_manager(trainer, cfg.exp_manager)
+    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
+    model.setup_datamodule()
+    # trainer.fit(model, model.dm)
+    # if cfg.model.nemo_path:
+    #     model.save_to(cfg.model.nemo_path)
+    
+    gpu = 1 if cfg.trainer.gpus != 0 else 0
+    # model.dm.setup('test')
+    trainer = pl.Trainer(gpus=gpu)
+    trainer.test(model,datamodule=model.dm,ckpt_path=None)
 
-    trainer = pl.Trainer(callbacks=[checkpoint_callback],**cfg.trainer)
-    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, train_dataloader=dl)
-    trainer.fit(model, dm)
-    # ic(next(iter(dm.train_dataloader())))
+
+    
+
     
 
 

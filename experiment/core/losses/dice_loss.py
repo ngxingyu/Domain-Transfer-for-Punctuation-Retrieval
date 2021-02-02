@@ -114,7 +114,7 @@ class FocalDiceLoss(_WeightedLoss):
         labels_flatten = torch.flatten(labels, start_dim=0, end_dim=-1)
         self.num_classes=logits_flatten.shape[-1]
         if self.weight==None:
-            self.weight=torch.tensor([1.]*self.num_classes)
+            self.weight=torch.tensor([1.]*self.num_classes).type_as(logits)
         if loss_mask is not None:
             if loss_mask.dtype is not torch.bool:
                 loss_mask = loss_mask > 0.5

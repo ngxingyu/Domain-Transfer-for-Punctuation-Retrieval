@@ -1,1 +1,28 @@
 [INFO] - shuffling train set
+[INFO] - shuffling train set
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          90.84       7.84      14.44     213956
+! (label_id: 1)                                          0.00       0.00       0.00         84
+, (label_id: 2)                                          6.83      19.06      10.05      14292
+- (label_id: 3)                                          0.05       0.28       0.09       1416
+. (label_id: 4)                                          4.73      21.30       7.74      11832
+: (label_id: 5)                                          0.04       5.33       0.09        300
+; (label_id: 6)                                          0.05      14.63       0.11        164
+? (label_id: 7)                                          1.20      15.19       2.23       1080
+— (label_id: 8)                                          1.85       1.20       1.46        664
+… (label_id: 9)                                          0.00       0.00       0.00         92
+-------------------
+micro avg                                                9.12       9.12       9.12     243880
+macro avg                                               10.56       8.48       3.62     243880
+weighted avg                                            80.33       9.12      13.64     243880
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00       2072
+-------------------
+micro avg                                              100.00     100.00     100.00       2072
+macro avg                                              100.00     100.00     100.00       2072
+weighted avg                                           100.00     100.00     100.00       2072
+
+[INFO] - Internal process exited

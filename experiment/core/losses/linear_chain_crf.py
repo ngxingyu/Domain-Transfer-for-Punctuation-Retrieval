@@ -92,6 +92,7 @@ class LinearChainCRF(torch.nn.Module):
                      in mini batch (batch_size, seq_len)
         :return: labels of each sequence in mini batch
         """
+        ic(logits,mask)
         assert logits.dim() == 3 and mask.dim() == 2
         assert logits.shape[:2] == mask.shape
         assert logits.size(2) == self.num_labels
