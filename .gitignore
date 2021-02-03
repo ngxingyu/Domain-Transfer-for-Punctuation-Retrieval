@@ -1,7 +1,8 @@
-/src/model.bin
-/logs/models/**
-/data/**
+src/model.bin
+logs/models/**
 data/**
 *.ckpt
-/experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
-/experiment/lightning_logs/*/checkpoints/
+experiment/lightning_logs
+experiment/nemo_experiments
+experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
+experiment/lightning_logs/*/checkpoints/
