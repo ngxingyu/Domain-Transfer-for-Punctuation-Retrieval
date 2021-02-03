@@ -70,15 +70,18 @@ The process of converting continuous text is as follows:
 
 # Preprocessing commands
 '''console
-
 bash ~/project/get-data.sh
 
 python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
+
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
+
 python ~/project/text2aligned.py -i ./ted_talks_processed -d 0 -c 2000 #without any split or filetype
 
 python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
+
 bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+
 python ~/project/text2aligned.py -i ./open_subtitles-processed -d 0 -c 2000
 
 ## python installs
