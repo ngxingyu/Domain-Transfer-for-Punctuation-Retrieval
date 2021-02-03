@@ -1,15 +1,15 @@
-import torch
+from torch import nn
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
 from core.utils import transformer_weights_init
-from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType, LogprobsType
+# from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType, LogprobsType
 from typing import Optional, Dict
 
-class SequenceClassifier(torch.nn.Module):
-    def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        if not self.log_softmax:
-            return {"logits": NeuralType(('B', 'D'), LogitsType())}
-        else:
-            return {"log_probs": NeuralType(('B', 'D'), LogprobsType())}
+class SequenceClassifier(nn.Module):
+    # def output_types(self) -> Optional[Dict[str, NeuralType]]:
+    #     if not self.log_softmax:
+    #         return {"logits": NeuralType(('B', 'D'), LogitsType())}
+    #     else:
+    #         return {"log_probs": NeuralType(('B', 'D'), LogprobsType())}
 
     def __init__(
         self,
@@ -34,7 +34,7 @@ class SequenceClassifier(torch.nn.Module):
             use_transformer_init: initializes the weights with the same approach used in Transformer
             idx_conditioned_on: index of the token to use as the sequence representation for the classification task, default is the first token
         """
-        super().__init__(hidden_size=hidden_size, dropout=dropout)
+        super().__init__()
         self.log_softmax = log_softmax
         self._idx_conditioned_on = idx_conditioned_on
         self.mlp = MultiLayerPerceptron(
@@ -44,6 +44,7 @@ class SequenceClassifier(torch.nn.Module):
             activation=activation,
             log_softmax=log_softmax,
         )
+        self.dropout=nn.Dropout(dropout)
         if use_transformer_init:
             self.apply(lambda module: transformer_weights_init(module, xavier=False))
 
