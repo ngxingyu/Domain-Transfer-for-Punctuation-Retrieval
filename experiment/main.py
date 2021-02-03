@@ -15,6 +15,7 @@ from models import PunctuationDomainModel
 # from nemo.utils import logging
 from nemo.utils.exp_manager import exp_manager
 from time import time
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 import atexit
 
@@ -41,9 +42,8 @@ def main(cfg: DictConfig)->None:
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
 
-    # trainer.tune(model, datamodule=model.dm)
+    # trainer.tune(model)
     lr_finder = trainer.tuner.lr_find(model, model.dm)
-
     # Results can be found in
     ic(lr_finder.results)
 
@@ -54,7 +54,7 @@ def main(cfg: DictConfig)->None:
     # Pick point based on plot, or get suggestion
     new_lr = lr_finder.suggestion()
 
-    model.hparams.optim.lr = new_lr
+    model.hparams.model.optim.lr = new_lr
     trainer.fit(model, model.dm)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
@@ -62,7 +62,7 @@ def main(cfg: DictConfig)->None:
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     trainer = pl.Trainer(gpus=gpu)
-    trainer.test(model,datamodule=model.dm,ckpt_path=None)
+    trainer.test(model,model.dm,ckpt_path=None)
 
 
 # @hydra.main(config_name="config.yaml")

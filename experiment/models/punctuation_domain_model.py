@@ -80,15 +80,18 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if not self.hparams.model.punct_head.loss in ['cel', 'dice', 'crf']:
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self.hparams.model.punct_head.loss = 'cel'
-        self.punctuation_loss = {'cel': CrossEntropyLoss(logits_ndim=3),
-                                 'dice': FocalDiceLoss(**self.hparams.model.dice_loss),
-                                 'crf': LinearChainCRF(self.hparams.model.dataset.num_labels)
-                                 }[self.hparams.model.punct_head.loss]
+        if self.hparams.model.punct_head.loss == 'dice':
+            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss)
+        elif self.hparams.model.punct_head.loss == 'crf':
+            self.punctuation_loss = LinearChainCRF(self.hparams.model.dataset.num_labels)
+        else: 
+            self.punctuation_loss = CrossEntropyLoss(logits_ndim=3)
+                                 
         if not self.hparams.model.domain_head.loss in ['cel']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
-        self.domain_loss = {'cel': CrossEntropyLoss(logits_ndim=2)}[
-            self.hparams.model.domain_head.loss]
+        # self.hparams.model.domain_head.loss
+        self.domain_loss = CrossEntropyLoss(logits_ndim=2)
 
         self.agg_loss = AggregatorLoss(num_inputs=2)
 
@@ -223,6 +226,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self.log_dict(output_dict.pop('log'), on_epoch=True)
 
             return output_dict
+
+    
 
     def multi_validation_epoch_end(self, outputs):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
@@ -481,7 +486,22 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             data_id=self.data_id
         )
         self.dm.setup()
+        self._train_dl=self.dm.train_dataloader
         self.train_size = ic(len(self.dm.train_dataset))
+        self._validation_dl=self.dm.val_dataloader
+        self._test_dl=self.dm.test_dataloader
+    
+    def train_dataloader(self):
+        if self._train_dl is not None:
+            return self._train_dl
+
+    def val_dataloader(self):
+        if self._validation_dl is not None:
+            return self._validation_dl
+
+    def test_dataloader(self):
+        if self._test_dl is not None:
+            return self._test_dl
 
     @staticmethod
     def __make_nemo_file_from_folder(filename, source_dir):
@@ -558,6 +578,37 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 cls._set_model_restore_state(is_being_restored=False)
                 os.chdir(cwd)
 
+    @classmethod
+    def load_from_checkpoint(
+        cls,
+        checkpoint_path: str,
+        *args,
+        map_location: Optional[Union[Dict[str, str], str, torch.device, int, Callable]] = None,
+        hparams_file: Optional[str] = None,
+        strict: bool = True,
+        **kwargs,
+    ):
+        """
+        Loads ModelPT from checkpoint, with some maintenance of restoration.
+        For documentation, please refer to LightningModule.load_from_checkpoin() documentation.
+        """
+        checkpoint = None
+        try:
+            cls._set_model_restore_state(is_being_restored=True)
+
+            checkpoint = super().load_from_checkpoint(
+                checkpoint_path=checkpoint_path,
+                *args,
+                map_location=map_location,
+                hparams_file=hparams_file,
+                strict=strict,
+                **kwargs,
+            )
+
+        finally:
+            cls._set_model_restore_state(is_being_restored=False)
+        return checkpoint
+
     @staticmethod
     def _is_model_being_restored() -> bool:
         global _MODEL_IS_RESTORED
@@ -605,3 +656,20 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
     def unfreeze(self, i: int = 1):
         self.freeze_transformer_to(max(0, self.frozen-i))
         self.frozen -= 1
+
+    def teardown(self, stage: str):
+        """
+        Called at the end of fit and test.
+        Args:
+            stage: either 'fit' or 'test'
+        """
+        if stage == 'fit':
+            # Update env variable to bypass multi gpu issue after training
+            # This fix affects usage of trainer.test() after trainer.train()
+            # If trainer.train() was done on multiple GPUs, then trainer.test()
+            # will try to do ddp, even if its a new Trainer object with just 1 GPU.
+            # Temporary patch to fix that
+            if 'PL_TRAINER_GPUS' in os.environ:
+                os.environ.pop('PL_TRAINER_GPUS')
+
+        super().teardown(stage)
