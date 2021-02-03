@@ -15,7 +15,7 @@ from models import PunctuationDomainModel
 # from nemo.utils import logging
 from nemo.utils.exp_manager import exp_manager
 from time import time
-import matplotlib.pyplot as plt
+
 import atexit
 
 def toString(obj):
@@ -40,16 +40,21 @@ def main(cfg: DictConfig)->None:
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
-    
-    lr_finder = trainer.tuner.lr_find(model,model.dm)
+
+    # trainer.tune(model, datamodule=model.dm)
+    lr_finder = trainer.tuner.lr_find(model, model.dm)
+
+    # Results can be found in
     ic(lr_finder.results)
+
     # Plot with
-    fig = lr_finder.plot(suggest=True)
-    fig.show()
+    # fig = lr_finder.plot(suggest=True)
+    # fig.show()
 
-    new_lr = ic(lr_finder.suggestion())
+    # Pick point based on plot, or get suggestion
+    new_lr = lr_finder.suggestion()
+
     model.hparams.optim.lr = new_lr
-
     trainer.fit(model, model.dm)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
