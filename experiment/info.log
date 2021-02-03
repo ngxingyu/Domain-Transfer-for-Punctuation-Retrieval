@@ -1,6 +1,9 @@
-[INFO] - GPU available: True, used: False
-[INFO] - TPU available: None, using: 0 TPU cores
-[INFO] - Using native 16bit precision.
-[INFO] - shuffling train set
-[INFO] - shuffling train set
+[INFO] - Lock 139948983482544 acquired on /root/.cache/huggingface/transformers/ca13c16218c6780ec76753d3afa19fcb7cc759e3f63ee87e441562d374762b3d.0824000443bf1ea1b536f53cf8bb9bfaac5e0143ee58dd462bceafeab8f45020.lock
+[INFO] - Lock 139948983482544 released on /root/.cache/huggingface/transformers/ca13c16218c6780ec76753d3afa19fcb7cc759e3f63ee87e441562d374762b3d.0824000443bf1ea1b536f53cf8bb9bfaac5e0143ee58dd462bceafeab8f45020.lock
+[INFO] - Lock 139948984170432 acquired on /root/.cache/huggingface/transformers/1ebdea26ed1a6268cdf5d1fe36450e89c70e306c97d39e62ede8a31f1c43f9ad.baa63624f08a59503441bce3d427225c61fe79bfa9f6d4c30cde7d072d863e0c.lock
+[INFO] - Lock 139948984170432 released on /root/.cache/huggingface/transformers/1ebdea26ed1a6268cdf5d1fe36450e89c70e306c97d39e62ede8a31f1c43f9ad.baa63624f08a59503441bce3d427225c61fe79bfa9f6d4c30cde7d072d863e0c.lock
+[INFO] - Lock 139948836593088 acquired on /root/.cache/huggingface/transformers/ece45ade3e01224cf31fed8e183b306d17b84e8abd415363474cfe72274f7814.d789d64ebfe299b0e416afc4a169632f903f693095b4629a7ea271d5a0cf2c99.lock
+[INFO] - Lock 139948836593088 released on /root/.cache/huggingface/transformers/ece45ade3e01224cf31fed8e183b306d17b84e8abd415363474cfe72274f7814.d789d64ebfe299b0e416afc4a169632f903f693095b4629a7ea271d5a0cf2c99.lock
+[INFO] - Lock 139948983338560 acquired on /root/.cache/huggingface/transformers/92992b36de47dee64b1d5a31c05d8d51e3075b918a218f5ba4f6e306c4b81b8c.7f2721073f19841be16f41b0a70b600ca6b880c8f3df6f3535cbc704371bdfa4.lock
+[INFO] - Lock 139948983338560 released on /root/.cache/huggingface/transformers/92992b36de47dee64b1d5a31c05d8d51e3075b918a218f5ba4f6e306c4b81b8c.7f2721073f19841be16f41b0a70b600ca6b880c8f3df6f3535cbc704371bdfa4.lock
 [INFO] - Internal process exited
