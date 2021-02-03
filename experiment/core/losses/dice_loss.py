@@ -114,7 +114,7 @@ class FocalDiceLoss(_WeightedLoss):
         labels_flatten = torch.flatten(labels, start_dim=0, end_dim=-1)
         self.num_classes=logits_flatten.shape[-1]
         if self.weight==None:
-            self.weight=torch.tensor([1]*self.num_classes)
+            self.weight=torch.tensor([1.]*self.num_classes).type_as(logits)
         if loss_mask is not None:
             if loss_mask.dtype is not torch.bool:
                 loss_mask = loss_mask > 0.5
@@ -134,7 +134,10 @@ class FocalDiceLoss(_WeightedLoss):
         target_one_hot=F.one_hot(labels_flatten,num_classes=logits_flatten_soft.shape[-1]) #(b_s, s_l) -> (b_s, s_l, n_l)
         intersection = torch.sum(logits_flatten_soft * target_one_hot, 0) # (b_s*s_l,n_l)->(n_l)
         cardinality = torch.sum(logits_flatten_soft*logits_flatten_soft + target_one_hot*target_one_hot, 0) if self.square_denominator==False else torch.sum(logits_flatten_soft + target_one_hot, 0) # (b_s*s_l,n_l)->(n_l)
-        focal_dice_score = torch.pow(1. - 2. * (intersection + self.epsilon) / (cardinality + self.epsilon),self.alpha) * self.weight # (n_l),(n_l)->(n_l)
+        if self.macro_average:
+            focal_dice_score = torch.pow(1. - 2. * (intersection + self.epsilon) / (cardinality + self.epsilon),self.alpha) * self.weight # (n_l),(n_l)->(n_l)
+        else:
+            focal_dice_score = torch.pow(1. - 2. * (torch.dot(intersection,self.weight) + self.epsilon) / (torch.dot(cardinality,self.weight) + self.epsilon),self.alpha) # (n_l),(n_l)->(n_l)
         if self.reduction == "mean":
             return focal_dice_score.sum()/self.weight.sum()
         elif self.reduction == "sum":

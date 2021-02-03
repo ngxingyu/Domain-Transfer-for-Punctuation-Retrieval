@@ -11,6 +11,7 @@ import torch.optim.lr_scheduler as pt_scheduler
 import torch.utils.data.dataloader as dataloader
 from omegaconf import DictConfig, OmegaConf
 from torch.optim.lr_scheduler import _LRScheduler
+import logging
 
 from core.config import SchedulerParams, get_scheduler_config, register_scheduler_params
 
@@ -386,7 +387,8 @@ def get_scheduler(name: str, **kwargs: Optional[Dict[str, Any]]) -> _LRScheduler
 def prepare_lr_scheduler(
     optimizer: optim.Optimizer,
     scheduler_config: Union[Dict[str, Any], DictConfig],
-    train_dataloader: Optional[dataloader.DataLoader] = None,
+    train_dataloader: Optional[Dict[str,int]] = None,
+
 ) -> Optional[Dict[str, Any]]:
     """
     Constructs an LR Scheduler (optionally) for a given optimizer, based on a config with the following schema
@@ -555,9 +557,9 @@ def prepare_lr_scheduler(
         num_workers = scheduler_config.get('t_num_workers')
 
         # Compute effective num max_steps
-        num_samples = len(train_dataloader.dataset)
-        batch_size = train_dataloader.batch_size
-        drop_last = train_dataloader.drop_last
+        num_samples = train_dataloader['num_samples']
+        batch_size = train_dataloader['batch_size']
+        drop_last = train_dataloader['drop_last']
 
         max_steps = compute_max_steps(
             max_epochs=max_epochs,

@@ -1,23 +1,23 @@
-import torch
+from torch import nn
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
 from core.utils import transformer_weights_init
-from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
+# from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
 from typing import Optional, Dict
 
-class TokenClassifier(torch.nn.Module):
+class TokenClassifier(nn.Module):
     """
     A module to perform token level classification tasks such as Named entity recognition.
     """
 
-    @property
-    def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        """
-        Returns definitions of module output ports.
-        """
-        if not self.log_softmax:
-            return {"logits": NeuralType(('B', 'T', 'C'), LogitsType())}
-        else:
-            return {"log_probs": NeuralType(('B', 'T', 'C'), LogprobsType())}
+    # @property
+    # def output_types(self) -> Optional[Dict[str, NeuralType]]:
+    #     """
+    #     Returns definitions of module output ports.
+    #     """
+    #     if not self.log_softmax:
+    #         return {"logits": NeuralType(('B', 'T', 'C'), LogitsType())}
+    #     else:
+    #         return {"log_probs": NeuralType(('B', 'T', 'C'), LogprobsType())}
 
     def __init__(
         self,
@@ -41,11 +41,12 @@ class TokenClassifier(torch.nn.Module):
             dropout: dropout to apply to the input hidden states
             use_transformer_init: whether to initialize the weights of the classifier head with the same approach used in Transformer
         """
-        super().__init__(hidden_size=hidden_size, dropout=dropout)
+        super().__init__()
         self.log_softmax = log_softmax
         self.mlp = MultiLayerPerceptron(
             hidden_size, num_classes, num_layers=num_layers, activation=activation, log_softmax=log_softmax
         )
+        self.dropout=nn.Dropout(dropout)
         if use_transformer_init:
             self.apply(lambda module: transformer_weights_init(module, xavier=False))
 

@@ -1,4 +1,4 @@
-base_path: /home/nxingyu2/data
+seed: 42
 trainer:
   gpus: 1
   num_nodes: 1
@@ -10,7 +10,7 @@ trainer:
   precision: 16
   accelerator: ddp
   checkpoint_callback: false
-  logger: true
+  logger: false
   log_every_n_steps: 1
   val_check_interval: 1.0
   resume_from_checkpoint: null
@@ -19,8 +19,11 @@ exp_manager:
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
+base_path: /home/nxingyu/data
 model:
-  transformer_path: ${base_path}/electra-base-discriminator
+  nemo_path: null
+  transformer_path: google/electra-small-discriminator
+  initial_unfrozen: 0
   punct_label_ids:
   - ''
   - '!'
@@ -33,7 +36,7 @@ model:
   - —
   - …
   dataset:
-    data_dir: ${base_path}
+    data_dir: /home/nxingyu/data
     labelled:
     - ${base_path}/ted_talks_processed
     unlabelled:
@@ -42,18 +45,20 @@ model:
     pad_label: ''
     ignore_extra_tokens: false
     ignore_start_end: false
-    use_cache: true
-    num_workers: 2
-    pin_memory: false
+    use_cache: false
+    num_workers: 4
+    pin_memory: true
     drop_last: false
-  train_ds:
-    shuffle: true
-    num_samples: -1
-    batch_size: 16
-  validation_ds:
-    shuffle: true
-    num_samples: -1
-    batch_size: 16
+    num_labels: 10
+    num_domains: 2
+    train_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 4
+    validation_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 4
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
@@ -64,32 +69,32 @@ model:
     lm_checkpoint: null
     config_file: null
     config: null
-    unfrozen_layers: 0
   punct_head:
     punct_num_fc_layers: 1
     fc_dropout: 0.1
     activation: relu
+    log_softmax: false
     use_transformer_init: true
     loss: cel
   domain_head:
     domain_num_fc_layers: 1
     fc_dropout: 0.1
     activation: relu
-    log_softmax: true
+    log_softmax: false
     use_transformer_init: true
     loss: cel
-    lbd: 1
+    gamma: 1
   dice_loss:
-    alpha: 0.8
-    gamma: 2
+    epsilon: 0.05
+    alpha: 2
   optim:
     name: adam
     lr: 0.0001
     weight_decay: 0.0
-  sched:
-    name: WarmupAnnealing
-    warmup_steps: null
-    warmup_ratio: 0.1
-    last_epoch: -1
-    monitor: val_loss
-    reduce_on_plateau: false
+    sched:
+      name: WarmupAnnealing
+      warmup_steps: null
+      warmup_ratio: 0.1
+      last_epoch: -1
+      monitor: val_loss
+      reduce_on_plateau: false

@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from torch import nn
 import regex as re
 
 __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'view_aligned']
@@ -17,8 +18,14 @@ def pad_to_len(max_seq_length,ids):
 
 def position_to_mask(max_seq_length:int,indices:list):
     '''[0, 2, 5] -> array([0, 1, 0, 1, 0, 0, 1, 0, 0, 0])'''
+    assert(isinstance(max_seq_length,int))
+
     o=np.zeros(max_seq_length,dtype=np.int)
-    o[np.array(indices)%(max_seq_length-2)+1]=1
+    try:
+        o[np.array(indices)%(max_seq_length-2)+1]=1
+    except:
+        ic('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
+        o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
 def align_labels_to_mask(mask,labels):
@@ -112,7 +119,7 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
     output = {'input_ids': torch.as_tensor(batch_ids, dtype=torch.long),
               'attention_mask': torch.as_tensor(batch_ids, dtype=torch.bool),
               'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)*labelled}
-    output['labels']=torch.as_tensor(batch_labels,dtype=torch.short) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.short)
+    output['labels']=torch.as_tensor(batch_labels,dtype=torch.long) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.long)
     return output
 
 
