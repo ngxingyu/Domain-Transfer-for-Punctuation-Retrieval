@@ -111,5 +111,25 @@ Some of the regexes are flawed, to check if spare time?
 
 Convert from huggingface load dataset which loads all to memory to pandas chunking map save.
 
+
 ## Log for 28/1/2020
+
 Found an arabic character in one of the texts "Co ِ perative" which broke the tokenizer parsing. To go through the preprocessing step in greater detail now.
+
+
+## Log for 2/2/2020
+
+Converted torch Dataset into IterableDataset with chunks, for faster loading. Each batch features a ConcatDataset looking at all children datasets which are cycled using itertools.cycle. They run until the largest batch size is fully covered.
+
+To implement:
+Random shuffling of csv dataset each batch.
+Look at effectiveness of Dice Loss and possible hyperparameters which can improve its F score.
+Evaluate the effectiveness of smaller models 
+
+Git issues: 
+```
+git filter-branch -f --index-filter 'git rm -rf --cached --ignore-unmatch ./experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*' --tag-name-filter cat -- --all
+git rev-list --objects --all |   git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |   sed -n 's/^blob //p' |   sort --numeric-sort --key=2 |   cut -c 1-12,41- |   $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+git gc --prune=now
+
+```
