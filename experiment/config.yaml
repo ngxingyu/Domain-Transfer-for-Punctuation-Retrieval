@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 3
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 16 # accumulates grads every k batches
+    accumulate_grad_batches: 10 # accumulates grads every k batches
     gradient_clip_val: 0.0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -66,7 +66,7 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  4
+        num_workers:  0
         pin_memory: true
         drop_last: false
         num_labels: 10
@@ -75,7 +75,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 1
+            batch_size: 4
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
