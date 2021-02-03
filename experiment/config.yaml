@@ -2,7 +2,7 @@ seed: 42
 trainer:
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 2
+    max_epochs: 3
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 1 # accumulates grads every k batches
     gradient_clip_val: 0.0
@@ -24,7 +24,7 @@ base_path: /home/nxingyu/data
 model:
     nemo_path: null
     transformer_path:  google/electra-small-discriminator #distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
-    initial_unfrozen: 1
+    initial_unfrozen: 0
     punct_label_ids:
         - ""
         - "!"
@@ -42,7 +42,7 @@ model:
         labelled:
             - ${base_path}/ted_talks_processed #
         unlabelled:
-            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
