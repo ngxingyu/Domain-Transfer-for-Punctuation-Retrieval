@@ -4,7 +4,7 @@ trainer:
   num_nodes: 1
   max_epochs: 3
   max_steps: null
-  accumulate_grad_batches: 1
+  accumulate_grad_batches: 16
   gradient_clip_val: 0.0
   amp_level: O1
   precision: 16
@@ -23,7 +23,7 @@ base_path: /root/data
 model:
   nemo_path: null
   transformer_path: google/electra-small-discriminator
-  initial_unfrozen: 0
+  initial_unfrozen: 1
   punct_label_ids:
   - ''
   - '!'
@@ -53,7 +53,7 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 2
+      batch_size: 4
     validation_ds:
       shuffle: true
       num_samples: -1
@@ -74,7 +74,7 @@ model:
     activation: relu
     log_softmax: false
     use_transformer_init: true
-    loss: cel
+    loss: dice
   domain_head:
     domain_num_fc_layers: 1
     fc_dropout: 0.1
@@ -85,10 +85,11 @@ model:
     gamma: 1
   dice_loss:
     epsilon: 0.01
-    alpha: 1
+    alpha: 2
+    macro_average: true
   optim:
     name: adam
-    lr: 0.0001
+    lr: 0.001
     weight_decay: 0.0
     sched:
       name: WarmupAnnealing
