@@ -6,8 +6,9 @@ trainer:
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 1 # accumulates grads every k batches
     gradient_clip_val: 0.0
-    # amp_level: O0 # O1/O2 for mixed precision
-    precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+    amp_backend: native
+    amp_level: O0 # O1/O2 for mixed precision
+    precision: 32 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     # accelerator: ddp
     checkpoint_callback: false  # Provided by exp_manager
     logger: false #false  # Provided by exp_manager
@@ -20,7 +21,7 @@ exp_manager:
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu2/data
+base_path: /root/data
 model:
     nemo_path: null
     transformer_path:  google/electra-small-discriminator #distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
@@ -38,7 +39,7 @@ model:
         - "…"
 
     dataset:
-        data_dir: /home/nxingyu2/data # /path/to/training/data
+        data_dir: /root/data # /path/to/training/data
         labelled:
             - ${base_path}/ted_talks_processed #
         unlabelled:
