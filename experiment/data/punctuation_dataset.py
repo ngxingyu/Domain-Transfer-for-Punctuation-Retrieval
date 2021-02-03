@@ -75,8 +75,9 @@ class PunctuationDomainDataset(IterableDataset):
     def __next__(self):
         batch = next(self.dataset)[1]
         l=batch.str.split().map(len).values
-        a=np.maximum((l-self.max_seq_length*8).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
-        b=np.minimum(l,a+self.max_seq_length*8)
+        n=8
+        a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+        b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
