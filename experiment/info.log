@@ -1,44 +1,6 @@
+[INFO] - GPU available: True, used: False
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - Using native 16bit precision.
 [INFO] - shuffling train set
 [INFO] - shuffling train set
-[INFO] - Optimizer config = Adam (
-Parameter Group 0
-    amsgrad: False
-    betas: (0.9, 0.999)
-    eps: 1e-08
-    lr: 0.0001
-    weight_decay: 0.0
-)
-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f2da65029d0>" 
-will be used during training (effective maximum steps = 63657) - 
-Parameters : 
-(warmup_steps: null
-warmup_ratio: 0.1
-last_epoch: -1
-max_steps: 63657
-)
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          99.27       3.70       7.14       7347
-! (label_id: 1)                                          0.00       0.00       0.00          4
-, (label_id: 2)                                          3.53      43.70       6.53        270
-- (label_id: 3)                                          0.00       0.00       0.00         28
-. (label_id: 4)                                          0.00       0.00       0.00        188
-: (label_id: 5)                                          1.79      50.00       3.45          4
-; (label_id: 6)                                          0.00       0.00       0.00          0
-? (label_id: 7)                                          0.00       0.00       0.00         12
-— (label_id: 8)                                          0.00       0.00       0.00          0
-… (label_id: 9)                                          0.00       0.00       0.00          0
--------------------
-micro avg                                                4.99       4.99       4.99       7853
-macro avg                                               14.94      13.92       2.44       7853
-weighted avg                                            93.00       4.99       6.90       7853
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                         55.32      76.47      64.20         34
-1 (label_id: 1)                                         61.90      38.24      47.27         34
--------------------
-micro avg                                               57.35      57.35      57.35         68
-macro avg                                               58.61      57.35      55.74         68
-weighted avg                                            58.61      57.35      55.74         68
-
+[INFO] - Internal process exited

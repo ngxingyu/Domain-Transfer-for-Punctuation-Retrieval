@@ -1,14 +1,12 @@
 seed: 42
 trainer:
-  gpus: 1
+  gpus: 0
   num_nodes: 1
   max_epochs: 3
   max_steps: null
   accumulate_grad_batches: 1
   gradient_clip_val: 0.0
-  amp_level: O0
   precision: 16
-  accelerator: ddp
   checkpoint_callback: false
   logger: false
   log_every_n_steps: 1
@@ -19,7 +17,7 @@ exp_manager:
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/nxingyu/data
+base_path: /home/nxingyu2/data
 model:
   nemo_path: null
   transformer_path: google/electra-small-discriminator
@@ -36,11 +34,10 @@ model:
   - —
   - …
   dataset:
-    data_dir: /home/nxingyu/data
+    data_dir: /home/nxingyu2/data
     labelled:
     - ${base_path}/ted_talks_processed
-    unlabelled:
-    - ${base_path}/open_subtitles_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -50,15 +47,15 @@ model:
     pin_memory: true
     drop_last: false
     num_labels: 10
-    num_domains: 2
+    num_domains: 1
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 4
+      batch_size: 2
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 4
+      batch_size: 2
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
@@ -85,8 +82,8 @@ model:
     loss: cel
     gamma: 1
   dice_loss:
-    epsilon: 0.05
-    alpha: 2
+    epsilon: 0.01
+    alpha: 1
   optim:
     name: adam
     lr: 0.0001
