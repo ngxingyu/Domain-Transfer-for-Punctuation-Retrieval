@@ -126,3 +126,10 @@ Random shuffling of csv dataset each batch.
 Look at effectiveness of Dice Loss and possible hyperparameters which can improve its F score.
 Evaluate the effectiveness of smaller models 
 
+Git issues: 
+```
+git filter-branch -f --index-filter 'git rm -rf --cached --ignore-unmatch ./experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*' --tag-name-filter cat -- --all
+git rev-list --objects --all |   git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |   sed -n 's/^blob //p' |   sort --numeric-sort --key=2 |   cut -c 1-12,41- |   $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
+git gc --prune=now
+
+```
