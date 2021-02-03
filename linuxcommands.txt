@@ -51,4 +51,8 @@ source ~/.profile
 
 
 
-pip install git+https://github.com/gruns/icecream.git
+conda install script
+conda create --name NLP python=3.8
+conda install pytorch==1.6.0 cudatoolkit=10.1 -c pytorch
+conda install -c conda-forge pytorch-lightning
+pip install icecream nemo_toolkit[all]==1.0.0b2 transformers datasets hydra-core
