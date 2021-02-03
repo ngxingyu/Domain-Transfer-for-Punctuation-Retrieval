@@ -1,12 +1,14 @@
 seed: 42
 trainer:
-  gpus: 0
+  gpus: 1
   num_nodes: 1
   max_epochs: 3
   max_steps: null
   accumulate_grad_batches: 1
   gradient_clip_val: 0.0
+  amp_level: O1
   precision: 16
+  accelerator: ddp
   checkpoint_callback: false
   logger: false
   log_every_n_steps: 1

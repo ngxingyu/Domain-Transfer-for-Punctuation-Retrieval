@@ -123,6 +123,6 @@ hydra:
         item_sep: ','
         exclude_keys: []
   runtime:
-    version: 1.0.5
-    cwd: /home/nxingyu2/project/experiment
+    version: 1.0.6
+    cwd: /content/ASR/experiment
   verbose: false
