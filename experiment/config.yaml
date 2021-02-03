@@ -1,14 +1,14 @@
 seed: 42
 trainer:
-    gpus: 1 # the number of gpus, 0 for CPU
+    gpus: 0 # the number of gpus, 0 for CPU
     num_nodes: 1
     max_epochs: 3
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 1 # accumulates grads every k batches
     gradient_clip_val: 0.0
-    amp_level: O0 # O1/O2 for mixed precision
+    # amp_level: O0 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
-    accelerator: ddp
+    # accelerator: ddp
     checkpoint_callback: false  # Provided by exp_manager
     logger: false #false  # Provided by exp_manager
     log_every_n_steps: 1  # Interval of logging.
@@ -20,7 +20,7 @@ exp_manager:
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu/data
+base_path: /home/nxingyu2/data
 model:
     nemo_path: null
     transformer_path:  google/electra-small-discriminator #distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
@@ -38,11 +38,11 @@ model:
         - "…"
 
     dataset:
-        data_dir: /home/nxingyu/data # /path/to/training/data
+        data_dir: /home/nxingyu2/data # /path/to/training/data
         labelled:
             - ${base_path}/ted_talks_processed #
         unlabelled:
-            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -54,12 +54,12 @@ model:
         pin_memory: true
         drop_last: false
         num_labels: 10
-        num_domains: 2
+        num_domains: 1
 
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 4
+            batch_size: 2
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -67,7 +67,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 4
+            batch_size: 2
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
