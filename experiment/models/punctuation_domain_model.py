@@ -150,7 +150,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.log('train_loss', loss)
 
         return {'loss': loss, 'lr': lr}
-
     def validation_step(self, batch, batch_idx, dataloader_idx=0):
         """
         Lightning calls this inside the validation loop with the data from the validation dataloader
