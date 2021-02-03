@@ -100,8 +100,8 @@ model:
         gamma: 1 # coefficient of gradient reversal
     
     dice_loss:
-        epsilon: 0.05
-        alpha: 2
+        epsilon: 0.01
+        alpha: 1
 
     optim:
         name: adam
