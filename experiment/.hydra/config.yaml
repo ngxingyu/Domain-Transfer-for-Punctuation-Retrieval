@@ -19,7 +19,7 @@ exp_manager:
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/nxingyu2/data
+base_path: /root/data
 model:
   nemo_path: null
   transformer_path: google/electra-small-discriminator
@@ -36,7 +36,7 @@ model:
   - —
   - …
   dataset:
-    data_dir: /home/nxingyu2/data
+    data_dir: /root/data
     labelled:
     - ${base_path}/ted_talks_processed
     unlabelled: null
