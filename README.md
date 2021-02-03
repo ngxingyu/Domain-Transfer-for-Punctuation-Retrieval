@@ -111,5 +111,18 @@ Some of the regexes are flawed, to check if spare time?
 
 Convert from huggingface load dataset which loads all to memory to pandas chunking map save.
 
+
 ## Log for 28/1/2020
+
 Found an arabic character in one of the texts "Co ِ perative" which broke the tokenizer parsing. To go through the preprocessing step in greater detail now.
+
+
+## Log for 2/2/2020
+
+Converted torch Dataset into IterableDataset with chunks, for faster loading. Each batch features a ConcatDataset looking at all children datasets which are cycled using itertools.cycle. They run until the largest batch size is fully covered.
+
+To implement:
+Random shuffling of csv dataset each batch.
+Look at effectiveness of Dice Loss and possible hyperparameters which can improve its F score.
+Evaluate the effectiveness of smaller models 
+

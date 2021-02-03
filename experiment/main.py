@@ -40,20 +40,14 @@ def main(cfg: DictConfig)->None:
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
-    # trainer.fit(model, model.dm)
-    # if cfg.model.nemo_path:
-    #     model.save_to(cfg.model.nemo_path)
+    trainer.fit(model, model.dm)
+    if cfg.model.nemo_path:
+        model.save_to(cfg.model.nemo_path)
     
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     trainer = pl.Trainer(gpus=gpu)
     trainer.test(model,datamodule=model.dm,ckpt_path=None)
-
-
-    cfg.model.punct_label_ids=OmegaConf.create(sorted(cfg.model.punct_label_ids))
-    labels_to_ids = {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)}
-    ids_to_labels = {_[0]:_[1] for _ in enumerate(cfg.model.punct_label_ids)}def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.02)
 
 
 # @hydra.main(config_name="config.yaml")
