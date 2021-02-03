@@ -57,7 +57,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.data_id=data_id
         self.setup_datamodule()
 
-
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=len(self.labels_to_ids),
@@ -82,10 +81,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self.hparams.model.punct_head.loss = 'cel'
         self.punctuation_loss = {'cel': CrossEntropyLoss(logits_ndim=3),
-                                 'dice': FocalDiceLoss(),
+                                 'dice': FocalDiceLoss(**self.hparams.model.dice_loss),
                                  'crf': LinearChainCRF(self.hparams.model.dataset.num_labels)
                                  }[self.hparams.model.punct_head.loss]
-
         if not self.hparams.model.domain_head.loss in ['cel']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'

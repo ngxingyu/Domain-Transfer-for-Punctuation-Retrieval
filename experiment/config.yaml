@@ -4,18 +4,11 @@ trainer:
     num_nodes: 1
     max_epochs: 3
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 1 # accumulates grads every k batches
+    accumulate_grad_batches: 16 # accumulates grads every k batches
     gradient_clip_val: 0.0
-<<<<<<< HEAD
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
-=======
-    amp_backend: native
-    amp_level: O0 # O1/O2 for mixed precision
-    precision: 32 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
-    # accelerator: ddp
->>>>>>> bfc8c0e3b1baa6b158afae76a0fffb0b12dc039e
     checkpoint_callback: false  # Provided by exp_manager
     logger: false #false  # Provided by exp_manager
     log_every_n_steps: 1  # Interval of logging.
@@ -31,7 +24,7 @@ base_path: /root/data
 model:
     nemo_path: null
     transformer_path:  google/electra-small-discriminator #distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
-    initial_unfrozen: 0
+    initial_unfrozen: 1
     punct_label_ids:
         - ""
         - "!"
@@ -66,7 +59,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 2
+            batch_size: 4
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -95,7 +88,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'dice'
 
     domain_head:
         domain_num_fc_layers: 1
@@ -108,11 +101,12 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 1
+        alpha: 2
+        macro_average: true
 
     optim:
         name: adam
-        lr: 1e-4
+        lr: 1e-3
         weight_decay: 0.00
 
         sched:
