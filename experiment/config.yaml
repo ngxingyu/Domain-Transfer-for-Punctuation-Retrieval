@@ -5,7 +5,7 @@ trainer:
     max_epochs: 6
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 8 # accumulates grads every k batches
-    gradient_clip_val: 0.8
+    gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
@@ -41,7 +41,7 @@ tmp_path: /tmp #/home/nxingyu2/data/tmp
 model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
-    initial_unfrozen: 0
+    initial_unfrozen: 2
     punct_label_ids:
         - ""
         - "!"
@@ -57,9 +57,9 @@ model:
     dataset:
         data_dir: /root/data # /home/nxingyu2/data # 
         labelled:
-            - ${base_path}/ted_talks_processed #
+            - ${base_path}/open_subtitles_processed #  
         unlabelled:
-            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/ted_talks_processed #
             # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -72,11 +72,12 @@ model:
         drop_last: false
         num_labels: 10
         num_domains: 1
+        test_unlabelled: true
 
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 8
+            batch_size: 16
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for

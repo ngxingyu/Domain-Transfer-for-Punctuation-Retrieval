@@ -55,7 +55,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.labels_to_ids = {_[1]: _[0]
                               for _ in enumerate(self.hparams.model.punct_label_ids)}
         self.data_id=data_id
-        self.setup_datamodule()
+        self.setup_datamodule(cfg.model.dataset.test_unlabelled)
 
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
@@ -169,7 +169,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
-
+        # pp(punct_preds.device)
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
@@ -464,7 +464,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             return [self._optimizer], [self._scheduler]
 
-    def setup_datamodule(self, data_config: Optional[DictConfig] = None):
+    def setup_datamodule(self, data_config: Optional[DictConfig] = None, test_unlabelled=True):
         if data_config is None:
             data_config = self._cfg.model.dataset
         self._cfg.model.punct_label_ids=OmegaConf.create(sorted(self._cfg.model.punct_label_ids))
@@ -487,7 +487,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             val_shuffle= data_config.validation_ds.shuffle,
             seed=self._cfg.seed,
             data_id=self.data_id,
-            tmp_path=self.hparams.tmp_path
+            tmp_path=self.hparams.tmp_path,
+            test_unlabelled=test_unlabelled
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader

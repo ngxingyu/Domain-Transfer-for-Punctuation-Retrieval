@@ -33,7 +33,7 @@ def main(cfg: DictConfig)->None:
     trainer = pl.Trainer(**cfg.trainer)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
-    model.setup_datamodule()
+    # model.setup_datamodule()
 
     lr_finder = trainer.tuner.lr_find(model)
     # Results can be found in
@@ -48,7 +48,7 @@ def main(cfg: DictConfig)->None:
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     trainer = pl.Trainer(gpus=gpu)
-    trainer.test(model,ckpt_path=None)
+    trainer.test(model,test_dataloader = ,ckpt_path=None)
 
 
 # @hydra.main(config_name="config.yaml")
