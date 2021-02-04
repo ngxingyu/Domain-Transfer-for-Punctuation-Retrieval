@@ -1,5 +1,5 @@
 #!/bin/bash
-usage="$(basename "$0") [-h] [-s n] [-i s] [-o s] [-a b] [-m s]-- 
+usage="$(basename "$0") [-h] [-s n] [-i s] [-o s] [-a b] [-m s] [-t s]-- 
 
 where:
 -h  show this help text
@@ -7,12 +7,14 @@ where:
 -a  sort (default: false)
 -i  set input filepath
 -o  set output filepath
--m  set memory limit"
+-m  set memory limit
+-t  set tmp dir"
 
 seed=42
 sorted=false
 memory="500M"
-while getopts i:o:s:a:m: flag; do
+tmpdir="~/data/tmp/"
+while getopts i:o:s:a:m:t: flag; do
     case "${flag}" in
         h) echo "$usage"
             exit
@@ -22,6 +24,7 @@ while getopts i:o:s:a:m: flag; do
         s) seed=${OPTARG};;
         a) sorted=${OPTARG};;
         m) memory=${OPTARG};;
+        t) tmpdir=${OPTARG};;
         :) printf "missing argument for -%s\n" "$OPTARG" >&2
             echo "$usage" >&2
             exit 1
@@ -42,8 +45,7 @@ get_seeded_random()
     }
 if $sorted
 then
-    # env TMPDIR=~/data/tmp
-    sort -o $output $input -S $memory
+    env TMPDIR=$tmpdir sort -o $output $input -S $memory
 else
     shuf -o $output <$input --random-source=<(get_seeded_random $seed)
 fi

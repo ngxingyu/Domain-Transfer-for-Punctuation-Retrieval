@@ -23,6 +23,7 @@ class PunctuationDataModule(LightningDataModule):
             val_shuffle:bool = False,
             seed: int = 42,
             data_id: str = '',
+            tmp_path:str = '~/data/tmp'
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -48,6 +49,7 @@ class PunctuationDataModule(LightningDataModule):
         self.test_dataset=None
         self.seed=seed
         self.data_id=data_id
+        self.tmp_path=tmp_path
         
     def setup(self, stage=None):
         if stage=='fit' or stage is None:
@@ -59,7 +61,8 @@ class PunctuationDataModule(LightningDataModule):
                     unlabelled=self.unlabelled,
                     tokenizer=self.tokenizer,
                     randomize=self.train_shuffle,
-                    data_id=self.data_id)
+                    data_id=self.data_id,
+                    tmp_path=self.tmp_path)
             self.val_dataset = PunctuationDomainDatasets(split='dev',
                     num_samples=self.val_batch_size,
                     max_seq_length=self.max_seq_length,
@@ -68,7 +71,8 @@ class PunctuationDataModule(LightningDataModule):
                     unlabelled=self.unlabelled,
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
-                    data_id=self.data_id)
+                    data_id=self.data_id,
+                    tmp_path=self.tmp_path)
         if stage=='test' or stage is None:
             self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
@@ -78,7 +82,9 @@ class PunctuationDataModule(LightningDataModule):
                     unlabelled=self.unlabelled,
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
-                    data_id=self.data_id)
+                    data_id=self.data_id,
+                    tmp_path=self.tmp_path
+                    )
 
         logging.info(f"shuffling train set")
         self.train_dataset.shuffle(randomize=False)

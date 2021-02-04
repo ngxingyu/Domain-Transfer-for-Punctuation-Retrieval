@@ -484,7 +484,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             train_shuffle= data_config.train_ds.shuffle,
             val_shuffle= data_config.validation_ds.shuffle,
             seed=self._cfg.seed,
-            data_id=self.data_id
+            data_id=self.data_id,
+            tmp_path=self.hparams.tmp_path
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
