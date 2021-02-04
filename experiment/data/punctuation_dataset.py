@@ -253,5 +253,5 @@ class PunctuationInferenceDataset(Dataset):
 
     def __getitem__(self, idx):
         return {'input_ids':self.all_input_ids[idx],
-            'attention_mask':self.all_attention_mask[idx],
-               'subtoken_mask':self.all_subtoken_mask[idx]}
+                'attention_mask':self.all_attention_mask[idx],
+                'subtoken_mask':self.all_subtoken_mask[idx]}
