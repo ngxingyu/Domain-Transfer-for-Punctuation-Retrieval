@@ -90,6 +90,7 @@ def subword_tokenize(tokenizer,tokens):
     subwords = list(map(tokenizer.tokenize, tokens))
     subword_lengths = list(map(len, subwords))
     subwords = list(flatten(subwords))
+    # token_start_idxs = np.cumsum([0]+subword_lengths[:-1])
     token_end_idxs = np.cumsum([0]+subword_lengths[:-1])+np.array(subword_lengths)-1
     return subwords, token_end_idxs
 
