@@ -133,7 +133,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             input_ids=input_ids, attention_mask=attention_mask
         )
         punctuation_loss = self.punctuation_loss(
-            logits=punct_logits, labels=punct_labels, loss_mask=subtoken_mask)
+            logits=punct_logits[subtoken_mask[:,0]>0], labels=punct_labels[subtoken_mask[:,0]>0], loss_mask=subtoken_mask[subtoken_mask[:,0]>0])
         domain_loss = self.domain_loss(
             logits=domain_logits, labels=domain_labels)
         loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
@@ -158,16 +158,17 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         """
         input_ids = batch['input_ids']
         attention_mask = batch['attention_mask']
+        subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        labelled_mask=pp(subtoken_mask[:,0]>0)
 
         val_loss, punct_logits, domain_logits = self._make_step(batch)
-
         # attention_mask = attention_mask > 0.5
-        punct_preds = self.punctuation_loss.decode(punct_logits, attention_mask) \
-            if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)[attention_mask]
+        punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
+            if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
 
-        punct_labels = punct_labels[attention_mask]
+        punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
@@ -188,20 +189,16 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         Lightning calls this inside the validation loop with the data from the validation dataloader
         passed in as `batch`.
         """
-        input_ids = batch['input_ids']
-        attention_mask = batch['attention_mask']
-        punct_labels = batch['labels']
-        domain_labels = batch['domain']
 
+        subtoken_mask = batch['subtoken_mask']
+        labelled_mask=(subtoken_mask[:,0]>0)
         test_loss, punct_logits, domain_logits = self._make_step(batch)
-
         # attention_mask = attention_mask > 0.5
-        # punct_preds = torch.argmax(punct_logits, axis=-1)[attention_mask]
-        punct_preds = self.punctuation_loss.decode(punct_logits, attention_mask) \
-            if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)[attention_mask]
-        punct_labels = punct_labels[attention_mask]
-        self.punct_class_report.update(punct_preds, punct_labels)
+        punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
+            if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
 
+        punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
+        self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
         self.domain_class_report.update(domain_preds, domain_labels)
