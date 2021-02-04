@@ -2,6 +2,7 @@ import numpy as np
 import torch
 from torch import nn
 import regex as re
+import snoop
 
 __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'view_aligned']
 
