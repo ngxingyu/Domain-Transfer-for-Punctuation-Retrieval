@@ -106,7 +106,7 @@ def chunk_to_len(max_seq_length,tokenizer,tokens,labels=None):
         padded_labels=[pad_to_len(max_seq_length,align_labels_to_mask(*_)) for _ in zip(masks,split_labels)]
     return ids,masks,padded_labels
     
-def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True):
+def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True,ignore_index=-100):
     batch_ids=[]
     batch_masks=[]
     batch_labels=[]
@@ -118,7 +118,9 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
             batch_labels.extend(c)
     output = {'input_ids': torch.as_tensor(batch_ids, dtype=torch.long),
               'attention_mask': torch.as_tensor(batch_ids, dtype=torch.bool),
-              'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)*labelled}
+              'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)}
+    output['subtoken_mask']|=(output['input_ids']==101)|(output['input_ids']==102)
+    output['subtoken_mask']&=labelled
     output['labels']=torch.as_tensor(batch_labels,dtype=torch.long) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.long)
     return output
 

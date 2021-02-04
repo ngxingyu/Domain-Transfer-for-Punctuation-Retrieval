@@ -164,10 +164,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         val_loss, punct_logits, domain_logits = self._make_step(batch)
 
         # attention_mask = attention_mask > 0.5
-        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, attention_mask).flatten().long(), self.hparams.model.dataset.num_labels) \
+        punct_preds = self.punctuation_loss.decode(punct_logits, attention_mask) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)[attention_mask]
 
-        punct_labels = punct_labels[attention_mask]
+        punct_labels = ic(punct_labels[attention_mask])
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
@@ -197,7 +197,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         # attention_mask = attention_mask > 0.5
         # punct_preds = torch.argmax(punct_logits, axis=-1)[attention_mask]
-        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, attention_mask).flatten().long(), self.hparams.model.num_labels) \
+        punct_preds = self.punctuation_loss.decode(punct_logits, attention_mask) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)[attention_mask]
         punct_labels = punct_labels[attention_mask]
         self.punct_class_report.update(punct_preds, punct_labels)
@@ -217,6 +217,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         }
 
     def validation_epoch_end(self, outputs):
+        self.dm.train_dataset.shuffle()
         if outputs is not None and len(outputs) == 0:
             return {}
         if type(outputs[0]) == dict:
@@ -493,15 +494,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
     
     def train_dataloader(self):
         if self._train_dl is not None:
-            return self._train_dl
+            return self._train_dl()
 
     def val_dataloader(self):
         if self._validation_dl is not None:
-            return self._validation_dl
+            return self._validation_dl()
 
     def test_dataloader(self):
         if self._test_dl is not None:
-            return self._test_dl
+            return self._test_dl()
 
     @staticmethod
     def __make_nemo_file_from_folder(filename, source_dir):
