@@ -1,3 +1,131 @@
 [INFO] - GPU available: True, used: False
 [INFO] - TPU available: None, using: 0 TPU cores
 [INFO] - shuffling train set
+[INFO] - shuffling train set
+[INFO] - Optimizer config = Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f8537a9f610>" 
+will be used during training (effective maximum steps = 100) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 100
+)
+[INFO] - 
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 514   
+3 | punctuation_loss    | LinearChainCRF       | 120   
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+1.6 M     Trainable params
+11.9 M    Non-trainable params
+13.5 M    Total params
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                           4.76       3.12       3.77         32
+! (label_id: 1)                                          0.00       0.00       0.00          1
+, (label_id: 2)                                         53.47      43.20      47.79        125
+- (label_id: 3)                                         17.39      25.00      20.51         16
+. (label_id: 4)                                         40.00       6.98      11.88         86
+: (label_id: 5)                                          0.00       0.00       0.00          0
+; (label_id: 6)                                          0.00       0.00       0.00          0
+? (label_id: 7)                                          0.00       0.00       0.00          3
+— (label_id: 8)                                          0.00       0.00       0.00          0
+… (label_id: 9)                                          0.00       0.00       0.00          0
+-------------------
+micro avg                                               24.71      24.71      24.71        263
+macro avg                                               19.27      13.05      13.99        263
+weighted avg                                            40.13      24.71      28.30        263
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                         65.22      93.75      76.92         16
+1 (label_id: 1)                                         88.89      50.00      64.00         16
+-------------------
+micro avg                                               71.88      71.88      71.88         32
+macro avg                                               77.05      71.87      70.46         32
+weighted avg                                            77.05      71.87      70.46         32
+
+[INFO] - LR finder stopped early due to diverging loss.
+[INFO] - Restored states from the checkpoint file at /home/nxingyu2/project/experiment/nemo_experiments/Punctuation_with_Domain_discriminator/2021-02-04_14-46-23/lr_find_temp_model.ckpt
+[ERROR] - Failed to compute suggesting for `lr`. There might not be enough points.
+Traceback (most recent call last):
+  File "/home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/tuner/lr_finder.py", line 353, in suggestion
+    min_grad = np.gradient(loss).argmin()
+  File "<__array_function__ internals>", line 5, in gradient
+  File "/home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/numpy/lib/function_base.py", line 1052, in gradient
+    raise ValueError(
+ValueError: Shape of array too small to calculate a numerical gradient, at least (edge_order + 1) elements are required.
+[INFO] - Optimizer config = Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f851e5e0ac0>" 
+will be used during training (effective maximum steps = 3981) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 3981
+)
+[INFO] - 
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 514   
+3 | punctuation_loss    | LinearChainCRF       | 120   
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+1.6 M     Trainable params
+11.9 M    Non-trainable params
+13.5 M    Total params
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                           6.25       6.25       6.25         16
+! (label_id: 1)                                          0.00       0.00       0.00          1
+, (label_id: 2)                                         52.63      48.78      50.63         41
+- (label_id: 3)                                          0.00       0.00       0.00          1
+. (label_id: 4)                                         50.00       5.71      10.26         35
+: (label_id: 5)                                          0.00       0.00       0.00          0
+; (label_id: 6)                                          0.00       0.00       0.00          0
+? (label_id: 7)                                          8.33     100.00      15.38          2
+— (label_id: 8)                                          0.00       0.00       0.00          0
+… (label_id: 9)                                          0.00       0.00       0.00          0
+-------------------
+micro avg                                               26.04      26.04      26.04         96
+macro avg                                               19.54      26.79      13.75         96
+weighted avg                                            41.92      26.04      26.73         96
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                         57.14     100.00      72.73          8
+1 (label_id: 1)                                        100.00      25.00      40.00          8
+-------------------
+micro avg                                               62.50      62.50      62.50         16
+macro avg                                               78.57      62.50      56.36         16
+weighted avg                                            78.57      62.50      56.36         16
+
+[INFO] - GPU available: True, used: False
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - Internal process exited
