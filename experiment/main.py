@@ -35,20 +35,11 @@ def main(cfg: DictConfig)->None:
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
 
-    
-    lr_finder = trainer.tuner.lr_find(model)
-    # Results can be found in
-    pp(lr_finder.results)
-
-    # Plot with
-    # fig = lr_finder.plot(suggest=True)
-    # fig.show()
-
-    # Pick point based on plot, or get suggestion
-    new_lr = lr_finder.suggestion()
-
-    model.hparams.model.optim.lr = new_lr
-
+    # lr_finder = trainer.tuner.lr_find(model)
+    # # Results can be found in
+    # pp(lr_finder.results)
+    # new_lr = lr_finder.suggestion()
+    # model.hparams.model.optim.lr = new_lr
 
     trainer.fit(model)
     if cfg.model.nemo_path:
