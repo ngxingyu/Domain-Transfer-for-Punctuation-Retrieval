@@ -9,7 +9,7 @@ import torch
 import torch.nn.functional as F
 from core import ClassificationReport
 from core.layers import *
-from core.losses import (AggregatorLoss, CrossEntropyLoss, FocalDiceLoss,
+from core.losses import (AggregatorLoss, CrossEntropyLoss, FocalDiceLoss, Focal Loss
                          LinearChainCRF)
 from pytorch_lightning.utilities import rank_zero_only
 from core.optim import get_optimizer, parse_optimizer_args, prepare_lr_scheduler
@@ -77,13 +77,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             use_transformer_init=self.hparams.model.domain_head.use_transformer_init,
         )
 
-        if not self.hparams.model.punct_head.loss in ['cel', 'dice', 'crf']:
+        if not self.hparams.model.punct_head.loss in ['cel', 'dice', 'crf', 'focal']:
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self.hparams.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
             self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss)
         elif self.hparams.model.punct_head.loss == 'crf':
             self.punctuation_loss = LinearChainCRF(self.hparams.model.dataset.num_labels)
+        elif self.hparams.model.punct_head.loss == 'focal':
+            self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss)
         else: 
             self.punctuation_loss = CrossEntropyLoss(logits_ndim=3)
                                  
@@ -161,7 +163,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
-        labelled_mask=pp(subtoken_mask[:,0]>0)
+        labelled_mask=subtoken_mask[:,0]>0
 
         val_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
@@ -189,8 +191,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         Lightning calls this inside the validation loop with the data from the validation dataloader
         passed in as `batch`.
         """
-
+        attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
+        punct_labels = batch['labels']
+        domain_labels = batch['domain']
+
         labelled_mask=(subtoken_mask[:,0]>0)
         test_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
