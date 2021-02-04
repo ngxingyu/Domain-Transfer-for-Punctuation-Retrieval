@@ -48,7 +48,7 @@ def main(cfg: DictConfig)->None:
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     trainer = pl.Trainer(gpus=gpu)
-    trainer.test(model,test_dataloader = ,ckpt_path=None)
+    trainer.test(model,ckpt_path=None)
 
 
 # @hydra.main(config_name="config.yaml")
