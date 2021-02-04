@@ -22,6 +22,8 @@ import atexit
 def toString(obj):
     if isinstance(obj, np.ndarray):
         return f'array shape {obj.shape.__str__()} type {obj.dtype}'
+    if isinstance(obj, list):
+        return f'list len {obj.__len__()} '+toString(obj[0])
     if isinstance(obj, torch.Tensor):
         return f'tensor shape {obj.shape.__str__()} type {obj.dtype}'
     if isinstance(obj, dict):
@@ -42,27 +44,29 @@ def main(cfg: DictConfig)->None:
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
 
-    # trainer.tune(model)
-    lr_finder = trainer.tuner.lr_find(model, model.dm)
-    # Results can be found in
-    ic(lr_finder.results)
+    
+    # lr_finder = trainer.tuner.lr_find(model)
+    # # Results can be found in
+    # ic(lr_finder.results)
 
-    # Plot with
-    # fig = lr_finder.plot(suggest=True)
-    # fig.show()
+    # # Plot with
+    # # fig = lr_finder.plot(suggest=True)
+    # # fig.show()
 
-    # Pick point based on plot, or get suggestion
-    new_lr = lr_finder.suggestion()
+    # # Pick point based on plot, or get suggestion
+    # new_lr = lr_finder.suggestion()
 
-    model.hparams.model.optim.lr = new_lr
-    trainer.fit(model, model.dm)
+    # model.hparams.model.optim.lr = new_lr
+
+
+    trainer.fit(model)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
     
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     trainer = pl.Trainer(gpus=gpu)
-    trainer.test(model,model.dm,ckpt_path=None)
+    trainer.test(model,ckpt_path=None)
 
 
 # @hydra.main(config_name="config.yaml")

@@ -6,3 +6,5 @@ experiment/lightning_logs
 experiment/nemo_experiments
 experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
 experiment/lightning_logs/*/checkpoints/
+**/__pycache__/*
+experiment/.hydra/
