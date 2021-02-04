@@ -55,7 +55,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.labels_to_ids = {_[1]: _[0]
                               for _ in enumerate(self.hparams.model.punct_label_ids)}
         self.data_id=data_id
-        self.setup_datamodule(cfg.model.dataset.test_unlabelled)
+        self.setup_datamodule()
 
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
@@ -464,7 +464,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             return [self._optimizer], [self._scheduler]
 
-    def setup_datamodule(self, data_config: Optional[DictConfig] = None, test_unlabelled=True):
+    def setup_datamodule(self, data_config: Optional[DictConfig] = None):
         if data_config is None:
             data_config = self._cfg.model.dataset
         self._cfg.model.punct_label_ids=OmegaConf.create(sorted(self._cfg.model.punct_label_ids))
@@ -488,7 +488,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             seed=self._cfg.seed,
             data_id=self.data_id,
             tmp_path=self.hparams.tmp_path,
-            test_unlabelled=test_unlabelled
+            test_unlabelled=data_config.test_unlabelled
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
