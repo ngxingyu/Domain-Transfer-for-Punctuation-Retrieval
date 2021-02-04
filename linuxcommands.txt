@@ -51,8 +51,11 @@ source ~/.profile
 
 
 
+apt install screen
 conda install script
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 conda create --name NLP python=3.8
-conda install pytorch cudatoolkit=10.1 -c pytorch
+pip install snoop nemo_toolkit[all]==1.0.0b2 transformers datasets hydra-core
 conda install -c conda-forge pytorch-lightning
-pip install icecream nemo_toolkit[all]==1.0.0b2 transformers datasets hydra-core
+conda install pytorch cudatoolkit=10.1 -c pytorch

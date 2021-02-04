@@ -42,7 +42,8 @@ get_seeded_random()
     }
 if $sorted
 then
-    env TMPDIR=~/data/tmp sort -o $output $input -S $memory
+    # env TMPDIR=~/data/tmp
+    sort -o $output $input -S $memory
 else
     shuf -o $output <$input --random-source=<(get_seeded_random $seed)
 fi
