@@ -3,7 +3,6 @@ import hydra
 import numpy as np
 import pytorch_lightning as pl
 import torch
-from icecream import ic, install
 from omegaconf import DictConfig, OmegaConf
 from transformers import AutoTokenizer
 
@@ -19,44 +18,36 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 
 import atexit
 
-def toString(obj):
-    if isinstance(obj, np.ndarray):
-        return f'array shape {obj.shape.__str__()} type {obj.dtype}'
-    if isinstance(obj, list):
-        return f'list len {obj.__len__()} '+toString(obj[0])
-    if isinstance(obj, torch.Tensor):
-        return f'tensor shape {obj.shape.__str__()} type {obj.dtype}'
-    if isinstance(obj, dict):
-        return {_[0]:toString(_[1]) for _ in obj.items()}.__str__()
-    return repr(obj)
-install()
-ic.configureOutput(argToStringFunction=toString)
+import snoop
+snoop.install()
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig)->None:
     data_id = str(int(time()))
     def savecounter():
-        ic(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
+        # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
+        pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}.csv'))
     atexit.register(savecounter)
-    ic(cfg)
+    pp(cfg)
+    pl.seed_everything(cfg.seed)
     trainer = pl.Trainer(**cfg.trainer)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
 
     
-    # lr_finder = trainer.tuner.lr_find(model)
-    # # Results can be found in
-    # ic(lr_finder.results)
+    lr_finder = trainer.tuner.lr_find(model)
+    # Results can be found in
+    pp(lr_finder.results)
 
-    # # Plot with
-    # # fig = lr_finder.plot(suggest=True)
-    # # fig.show()
+    # Plot with
+    # fig = lr_finder.plot(suggest=True)
+    # fig.show()
 
-    # # Pick point based on plot, or get suggestion
-    # new_lr = lr_finder.suggestion()
+    # Pick point based on plot, or get suggestion
+    new_lr = lr_finder.suggestion()
 
-    # model.hparams.model.optim.lr = new_lr
+    model.hparams.model.optim.lr = new_lr
 
 
     trainer.fit(model)
