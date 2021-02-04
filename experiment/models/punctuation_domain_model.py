@@ -167,7 +167,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punct_preds = self.punctuation_loss.decode(punct_logits, attention_mask) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)[attention_mask]
 
-        punct_labels = ic(punct_labels[attention_mask])
+        punct_labels = punct_labels[attention_mask]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
@@ -446,7 +446,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # Try to instantiate scheduler for optimizer
         self._scheduler = prepare_lr_scheduler(
             optimizer=self._optimizer, scheduler_config=scheduler_config,
-            train_dataloader=ic({'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
+            train_dataloader=pp({'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
             'batch_size': self.hparams.model.dataset.train_ds.batch_size,
             'drop_last' : self.hparams.model.dataset.drop_last})
             )
@@ -488,7 +488,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
-        self.train_size = ic(len(self.dm.train_dataset))
+        self.train_size = len(self.dm.train_dataset)
         self._validation_dl=self.dm.val_dataloader
         self._test_dl=self.dm.test_dataloader
     

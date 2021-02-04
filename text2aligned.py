@@ -144,33 +144,6 @@ def process_dataset(transcript, filename, max_length=128, overlap=63, degree=0, 
     data=chunk_examples_with_degree(degree)(transcript)
     chunk_to_len_batch(max_length,data['texts'],data['tags'], filename)
 
-#%%
-
-# filename='../data/ted_talks_processed'
-# split='train'
-# chunksize=2000
-# header=0
-# t=pd.read_csv(filename+'.'+split+'.csv',
-#                 dtype='str',
-#                 # columns=['talk_id','transcript'],
-#                 skiprows=range(0,header+chunksize*0),
-#                 header=None,
-#                 chunksize=chunksize)
-# degree=0
-# data=chunk_examples_with_degree(degree)(next(iter(t))[1])
-#%%
-# from icecream import install
-# install()
-# ic.configureOutput(argToStringFunction=lambda x:str(x))
-
-
-# max_length=1024
-# data_proc=chunk_to_len_batch(max_length,[data['texts'][1190]],[data['tags'][1190]])
-
-
-
-
-#%%
 
 if __name__ == "__main__":
 
