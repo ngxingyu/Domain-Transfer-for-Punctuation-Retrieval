@@ -80,7 +80,7 @@ class LinearChainCRF(torch.nn.Module):
                     'the first two dimensions of h and mask must match, '
                     f'got {tuple(logits.shape[:2])} and {tuple(mask.shape)}')
             if not mask[:, 0].all():
-                ic(mask[:,0])
+                pp(mask[:,0])
                 raise ValueError('mask of the first timestep must all be on')
     
     @jit.export
@@ -99,7 +99,6 @@ class LinearChainCRF(torch.nn.Module):
                      in mini batch (batch_size, seq_len)
         :return: labels of each sequence in mini batch
         """
-        ic(logits,mask)
         assert logits.dim() == 3 and mask.dim() == 2
         assert logits.shape[:2] == mask.shape
         assert logits.size(2) == self.num_labels
@@ -133,10 +132,9 @@ class LinearChainCRF(torch.nn.Module):
             path.append(best_path)
         # predict labels of mini batch
         best_paths = [
-            ic(torch.tensor(self._viterbi_compute_best_path(i, ic(seq_lens), ic(score), ic(path))))
+            torch.tensor(self._viterbi_compute_best_path(i, seq_lens, score, path))
             for i in range(batch_size)
         ]
-        # ic(mask,best_paths)
         # best_paths = [align_labels_to_mask(_[0],_[1]) for _ in zip(mask.long(),best_paths)]
         return torch.cat(best_paths).long()
 
