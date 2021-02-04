@@ -179,5 +179,6 @@ label                                                precision    recall       f
 — (label_id: 8)                                          0.00       0.00       0.00        566
 … (label_id: 9)                                          0.00       0.00       0.00         52
 
-Electra base crf ted 0 unfrozen
+Electra base crf open l ted u 1 unfrozen 0.01 lr
+
 
