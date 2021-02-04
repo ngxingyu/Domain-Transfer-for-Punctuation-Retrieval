@@ -26,27 +26,28 @@ def main(cfg: DictConfig)->None:
     data_id = str(int(time()))
     def savecounter():
         # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
-        pp(os.system(f'rm -r /tmp/*.{data_id}.csv'))
+        pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}.csv'))
     atexit.register(savecounter)
     pp(cfg)
+    pl.seed_everything(cfg.seed)
     trainer = pl.Trainer(**cfg.trainer)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     model.setup_datamodule()
 
     
-    # lr_finder = trainer.tuner.lr_find(model)
-    # # Results can be found in
-    # pp(lr_finder.results)
+    lr_finder = trainer.tuner.lr_find(model)
+    # Results can be found in
+    pp(lr_finder.results)
 
-    # # Plot with
-    # # fig = lr_finder.plot(suggest=True)
-    # # fig.show()
+    # Plot with
+    # fig = lr_finder.plot(suggest=True)
+    # fig.show()
 
-    # # Pick point based on plot, or get suggestion
-    # new_lr = lr_finder.suggestion()
+    # Pick point based on plot, or get suggestion
+    new_lr = lr_finder.suggestion()
 
-    # model.hparams.model.optim.lr = new_lr
+    model.hparams.model.optim.lr = new_lr
 
 
     trainer.fit(model)
