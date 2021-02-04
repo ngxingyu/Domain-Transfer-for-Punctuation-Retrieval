@@ -1,3 +1,5 @@
+[INFO] - GPU available: True, used: False
+[INFO] - TPU available: None, using: 0 TPU cores
 [INFO] - shuffling train set
 [INFO] - shuffling train set
 [INFO] - Optimizer config = Adam (

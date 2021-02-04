@@ -42,9 +42,9 @@ class LinearChainCRF(torch.nn.Module):
         :return: The log-likelihood (batch_size,) if reduction==none,  else ()
         """
 
-        self._validate(logits, labels=labels, mask=loss_mask)
         if loss_mask is None:
             loss_mask = torch.ones_like(labels, dtype=torch.uint8)
+        self._validate(logits, labels=labels, mask=loss_mask)
         logits =log_softmax(logits,-1)
         log_numerator = self._compute_numerator_log_likelihood(logits, labels, loss_mask) #score
         log_denominator = self._compute_denominator_log_likelihood(logits, loss_mask) #partition
@@ -80,6 +80,7 @@ class LinearChainCRF(torch.nn.Module):
                     'the first two dimensions of h and mask must match, '
                     f'got {tuple(logits.shape[:2])} and {tuple(mask.shape)}')
             if not mask[:, 0].all():
+                pp(labels[:,0])
                 pp(mask[:,0])
                 raise ValueError('mask of the first timestep must all be on')
     
