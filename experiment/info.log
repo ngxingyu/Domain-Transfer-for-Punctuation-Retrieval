@@ -1,39 +1,42 @@
-[INFO] - GPU available: True, used: False
-[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - Lock 140047526327056 acquired on /root/.cache/huggingface/transformers/3c61d016573b14f7f008c02c4e51a366c67ab274726fe2910691e2a761acf43e.637c6035640bacb831febcc2b7f7bee0a96f9b30c2d7e9ef84082d9f252f3170.lock
+[INFO] - Lock 140047526327056 released on /root/.cache/huggingface/transformers/3c61d016573b14f7f008c02c4e51a366c67ab274726fe2910691e2a761acf43e.637c6035640bacb831febcc2b7f7bee0a96f9b30c2d7e9ef84082d9f252f3170.lock
+[INFO] - Lock 140047395554256 acquired on /root/.cache/huggingface/transformers/a8041bf617d7f94ea26d15e218abd04afc2004805632abc0ed2066aa16d50d04.faf6ea826ae9c5867d12b22257f9877e6b8367890837bd60f7c54a29633f7f2f.lock
+[INFO] - Lock 140047395554256 released on /root/.cache/huggingface/transformers/a8041bf617d7f94ea26d15e218abd04afc2004805632abc0ed2066aa16d50d04.faf6ea826ae9c5867d12b22257f9877e6b8367890837bd60f7c54a29633f7f2f.lock
 [INFO] - shuffling train set
 [INFO] - shuffling train set
-[INFO] - Optimizer config = Adam (
+[INFO] - Optimizer config = Novograd (
 Parameter Group 0
     amsgrad: False
-    betas: (0.9, 0.999)
+    betas: (0.95, 0.98)
     eps: 1e-08
+    grad_averaging: False
     lr: 0.001
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f0b67bb1fd0>" 
-will be used during training (effective maximum steps = 1000) - 
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f5f52d97be0>" 
+will be used during training (effective maximum steps = 100) - 
 Parameters : 
 (warmup_steps: null
 warmup_ratio: 0.1
 last_epoch: -1
-max_steps: 1000
+max_steps: 100
 )
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          94.44       1.91       3.74        890
+ (label_id: 0)                                           0.00       0.00       0.00         20
 ! (label_id: 1)                                          0.00       0.00       0.00          1
-, (label_id: 2)                                          8.89      11.27       9.94         71
-- (label_id: 3)                                          0.00       0.00       0.00         10
-. (label_id: 4)                                          0.00       0.00       0.00         48
+, (label_id: 2)                                         33.33       1.41       2.70         71
+- (label_id: 3)                                          2.94      10.00       4.55         10
+. (label_id: 4)                                         36.36      25.00      29.63         48
 : (label_id: 5)                                          0.00       0.00       0.00          0
 ; (label_id: 6)                                          0.00       0.00       0.00          0
 ? (label_id: 7)                                          0.00       0.00       0.00          2
 — (label_id: 8)                                          0.00       0.00       0.00          0
 … (label_id: 9)                                          0.00       0.00       0.00          0
 -------------------
-micro avg                                                2.45       2.45       2.45       1022
-macro avg                                               17.22       2.20       2.28       1022
-weighted avg                                            82.86       2.45       3.95       1022
+micro avg                                                9.21       9.21       9.21        152
+macro avg                                               12.11       6.07       6.15        152
+weighted avg                                            27.25       9.21      10.92        152
 
 [INFO] - Domain report: 
 label                                                precision    recall       f1           support   
@@ -42,279 +45,4 @@ label                                                precision    recall       f
 micro avg                                              100.00     100.00     100.00         10
 macro avg                                              100.00     100.00     100.00         10
 weighted avg                                           100.00     100.00     100.00         10
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       2.96       5.74     217849
-! (label_id: 1)                                          0.00       0.00       0.00        129
-, (label_id: 2)                                          6.96      87.09      12.89      14631
-- (label_id: 3)                                          3.15      84.21       6.07       1355
-. (label_id: 4)                                         55.60      85.05      67.24      12135
-: (label_id: 5)                                         33.33       0.84       1.63        358
-; (label_id: 6)                                          0.00       0.00       0.00        144
-? (label_id: 7)                                         15.94      59.50      25.14       1037
-— (label_id: 8)                                          0.00       0.00       0.00        487
-… (label_id: 9)                                          0.00       0.00       0.00         82
--------------------
-micro avg                                               12.60      12.60      12.60     248207
-macro avg                                               21.50      31.96      11.87     248207
-weighted avg                                            91.03      12.60       9.23     248207
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2139
--------------------
-micro avg                                              100.00     100.00     100.00       2139
-macro avg                                              100.00     100.00     100.00       2139
-weighted avg                                           100.00     100.00     100.00       2139
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.33       6.44     210160
-! (label_id: 1)                                         20.00       2.34       4.20        128
-, (label_id: 2)                                          7.17      82.07      13.19      14194
-- (label_id: 3)                                          2.63      85.71       5.11       1246
-. (label_id: 4)                                         41.39      91.58      57.01      11727
-: (label_id: 5)                                         10.34      37.96      16.26        324
-; (label_id: 6)                                          0.00       0.00       0.00        134
-? (label_id: 7)                                         32.42      72.51      44.81       1015
-— (label_id: 8)                                         17.24       1.14       2.14        438
-… (label_id: 9)                                          0.00       0.00       0.00         76
--------------------
-micro avg                                               13.08      13.08      13.08     239442
-macro avg                                               23.12      37.67      14.92     239442
-weighted avg                                            90.43      13.08       9.47     239442
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2072
--------------------
-micro avg                                              100.00     100.00     100.00       2072
-macro avg                                              100.00     100.00     100.00       2072
-weighted avg                                           100.00     100.00     100.00       2072
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       2.94       5.72     212468
-! (label_id: 1)                                          6.84       5.76       6.25        139
-, (label_id: 2)                                          7.72      85.72      14.17      14290
-- (label_id: 3)                                          2.12      84.85       4.13       1234
-. (label_id: 4)                                         44.53      89.71      59.51      11832
-: (label_id: 5)                                         10.60      41.23      16.87        342
-; (label_id: 6)                                          0.00       0.00       0.00        171
-? (label_id: 7)                                         32.37      76.37      45.47       1024
-— (label_id: 8)                                         26.32       1.09       2.09        459
-… (label_id: 9)                                          0.00       0.00       0.00         76
--------------------
-micro avg                                               12.85      12.85      12.85     242035
-macro avg                                               23.05      38.77      15.42     242035
-weighted avg                                            90.63      12.85       9.01     242035
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2076
--------------------
-micro avg                                              100.00     100.00     100.00       2076
-macro avg                                              100.00     100.00     100.00       2076
-weighted avg                                           100.00     100.00     100.00       2076
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.05       5.93     216064
-! (label_id: 1)                                         12.33       7.26       9.14        124
-, (label_id: 2)                                          8.47      84.58      15.40      14554
-- (label_id: 3)                                          1.76      87.66       3.46       1353
-. (label_id: 4)                                         49.51      90.55      64.02      11935
-: (label_id: 5)                                          9.59      45.75      15.86        341
-; (label_id: 6)                                          0.00       0.00       0.00        162
-? (label_id: 7)                                         25.79      78.62      38.84       1057
-— (label_id: 8)                                         16.67       2.42       4.22        414
-… (label_id: 9)                                          0.00       0.00       0.00         71
--------------------
-micro avg                                               12.97      12.97      12.97     246075
-macro avg                                               22.41      39.99      15.69     246075
-weighted avg                                            90.87      12.97       9.44     246075
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2120
--------------------
-micro avg                                              100.00     100.00     100.00       2120
-macro avg                                              100.00     100.00     100.00       2120
-weighted avg                                           100.00     100.00     100.00       2120
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.27       6.33     215625
-! (label_id: 1)                                         10.53       8.57       9.45        140
-, (label_id: 2)                                          8.77      86.75      15.93      14396
-- (label_id: 3)                                          1.64      85.51       3.23       1304
-. (label_id: 4)                                         48.00      88.45      62.23      11930
-: (label_id: 5)                                          6.68      44.62      11.62        372
-; (label_id: 6)                                          0.00       0.00       0.00        184
-? (label_id: 7)                                         26.46      80.04      39.77       1062
-— (label_id: 8)                                          5.82       3.88       4.66        412
-… (label_id: 9)                                          0.77       1.45       1.01         69
--------------------
-micro avg                                               13.13      13.13      13.13     245494
-macro avg                                               20.87      40.25      15.42     245494
-weighted avg                                            90.83      13.13       9.74     245494
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2120
--------------------
-micro avg                                              100.00     100.00     100.00       2120
-macro avg                                              100.00     100.00     100.00       2120
-weighted avg                                           100.00     100.00     100.00       2120
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.34       6.46     221012
-! (label_id: 1)                                         12.37       8.70      10.21        138
-, (label_id: 2)                                          8.38      88.28      15.31      14933
-- (label_id: 3)                                          1.93      86.76       3.77       1314
-. (label_id: 4)                                         48.85      86.51      62.44      12338
-: (label_id: 5)                                          7.10      34.99      11.81        343
-; (label_id: 6)                                          0.00       0.00       0.00        157
-? (label_id: 7)                                         29.93      74.44      42.70       1033
-— (label_id: 8)                                          7.41       5.87       6.55        477
-… (label_id: 9)                                          0.15       2.33       0.27         86
--------------------
-micro avg                                               13.23      13.23      13.23     251831
-macro avg                                               21.61      39.12      15.95     251831
-weighted avg                                            90.82      13.23       9.87     251831
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2158
--------------------
-micro avg                                              100.00     100.00     100.00       2158
-macro avg                                              100.00     100.00     100.00       2158
-weighted avg                                           100.00     100.00     100.00       2158
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.44       6.64     213073
-! (label_id: 1)                                         19.05       2.82       4.91        142
-, (label_id: 2)                                          8.26      90.10      15.13      14354
-- (label_id: 3)                                          2.13      86.55       4.15       1264
-. (label_id: 4)                                         50.09      85.41      63.15      11930
-: (label_id: 5)                                          9.83      40.76      15.84        341
-; (label_id: 6)                                         50.00       0.65       1.28        154
-? (label_id: 7)                                         29.29      75.40      42.19       1000
-— (label_id: 8)                                          5.19       5.27       5.23        474
-… (label_id: 9)                                          0.08       2.15       0.15         93
--------------------
-micro avg                                               13.37      13.37      13.37     242825
-macro avg                                               27.39      39.26      15.87     242825
-weighted avg                                            90.90      13.37      10.06     242825
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2100
--------------------
-micro avg                                              100.00     100.00     100.00       2100
-macro avg                                              100.00     100.00     100.00       2100
-weighted avg                                           100.00     100.00     100.00       2100
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          99.99       3.59       6.94     224237
-! (label_id: 1)                                         11.36       3.55       5.41        141
-, (label_id: 2)                                          8.51      88.89      15.53      15176
-- (label_id: 3)                                          2.02      86.85       3.95       1376
-. (label_id: 4)                                         49.75      87.73      63.49      12395
-: (label_id: 5)                                         12.19      31.78      17.62        343
-; (label_id: 6)                                         16.67       0.67       1.28        150
-? (label_id: 7)                                         34.79      78.96      48.30       1041
-— (label_id: 8)                                          5.61       9.58       7.08        480
-… (label_id: 9)                                          0.08       3.33       0.16         90
--------------------
-micro avg                                               13.55      13.55      13.55     255429
-macro avg                                               24.10      39.49      16.97     255429
-weighted avg                                            90.89      13.55      10.35     255429
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2192
--------------------
-micro avg                                              100.00     100.00     100.00       2192
-macro avg                                              100.00     100.00     100.00       2192
-weighted avg                                           100.00     100.00     100.00       2192
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.59       6.93     210014
-! (label_id: 1)                                          5.13       1.38       2.17        145
-, (label_id: 2)                                          8.82      89.46      16.06      14127
-- (label_id: 3)                                          1.86      88.20       3.65       1246
-. (label_id: 4)                                         48.40      86.55      62.08      11707
-: (label_id: 5)                                         12.95      36.28      19.09        317
-; (label_id: 6)                                         38.46       4.03       7.30        124
-? (label_id: 7)                                         31.65      73.63      44.27       1020
-— (label_id: 8)                                          4.00       9.35       5.60        460
-… (label_id: 9)                                          0.10       5.63       0.19         71
--------------------
-micro avg                                               13.51      13.51      13.51     239231
-macro avg                                               25.14      39.81      16.73     239231
-weighted avg                                            90.87      13.51      10.32     239231
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2077
--------------------
-micro avg                                              100.00     100.00     100.00       2077
-macro avg                                              100.00     100.00     100.00       2077
-weighted avg                                           100.00     100.00     100.00       2077
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.55       6.85     217926
-! (label_id: 1)                                          4.76       2.33       3.12        129
-, (label_id: 2)                                          9.55      88.69      17.25      14683
-- (label_id: 3)                                          1.66      87.09       3.25       1286
-. (label_id: 4)                                         46.95      88.41      61.33      12138
-: (label_id: 5)                                         10.25      33.73      15.72        338
-; (label_id: 6)                                         27.27       1.95       3.64        154
-? (label_id: 7)                                         25.89      79.92      39.11        991
-— (label_id: 8)                                          1.99      11.01       3.37        445
-… (label_id: 9)                                          0.04       4.62       0.09         65
--------------------
-micro avg                                               13.53      13.53      13.53     248155
-macro avg                                               22.84      40.13      15.37     248155
-weighted avg                                            90.83      13.53      10.24     248155
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2151
--------------------
-micro avg                                              100.00     100.00     100.00       2151
-macro avg                                              100.00     100.00     100.00       2151
-weighted avg                                           100.00     100.00     100.00       2151
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                         100.00       3.73       7.19     220519
-! (label_id: 1)                                          9.76       3.60       5.26        111
-, (label_id: 2)                                         10.36      88.26      18.54      14739
-- (label_id: 3)                                          1.50      90.71       2.95       1205
-. (label_id: 4)                                         45.09      88.10      59.65      12211
-: (label_id: 5)                                          8.37      27.96      12.89        329
-; (label_id: 6)                                          9.76       2.47       3.94        162
-? (label_id: 7)                                         21.89      80.75      34.45       1039
-— (label_id: 8)                                          1.37      11.37       2.45        466
-… (label_id: 9)                                          0.02       3.17       0.03         63
--------------------
-micro avg                                               13.59      13.59      13.59     250844
-macro avg                                               20.81      40.01      14.74     250844
-weighted avg                                            90.84      13.59      10.50     250844
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2162
--------------------
-micro avg                                              100.00     100.00     100.00       2162
-macro avg                                              100.00     100.00     100.00       2162
-weighted avg                                           100.00     100.00     100.00       2162
 
