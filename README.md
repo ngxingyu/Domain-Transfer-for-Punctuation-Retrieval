@@ -166,4 +166,18 @@ label            | precision    | recall   | f1     | support
 — (label_id: 8)  | 0.00         | 0.00     | 0.00   | 385
 … (label_id: 9)  | 0.00         | 0.00     | 0.00   | 66
 
+Focal DistilBERT gamma 3 0 unfrozen ted
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                         100.00      51.29      67.80       4118
+! (label_id: 1)                                          0.00       0.00       0.00         91
+, (label_id: 2)                                          0.00       0.00       0.00      13953
+- (label_id: 3)                                         94.27      46.49      62.27       1310
+. (label_id: 4)                                         39.51      99.94      56.63      12142
+: (label_id: 5)                                          0.00       0.00       0.00        254
+; (label_id: 6)                                          0.00       0.00       0.00         79
+? (label_id: 7)                                          0.00       0.00       0.00        905
+— (label_id: 8)                                          0.00       0.00       0.00        566
+… (label_id: 9)                                          0.00       0.00       0.00         52
+
+Electra base crf ted 0 unfrozen
 

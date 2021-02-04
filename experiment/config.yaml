@@ -5,7 +5,7 @@ trainer:
     max_epochs: 6
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 8 # accumulates grads every k batches
-    gradient_clip_val: 0.5
+    gradient_clip_val: 0.8
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
@@ -40,7 +40,7 @@ tmp_path: /tmp #/home/nxingyu2/data/tmp
 
 model:
     nemo_path: null
-    transformer_path: bert-base-uncased #google/electra-base-discriminator #  filename to save the model and associated artifacts to .nemo file
+    transformer_path: google/electra-base-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
     initial_unfrozen: 0
     punct_label_ids:
         - ""
@@ -105,7 +105,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'crf'
 
     domain_head:
         domain_num_fc_layers: 1
@@ -122,10 +122,10 @@ model:
         macro_average: true
 
     focal_loss: 
-        gamma: 2
+        gamma: 5
 
     optim:
-        name: novograd
+        name: adamw
         lr: 1e-3
         weight_decay: 0.00
 
