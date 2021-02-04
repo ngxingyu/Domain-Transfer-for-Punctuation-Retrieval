@@ -169,7 +169,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
-
+        # pp(punct_preds.device)
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
@@ -487,7 +487,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             val_shuffle= data_config.validation_ds.shuffle,
             seed=self._cfg.seed,
             data_id=self.data_id,
-            tmp_path=self.hparams.tmp_path
+            tmp_path=self.hparams.tmp_path,
+            test_unlabelled=data_config.test_unlabelled
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader

@@ -23,7 +23,8 @@ class PunctuationDataModule(LightningDataModule):
             val_shuffle:bool = False,
             seed: int = 42,
             data_id: str = '',
-            tmp_path:str = '~/data/tmp'
+            tmp_path:str = '~/data/tmp',
+            test_unlabelled:bool = True
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -50,6 +51,7 @@ class PunctuationDataModule(LightningDataModule):
         self.seed=seed
         self.data_id=data_id
         self.tmp_path=tmp_path
+        self.test_unlabelled=test_unlabelled
         
     def setup(self, stage=None):
         if stage=='fit' or stage is None:
@@ -74,7 +76,19 @@ class PunctuationDataModule(LightningDataModule):
                     data_id=self.data_id,
                     tmp_path=self.tmp_path)
         if stage=='test' or stage is None:
-            self.test_dataset = PunctuationDomainDatasets(split='test',
+            if (len(self.unlabelled)>0) and self.test_unlabelled:
+                self.test_dataset = PunctuationDomainDatasets(split='test',
+                    num_samples=self.val_batch_size,
+                    max_seq_length=self.max_seq_length,
+                    punct_label_ids=self.punct_label_ids,
+                    labelled=self.unlabelled,
+                    unlabelled=[],
+                    tokenizer=self.tokenizer,
+                    randomize=self.val_shuffle,
+                    data_id=self.data_id,
+                    tmp_path=self.tmp_path
+                    )
+            else: self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
                     max_seq_length=self.max_seq_length,
                     punct_label_ids=self.punct_label_ids,
