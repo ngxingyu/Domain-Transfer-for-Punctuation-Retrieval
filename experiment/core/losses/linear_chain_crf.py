@@ -17,9 +17,9 @@ class LinearChainCRF(torch.nn.Module):
         if num_labels < 1: raise ValueError("invalid number of labels: {0}".format(num_labels))
         super().__init__()
         self.num_labels = num_labels
-        self.transitions = nn.Parameter(torch.empty(num_labels, num_labels))
-        self.start_transition = nn.Parameter(torch.empty(num_labels))
-        self.end_transition = nn.Parameter(torch.empty(num_labels))
+        self.register_parameter('transitions',nn.Parameter(torch.empty(num_labels, num_labels)))
+        self.register_parameter('start_transition' , nn.Parameter(torch.empty(num_labels)))
+        self.register_parameter('end_transition', nn.Parameter(torch.empty(num_labels)))
         if reduction not in ('none', 'sum', 'mean', 'token_mean'):
             raise ValueError(f'invalid reduction: {reduction}')
         self.reduction = reduction
@@ -137,7 +137,7 @@ class LinearChainCRF(torch.nn.Module):
             for i in range(batch_size)
         ]
         # best_paths = [align_labels_to_mask(_[0],_[1]) for _ in zip(mask.long(),best_paths)]
-        return torch.cat(best_paths).long()
+        return torch.cat(best_paths).long().type_as(logits)
 
     def _viterbi_compute_best_path(
         self,
@@ -260,11 +260,10 @@ class LinearChainCRF(torch.nn.Module):
         :param arange_b: this param is seted torch.arange(batch_size)
         :param batch_size: batch size of this calculation
         """
-        device = logits.device
         mask_t = mask[:, t]
-        mask_t = mask_t.to(device)
+        mask_t = mask_t.type_as(logits)
         mask_t1 = mask[:, t + 1]
-        mask_t1 = mask_t1.to(device)
+        mask_t1 = mask_t1.type_as(logits)
         # extract the score of t label
         # (batch_size)
         logits_t = logits[arange_b, t, y[:, t]].squeeze(1)  ##Changed from t to t
