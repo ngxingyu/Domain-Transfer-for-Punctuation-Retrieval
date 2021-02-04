@@ -36,6 +36,7 @@ class PunctuationDomainDataset(IterableDataset):
         labelled=True,
         randomize=True,
         target_file='',
+        tmp_path='~/data/tmp'
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -59,6 +60,7 @@ class PunctuationDomainDataset(IterableDataset):
         self.degree=degree
         self.randomize=randomize
         self.target_file=target_file
+        self.tmp_path=tmp_path
         os.system(f'cp {self.csv_file} {self.target_file}')
 
     def __iter__(self):
@@ -75,7 +77,7 @@ class PunctuationDomainDataset(IterableDataset):
     def __next__(self):
         batch = next(self.dataset)[1]
         l=batch.str.split().map(len).values
-        n=8
+        n=16
         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
@@ -127,7 +129,7 @@ class PunctuationDomainDataset(IterableDataset):
         return self.len
     
     def shuffle(self, randomize=True, seed=42):
-        pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M')))
+        pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
         self.dataset=iter(pd.read_csv(
                 self.target_file,
                 skiprows=(0 % self.len)*self.num_samples,
@@ -159,30 +161,33 @@ class PunctuationDomainDatasets(IterableDataset):
                  unlabelled: List[str],
                  tokenizer,
                  randomize:bool=True,
-                 data_id=''):
+                 data_id='',
+                 tmp_path='~/data/tmp'):
         
         self.datasets = []
         self.iterables=[]
         self.randomize=randomize
         for i,path in enumerate(labelled):
-            tmppath=os.path.join('/tmp/',os.path.split(path)[1])
+            target=os.path.join(tmp_path,os.path.split(path)[1])
             dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
                     punct_label_ids=punct_label_ids,domain=i,labelled=True,
                     randomize=randomize,
-                    target_file=f'{tmppath}.{split}.{data_id}.csv')
+                    target_file=f'{target}.{split}.{data_id}.csv',
+                    tmp_path=tmp_path)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
             
         for i,path in enumerate(unlabelled):
-            tmppath=os.path.join('/tmp/',os.path.split(path)[1])
+            target=os.path.join(tmp_path,os.path.split(path)[1])
             dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
                     punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,
                     randomize=randomize,
-                    target_file=f'{tmppath}.{split}.{data_id}.csv')
+                    target_file=f'{target}.{split}.{data_id}.csv',
+                    tmp_path=tmp_path)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
 
