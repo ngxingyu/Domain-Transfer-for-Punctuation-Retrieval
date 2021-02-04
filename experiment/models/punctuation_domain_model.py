@@ -9,7 +9,7 @@ import torch
 import torch.nn.functional as F
 from core import ClassificationReport
 from core.layers import *
-from core.losses import (AggregatorLoss, CrossEntropyLoss, FocalDiceLoss, Focal Loss
+from core.losses import (AggregatorLoss, CrossEntropyLoss, FocalDiceLoss, FocalLoss,
                          LinearChainCRF)
 from pytorch_lightning.utilities import rank_zero_only
 from core.optim import get_optimizer, parse_optimizer_args, prepare_lr_scheduler
