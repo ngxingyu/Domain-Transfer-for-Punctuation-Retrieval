@@ -136,3 +136,17 @@ git rev-list --objects --all |   git cat-file --batch-check='%(objecttype) %(obj
 git gc --prune=now
 
 ```
+
+
+## Log for 4/2/2020
+
+Iterable dataset isn't really suited for multiprocessing.
+The examples with subword mask beginning with 0 are filtered out for all punctuation tasks before anything rather than as a factor for the loss.
+
+Parameters to tune: 
+- Look at first subword token instead of last or all subword tokens. Not sure how to bring the labels to the first subwords. to look into this.
+- Compare Electra to BERT (to Roberta)
+- BiLSTM (nooooo)
+- Dice (various gamma) vs CRF vs CEL (weighted)
+- Immediate unfreeze 2 layers vs gradual unfreeze vs no unfreeze
+- Optimizers
