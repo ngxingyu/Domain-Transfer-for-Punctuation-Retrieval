@@ -118,7 +118,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
-        self.epoch=0
+        self.hparams.epoch=0
 
     def forward(self, input_ids, attention_mask, domain_ids=None):
         hidden_states = self.transformer(
@@ -224,9 +224,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         }
 
     def validation_epoch_end(self, outputs):
-        self.epoch+=1
-        print(self.epoch, self.epoch%self.hparams.model.unfreeze_every)
-        if self.epoch%self.hparams.model.unfreeze_every:
+        self.hparams.epoch+=1
+        print(self.hparams.epoch, self.hparams.epoch%self.hparams.model.unfreeze_every)
+        if (self.hparams.epoch%self.hparams.model.unfreeze_every==0):
             self.unfreeze(self.hparams.model.unfreeze_step)
         self.dm.train_dataset.shuffle()
         if outputs is not None and len(outputs) == 0:
