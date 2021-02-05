@@ -179,6 +179,7 @@ label                                                precision    recall       f
 — (label_id: 8)                                          0.00       0.00       0.00        566
 … (label_id: 9)                                          0.00       0.00       0.00         52
 
-Electra base crf open l ted u 1 unfrozen 0.001584893192461114 lr adamw
+Electra small cel weighted ted l 1 unfrozen 0.0031622776 lr adamw accgrad4 bs8
+
 
 

@@ -57,6 +57,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.data_id=data_id
         self.setup_datamodule()
 
+        if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
+            self.hparams.model.punct_class_weights=OmegaConf.create(self.dm.train_dataset.determine_class_weights().tolist())
+        else:
+            self.hparams.model.punct_class_weights=OmegaConf.create([])
+
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=len(self.labels_to_ids),
@@ -81,13 +86,13 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self.hparams.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
-            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss)
+            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss, weight=self.hparams.model.punct_class_weights)
         elif self.hparams.model.punct_head.loss == 'crf':
             self.punctuation_loss = LinearChainCRF(self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'focal':
-            self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss)
+            self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss, weight=self.hparams.model.punct_class_weights)
         else: 
-            self.punctuation_loss = CrossEntropyLoss(logits_ndim=3)
+            self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self.hparams.model.punct_class_weights)
                                  
         if not self.hparams.model.domain_head.loss in ['cel']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
