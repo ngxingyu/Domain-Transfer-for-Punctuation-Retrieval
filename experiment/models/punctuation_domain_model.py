@@ -60,7 +60,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
             self.hparams.model.punct_class_weights=OmegaConf.create(self.dm.train_dataset.determine_class_weights().tolist())
         else:
-            self.hparams.model.punct_class_weights=OmegaConf.create([])
+            self.hparams.model.punct_class_weights=None
 
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
@@ -118,7 +118,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
-        self.unfreeze(self.hparams.model.initial_unfrozen)
+        self.epoch=0
 
     def forward(self, input_ids, attention_mask, domain_ids=None):
         hidden_states = self.transformer(
@@ -234,6 +234,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self.log_dict(output_dict.pop('log'), on_epoch=True)
 
             return output_dict
+        self.epoch+=1
+        if self.epoch%self.hparams.model.unfreeze_every:
+            self.unfreeze(self.hparams.model.unfreeze_step)
 
     
 
@@ -633,7 +636,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         """Freeze layers up to layer group `n`.
         Look at each group, and freeze each paraemeter, except excluded types
         """
-        print(f"1st {n} encoder layers of transformer frozen")
+        pp(f"1st {n} encoder layers of transformer frozen")
 
         def set_requires_grad_for_module(module: torch.nn.Module, requires_grad: bool):
             "Sets each parameter in lthe module to the `requires_grad` value"
@@ -660,12 +663,16 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         for param in self.transformer.embeddings.parameters():
             param.requires_grad = False
 
-        self.frozen = len(encoder.layer)
+        self.frozen = len(encoder.layer)-self.hparams.model.unfrozen
         self.freeze_transformer_to(self.frozen)
 
     def unfreeze(self, i: int = 1):
-        self.freeze_transformer_to(max(0, self.frozen-i))
-        self.frozen -= 1
+        self.frozen -= i
+        self.hparams.model.unfrozen+=i
+        if self.hparams.model.unfrozen>self.hparams.model.maximum_unfrozen:
+            self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
+            self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
+        self.freeze_transformer_to(max(0, self.frozen))
 
     def teardown(self, stage: str):
         """
