@@ -5,7 +5,7 @@ fi
 
 echo "in $1"
 echo "out $1 _ split .csv"
-# bash ~/project/bin/shuffle.sh -i $1 -o $1 -a true
+bash ~/project/bin/shuffle.sh -i $1 -o $1 -a true
 # bash ~/project/bin/shuffle.sh -i $1 -o $1 -a false -s 42
 bash ~/project/bin/percsplit.sh -f "${1%.csv}" $1 $2 $3 $4
 mv "${1%.csv}00" "${1%.csv}.train.csv"
