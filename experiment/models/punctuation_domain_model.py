@@ -224,6 +224,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         }
 
     def validation_epoch_end(self, outputs):
+        self.epoch+=1
+        print(self.epoch, self.epoch%self.hparams.model.unfreeze_every)
+        if self.epoch%self.hparams.model.unfreeze_every:
+            self.unfreeze(self.hparams.model.unfreeze_step)
         self.dm.train_dataset.shuffle()
         if outputs is not None and len(outputs) == 0:
             return {}
@@ -234,9 +238,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self.log_dict(output_dict.pop('log'), on_epoch=True)
 
             return output_dict
-        self.epoch+=1
-        if self.epoch%self.hparams.model.unfreeze_every:
-            self.unfreeze(self.hparams.model.unfreeze_step)
+        
 
     
 
