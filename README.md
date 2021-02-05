@@ -317,3 +317,20 @@ try early_stop_threshold=None for lr_finder
 lr 0 : 0.008413951416451957
 1: 0.00031622776601683794 ** too high. to adjust the min to 1e-10?
 2: 0.00031622776601683794
+
+label                                                precision    recall       f1           support
+ (label_id: 0)                                           0.00       0.00       0.00       7470
+! (label_id: 1)                                          0.00       0.00       0.00        148
+, (label_id: 2)                                          0.00       0.00       0.00      28513
+- (label_id: 3)                                          3.02     100.00       5.86       2074
+. (label_id: 4)                                          0.00       0.00       0.00      25120
+: (label_id: 5)                                          0.00       0.00       0.00        570
+; (label_id: 6)                                          0.00       0.00       0.00        534
+? (label_id: 7)                                          0.00       0.00       0.00       2085
+— (label_id: 8)                                          0.00       0.00       0.00       2073
+… (label_id: 9)                                          0.00       0.00       0.00        142
+
+ 'punct_f1': 0.5858508944511414,
+ 'punct_precision': 0.30176490545272827,
+ 'punct_recall': 10.0,
+ 'test_loss': 0.8140875697135925}
