@@ -310,4 +310,6 @@ weighted avg          |      55.33   |   51.99 |   51.87  |   41437
  'test_loss': tensor(0.6303)}
 
  ### elsmall dice alpha 5 weighted ted-l unfrozen 0 to 2 every 3 ep total 10 ep, 0.003981071705534973 lr adamw accgrad4 
+
+ 0 layer not too much improvement, 1 layer pretty decent.
  
