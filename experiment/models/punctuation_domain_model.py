@@ -118,7 +118,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
-        self.unfreeze(self.hparams.model.unfrozen)
+        # self.unfreeze(self.hparams.model.unfrozen)
 
     def forward(self, input_ids, attention_mask, domain_ids=None):
         hidden_states = self.transformer(
@@ -633,7 +633,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         """Freeze layers up to layer group `n`.
         Look at each group, and freeze each paraemeter, except excluded types
         """
-        print(f"1st {n} encoder layers of transformer frozen")
+        pp(f"1st {n} encoder layers of transformer frozen")
 
         def set_requires_grad_for_module(module: torch.nn.Module, requires_grad: bool):
             "Sets each parameter in lthe module to the `requires_grad` value"
@@ -664,9 +664,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.freeze_transformer_to(self.frozen)
 
     def unfreeze(self, i: int = 1):
-        self.freeze_transformer_to(max(0, self.frozen-i))
-        self.frozen -= 1
-        self.hparams.model.unfrozen-=i
+        self.frozen -= i
+        self.hparams.model.unfrozen+=i
+        self.freeze_transformer_to(max(0, self.frozen))
 
     def teardown(self, stage: str):
         """
