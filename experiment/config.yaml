@@ -137,7 +137,7 @@ model:
         weight_decay: 0.00
 
         sched:
-            name: CyclicLR
+            name: CosineAnnealing #CyclicLR
             # Scheduler params
             warmup_steps: null
             warmup_ratio: 0.1
