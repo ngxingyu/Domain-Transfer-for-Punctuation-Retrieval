@@ -125,7 +125,7 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 5
+        alpha: 4
         macro_average: true
 
     focal_loss: 
