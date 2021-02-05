@@ -60,7 +60,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
             self.hparams.model.punct_class_weights=OmegaConf.create(self.dm.train_dataset.determine_class_weights().tolist())
         else:
-            self.hparams.model.punct_class_weights=OmegaConf.create([])
+            self.hparams.model.punct_class_weights=None
 
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
@@ -118,7 +118,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
-        self.unfreeze(self.hparams.model.initial_unfrozen)
+        self.unfreeze(self.hparams.model.unfrozen)
 
     def forward(self, input_ids, attention_mask, domain_ids=None):
         hidden_states = self.transformer(
@@ -662,10 +662,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.frozen = len(encoder.layer)
         self.freeze_transformer_to(self.frozen)
+        self.hparams.model.unfrozen=0
 
     def unfreeze(self, i: int = 1):
         self.freeze_transformer_to(max(0, self.frozen-i))
         self.frozen -= 1
+        self.hparams.model.unfrozen-=i
 
     def teardown(self, stage: str):
         """
