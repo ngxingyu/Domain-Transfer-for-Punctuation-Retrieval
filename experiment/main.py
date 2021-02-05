@@ -35,7 +35,7 @@ def main(cfg: DictConfig)->None:
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     # model.setup_datamodule()
 
-    lr_finder = trainer.tuner.lr_find(model)
+    lr_finder = trainer.tuner.lr_find(model,datamodule=model.dm,min_lr=1e-08, max_lr=1e-02, num_training=60)
     # Results can be found in
     pp(lr_finder.results)
     new_lr = lr_finder.suggestion()

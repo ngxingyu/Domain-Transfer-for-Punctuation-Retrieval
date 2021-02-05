@@ -101,7 +101,7 @@ class PunctuationDataModule(LightningDataModule):
                     )
 
         logging.info(f"shuffling train set")
-        self.train_dataset.shuffle(randomize=False)
+        # self.train_dataset.shuffle(randomize=False)
         self.train_dataset.shuffle(randomize=True, seed=self.seed)
 
     def train_dataloader(self):

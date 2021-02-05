@@ -51,8 +51,8 @@ source ~/.profile
 
 
 
-apt install screen
 conda install script
+apt install screen
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh
 conda create --name NLP python=3.8
