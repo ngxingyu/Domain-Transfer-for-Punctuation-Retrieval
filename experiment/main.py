@@ -39,7 +39,7 @@ def main(cfg: DictConfig)->None:
     
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         trainer.current_epoch=0
-        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-08, max_lr=1e-02, num_training=60)
+        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-08, max_lr=1e-02, num_training=80)
         # Results can be found in
         pp(lr_finder.results)
         new_lr = lr_finder.suggestion()
@@ -47,7 +47,11 @@ def main(cfg: DictConfig)->None:
         model.dm.reset()
         trainer.current_epoch=0
         trainer.fit(model)
-        model.unfreeze(cfg.model.unfreeze_step)
+        try:
+            model.unfreeze(cfg.model.unfreeze_step)
+        except:
+            pp('training complete.')
+            break
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
 

@@ -1,1 +1,248 @@
 [INFO] - shuffling train set
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705d6d5130>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          24.14      10.10      14.24        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                         34.00       2.47       4.60        689
+- (label_id: 3)                                          4.42       8.62       5.85         58
+. (label_id: 4)                                         50.00       1.57       3.05        572
+: (label_id: 5)                                          0.55      40.00       1.09         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          2.18      17.39       3.87         46
+— (label_id: 8)                                          1.42       5.71       2.27         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                                4.02       4.02       4.02       1641
+macro avg                                               11.67       8.59       3.50       1641
+weighted avg                                            35.01       4.02       5.17       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705eb490a0>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          24.14      10.10      14.24        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                         34.00       2.47       4.60        689
+- (label_id: 3)                                          4.42       8.62       5.85         58
+. (label_id: 4)                                         50.00       1.57       3.05        572
+: (label_id: 5)                                          0.55      40.00       1.09         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          2.18      17.39       3.87         46
+— (label_id: 8)                                          1.42       5.71       2.27         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                                4.02       4.02       4.02       1641
+macro avg                                               11.67       8.59       3.50       1641
+weighted avg                                            35.01       4.02       5.17       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705eaf3820>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          12.68     100.00      22.50        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                          0.00       0.00       0.00        689
+- (label_id: 3)                                          0.00       0.00       0.00         58
+. (label_id: 4)                                          0.00       0.00       0.00        572
+: (label_id: 5)                                          0.00       0.00       0.00         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          0.00       0.00       0.00         46
+— (label_id: 8)                                          0.00       0.00       0.00         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                               12.68      12.68      12.68       1641
+macro avg                                                1.27      10.00       2.25       1641
+weighted avg                                             1.61      12.68       2.85       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705eabbc10>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          12.68     100.00      22.50        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                          0.00       0.00       0.00        689
+- (label_id: 3)                                          0.00       0.00       0.00         58
+. (label_id: 4)                                          0.00       0.00       0.00        572
+: (label_id: 5)                                          0.00       0.00       0.00         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          0.00       0.00       0.00         46
+— (label_id: 8)                                          0.00       0.00       0.00         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                               12.68      12.68      12.68       1641
+macro avg                                                1.27      10.00       2.25       1641
+weighted avg                                             1.61      12.68       2.85       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705eb150a0>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          12.68     100.00      22.50        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                          0.00       0.00       0.00        689
+- (label_id: 3)                                          0.00       0.00       0.00         58
+. (label_id: 4)                                          0.00       0.00       0.00        572
+: (label_id: 5)                                          0.00       0.00       0.00         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          0.00       0.00       0.00         46
+— (label_id: 8)                                          0.00       0.00       0.00         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                               12.68      12.68      12.68       1641
+macro avg                                                1.27      10.00       2.25       1641
+weighted avg                                             1.61      12.68       2.85       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f705eaeae20>" 
+will be used during training (effective maximum steps = 1) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 1
+)
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          12.68     100.00      22.50        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                          0.00       0.00       0.00        689
+- (label_id: 3)                                          0.00       0.00       0.00         58
+. (label_id: 4)                                          0.00       0.00       0.00        572
+: (label_id: 5)                                          0.00       0.00       0.00         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          0.00       0.00       0.00         46
+— (label_id: 8)                                          0.00       0.00       0.00         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                               12.68      12.68      12.68       1641
+macro avg                                                1.27      10.00       2.25       1641
+weighted avg                                             1.61      12.68       2.85       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
+[INFO] - Internal process exited

@@ -669,9 +669,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
     def unfreeze(self, i: int = 1):
         self.frozen -= i
         self.hparams.model.unfrozen+=i
-        if self.hparams.model.unfrozen>self.hparams.model.maximum_unfrozen:
-            self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
-            self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
+        assert(self.hparams.model.unfrozen<=self.hparams.model.maximum_unfrozen)
+        # if self.hparams.model.unfrozen>self.hparams.model.maximum_unfrozen:
+        #     self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
+        #     self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
         self.freeze_transformer_to(max(0, self.frozen))
 
     def teardown(self, stage: str):
