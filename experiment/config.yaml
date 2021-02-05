@@ -43,6 +43,7 @@ model:
     transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
     maximum_unfrozen: 2
+    unfreeze_step: 1
     punct_label_ids:
         - ""
         - "!"
