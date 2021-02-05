@@ -41,7 +41,8 @@ tmp_path: /tmp # /home/nxingyu2/data/tmp #
 model:
     nemo_path: null
     transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
-    initial_unfrozen: 1
+    unfrozen: 0
+    maximum_unfrozen: 2
     punct_label_ids:
         - ""
         - "!"
@@ -54,7 +55,7 @@ model:
         - "—"
         - "…"
 
-    punct_class_weights: true
+    punct_class_weights: false
     
     dataset:
         data_dir: /root/data # /home/nxingyu2/data # 
@@ -108,7 +109,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'dice'
 
     domain_head:
         domain_num_fc_layers: 1
@@ -121,7 +122,7 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 3
+        alpha: 5
         macro_average: true
 
     focal_loss: 

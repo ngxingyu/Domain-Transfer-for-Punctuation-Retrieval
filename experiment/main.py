@@ -28,6 +28,9 @@ def main(cfg: DictConfig)->None:
         # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
         pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}.csv'))
     atexit.register(savecounter)
+
+    cfg.model.maximum_unfrozen=max(cfg.model.maximum_unfrozen,cfg.model.unfrozen)
+
     pp(cfg)
     pl.seed_everything(cfg.seed)
     trainer = pl.Trainer(**cfg.trainer)
@@ -41,8 +44,11 @@ def main(cfg: DictConfig)->None:
     pp(lr_finder.results)
     new_lr = lr_finder.suggestion()
     model.hparams.model.optim.lr = new_lr
-
-    trainer.fit(model)
+    
+    while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen):
+        trainer.fit(model)
+        model.freeze()
+    
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
     
