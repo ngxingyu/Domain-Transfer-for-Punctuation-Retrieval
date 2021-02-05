@@ -100,8 +100,8 @@ class FocalDiceLoss(_WeightedLoss):
     square_denominator: bool
 
     def __init__(self, weight: Optional[Tensor] = None, size_average=None, ignore_index: int = -100,
-                 reduce=None, reduction: str = 'mean', macro_average=True, alpha = 2.0, epsilon = 0.05, 
-                 square_denominator = False) -> None:
+                 reduce=None, reduction: str = 'mean', macro_average=True, alpha = 1.0, epsilon = 0.05, 
+                 square_denominator = False, log_softmax=False) -> None:
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
         super(FocalDiceLoss, self).__init__(weight, size_average, reduce, reduction)
@@ -110,6 +110,7 @@ class FocalDiceLoss(_WeightedLoss):
         self.alpha = alpha
         self.epsilon = epsilon
         self.square_denominator = square_denominator
+        self.log_softmax = log_softmax
 
     def forward(self, logits: Tensor, labels: Tensor, loss_mask=None) -> Tensor:
         logits_flatten = torch.flatten(logits, start_dim=0, end_dim=-2)
@@ -130,7 +131,7 @@ class FocalDiceLoss(_WeightedLoss):
         #                        ignore_index=self.ignore_index, reduction=self.reduction)
 
 
-        logits_flatten_soft =F.log_softmax(logits_flatten,-1) #(batch_size,seq_len,num_labels)->(batch_size,seq_len,num_labels), sum along num_labels to 1
+        logits_flatten_soft = F.log_softmax(logits_flatten,-1) if self.log_softmax else F.softmax(logits_flatten,-1) #(batch_size,seq_len,num_labels)->(batch_size,seq_len,num_labels), sum along num_labels to 1
         target_one_hot=F.one_hot(labels_flatten,num_classes=logits_flatten_soft.shape[-1]) #(b_s, s_l) -> (b_s, s_l, n_l)
         intersection = torch.sum(logits_flatten_soft * target_one_hot, 0) # (b_s*s_l,n_l)->(n_l)
         cardinality = torch.sum(logits_flatten_soft*logits_flatten_soft + target_one_hot*target_one_hot, 0) if self.square_denominator==False else torch.sum(logits_flatten_soft + target_one_hot, 0) # (b_s*s_l,n_l)->(n_l)

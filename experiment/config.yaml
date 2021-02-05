@@ -31,12 +31,12 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /root/experiments #/home/nxingyu2/project/  # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/nxingyu2/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /root/data # /home/nxingyu2/data # 
-tmp_path: /tmp #/home/nxingyu2/data/tmp
+base_path: /home/nxingyu2/data # /root/data # 
+tmp_path: /home/nxingyu2/data/tmp # /tmp # 
 
 model:
     nemo_path: null
@@ -55,7 +55,7 @@ model:
         - "…"
 
     dataset:
-        data_dir: /root/data # /home/nxingyu2/data # 
+        data_dir: /home/nxingyu2/data # /root/data # 
         labelled:
             - ${base_path}/open_subtitles_processed #  
         unlabelled:
