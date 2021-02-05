@@ -33,6 +33,7 @@ def main(cfg: DictConfig)->None:
     trainer = pl.Trainer(**cfg.trainer)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
+    
     # model.setup_datamodule()
 
     lr_finder = trainer.tuner.lr_find(model,datamodule=model.dm,min_lr=1e-08, max_lr=1e-02, num_training=60)

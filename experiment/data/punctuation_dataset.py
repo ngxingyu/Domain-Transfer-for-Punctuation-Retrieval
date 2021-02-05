@@ -119,7 +119,7 @@ class PunctuationDomainDataset(IterableDataset):
         for _ in range(20):
             print('.',end='')
             ni=next(it)
-            ct+=torch.bincount(ni['labels'].view(-1))
+            ct+=torch.bincount(ni['labels'].view(-1),minlength=len(self.punct_label_ids))
         return ct/sum(ct)
 
 
@@ -153,6 +153,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.datasets = []
         self.iterables=[]
         self.randomize=randomize
+        self.punct_label_ids=punct_label_ids
         for i,path in enumerate(labelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
             dataset=PunctuationDomainDataset(
@@ -212,7 +213,7 @@ class PunctuationDomainDatasets(IterableDataset):
         ct=torch.zeros(len(self.punct_label_ids))
         for _ in range(self.num_labelled):
             ct+=self.datasets[_].determine_class_weights()
-        return ct/self.num_labelled
+        return self.num_labelled/ct
 
 
 class PunctuationInferenceDataset(Dataset):

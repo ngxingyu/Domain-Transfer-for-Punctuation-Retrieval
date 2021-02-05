@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 8 # accumulates grads every k batches
+    accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -31,16 +31,16 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu2/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /root/experiments # /home/nxingyu2/project/ # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu2/data # /root/data # 
-tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+base_path: /root/data # /home/nxingyu2/data # 
+tmp_path: /tmp # /home/nxingyu2/data/tmp # 
 
 model:
     nemo_path: null
-    transformer_path: google/electra-base-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
+    transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
     initial_unfrozen: 1
     punct_label_ids:
         - ""
@@ -54,23 +54,14 @@ model:
         - "—"
         - "…"
 
-    punct_weights:
-        - 1  # ""
-        - 1  # "!"
-        - 1  # ","
-        - 1  # "-"
-        - 1  # "."
-        - 1  # ":"
-        - 1  # ";"
-        - 1  # "?"
-        - 5  # "—"
-        - 4  # "…"
+    punct_class_weights: true
+    
     dataset:
-        data_dir: /home/nxingyu2/data # /root/data # 
+        data_dir: /root/data # /home/nxingyu2/data # 
         labelled:
-            - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/ted_talks_processed #
         unlabelled:
-            # - ${base_path}/ted_talks_processed #
+            # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -117,7 +108,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'focal'
+        loss: 'cel'
 
     domain_head:
         domain_num_fc_layers: 1
