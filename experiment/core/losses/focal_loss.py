@@ -33,7 +33,7 @@ class FocalLoss(torch.nn.NLLLoss):
             logits_flatten=logits
             labels_flatten = torch.argmax(logits, dim=-1)
 
-        logits_flatten_soft =F.log_softmax(logits_flatten,-1)
+        logits_flatten_soft = F.log_softmax(logits_flatten,-1)
         ce = super().forward(logits_flatten_soft,labels_flatten)
         all_rows = torch.arange(len(logits_flatten))
         log_pt = logits_flatten_soft[all_rows, labels_flatten]

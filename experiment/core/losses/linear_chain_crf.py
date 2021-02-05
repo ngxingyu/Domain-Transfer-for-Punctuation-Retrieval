@@ -45,10 +45,10 @@ class LinearChainCRF(torch.nn.Module):
         if loss_mask is None:
             loss_mask = torch.ones_like(labels, dtype=torch.uint8)
         self._validate(logits, labels=labels, mask=loss_mask)
-        logits =log_softmax(logits,-1)
+        # logits = log_softmax(logits,-1)
         log_numerator = self._compute_numerator_log_likelihood(logits, labels, loss_mask) #score
         log_denominator = self._compute_denominator_log_likelihood(logits, loss_mask) #partition
-        llh=log_numerator - log_denominator
+        llh = log_numerator - log_denominator
         if self.reduction == 'none':
             return -llh
         if self.reduction == 'sum':
