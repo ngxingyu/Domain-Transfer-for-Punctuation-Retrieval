@@ -314,3 +314,6 @@ weighted avg                                            14.46      32.57      19
 
  ### elsmall dice alpha 4 weighted ted-l unfrozen 0 to 2 every 3 ep total 10 ep, 0.008413951416451957 lr adamw accgrad4 
 try early_stop_threshold=None for lr_finder
+lr 0 : 0.008413951416451957
+1: 0.00031622776601683794 ** too high. to adjust the min to 1e-10?
+2: 0.00031622776601683794
