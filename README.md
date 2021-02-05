@@ -188,7 +188,7 @@ label                                                precision    recall       f
 
 
 
-### elsmall dice alpha 4 weighted ted-l unfrozen 0.003162277660 lr adamw accgrad4 bbs8
+### elsmall dice alpha 4 weighted ted-l unfrozen 1 0.003162277660 lr adamw accgrad4 bbs8
 
 label                 |   precision  |  recall |    f1    |      support
 ---|---|---|---|---
@@ -311,3 +311,6 @@ weighted avg                                            14.46      32.57      19
  'punct_precision': 4.423948764801025,
  'punct_recall': 11.572192192077637,
  'test_loss': 0.47498953342437744}
+
+ ### elsmall dice alpha 4 weighted ted-l unfrozen 0 to 2 every 3 ep total 10 ep, 0.008413951416451957 lr adamw accgrad4 
+try early_stop_threshold=None for lr_finder
