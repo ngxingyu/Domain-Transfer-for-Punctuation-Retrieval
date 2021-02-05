@@ -223,8 +223,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         }
 
     def validation_epoch_end(self, outputs):
-        print(self.current_epoch, self.current_epoch%self.hparams.model.unfreeze_every)
-        if (self.current_epoch%self.hparams.model.unfreeze_every==0):
+        print('next epoch:',self.current_epoch+1, (self.current_epoch+1)%self.hparams.model.unfreeze_every)
+        if ((self.current_epoch+1)%self.hparams.model.unfreeze_every==0):
             self.unfreeze(self.hparams.model.unfreeze_step)
         self.dm.train_dataset.shuffle()
         if outputs is not None and len(outputs) == 0:

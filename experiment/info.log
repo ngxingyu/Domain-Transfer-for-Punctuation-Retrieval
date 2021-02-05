@@ -1,1 +1,17 @@
 [INFO] - shuffling train set
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f8c28113eb0>" 
+will be used during training (effective maximum steps = 60) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+last_epoch: -1
+max_steps: 60
+)
