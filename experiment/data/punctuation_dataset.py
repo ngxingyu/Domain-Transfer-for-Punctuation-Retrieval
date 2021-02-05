@@ -76,11 +76,13 @@ class PunctuationDomainDataset(IterableDataset):
 
     def __next__(self):
         batch = next(self.dataset)[1]
+
         l=batch.str.split().map(len).values
         n=16
         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
         num_samples=batched['labels'].shape[0]
@@ -91,33 +93,6 @@ class PunctuationDomainDataset(IterableDataset):
             return {k:v[rand] for k,v in batched.items()}
         else:
             return batched
-
-
-    # def __getitem__(self, idx):
-    #     batch = next(
-    #         pd.read_csv(
-    #             self.csv_file,
-    #             skiprows=(idx % self.len)*self.num_samples,
-    #             header=None,
-    #             dtype=str,
-    #             chunksize=self.num_samples,
-    #             ))[1]
-    #     l=batch.str.split().map(len).values
-    #     time0=time()
-    #     a=np.maximum((l-self.max_seq_length*4).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
-    #     b=np.minimum(l,a+self.max_seq_length*4)
-    #     batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
-    #     chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
-    #     batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled)
-    #     num_samples=batched['labels'].shape[0]
-    #     batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
-    #     gc.collect()
-    #     if self.randomize:
-    #         rand=torch.randperm(num_samples)
-    #         return {k:v[rand] for k,v in batched.items()}
-    #     else:
-    #         return batched
-
 
     def set_num_samples(self,csv_file,num_samples):
         self.num_samples = num_samples
@@ -137,6 +112,17 @@ class PunctuationDomainDataset(IterableDataset):
                 dtype=str,
                 chunksize=self.num_samples,
                 ))
+    
+    def determine_class_weights(self):
+        it=iter(self)
+        ct=torch.zeros(len(self.punct_label_ids))
+        for _ in range(20):
+            print('.',end='')
+            ni=next(it)
+            ct+=torch.bincount(ni['labels'].view(-1))
+        return ct/sum(ct)
+
+
 
 
 class PunctuationDomainDatasets(IterableDataset):
@@ -163,7 +149,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  randomize:bool=True,
                  data_id='',
                  tmp_path='~/data/tmp'):
-        
+        self.num_labelled=len(labelled)
         self.datasets = []
         self.iterables=[]
         self.randomize=randomize
@@ -221,6 +207,13 @@ class PunctuationDomainDatasets(IterableDataset):
     def shuffle(self, randomize=True, seed=42):
         for _ in self.datasets:
             _.shuffle(randomize,seed)
+    
+    def determine_class_weights(self):
+        ct=torch.zeros(len(self.punct_label_ids))
+        for _ in range(self.num_labelled):
+            ct+=self.datasets[_].determine_class_weights()
+        return ct/self.num_labelled
+
 
 class PunctuationInferenceDataset(Dataset):
     """
