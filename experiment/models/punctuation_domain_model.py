@@ -660,9 +660,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         for param in self.transformer.embeddings.parameters():
             param.requires_grad = False
 
-        self.frozen = len(encoder.layer)
+        self.frozen = len(encoder.layer)-self.hparams.model.unfrozen
         self.freeze_transformer_to(self.frozen)
-        self.hparams.model.unfrozen=0
 
     def unfreeze(self, i: int = 1):
         self.freeze_transformer_to(max(0, self.frozen-i))
