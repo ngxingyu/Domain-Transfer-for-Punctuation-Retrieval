@@ -43,10 +43,10 @@ def main(cfg: DictConfig)->None:
     new_lr = lr_finder.suggestion()
     model.hparams.model.optim.lr = new_lr
     model.dm.reset()
-    model.hparams.epoch=0
     # model.setup_datamodule()
     # while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         # model.unfreeze(cfg.model.unfreeze_step)
+    trainer.current_epoch=0
     trainer.fit(model)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
