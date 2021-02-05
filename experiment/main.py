@@ -17,7 +17,7 @@ from time import time
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 import atexit
-
+from copy import deepcopy
 import snoop
 snoop.install()
 
@@ -28,23 +28,29 @@ def main(cfg: DictConfig)->None:
         # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
         pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}.csv'))
     atexit.register(savecounter)
+
+    cfg.model.maximum_unfrozen=max(cfg.model.maximum_unfrozen,cfg.model.unfrozen)
+
     pp(cfg)
     pl.seed_everything(cfg.seed)
     trainer = pl.Trainer(**cfg.trainer)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     
-    # model.setup_datamodule()
-
-    lr_finder = trainer.tuner.lr_find(model,datamodule=model.dm,min_lr=1e-08, max_lr=1e-02, num_training=60)
+    lr_finder = trainer.tuner.lr_find(model,min_lr=1e-08, max_lr=1e-02, num_training=60)
     # Results can be found in
     pp(lr_finder.results)
     new_lr = lr_finder.suggestion()
     model.hparams.model.optim.lr = new_lr
-
+    model.dm.reset()
+    # model.setup_datamodule()
+    # while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
+        # model.unfreeze(cfg.model.unfreeze_step)
     trainer.fit(model)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
+
+    
     
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
