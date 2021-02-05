@@ -207,7 +207,8 @@ class PunctuationDomainDatasets(IterableDataset):
 
     def shuffle(self, randomize=True, seed=42):
         for _ in self.datasets:
-            pp(_.shuffle(randomize,seed))
+            print(f"shuffling {_}")
+            _.shuffle(randomize,seed)
     
     def determine_class_weights(self):
         ct=torch.zeros(len(self.punct_label_ids))
