@@ -43,6 +43,7 @@ def main(cfg: DictConfig)->None:
     new_lr = lr_finder.suggestion()
     model.hparams.model.optim.lr = new_lr
     model.dm.reset()
+    model.epoch=0
     # model.setup_datamodule()
     # while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         # model.unfreeze(cfg.model.unfreeze_step)
