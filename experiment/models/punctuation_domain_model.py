@@ -118,7 +118,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
-        # self.unfreeze(self.hparams.model.unfrozen)
+        self.epoch=0
 
     def forward(self, input_ids, attention_mask, domain_ids=None):
         hidden_states = self.transformer(
@@ -234,6 +234,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self.log_dict(output_dict.pop('log'), on_epoch=True)
 
             return output_dict
+        self.epoch+=1
+        if self.epoch%self.hparams.model.unfreeze_every:
+            self.unfreeze(self.hparams.model.unfreeze_step)
 
     
 
@@ -666,6 +669,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
     def unfreeze(self, i: int = 1):
         self.frozen -= i
         self.hparams.model.unfrozen+=i
+        if self.hparams.model.unfrozen>self.hparams.model.maximum_unfrozen:
+            self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
+            self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
         self.freeze_transformer_to(max(0, self.frozen))
 
     def teardown(self, stage: str):

@@ -37,20 +37,20 @@ def main(cfg: DictConfig)->None:
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     
+    lr_finder = trainer.tuner.lr_find(model,min_lr=1e-08, max_lr=1e-02, num_training=60)
+    # Results can be found in
+    pp(lr_finder.results)
+    new_lr = lr_finder.suggestion()
+    model.hparams.model.optim.lr = new_lr
+    model.dm.reset()
     # model.setup_datamodule()
-    while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
-        model.dm.reset()
-        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-08, max_lr=1e-02, num_training=60)
-        # Results can be found in
-        pp(lr_finder.results)
-        new_lr = lr_finder.suggestion()
-        model.hparams.model.optim.lr = new_lr
-        model.dm.reset()
-        trainer.fit(model)
-        model.unfreeze(cfg.model.unfreeze_step)
-    
+    # while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
+        # model.unfreeze(cfg.model.unfreeze_step)
+    trainer.fit(model)
     if cfg.model.nemo_path:
         model.save_to(cfg.model.nemo_path)
+
+    
     
     gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
