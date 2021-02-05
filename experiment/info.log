@@ -7,53 +7,77 @@ Parameter Group 0
     lr: 0.001
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f57ad9d57f0>" 
-will be used during training (effective maximum steps = 100) - 
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f13d3dd1400>" 
+will be used during training (effective maximum steps = 60) - 
 Parameters : 
 (warmup_steps: null
 warmup_ratio: 0.1
 last_epoch: -1
-max_steps: 100
+max_steps: 60
 )
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          66.67      16.67      26.67         24
-! (label_id: 1)                                          5.56      11.11       7.41          9
-, (label_id: 2)                                         50.00       8.11      13.95         74
-- (label_id: 3)                                          0.00       0.00       0.00          3
-. (label_id: 4)                                         50.00       0.69       1.37        144
-: (label_id: 5)                                          0.00       0.00       0.00          0
-; (label_id: 6)                                          0.00       0.00       0.00          0
-? (label_id: 7)                                         20.00       7.14      10.53         14
-— (label_id: 8)                                          0.00       0.00       0.00          0
-… (label_id: 9)                                          2.33      20.00       4.17         10
+ (label_id: 0)                                          24.14      10.10      14.24        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                         34.00       2.47       4.60        689
+- (label_id: 3)                                          4.42       8.62       5.85         58
+. (label_id: 4)                                         50.00       1.57       3.05        572
+: (label_id: 5)                                          0.55      40.00       1.09         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          2.18      17.39       3.87         46
+— (label_id: 8)                                          1.42       5.71       2.27         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
 -------------------
-micro avg                                                5.40       5.40       5.40        278
-macro avg                                               27.79       9.10       9.16        278
-weighted avg                                            46.23       5.40       7.65        278
+micro avg                                                4.02       4.02       4.02       1641
+macro avg                                               11.67       8.59       3.50       1641
+weighted avg                                            35.01       4.02       5.17       1641
 
 [INFO] - Domain report: 
 label                                                precision    recall       f1           support   
-0 (label_id: 0)                                         33.33      16.67      22.22         12
-1 (label_id: 1)                                         44.44      66.67      53.33         12
+0 (label_id: 0)                                        100.00     100.00     100.00        104
 -------------------
-micro avg                                               41.67      41.67      41.67         24
-macro avg                                               38.89      41.67      37.78         24
-weighted avg                                            38.89      41.67      37.78         24
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
 
 [INFO] - Optimizer config = AdamW (
 Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 0.001584893192461114
+    lr: 0.003162277660168378
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f57b5e4a1f0>" 
-will be used during training (effective maximum steps = 7962) - 
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f13c79baa30>" 
+will be used during training (effective maximum steps = 800) - 
 Parameters : 
 (warmup_steps: null
 warmup_ratio: 0.1
 last_epoch: -1
-max_steps: 7962
+max_steps: 800
 )
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          24.14      10.10      14.24        208
+! (label_id: 1)                                          0.00       0.00       0.00         13
+, (label_id: 2)                                         34.00       2.47       4.60        689
+- (label_id: 3)                                          4.42       8.62       5.85         58
+. (label_id: 4)                                         50.00       1.57       3.05        572
+: (label_id: 5)                                          0.55      40.00       1.09         10
+; (label_id: 6)                                          0.00       0.00       0.00          6
+? (label_id: 7)                                          2.18      17.39       3.87         46
+— (label_id: 8)                                          1.42       5.71       2.27         35
+… (label_id: 9)                                          0.00       0.00       0.00          4
+-------------------
+micro avg                                                4.02       4.02       4.02       1641
+macro avg                                               11.67       8.59       3.50       1641
+weighted avg                                            35.01       4.02       5.17       1641
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00        104
+-------------------
+micro avg                                              100.00     100.00     100.00        104
+macro avg                                              100.00     100.00     100.00        104
+weighted avg                                           100.00     100.00     100.00        104
+
