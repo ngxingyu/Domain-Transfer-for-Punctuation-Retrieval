@@ -1,0 +1,521 @@
+commit hash: 5b55597d5aa99268a9f2ee637608d94abc88934b
+diff --git a/experiment/Nemo2Lightning.ipynb b/experiment/Nemo2Lightning.ipynb
+index ebb0800..d2ec988 100644
+--- a/experiment/Nemo2Lightning.ipynb
++++ b/experiment/Nemo2Lightning.ipynb
+@@ -74,79 +74,79 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 11,
++   "execution_count": 13,
+    "metadata": {},
+    "outputs": [
+     {
+      "name": "stderr",
+      "output_type": "stream",
+      "text": [
+-      "09:00:02.50 LOG:\n",
+-      "09:00:02.52 .... 'cel none' = 'cel none'\n",
+-      "09:00:02.53 .... output = tensor([1.5514, 1.5514, 0.5514, 0.5514], grad_fn=<NllLossBackward>)\n",
+-      "09:00:02.53 LOG:\n",
+-      "09:00:02.53 .... 'cel mean' = 'cel mean'\n",
+-      "09:00:02.53 .... output = tensor(1.0514, grad_fn=<NllLossBackward>)\n",
+-      "09:00:02.53 LOG:\n",
+-      "09:00:02.53 .... 'cel sum' = 'cel sum'\n",
+-      "09:00:02.53 .... output = tensor(4.2058, grad_fn=<NllLossBackward>)\n",
+-      "09:00:02.53 LOG:\n",
+-      "09:00:02.54 .... 'focal sum' = 'focal sum'\n",
+-      "09:00:02.54 .... loss(inp, tar) = tensor(6.7352, grad_fn=<SumBackward0>)\n",
+-      "09:00:02.54 LOG:\n",
+-      "09:00:02.54 .... 'focal mean' = 'focal mean'\n",
+-      "09:00:02.54 .... loss(inp, tar) = tensor(0.4210, grad_fn=<MeanBackward0>)\n",
+-      "09:00:02.54 LOG:\n",
+-      "09:00:02.54 .... 'focal none' = 'focal none'\n",
+-      "09:00:02.55 .... loss(inp, tar) = tensor([0.9635, 0.9635, 0.0991, 0.0991], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.55 LOG:\n",
+-      "09:00:02.55 .... 'focal none' = 'focal none'\n",
+-      "09:00:02.55 .... loss(inp, tar) = tensor([0.4716, 0.4716, 0.0075, 0.0075], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.55 LOG:\n",
+-      "09:00:02.55 .... 'crf,none' = 'crf,none'\n",
+-      "09:00:02.56 .... output = tensor([4.2377], grad_fn=<NegBackward>)\n",
+-      "09:00:02.56 LOG:\n",
+-      "09:00:02.56 .... 'crf,mean' = 'crf,mean'\n",
+-      "09:00:02.56 .... output = tensor(4.3934, grad_fn=<NegBackward>)\n",
+-      "09:00:02.56 LOG:\n",
+-      "09:00:02.56 .... 'crf,sum' = 'crf,sum'\n",
+-      "09:00:02.57 .... output = tensor(4.3557, grad_fn=<NegBackward>)\n",
+-      "09:00:02.57 LOG:\n",
+-      "09:00:02.57 .... 'crf,token_mean' = 'crf,token_mean'\n",
+-      "09:00:02.57 .... output = tensor(1.0820, grad_fn=<DivBackward0>)\n",
+-      "09:00:02.57 LOG:\n",
+-      "09:00:02.57 .... 'dice none,micro' = 'dice none,micro'\n",
+-      "09:00:02.57 .... output = tensor(0.1876, grad_fn=<PowBackward0>)\n",
+-      "09:00:02.58 LOG:\n",
+-      "09:00:02.58 .... 'dice mean,micro' = 'dice mean,micro'\n",
+-      "09:00:02.58 .... output = tensor(0.0625, grad_fn=<DivBackward0>)\n",
+-      "09:00:02.58 LOG:\n",
+-      "09:00:02.58 .... 'dice sum,micro' = 'dice sum,micro'\n",
+-      "09:00:02.58 .... output = tensor(0.1876, grad_fn=<SumBackward0>)\n",
+-      "09:00:02.58 LOG:\n",
+-      "09:00:02.58 .... 'dice sum,micro' = 'dice sum,micro'\n",
+-      "09:00:02.59 .... output = tensor(0.0812, grad_fn=<SumBackward0>)\n",
+-      "09:00:02.59 LOG:\n",
+-      "09:00:02.59 .... 'dice none,macro' = 'dice none,macro'\n",
+-      "09:00:02.59 .... loss(inp, tar) = tensor([5.9547, 4.4872, 2.0551], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.59 LOG:\n",
+-      "09:00:02.59 .... 'dice none,macro' = 'dice none,macro'\n",
+-      "09:00:02.60 .... loss(inp, tar) = tensor([0.0042, 0.1202, 0.0027], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.60 LOG:\n",
+-      "09:00:02.60 .... 'dice none,macro' = 'dice none,macro'\n",
+-      "09:00:02.60 .... loss(inp, tar) = tensor([0.1116, 0.4285, 0.0935], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.60 LOG:\n",
+-      "09:00:02.60 .... 'dice mean,macro' = 'dice mean,macro'\n",
+-      "09:00:02.60 .... loss(inp, tar) = tensor(0.2112, grad_fn=<DivBackward0>)\n",
+-      "09:00:02.61 LOG:\n",
+-      "09:00:02.61 .... 'dice sum,macro' = 'dice sum,macro'\n",
+-      "09:00:02.61 .... loss(inp, tar) = tensor(0.6335, grad_fn=<SumBackward0>)\n",
+-      "09:00:02.61 LOG:\n",
+-      "09:00:02.61 .... 'dice sum,macro' = 'dice sum,macro'\n",
+-      "09:00:02.61 .... output = tensor([0.5989, 0.7696, 0.2411], grad_fn=<MulBackward0>)\n",
+-      "09:00:02.61 LOG:\n",
+-      "09:00:02.62 .... 'dice sum,macro' = 'dice sum,macro'\n",
+-      "09:00:02.62 .... output = tensor([0.2148, 0.4559, 0.0140], grad_fn=<MulBackward0>)\n"
++      "09:01:12.28 LOG:\n",
++      "09:01:12.30 .... 'cel none' = 'cel none'\n",
++      "09:01:12.31 .... output = tensor([1.5514, 1.5514, 0.5514, 0.5514], grad_fn=<NllLossBackward>)\n",
++      "09:01:12.31 LOG:\n",
++      "09:01:12.31 .... 'cel mean' = 'cel mean'\n",
++      "09:01:12.31 .... output = tensor(1.0514, grad_fn=<NllLossBackward>)\n",
++      "09:01:12.31 LOG:\n",
++      "09:01:12.31 .... 'cel sum' = 'cel sum'\n",
++      "09:01:12.31 .... output = tensor(4.2058, grad_fn=<NllLossBackward>)\n",
++      "09:01:12.31 LOG:\n",
++      "09:01:12.32 .... 'focal sum' = 'focal sum'\n",
++      "09:01:12.32 .... loss(inp, tar) = tensor(6.7352, grad_fn=<SumBackward0>)\n",
++      "09:01:12.32 LOG:\n",
++      "09:01:12.32 .... 'focal mean' = 'focal mean'\n",
++      "09:01:12.32 .... loss(inp, tar) = tensor(0.4210, grad_fn=<MeanBackward0>)\n",
++      "09:01:12.32 LOG:\n",
++      "09:01:12.33 .... 'focal none' = 'focal none'\n",
++      "09:01:12.33 .... loss(inp, tar) = tensor([0.9635, 0.9635, 0.0991, 0.0991], grad_fn=<MulBackward0>)\n",
++      "09:01:12.33 LOG:\n",
++      "09:01:12.33 .... 'focal none' = 'focal none'\n",
++      "09:01:12.33 .... loss(inp, tar) = tensor([0.4716, 0.4716, 0.0075, 0.0075], grad_fn=<MulBackward0>)\n",
++      "09:01:12.33 LOG:\n",
++      "09:01:12.34 .... 'crf,none' = 'crf,none'\n",
++      "09:01:12.34 .... output = tensor([4.2927], grad_fn=<NegBackward>)\n",
++      "09:01:12.34 LOG:\n",
++      "09:01:12.34 .... 'crf,mean' = 'crf,mean'\n",
++      "09:01:12.34 .... output = tensor(4.3138, grad_fn=<NegBackward>)\n",
++      "09:01:12.34 LOG:\n",
++      "09:01:12.35 .... 'crf,sum' = 'crf,sum'\n",
++      "09:01:12.35 .... output = tensor(4.2588, grad_fn=<NegBackward>)\n",
++      "09:01:12.35 LOG:\n",
++      "09:01:12.35 .... 'crf,token_mean' = 'crf,token_mean'\n",
++      "09:01:12.35 .... output = tensor(1.0429, grad_fn=<DivBackward0>)\n",
++      "09:01:12.35 LOG:\n",
++      "09:01:12.35 .... 'dice none,micro' = 'dice none,micro'\n",
++      "09:01:12.36 .... output = tensor(0.1876, grad_fn=<PowBackward0>)\n",
++      "09:01:12.36 LOG:\n",
++      "09:01:12.36 .... 'dice mean,micro' = 'dice mean,micro'\n",
++      "09:01:12.36 .... output = tensor(0.0625, grad_fn=<DivBackward0>)\n",
++      "09:01:12.36 LOG:\n",
++      "09:01:12.36 .... 'dice sum,micro' = 'dice sum,micro'\n",
++      "09:01:12.36 .... output = tensor(0.1876, grad_fn=<SumBackward0>)\n",
++      "09:01:12.37 LOG:\n",
++      "09:01:12.37 .... 'dice sum,micro' = 'dice sum,micro'\n",
++      "09:01:12.37 .... output = tensor(0.0812, grad_fn=<SumBackward0>)\n",
++      "09:01:12.37 LOG:\n",
++      "09:01:12.37 .... 'dice none,macro' = 'dice none,macro'\n",
++      "09:01:12.37 .... loss(inp, tar) = tensor([5.9547, 4.4872, 2.0551], grad_fn=<MulBackward0>)\n",
++      "09:01:12.37 LOG:\n",
++      "09:01:12.38 .... 'dice mean,macro' = 'dice mean,macro'\n",
++      "09:01:12.38 .... loss(inp, tar) = tensor(0.2112, grad_fn=<DivBackward0>)\n",
++      "09:01:12.38 LOG:\n",
++      "09:01:12.38 .... 'dice sum,macro' = 'dice sum,macro'\n",
++      "09:01:12.38 .... loss(inp, tar) = tensor(0.6335, grad_fn=<SumBackward0>)\n",
++      "09:01:12.38 LOG:\n",
++      "09:01:12.38 .... 'dice none,macro' = 'dice none,macro'\n",
++      "09:01:12.39 .... loss(inp, tar) = tensor([0.3340, 0.6546, 0.3057], grad_fn=<MulBackward0>)\n",
++      "09:01:12.39 LOG:\n",
++      "09:01:12.39 .... 'dice none,macro' = 'dice none,macro'\n",
++      "09:01:12.39 .... loss(inp, tar) = tensor([0.0373, 0.2805, 0.0286], grad_fn=<MulBackward0>)\n",
++      "09:01:12.39 LOG:\n",
++      "09:01:12.39 .... 'dice sum,macro' = 'dice sum,macro'\n",
++      "09:01:12.40 .... output = tensor([0.5989, 0.7696, 0.2411], grad_fn=<MulBackward0>)\n",
++      "09:01:12.40 LOG:\n",
++      "09:01:12.40 .... 'dice sum,macro' = 'dice sum,macro'\n",
++      "09:01:12.40 .... output = tensor([0.2148, 0.4559, 0.0140], grad_fn=<MulBackward0>)\n"
+      ]
+     },
+     {
+@@ -155,7 +155,7 @@
+        "('dice sum,macro', tensor([0.2148, 0.4559, 0.0140], grad_fn=<MulBackward0>))"
+       ]
+      },
+-     "execution_count": 11,
++     "execution_count": 13,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+@@ -249,25 +249,25 @@
+     "# output.backward()\n",
+     "pp('dice none,macro',loss(inp, tar))\n",
+     "\n",
+-    "loss = FocalDiceLoss(reduction='none',macro_average=True,alpha=5.0)\n",
++    "loss = FocalDiceLoss(reduction='mean',macro_average=True)\n",
+     "output = loss(inp, tar)\n",
+     "# output.backward()\n",
+-    "pp('dice none,macro',loss(inp, tar))\n",
++    "pp('dice mean,macro',loss(inp, tar))\n",
+     "\n",
+-    "loss = FocalDiceLoss(reduction='none',macro_average=True)\n",
++    "loss = FocalDiceLoss(reduction='sum',macro_average=True)\n",
+     "output = loss(inp, tar)\n",
+     "# output.backward()\n",
+-    "pp('dice none,macro',loss(inp, tar))\n",
++    "pp('dice sum,macro',loss(inp, tar))\n",
+     "\n",
+-    "loss = FocalDiceLoss(reduction='mean',macro_average=True)\n",
++    "loss = FocalDiceLoss(reduction='none',macro_average=True,alpha=1.0)\n",
+     "output = loss(inp, tar)\n",
+     "# output.backward()\n",
+-    "pp('dice mean,macro',loss(inp, tar))\n",
++    "pp('dice none,macro',loss(inp, tar))\n",
+     "\n",
+-    "loss = FocalDiceLoss(reduction='sum',macro_average=True)\n",
++    "loss = FocalDiceLoss(reduction='none',macro_average=True, alpha=3)\n",
+     "output = loss(inp, tar)\n",
+     "# output.backward()\n",
+-    "pp('dice sum,macro',loss(inp, tar))\n",
++    "pp('dice none,macro',loss(inp, tar))\n",
+     "\n",
+     "inp = torch.tensor([[[0,1,0],[1,0,1],[0,0,1],[0,1,0]]],dtype=torch.float, requires_grad=True)\n",
+     "tar = torch.tensor([[0,1,2,0]],dtype=torch.long)\n",
+@@ -284,78 +284,6 @@
+     "pp('dice sum,macro',output)"
+    ]
+   },
+-  {
+-   "cell_type": "code",
+-   "execution_count": null,
+-   "metadata": {},
+-   "outputs": [],
+-   "source": [
+-    "# loss = LinearChainCRF(num_labels=5,reduction='none')\n",
+-    "# output = loss(inp, tar,mask)\n",
+-    "# # output.backward()\n",
+-    "# ic('crf,none',output)\n",
+-    "\n",
+-    "# loss = LinearChainCRF(num_labels=5,reduction='mean')\n",
+-    "# output = loss(inp, tar,mask)\n",
+-    "# # output.backward()\n",
+-    "# ic('crf,mean',output)\n",
+-    "\n",
+-    "# loss = LinearChainCRF(num_labels=5,reduction='sum')\n",
+-    "# output = loss(inp, tar,mask)\n",
+-    "# # output.backward()\n",
+-    "# ic('crf,sum',output)\n",
+-    "\n",
+-    "# loss = LinearChainCRF(num_labels=5,reduction='token_mean')\n",
+-    "# output = loss(inp, tar,mask)\n",
+-    "# # output.backward()\n",
+-    "# ic('crf,token_mean',output)\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='none',macro_average=True)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal none,macro',loss(inp, tar))\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='mean',macro_average=True)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal mean,macro',loss(inp, tar))\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='sum',macro_average=True)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal sum,macro',loss(inp, tar))\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='none', macro_average=False)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal none,micro',output)\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='mean', macro_average=False)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal mean,micro',output)\n",
+-    "\n",
+-    "# loss = FocalDiceLoss(reduction='sum', macro_average=False)\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('focal sum,micro',output)\n",
+-    "\n",
+-    "# loss = CrossEntropyLoss(reduction='none')\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('cel none',output)\n",
+-    "\n",
+-    "# loss = CrossEntropyLoss(reduction='mean')\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('cel mean',output)\n",
+-    "\n",
+-    "# loss = CrossEntropyLoss(reduction='sum')\n",
+-    "# output = loss(inp, tar)\n",
+-    "# # output.backward()\n",
+-    "# pp('cel sum',output)"
+-   ]
+-  },
+   {
+    "cell_type": "code",
+    "execution_count": 2,
+@@ -365,15 +293,20 @@
+      "name": "stderr",
+      "output_type": "stream",
+      "text": [
+-      "ic| os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M')): 0\n",
+-      "ic| os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M')): 0\n",
+-      "ic| max(len(d) for d in self.datasets): 12\n"
++      "10:05:46.40 LOG:\n",
++      "10:05:46.46 .... os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)) = 0\n",
++      "10:05:46.66 LOG:\n",
++      "10:05:46.66 .... os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)) = 0\n",
++      "10:06:04.19 LOG:\n",
++      "10:06:04.20 .... os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)) = 0\n",
++      "10:06:04.34 LOG:\n",
++      "10:06:04.34 .... os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)) = 0\n"
+      ]
+     },
+     {
+      "data": {
+       "text/plain": [
+-       "12"
++       "10609"
+       ]
+      },
+      "execution_count": 2,
+@@ -408,6 +341,35 @@
+     "len(dm.train_dataset)"
+    ]
+   },
++  {
++   "cell_type": "code",
++   "execution_count": 4,
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "10609"
++      ]
++     },
++     "execution_count": 4,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "# it=dm.train_dataset\n",
++    "# ni=next(it)\n",
++    "# it=dm.train_dataset.datasets[0]\n",
++    "dm.train_dataset.__len__()#determine_class_weights()\n",
++    "# ct=torch.zeros(10)\n",
++    "# for _ in range(64):\n",
++    "#     print('.',end='')\n",
++    "#     ni=next(it)\n",
++    "#     ct+=torch.bincount(ni['labels'].view(-1))\n",
++    "# return ct/sum(ct)"
++   ]
++  },
+   {
+    "cell_type": "code",
+    "execution_count": 19,
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 9d99993..7417f08 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -1,42 +1,42 @@
+ seed: 42
+ trainer:
+-    gpus: 1 # the number of gpus, 0 for CPU
++    # gpus: 1 # the number of gpus, 0 for CPU
++    # num_nodes: 1
++    # max_epochs: 8
++    # max_steps: null # precedence over max_epochs
++    # accumulate_grad_batches: 4 # accumulates grads every k batches
++    # gradient_clip_val: 0
++    # amp_level: O1 # O1/O2 for mixed precision
++    # precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
++    # accelerator: ddp
++    # checkpoint_callback: false  # Provided by exp_manager
++    # logger: false #false  # Provided by exp_manager
++    # log_every_n_steps: 1  # Interval of logging.
++    # val_check_interval: 1.0  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
++    # resume_from_checkpoint: null
++
++    gpus: 0 # the number of gpus, 0 for CPU
+     num_nodes: 1
+     max_epochs: 8
+     max_steps: null # precedence over max_epochs
+     accumulate_grad_batches: 4 # accumulates grads every k batches
+     gradient_clip_val: 0
+-    amp_level: O1 # O1/O2 for mixed precision
+-    precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+-    accelerator: ddp
++    amp_level: O0 # O1/O2 for mixed precision
++    precision: 32 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
++    # accelerator: ddp
+     checkpoint_callback: false  # Provided by exp_manager
+     logger: false #false  # Provided by exp_manager
+     log_every_n_steps: 1  # Interval of logging.
+     val_check_interval: 1.0  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
+     resume_from_checkpoint: null
+ 
+-    # gpus: 0 # the number of gpus, 0 for CPU
+-    # num_nodes: 1
+-    # max_epochs: 3
+-    # max_steps: null # precedence over max_epochs
+-    # accumulate_grad_batches: 8 # accumulates grads every k batches
+-    # gradient_clip_val: 0.5
+-    # amp_level: O0 # O1/O2 for mixed precision
+-    # precision: 32 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+-    # # accelerator: ddp
+-    # checkpoint_callback: false  # Provided by exp_manager
+-    # logger: false #false  # Provided by exp_manager
+-    # log_every_n_steps: 1  # Interval of logging.
+-    # val_check_interval: 1.0  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
+-    # resume_from_checkpoint: null
+-
+ exp_manager:
+-    exp_dir: /root/experiments # /home/nxingyu2/project/ # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
++    exp_dir: /home/nxingyu2/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+     name: Punctuation_with_Domain_discriminator  # The name of your model
+     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
+     create_checkpoint_callback: true 
+-base_path: /root/data # /home/nxingyu2/data # 
+-tmp_path: /tmp # /home/nxingyu2/data/tmp # 
++base_path: /home/nxingyu2/data # /root/data # 
++tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+ 
+ model:
+     nemo_path: null
+@@ -57,7 +57,7 @@ model:
+     punct_class_weights: true
+     
+     dataset:
+-        data_dir: /root/data # /home/nxingyu2/data # 
++        data_dir: /home/nxingyu2/data # /root/data # 
+         labelled:
+             - ${base_path}/ted_talks_processed #
+         unlabelled:
+@@ -108,7 +108,7 @@ model:
+         activation: 'relu'
+         log_softmax: false
+         use_transformer_init: true
+-        loss: 'cel'
++        loss: 'dice'
+ 
+     domain_head:
+         domain_num_fc_layers: 1
+@@ -121,7 +121,7 @@ model:
+     
+     dice_loss:
+         epsilon: 0.01
+-        alpha: 3
++        alpha: 4
+         macro_average: true
+ 
+     focal_loss: 
+diff --git a/experiment/info.log b/experiment/info.log
+index 6f9e06b..5024c4f 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,83 +1,2 @@
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.001
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f13d3dd1400>" 
+-will be used during training (effective maximum steps = 60) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-last_epoch: -1
+-max_steps: 60
+-)
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          24.14      10.10      14.24        208
+-! (label_id: 1)                                          0.00       0.00       0.00         13
+-, (label_id: 2)                                         34.00       2.47       4.60        689
+-- (label_id: 3)                                          4.42       8.62       5.85         58
+-. (label_id: 4)                                         50.00       1.57       3.05        572
+-: (label_id: 5)                                          0.55      40.00       1.09         10
+-; (label_id: 6)                                          0.00       0.00       0.00          6
+-? (label_id: 7)                                          2.18      17.39       3.87         46
+-— (label_id: 8)                                          1.42       5.71       2.27         35
+-… (label_id: 9)                                          0.00       0.00       0.00          4
+--------------------
+-micro avg                                                4.02       4.02       4.02       1641
+-macro avg                                               11.67       8.59       3.50       1641
+-weighted avg                                            35.01       4.02       5.17       1641
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        104
+--------------------
+-micro avg                                              100.00     100.00     100.00        104
+-macro avg                                              100.00     100.00     100.00        104
+-weighted avg                                           100.00     100.00     100.00        104
+-
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.003162277660168378
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f13c79baa30>" 
+-will be used during training (effective maximum steps = 800) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-last_epoch: -1
+-max_steps: 800
+-)
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          24.14      10.10      14.24        208
+-! (label_id: 1)                                          0.00       0.00       0.00         13
+-, (label_id: 2)                                         34.00       2.47       4.60        689
+-- (label_id: 3)                                          4.42       8.62       5.85         58
+-. (label_id: 4)                                         50.00       1.57       3.05        572
+-: (label_id: 5)                                          0.55      40.00       1.09         10
+-; (label_id: 6)                                          0.00       0.00       0.00          6
+-? (label_id: 7)                                          2.18      17.39       3.87         46
+-— (label_id: 8)                                          1.42       5.71       2.27         35
+-… (label_id: 9)                                          0.00       0.00       0.00          4
+--------------------
+-micro avg                                                4.02       4.02       4.02       1641
+-macro avg                                               11.67       8.59       3.50       1641
+-weighted avg                                            35.01       4.02       5.17       1641
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        104
+--------------------
+-micro avg                                              100.00     100.00     100.00        104
+-macro avg                                              100.00     100.00     100.00        104
+-weighted avg                                           100.00     100.00     100.00        104
+-
++[INFO] - GPU available: True, used: False
++[INFO] - TPU available: None, using: 0 TPU cores

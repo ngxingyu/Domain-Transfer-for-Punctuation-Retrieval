@@ -152,9 +152,9 @@ Parameters to tune:
 - Optimizers
 
 Experiments:
-CEL BERT novograd lr 0.00575 ted: blank and period overwhelm training on 1st epoch.
+### CEL BERT novograd lr 0.00575 ted: blank and period overwhelm training on 1st epoch.
 label            | precision    | recall   | f1     | support   
----
+---|---|---|---|---
  (label_id: 0)   | 96.71        | 100.00   | 98.33  | 3702
 ! (label_id: 1)  | 0.00         | 0.00     | 0.00   | 115
 , (label_id: 2)  | 0.00         | 0.00     | 0.00   | 12414
@@ -166,7 +166,7 @@ label            | precision    | recall   | f1     | support
 — (label_id: 8)  | 0.00         | 0.00     | 0.00   | 385
 … (label_id: 9)  | 0.00         | 0.00     | 0.00   | 66
 
-Focal DistilBERT gamma 3 0 unfrozen ted
+###Focal DistilBERT gamma 3 0 unfrozen ted
 label                                                precision    recall       f1           support   
  (label_id: 0)                                         100.00      51.29      67.80       4118
 ! (label_id: 1)                                          0.00       0.00       0.00         91
@@ -179,7 +179,135 @@ label                                                precision    recall       f
 — (label_id: 8)                                          0.00       0.00       0.00        566
 … (label_id: 9)                                          0.00       0.00       0.00         52
 
-Electra small cel weighted ted l 1 unfrozen 0.0031622776 lr adamw accgrad4 bs8
+## Observations
+- CRF tends to perform better on higher proportion classes like blank, comma and period without class weights.
+- So far, the best performing model on F1 is dice with alpha 4, 1 unfrozen layer for 8 epoch.
+- cel Doesnt quite converge, and weighted cel's blank class seems to suffer. To experiment further. with cel and focal
+- Higher dice alpha results in better scores on weaker classes.
+- Dice with class weights perform better than without
 
 
 
+### elsmall dice alpha 4 weighted ted-l unfrozen 0.003162277660 lr adamw accgrad4 bbs8
+
+label                 |   precision  |  recall |    f1    |      support
+---|---|---|---|---
+ (label_id: 0)        |      79.50   |   29.94 |   43.50  |    5026
+! (label_id: 1)       |       6.84   |   20.59 |   10.27  |     102
+, (label_id: 2)       |      50.70   |   60.09 |   55.00  |   17571
+- (label_id: 3)       |      64.45   |   82.11 |   72.22  |    1526
+. (label_id: 4)       |      57.40   |   49.43 |   53.12  |   14767
+: (label_id: 5)       |      17.86   |   31.83 |   22.89  |     289
+; (label_id: 6)       |       1.50   |    5.88 |    2.39  |      85
+? (label_id: 7)       |      37.02   |   61.32 |   46.17  |    1228
+— (label_id: 8)       |       6.44   |    7.34 |    6.86  |     763
+… (label_id: 9)       |       0.00   |    0.00 |    0.00  |      80
+-------------------||||
+micro avg             |      51.99   |   51.99 |   51.99  |   41437
+macro avg             |      32.17   |   34.85 |   31.24  |   41437
+weighted avg          |      55.33   |   51.99 |   51.87  |   41437
+
+{'punct_f1': tensor(31.2411),
+ 'punct_precision': tensor(32.1728),
+ 'punct_recall': tensor(34.8539),
+ 'test_loss': tensor(0.6303)}
+
+
+### elsmall dice alpha 1 weighted ted-l unfrozen 0.007943282347 lr adamw accgrad4 bbs7
+
+label                 |   precision  |  recall |    f1    |      support
+---|---|---|---|---
+ (label_id: 0)             |     0.00  |  0.00 |   0.00  |  5026
+! (label_id: 1)            |     0.00  |  0.00 |   0.00  |   102
+, (label_id: 2)            |    42.79  | 47.54 |  45.04  | 17571
+- (label_id: 3)            |    73.63  | 80.87 |  77.08  |  1526
+. (label_id: 4)            |    47.36  | 55.16 |  50.96  | 14767
+: (label_id: 5)            |    10.88  | 27.68 |  15.62  |   289
+; (label_id: 6)            |     0.00  |  0.00 |   0.00  |    85
+? (label_id: 7)            |    43.18  | 60.10 |  50.26  |  1228
+— (label_id: 8)            |     3.03  |  2.36 |   2.65  |   763
+… (label_id: 9)            |     0.00  |  0.00 |   0.00  |    80
+-------------------||||
+micro avg                  |    44.81  | 44.81 |  44.81  | 41437
+macro avg                  |    22.09  | 27.37 |  24.16  | 41437
+weighted avg               |    39.14  | 44.81 |  41.75  | 41437
+
+{'punct_f1': tensor(24.1611),
+ 'punct_precision': tensor(22.0869),
+ 'punct_recall': tensor(27.3705),
+ 'test_loss': tensor(0.4047)}
+
+
+### elsmall crf ted-l unfrozen 0.005011872336272719 lr adamw accgrad4 bbs8
+
+label                  |  precision | recall |   f1   |     support
+---|---|---|---|---
+ (label_id: 0)         |     59.35  |  52.35 |  55.63 |   7314
+! (label_id: 1)        |      0.00  |   0.00 |   0.00 |    154
+, (label_id: 2)        |     44.15  |  82.80 |  57.59 |  28180
+- (label_id: 3)        |      3.91  |   2.02 |   2.66 |   1933
+. (label_id: 4)        |     39.91  |  11.64 |  18.02 |  24624
+: (label_id: 5)        |      0.00  |   0.00 |   0.00 |    522
+; (label_id: 6)        |      0.00  |   0.00 |   0.00 |    485
+? (label_id: 7)        |      0.00  |   0.00 |   0.00 |   2096
+— (label_id: 8)        |      0.00  |   0.00 |   0.00 |   2055
+… (label_id: 9)        |      0.00  |   0.00 |   0.00 |    123
+-------------------||||
+micro avg              |     44.55  |  44.55 |  44.55 |  67486
+macro avg              |     14.73  |  14.88 |  13.39 |  67486
+weighted avg           |     39.54  |  44.55 |  36.73 |  67486
+
+{'punct_f1': 13.390362739562988,
+ 'punct_precision': 14.73101806640625,
+ 'punct_recall': 14.881169319152832,
+ 'test_loss': 11.328206062316895}
+
+### elsmall dice alpha 3 no weight ted-l unfrozen 0.005011872336272719 lr adamw accgrad4 bbs8
+label                |  precision | recall |   f1   |    support
+---|---|---|---|---
+ (label_id: 0)       |  62.32   | 99.78 |  76.72  |   7314
+! (label_id: 1)      |   0.00   |  0.00 |   0.00  |    154
+, (label_id: 2)      |  49.81   |  4.72 |   8.62  |  28180
+- (label_id: 3)      |   5.91   | 28.35 |   9.78  |   1933
+. (label_id: 4)      |  41.80   | 52.40 |  46.50  |  24624
+: (label_id: 5)      |   0.94   |  4.02 |   1.53  |    522
+; (label_id: 6)      |   0.00   |  0.00 |   0.00  |    485
+? (label_id: 7)      |   4.92   | 24.86 |   8.22  |   2096
+— (label_id: 8)      |   0.00   |  0.00 |   0.00  |   2055
+… (label_id: 9)      |   0.00   |  0.00 |   0.00  |    123
+-------------------||||
+micro avg            |  33.52   | 33.52 |  33.52  |  67486
+macro avg            |  16.57   | 21.41 |  15.14  |  67486
+weighted avg         |  43.14   | 33.52 |  29.43  |  67486
+
+'punct_f1': 15.136445999145508,
+ 'punct_precision': 16.57059097290039,
+ 'punct_recall': 21.41229820251465,
+ 'test_loss': 0.6608337163925171}
+
+### elsmall dice alpha 5 weighted ted-l unfrozen 0 to 3 0.005011872336272719 lr adamw accgrad4 bbs8
+
+label                 |   precision  |  recall |    f1    |      support
+---|---|---|---|---
+ (label_id: 0)        |      79.50   |   29.94 |   43.50  |    5026
+! (label_id: 1)       |       6.84   |   20.59 |   10.27  |     102
+, (label_id: 2)       |      50.70   |   60.09 |   55.00  |   17571
+- (label_id: 3)       |      64.45   |   82.11 |   72.22  |    1526
+. (label_id: 4)       |      57.40   |   49.43 |   53.12  |   14767
+: (label_id: 5)       |      17.86   |   31.83 |   22.89  |     289
+; (label_id: 6)       |       1.50   |    5.88 |    2.39  |      85
+? (label_id: 7)       |      37.02   |   61.32 |   46.17  |    1228
+— (label_id: 8)       |       6.44   |    7.34 |    6.86  |     763
+… (label_id: 9)       |       0.00   |    0.00 |    0.00  |      80
+-------------------||||
+micro avg             |      51.99   |   51.99 |   51.99  |   41437
+macro avg             |      32.17   |   34.85 |   31.24  |   41437
+weighted avg          |      55.33   |   51.99 |   51.87  |   41437
+
+{'punct_f1': tensor(31.2411),
+ 'punct_precision': tensor(32.1728),
+ 'punct_recall': tensor(34.8539),
+ 'test_loss': tensor(0.6303)}
+
+ ### elsmall dice alpha 5 weighted ted-l unfrozen 0 to 2 every 3 ep total 10 ep, 0.005011872336272719 lr adamw accgrad4 
+ 
