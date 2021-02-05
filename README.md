@@ -285,31 +285,29 @@ weighted avg         |  43.14   | 33.52 |  29.43  |  67486
  'punct_recall': 21.41229820251465,
  'test_loss': 0.6608337163925171}
 
-### elsmall dice alpha 5 weighted ted-l unfrozen 0 to 3 0.005011872336272719 lr adamw accgrad4 bbs8
-
-label                 |   precision  |  recall |    f1    |      support
----|---|---|---|---
- (label_id: 0)        |      79.50   |   29.94 |   43.50  |    5026
-! (label_id: 1)       |       6.84   |   20.59 |   10.27  |     102
-, (label_id: 2)       |      50.70   |   60.09 |   55.00  |   17571
-- (label_id: 3)       |      64.45   |   82.11 |   72.22  |    1526
-. (label_id: 4)       |      57.40   |   49.43 |   53.12  |   14767
-: (label_id: 5)       |      17.86   |   31.83 |   22.89  |     289
-; (label_id: 6)       |       1.50   |    5.88 |    2.39  |      85
-? (label_id: 7)       |      37.02   |   61.32 |   46.17  |    1228
-— (label_id: 8)       |       6.44   |    7.34 |    6.86  |     763
-… (label_id: 9)       |       0.00   |    0.00 |    0.00  |      80
--------------------||||
-micro avg             |      51.99   |   51.99 |   51.99  |   41437
-macro avg             |      32.17   |   34.85 |   31.24  |   41437
-weighted avg          |      55.33   |   51.99 |   51.87  |   41437
-
-{'punct_f1': tensor(31.2411),
- 'punct_precision': tensor(32.1728),
- 'punct_recall': tensor(34.8539),
- 'test_loss': tensor(0.6303)}
 
  ### elsmall dice alpha 5 weighted ted-l unfrozen 0 to 2 every 3 ep total 10 ep, 0.003981071705534973 lr adamw accgrad4 
 
  0 layer not too much improvement, 1 layer pretty decent.
- 
+ alpha 5 seems too high. to try full run 4 next.
+layer 0 * 8 + layer 1 * 3
+
+  (label_id: 0)                                           0.00       0.00       0.00       5704
+! (label_id: 1)                                          0.00       0.00       0.00        110
+, (label_id: 2)                                          0.00       0.00       0.00      19711
+- (label_id: 3)                                          6.82      29.32      11.07       1702
+. (label_id: 4)                                         37.30      83.82      51.62      18406
+: (label_id: 5)                                          0.00       0.00       0.00        379
+; (label_id: 6)                                          0.00       0.00       0.00        190
+? (label_id: 7)                                          6.71       1.31       2.20       1446
+— (label_id: 8)                                          0.00       0.00       0.00       1227
+… (label_id: 9)                                          0.00       0.00       0.00         86
+-------------------
+micro avg                                               32.57      32.57      32.57      48961
+macro avg                                                5.08      11.44       6.49      48961
+weighted avg                                            14.46      32.57      19.86      48961
+
+ {'punct_f1': 6.104840278625488,
+ 'punct_precision': 4.423948764801025,
+ 'punct_recall': 11.572192192077637,
+ 'test_loss': 0.47498953342437744}
