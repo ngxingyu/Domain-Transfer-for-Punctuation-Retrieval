@@ -48,7 +48,7 @@ git clone git@github.com:ngxingyu/dotfiles.git
 echo 'alias nv="~/nvim.appimage"' >> ~/.bashrc
 source ~/.profile
 
-
+ls -b | head -30 | xargs ls -d
 
 
 conda install script

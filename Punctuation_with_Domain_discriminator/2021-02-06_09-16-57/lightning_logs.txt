@@ -1,0 +1,74 @@
+GPU available: True, used: False
+TPU available: None, using: 0 TPU cores
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 257   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+35.9 K    Trainable params
+13.4 M    Non-trainable params
+13.5 M    Total params
+Restored states from the checkpoint file at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_09-16-57/lr_find_temp_model.ckpt
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 257   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+35.9 K    Trainable params
+13.4 M    Non-trainable params
+13.5 M    Total params
+Epoch 0, global step 100: val_loss reached 0.85947 (best 0.85947), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_09-16-57/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.86-epoch=0.ckpt" as top 3
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 257   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+825 K     Trainable params
+12.7 M    Non-trainable params
+13.5 M    Total params
+LR finder stopped early due to diverging loss.
+Restored states from the checkpoint file at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_09-16-57/lr_find_temp_model.ckpt
+Failed to compute suggesting for `lr`. There might not be enough points.
+Traceback (most recent call last):
+  File "/home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/tuner/lr_finder.py", line 353, in suggestion
+    min_grad = np.gradient(loss).argmin()
+  File "<__array_function__ internals>", line 5, in gradient
+  File "/home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/numpy/lib/function_base.py", line 1052, in gradient
+    raise ValueError(
+ValueError: Shape of array too small to calculate a numerical gradient, at least (edge_order + 1) elements are required.
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 257   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+825 K     Trainable params
+12.7 M    Non-trainable params
+13.5 M    Total params

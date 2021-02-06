@@ -1,0 +1,6 @@
+[NeMo W 2021-02-06 09:14:51 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: GPU available but not used. Set the --gpus flag when calling the script.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo I 2021-02-06 09:14:51 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_09-14-51
+[NeMo I 2021-02-06 09:14:51 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-02-06 09:14:51 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.

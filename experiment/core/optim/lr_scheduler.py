@@ -347,6 +347,29 @@ class PolynomialHoldDecayAnnealing(WarmupHoldPolicy):
         return new_lrs
 
 
+class CosineHoldDecayAnnealing(WarmupHoldPolicy):
+    def __init__(self, optimizer, *, max_steps, min_lr=0.0, last_epoch=-1, **kwargs):
+        super().__init__(optimizer=optimizer, max_steps=max_steps, last_epoch=last_epoch, min_lr=min_lr, **kwargs)
+
+    def _get_lr(self, step):
+        for initial_lr in self.base_lrs:
+            if initial_lr < self.min_lr:
+                raise ValueError(
+                    f"{self} received an initial learning rate that was lower than the minimum learning rate."
+                )
+
+        new_lrs = [
+            _cosine_annealing(
+                initial_lr=initial_lr,
+                step=step - self.hold_steps,
+                max_steps=self.max_steps - max(self.warmup_steps, self.hold_steps),
+                min_lr=self.min_lr,
+            )
+            for initial_lr in self.base_lrs
+        ]
+        return new_lrs
+
+
 def register_scheduler(name: str, scheduler: _LRScheduler, scheduler_params: SchedulerParams):
     """
     Checks if the scheduler name exists in the registry, and if it doesnt, adds it.
@@ -654,4 +677,5 @@ AVAILABLE_SCHEDULERS = {
     'ExponentialLR': pt_scheduler.ExponentialLR,
     'ReduceLROnPlateau': pt_scheduler.ReduceLROnPlateau,
     'CyclicLR': pt_scheduler.CyclicLR,
+    'CosineHoldDecayAnnealing': CosineHoldDecayAnnealing,
 }
