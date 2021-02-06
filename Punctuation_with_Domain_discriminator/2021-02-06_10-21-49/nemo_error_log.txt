@@ -1,0 +1,4 @@
+[NeMo W 2021-02-06 10:21:49 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: GPU available but not used. Set the --gpus flag when calling the script.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-06 10:21:49 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.

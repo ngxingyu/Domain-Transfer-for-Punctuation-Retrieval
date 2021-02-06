@@ -1,0 +1,2 @@
+GPU available: True, used: False
+TPU available: None, using: 0 TPU cores

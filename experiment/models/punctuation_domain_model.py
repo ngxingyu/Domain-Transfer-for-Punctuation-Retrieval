@@ -374,6 +374,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             scheduler_config = None
 
+
         # Check if caller provided optimizer name, default to Adam otherwise
         optimizer_cls = optim_config.get('_target_', None)
 

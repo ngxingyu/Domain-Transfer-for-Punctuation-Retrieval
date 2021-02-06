@@ -7,6 +7,7 @@ import torch.optim as optim
 from omegaconf import DictConfig, OmegaConf
 from torch.optim import adadelta, adagrad, adamax, rmsprop, rprop
 from torch.optim.optimizer import Optimizer
+from torchtools.optim import Ranger
 
 from core.config import OptimizerParams, get_optimizer_config, register_optimizer_params
 from core.optim.novograd import Novograd
@@ -24,6 +25,7 @@ AVAILABLE_OPTIMIZERS = {
     'rmsprop': rmsprop.RMSprop,
     'rprop': rprop.Rprop,
     'novograd': Novograd,
+    'ranger': Ranger,
 }
 
 
