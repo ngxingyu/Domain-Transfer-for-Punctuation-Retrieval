@@ -62,6 +62,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             self.hparams.model.punct_class_weights=None
 
+        self.dropout=torch.nn.Dropout(self.hparams.model.mlp.fc_dropout)
+        self.mlp = MultiLayerPerceptron(
+            self.transformer.config.hidden_size,
+            self.transformer.config.hidden_size,
+            num_layers=self.hparams.model.mlp.num_fc_layers, 
+            activation=self.hparams.model.mlp.activation, 
+            log_softmax=self.hparams.model.mlp.log_softmax
+        )
+
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=len(self.labels_to_ids),
@@ -80,6 +89,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             log_softmax=self.hparams.model.domain_head.log_softmax,
             dropout=self.hparams.model.domain_head.fc_dropout,
             use_transformer_init=self.hparams.model.domain_head.use_transformer_init,
+            pooling=self.hparams.model.domain_head.pooling,
+            idx_conditioned_on = self.hparams.model.domain_head.idx_conditioned_on,
         )
 
         if not self.hparams.model.punct_head.loss in ['cel', 'dice', 'crf', 'focal']:
@@ -119,14 +130,17 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma
         self.freeze()
 
-    def forward(self, input_ids, attention_mask, domain_ids=None):
+    def forward(self, input_ids, attention_mask, subtoken_mask=None, domain_ids=None):
         hidden_states = self.transformer(
             input_ids=input_ids, attention_mask=attention_mask
         )[0]
+        hidden_states = self.dropout(hidden_states)
+        hidden_states = self.mlp(hidden_states)
         punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         domain_logits = self.domain_classifier(
-            hidden_states=reverse_grad_hidden_states)
+            hidden_states=reverse_grad_hidden_states,
+            subtoken_mask=subtoken_mask)
         return punct_logits, domain_logits
 
     def _make_step(self, batch):
@@ -136,7 +150,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punct_labels = batch['labels']
         domain_labels = batch['domain']
         punct_logits, domain_logits = self(
-            input_ids=input_ids, attention_mask=attention_mask
+            input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )
         punctuation_loss = self.punctuation_loss(
             logits=punct_logits[subtoken_mask[:,0]>0], labels=punct_labels[subtoken_mask[:,0]>0], loss_mask=subtoken_mask[subtoken_mask[:,0]>0])
