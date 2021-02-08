@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
 from core.utils import transformer_weights_init
@@ -20,7 +21,8 @@ class SequenceClassifier(nn.Module):
         log_softmax: bool = True,
         dropout: float = 0.0,
         use_transformer_init: bool = True,
-        idx_conditioned_on: int = 0,
+        pooling: str = 'mean', # mean, max, mean_max, token
+        idx_conditioned_on: int = None,
     ):
         """
         Initializes the SequenceClassifier module.
@@ -37,8 +39,9 @@ class SequenceClassifier(nn.Module):
         super().__init__()
         self.log_softmax = log_softmax
         self._idx_conditioned_on = idx_conditioned_on
+        self.pooling = pooling
         self.mlp = MultiLayerPerceptron(
-            hidden_size=hidden_size,
+            hidden_size=(hidden_size*2 if pooling=='mean_max' else hidden_size),
             num_classes=num_classes,
             num_layers=num_layers,
             activation=activation,
@@ -48,7 +51,23 @@ class SequenceClassifier(nn.Module):
         if use_transformer_init:
             self.apply(lambda module: transformer_weights_init(module, xavier=False))
 
-    def forward(self, hidden_states):
+    def forward(self, hidden_states, subtoken_mask=None):
         hidden_states = self.dropout(hidden_states)
-        logits = self.mlp(hidden_states[:, self._idx_conditioned_on])
+        if self.pooling=='token':
+            pooled = hidden_states[:, self._idx_conditioned_on]
+        else:
+            if subtoken_mask==None:
+                ct=hidden_states.shape[1] # Seq len
+                hidden_states=hidden_states*subtoken_mask.unsqueeze(2) # remove subtoken or padding contribution.
+            else:
+                ct = torch.sum(subtoken_mask,axis=1).unsqueeze(1)
+            pooled_sum = torch.sum(hidden_states,axis=1)            
+            if self.pooling=='mean' or self.pooling == 'mean_max':
+                pooled_mean = torch.div(pooled_sum,ct)
+            if self.pooling=='max' or self.pooling=='mean_max':
+                pooled_max = torch.max(hidden_states,axis=1)[0]
+            pooled=pooled_mean if self.pooling=='mean' else \
+                pooled_max if self.pooling=='max' else \
+                    torch.cat([pooled_mean,pooled_max],axis=-1)
+        logits = self.mlp(pooled)
         return logits

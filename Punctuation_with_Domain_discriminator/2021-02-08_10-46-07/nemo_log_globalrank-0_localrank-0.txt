@@ -1,0 +1,9 @@
+[NeMo I 2021-02-08 10:46:07 exp_manager:183] Experiments will be logged at /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_10-46-07
+[NeMo I 2021-02-08 10:46:07 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-02-08 10:46:07 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-08 10:46:15 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-08 10:46:15 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 32 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      warnings.warn(*args, **kwargs)
+    

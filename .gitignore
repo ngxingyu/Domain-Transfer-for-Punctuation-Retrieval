@@ -8,3 +8,4 @@ experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
 experiment/lightning_logs/*/checkpoints/
 **/__pycache__/*
 experiment/.hydra/
+Punctuation_with_Domain_discriminator/*/checkpoints/
