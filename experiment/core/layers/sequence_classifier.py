@@ -51,17 +51,18 @@ class SequenceClassifier(nn.Module):
         if use_transformer_init:
             self.apply(lambda module: transformer_weights_init(module, xavier=False))
 
-    def forward(self, hidden_states, subtoken_mask=None):
+    def forward(self, hidden_states, attention_mask=None):
         hidden_states = self.dropout(hidden_states)
         if self.pooling=='token':
             pooled = hidden_states[:, self._idx_conditioned_on]
         else:
-            if subtoken_mask==None:
+            if attention_mask is None:
                 ct=hidden_states.shape[1] # Seq len
-                hidden_states=hidden_states*subtoken_mask.unsqueeze(2) # remove subtoken or padding contribution.
             else:
-                ct = torch.sum(subtoken_mask,axis=1).unsqueeze(1)
-            pooled_sum = torch.sum(hidden_states,axis=1)            
+                hidden_states=hidden_states*attention_mask.unsqueeze(2) # remove subtoken or padding contribution.
+                ct = torch.sum(attention_mask,axis=1).unsqueeze(1)
+            pooled_sum = torch.sum(hidden_states,axis=1)
+
             if self.pooling=='mean' or self.pooling == 'mean_max':
                 pooled_mean = torch.div(pooled_sum,ct)
             if self.pooling=='max' or self.pooling=='mean_max':
