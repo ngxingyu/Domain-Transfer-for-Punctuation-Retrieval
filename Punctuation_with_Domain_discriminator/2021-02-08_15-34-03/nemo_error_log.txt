@@ -1,4 +1,0 @@
-[NeMo W 2021-02-08 15:34:03 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
-[NeMo W 2021-02-08 15:34:34 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
-      warnings.warn(*args, **kwargs)
-    
