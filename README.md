@@ -291,21 +291,22 @@ weighted avg         |  43.14   | 33.52 |  29.43  |  67486
  0 layer not too much improvement, 1 layer pretty decent.
  alpha 5 seems too high. to try full run 4 next.
 layer 0 * 8 + layer 1 * 3
-
-  (label_id: 0)                                           0.00       0.00       0.00       5704
-! (label_id: 1)                                          0.00       0.00       0.00        110
-, (label_id: 2)                                          0.00       0.00       0.00      19711
-- (label_id: 3)                                          6.82      29.32      11.07       1702
-. (label_id: 4)                                         37.30      83.82      51.62      18406
-: (label_id: 5)                                          0.00       0.00       0.00        379
-; (label_id: 6)                                          0.00       0.00       0.00        190
-? (label_id: 7)                                          6.71       1.31       2.20       1446
-— (label_id: 8)                                          0.00       0.00       0.00       1227
-… (label_id: 9)                                          0.00       0.00       0.00         86
--------------------
-micro avg                                               32.57      32.57      32.57      48961
-macro avg                                                5.08      11.44       6.49      48961
-weighted avg                                            14.46      32.57      19.86      48961
+label                |  precision | recall |   f1   |    support
+---|---|---|---|---
+  (label_id: 0)        | 0.00     | 0.00    | 0.00  | 5704
+! (label_id: 1)        | 0.00     | 0.00    | 0.00  | 110
+, (label_id: 2)        | 0.00     | 0.00    | 0.00  | 19711
+- (label_id: 3)        | 6.82     | 29.32   | 11.07 | 1702
+. (label_id: 4)        | 37.30    | 83.82   | 51.62 | 18406
+: (label_id: 5)        | 0.00     | 0.00    | 0.00  | 379
+; (label_id: 6)        | 0.00     | 0.00    | 0.00  | 190
+? (label_id: 7)        | 6.71     | 1.31    | 2.20  | 1446
+— (label_id: 8)        | 0.00     | 0.00    | 0.00  | 1227
+… (label_id: 9)        | 0.00     | 0.00    | 0.00  | 86
+-------------------||||
+micro avg              | 32.57    | 32.57   | 32.57 | 48961
+macro avg              | 5.08     | 11.44   | 6.49  | 48961
+weighted avg           | 14.46    | 32.57   | 19.86 | 48961
 
  {'punct_f1': 6.104840278625488,
  'punct_precision': 4.423948764801025,
@@ -318,19 +319,96 @@ lr 0 : 0.008413951416451957
 1: 0.00031622776601683794 ** too high. to adjust the min to 1e-10?
 2: 0.00031622776601683794
 
-label                                                precision    recall       f1           support
- (label_id: 0)                                           0.00       0.00       0.00       7470
-! (label_id: 1)                                          0.00       0.00       0.00        148
-, (label_id: 2)                                          0.00       0.00       0.00      28513
-- (label_id: 3)                                          3.02     100.00       5.86       2074
-. (label_id: 4)                                          0.00       0.00       0.00      25120
-: (label_id: 5)                                          0.00       0.00       0.00        570
-; (label_id: 6)                                          0.00       0.00       0.00        534
-? (label_id: 7)                                          0.00       0.00       0.00       2085
-— (label_id: 8)                                          0.00       0.00       0.00       2073
-… (label_id: 9)                                          0.00       0.00       0.00        142
+label                |  precision | recall |   f1   |    support
+---|---|---|---|---
+ (label_id: 0)       |   0.00  | 0.00     | 0.00  | 7470
+! (label_id: 1)      |   0.00  | 0.00     | 0.00  | 148
+, (label_id: 2)      |   0.00  | 0.00     | 0.00  | 28513
+- (label_id: 3)      |   3.02  | 100.00   | 5.86  | 2074
+. (label_id: 4)      |   0.00  | 0.00     | 0.00  | 25120
+: (label_id: 5)      |   0.00  | 0.00     | 0.00  | 570
+; (label_id: 6)      |   0.00  | 0.00     | 0.00  | 534
+? (label_id: 7)      |   0.00  | 0.00     | 0.00  | 2085
+— (label_id: 8)      |   0.00  | 0.00     | 0.00  | 2073
+… (label_id: 9)      |   0.00  | 0.00     | 0.00  | 142
 
- 'punct_f1': 0.5858508944511414,
+ {'punct_f1': 0.5858508944511414,
  'punct_precision': 0.30176490545272827,
  'punct_recall': 10.0,
  'test_loss': 0.8140875697135925}
+
+### elsmall dice alpha 3 unweighted ted-l unfrozen 0-2 2 ep 
+
+label                |  precision | recall |   f1   |    support
+---|---|---|---|---
+ (label_id: 0)      | 62.15  | 100.00   | 76.66   | 5154
+! (label_id: 1)     | 0.00   | 0.00     | 0.00    | 108
+, (label_id: 2)     | 0.00   | 0.00     | 0.00    | 18022
+- (label_id: 3)     | 0.00   | 0.00     | 0.00    | 1557
+. (label_id: 4)     | 41.74  | 94.01    | 57.81   | 15164
+: (label_id: 5)     | 0.00   | 0.00     | 0.00    | 319
+; (label_id: 6)     | 0.00   | 0.00     | 0.00    | 88
+? (label_id: 7)     | 0.00   | 0.00     | 0.00    | 1217
+ (label_id: 8)      | 0.00   | 0.00     | 0.00    | 752
+… (label_id: 9)     | 0.00   | 0.00     | 0.00    | 67
+-------------------||||
+micro avg           | 45.72 | 45.72 | 45.72 | 42448
+macro avg           | 10.39 | 19.40 | 13.45 | 42448
+weighted avg        | 22.46 | 45.72 | 29.96 | 42448
+
+{ 'punct_f1': 13.446383476257324,
+ 'punct_precision': 10.388500213623047,
+ 'punct_recall': 19.400554656982422,
+ 'test_loss': 0.44148480892181396}
+
+
+ ## Log for 8/2/2021
+
+ I believe Dice loss performs better when unweighted, and the experiments that failed to converge were due to it being weighted.
+ For 3 layers unfreezing, the tuning of the 1st and 2nd layers result in some form of divergence, I believe the training process causes divergence and requires a much smaller learning rate.
+
+For /2021-02-08_07-56-46 crf adam, frozen best lr was 0.01, auto set to 0.007943282347242822.
+End frozen 
+micro avg      |  41.42 |   41.42  |    41.42   |   33406
+macro avg      |  11.01 |   13.54  |    11.07   |   33406
+weighted avg   |  34.88 |   41.42  |    34.20   |   33406
+
+1st layer best lr 1e-10, set to 0.007943282347242822
+micro avg            |       36.65  |    36.65  |    36.65  |    33463
+macro avg            |       10.71  |     9.91  |     8.26  |    33463
+weighted avg         |       34.32  |    36.65  |    31.08  |    33463
+
+2nd layer best lr 1e-10, set to 0.007943282347242822
+micro avg        |   35.72  |    35.72  |    35.72  |    42448
+macro avg        |    3.57  |    10.00  |     5.26  |    42448
+weighted avg     |   12.76  |    35.72  |    18.81  |    42448
+
+{'punct_f1': 5.264181137084961,
+ 'punct_precision': 3.572371006011963,
+ 'punct_recall': 10.0,
+ 'test_loss': 18.49854850769043}
+
+
+For 2021-02-08_08-37-54/ dice adamw, the frozen best lr was at 0.01, auto set to 0.005011872336272725.
+alpha from 3->4 seems to reduce convergence rate.
+
+micro avg        |   50.98  | 50.98  |  50.98    |  33463
+macro avg        |   25.99  | 25.38  |  23.38    |  33463
+weighted avg     |   50.31  | 50.98  |  48.27    |  33463
+
+unfreeze 1 0.0025118864315095825 best lr 1e-10, 
+micro avg     |  58.55  |  58.55 |  58.55 | 39340
+macro avg     |  30.02  |  29.74 |  29.52 | 39340
+weighted avg  |  57.91  |  58.55 |  57.51 | 39340
+
+still increasing?!
+{'punct_f1': 29.523975372314453,
+ 'punct_precision': 30.015613555908203,
+ 'punct_recall': 29.738296508789062,
+ 'test_loss': 0.3690211772918701}
+
+
+### Implemented mlp 2 layer before classifier, 
+
+adamw mean 2 layer domain, dice, alpha 4 10 batch, accgrad 4 2021-02-08_11-07-07/
+frozen lr 0.0025118864315095825 best: 0.01,

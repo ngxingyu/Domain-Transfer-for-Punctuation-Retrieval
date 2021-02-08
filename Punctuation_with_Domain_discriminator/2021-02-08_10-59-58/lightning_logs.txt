@@ -1,0 +1,35 @@
+Global seed set to 42
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [3]
+Using native 16bit precision.
+Global seed set to 42
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | dropout             | Dropout              | 0     
+2 | mlp                 | MultiLayerPerceptron | 131 K 
+3 | punct_classifier    | TokenClassifier      | 2.6 K 
+4 | domain_classifier   | SequenceClassifier   | 257   
+5 | punctuation_loss    | FocalDiceLoss        | 0     
+6 | domain_loss         | CrossEntropyLoss     | 0     
+7 | agg_loss            | AggregatorLoss       | 0     
+8 | punct_class_report  | ClassificationReport | 0     
+9 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+167 K     Trainable params
+13.4 M    Non-trainable params
+13.6 M    Total params
+LR finder stopped early due to diverging loss.
+Restored states from the checkpoint file at /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_10-59-58/lr_find_temp_model.ckpt
+Failed to compute suggesting for `lr`. There might not be enough points.
+Traceback (most recent call last):
+  File "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/tuner/lr_finder.py", line 355, in suggestion
+    min_grad = np.gradient(loss).argmin()
+  File "<__array_function__ internals>", line 5, in gradient
+  File "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/numpy/lib/function_base.py", line 1052, in gradient
+    raise ValueError(
+ValueError: Shape of array too small to calculate a numerical gradient, at least (edge_order + 1) elements are required.
+Global seed set to 42

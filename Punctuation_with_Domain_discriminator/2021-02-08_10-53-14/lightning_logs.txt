@@ -1,0 +1,24 @@
+Global seed set to 42
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [3]
+Using native 16bit precision.
+Global seed set to 42
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | dropout             | Dropout              | 0     
+2 | mlp                 | MultiLayerPerceptron | 131 K 
+3 | punct_classifier    | TokenClassifier      | 2.6 K 
+4 | domain_classifier   | SequenceClassifier   | 257   
+5 | punctuation_loss    | FocalDiceLoss        | 0     
+6 | domain_loss         | CrossEntropyLoss     | 0     
+7 | agg_loss            | AggregatorLoss       | 0     
+8 | punct_class_report  | ClassificationReport | 0     
+9 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+167 K     Trainable params
+13.4 M    Non-trainable params
+13.6 M    Total params
