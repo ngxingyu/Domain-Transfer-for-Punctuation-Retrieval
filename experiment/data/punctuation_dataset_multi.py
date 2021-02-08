@@ -1,4 +1,4 @@
-from torch.utils.data import IterableDataset, Dataset
+from torch.utils.data import IterableDataset, Dataset, get_worker_info
 from nemo.core.neural_types import ChannelType, LabelsType, MaskType, NeuralType
 import gc
 import numpy as np
@@ -9,7 +9,7 @@ import os
 import torch
 import subprocess
 from time import time
-from itertools import cycle
+from itertools import cycle, chain, islice
 
 class PunctuationDomainDataset(IterableDataset):
 
@@ -151,13 +151,23 @@ class PunctuationDomainDatasets(IterableDataset):
                  randomize:bool=True,
                  data_id='',
                  tmp_path='~/data/tmp',
-                 start=0,
-                 end=-1,):
+                 ):
+        worker_info = get_worker_info()
+        self.num_workers=1 if worker_info is None else worker_info.num_workers
         self.num_labelled=len(labelled)
         self.datasets = []
         self.iterables=[]
         self.randomize=randomize
         self.punct_label_ids=punct_label_ids
+
+        self.ds_lengths=[]
+        for path in labelled+unlabelled:
+            self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+        self.max_length=max(self.ds_lengths)
+        self.len=int(self.max_length/num_samples)
+        self.per_worker=int(self.max_length/self.num_workers)
+
+
         for i,path in enumerate(labelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
             dataset=PunctuationDomainDataset(
@@ -186,9 +196,12 @@ class PunctuationDomainDatasets(IterableDataset):
     #     ds=[d[i] for d in self.datasets]
 
     def __iter__(self):
+        worker_info = get_worker_info()
+        worker_id = 0 if worker_info is None else worker_info.id
         self.iterables=[]
-        for dataset in self.datasets:
-            self.iterables.append(cycle(dataset))
+        for ds_length, dataset in zip(self.ds_lengths,self.datasets):
+            start = (worker_id*self.per_worker)%ds_length
+            self.iterables.append(cycle(chain(islice(iter(dataset),start,None),islice(iter(dataset),start))))
         return self
 
     def __next__(self):
@@ -207,18 +220,23 @@ class PunctuationDomainDatasets(IterableDataset):
             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
-        return max(len(d) for d in self.datasets)
+        return self.len
 
     def shuffle(self, randomize=True, seed=42):
-        for _ in self.datasets:
-            print(f"shuffling {_}")
-            _.shuffle(randomize,seed)
+        worker_info = get_worker_info()
+        worker_id = 0 if worker_info is None else worker_info.id
+        if worker_id==0:
+            for _ in self.datasets:
+                print(f"shuffling {_}")
+                _.shuffle(randomize,seed)
     
     def determine_class_weights(self):
-        ct=torch.zeros(len(self.punct_label_ids))
-        for _ in range(self.num_labelled):
-            ct+=self.datasets[_].determine_class_weights()
-        return self.num_labelled/ct
+        if self.class_weights is None:
+            ct=torch.zeros(len(self.punct_label_ids))
+            for _ in range(self.num_labelled):
+                ct+=self.datasets[_].determine_class_weights()
+            self.class_weights=self.num_labelled/ct
+        return self.class_weights
 
 
 class PunctuationInferenceDataset(Dataset):
