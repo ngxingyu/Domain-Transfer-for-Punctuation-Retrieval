@@ -63,8 +63,10 @@ model:
     dataset:
         data_dir: /home/nxingyu/data # /root/data # 
         labelled:
-            - ${base_path}/ted_talks_processed #
+            # - ${base_path}/ted_talks_processed #
+            - ${base_path}/open_subtitles_processed #  
         unlabelled:
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
@@ -73,11 +75,11 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  0
+        num_workers:  4
         pin_memory: true
         drop_last: false
         num_labels: 10
-        num_domains: 1
+        num_domains: 2
         test_unlabelled: true
 
         train_ds:
@@ -105,12 +107,6 @@ model:
         config_file: null # json file, precedence over config
         config: null
         # unfrozen_layers: 1
-
-    mlp:
-        num_fc_layers: 1
-        fc_dropout: 0.1
-        log_softmax: false
-        activation: 'relu'
         
     punct_head:
         punct_num_fc_layers: 1
@@ -127,8 +123,8 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
-        gamma: 0.1 # coefficient of gradient reversal
-        pooling: 'mean'
+        gamma: 0 #0.1 # coefficient of gradient reversal
+        pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
     
     dice_loss:
@@ -137,7 +133,7 @@ model:
         macro_average: true
 
     focal_loss: 
-        gamma: 5
+        gamma: 1
 
     optim:
         name: adamw

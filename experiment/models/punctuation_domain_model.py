@@ -62,15 +62,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             self.hparams.model.punct_class_weights=None
 
-        self.dropout=torch.nn.Dropout(self.hparams.model.mlp.fc_dropout)
-        self.mlp = MultiLayerPerceptron(
-            self.transformer.config.hidden_size,
-            self.transformer.config.hidden_size,
-            num_layers=self.hparams.model.mlp.num_fc_layers, 
-            activation=self.hparams.model.mlp.activation, 
-            log_softmax=self.hparams.model.mlp.log_softmax
-        )
-
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=len(self.labels_to_ids),
@@ -134,13 +125,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         hidden_states = self.transformer(
             input_ids=input_ids, attention_mask=attention_mask
         )[0]
-        hidden_states = self.dropout(hidden_states)
-        hidden_states = self.mlp(hidden_states)
         punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
-            subtoken_mask=subtoken_mask)
+            attention_mask=attention_mask)
         return punct_logits, domain_logits
 
     def _make_step(self, batch):
@@ -669,6 +658,13 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         for layer in list(encoder.layer)[n:]:
             set_requires_grad_for_module(layer, True)
+        
+        # Set output layer to true.
+        last_iter=iter(encoder.layer[-1].children())
+        last = next(last_iter)
+        for last in last_iter:
+            continue
+        set_requires_grad_for_module(last, True)
 
     def freeze(self) -> None:
         try:
