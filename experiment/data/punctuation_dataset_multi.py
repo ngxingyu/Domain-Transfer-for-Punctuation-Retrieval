@@ -63,7 +63,8 @@ class PunctuationDomainDataset(IterableDataset):
         self.randomize=randomize
         self.target_file=target_file
         self.tmp_path=tmp_path
-        os.system(f'cp {self.csv_file} {self.target_file}')
+        if not (os.path.exists(self.target_file)):
+            os.system(f'cp {self.csv_file} {self.target_file}')
 
     def __iter__(self):
         self.dataset=iter(pd.read_csv(

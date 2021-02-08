@@ -449,3 +449,15 @@ weighted avg                                            69.12      72.03      70
  'punct_recall': 33.78831481933594,
  'test_loss': 0.2638570964336395}
 
+
+
+### domain adversarial dice 3, open l ted ul 
+initial_lr 0.007943282347242822
+
+* Half of samples are thrown away, so would have to adjust either non-adversarial half the samples or the adversarial train twice as long. To see if both can converge.
+testing gamma 0.1 vs just open subtitles:
+
+https://www.aclweb.org/anthology/2020.acl-main.370.pdf uses the formula of 2/(1+e^(-10p))-1 where p varies from 0 to 1. To repeat cycle every unfrozen layer.
+
+
+
