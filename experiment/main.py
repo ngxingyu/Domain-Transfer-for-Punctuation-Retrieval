@@ -39,7 +39,7 @@ def main(cfg: DictConfig)->None:
     
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         trainer.current_epoch=0
-        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-10, max_lr=1e-02, num_training=80, early_stop_threshold=None)
+        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
         # Results can be found in
         pp(lr_finder.results)
         new_lr = lr_finder.suggestion()
