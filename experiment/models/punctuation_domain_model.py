@@ -163,7 +163,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.trainer.max_epochs)
         if (batch_idx%1000==0):
             print('gamma:',p)
-        self.grad_reverse.scale=2/(1+math.exp(-10*p))-1
+        self.grad_reverse.scale=(2/(1+math.exp(-10*p))-1)*self.hparams.model.domain_head.gamma
         loss, _, _ = self._make_step(batch)
         lr = self._optimizer.param_groups[0]['lr']
 

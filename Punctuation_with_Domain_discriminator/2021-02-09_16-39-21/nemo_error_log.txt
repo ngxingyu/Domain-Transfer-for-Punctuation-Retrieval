@@ -1,0 +1,1 @@
+[NeMo W 2021-02-09 16:39:21 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
