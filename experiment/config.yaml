@@ -2,7 +2,7 @@ seed: 42
 trainer:
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 10
+    max_epochs: 15
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 0
@@ -63,10 +63,10 @@ model:
     dataset:
         data_dir: /home/nxingyu/data # /root/data # 
         labelled:
-            - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
-        unlabelled:
             # - ${base_path}/ted_talks_processed #
+            - ${base_path}/open_subtitles_processed #  
+        unlabelled:
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
@@ -79,7 +79,7 @@ model:
         pin_memory: true
         drop_last: true
         num_labels: 10
-        num_domains: 1
+        num_domains: 2
         test_unlabelled: true
 
         train_ds:
@@ -123,7 +123,7 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
-        gamma: 0.1 #0.1 # coefficient of gradient reversal
+        gamma: 0.2 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
     
@@ -137,13 +137,20 @@ model:
 
     optim:
         name: adamw
-        lr: 0.009261935523740748 #1e-3
+        lr: 1e-2 #1e-3
         weight_decay: 0.00
         sched:
-            name: WarmupAnnealing #CyclicLR
+            # name: CyclicLR
+            # base_lr: 1e-5
+            # max_lr: 1e-1
+            # mode: 'triangular2'
+            # last_epoch: -1
+
+            name: CosineAnnealing #WarmupAnnealing #CyclicLR
             # Scheduler params
             warmup_steps: null
             warmup_ratio: 0.1
+            min_lr: 1e-10
             # hold_steps: 6
             last_epoch: -1
 

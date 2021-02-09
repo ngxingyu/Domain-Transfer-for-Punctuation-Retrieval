@@ -54,7 +54,7 @@ def main(cfg: DictConfig)->None:
     #         tmp_path=cfg.tmp_path,
     #         test_unlabelled=False,
     #     )
-    lrs=[1e-4,1e-6]
+    lrs=[1e-2,1e-5]
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         # trainer.current_epoch=0
         # lr_finder = trainer.tuner.lr_find(model,datamodule=lr_finder_dm,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None

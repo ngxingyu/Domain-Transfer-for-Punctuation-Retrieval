@@ -2,7 +2,7 @@ seed: 42
 trainer:
   gpus: 1
   num_nodes: 1
-  max_epochs: 2
+  max_epochs: 15
   max_steps: null
   accumulate_grad_batches: 4
   gradient_clip_val: 0
@@ -42,8 +42,9 @@ model:
   dataset:
     data_dir: /home/nxingyu/data
     labelled:
+    - /home/nxingyu/data/open_subtitles_processed
+    unlabelled:
     - /home/nxingyu/data/ted_talks_processed
-    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -53,7 +54,7 @@ model:
     pin_memory: true
     drop_last: true
     num_labels: 10
-    num_domains: 1
+    num_domains: 2
     test_unlabelled: true
     train_ds:
       shuffle: true
@@ -79,7 +80,7 @@ model:
     activation: relu
     log_softmax: false
     use_transformer_init: true
-    loss: crf
+    loss: dice
   domain_head:
     domain_num_fc_layers: 1
     fc_dropout: 0.1
@@ -87,7 +88,7 @@ model:
     log_softmax: false
     use_transformer_init: true
     loss: cel
-    gamma: 0.1
+    gamma: 0.2
     pooling: mean_max
     idx_conditioned_on: 0
   dice_loss:
@@ -98,12 +99,13 @@ model:
     gamma: 1
   optim:
     name: adamw
-    lr: 0.009261935523740748
+    lr: 0.01
     weight_decay: 0.0
     sched:
-      name: WarmupAnnealing
+      name: CosineAnnealing
       warmup_steps: null
       warmup_ratio: 0.1
+      min_lr: 1.0e-10
       last_epoch: -1
       monitor: val_loss
       reduce_on_plateau: false
