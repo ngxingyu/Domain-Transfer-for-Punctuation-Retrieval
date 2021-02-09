@@ -15,4 +15,3 @@ TPU available: None, using: 0 TPU cores
 299 K     Trainable params
 13.2 M    Non-trainable params
 13.5 M    Total params
-Saving latest checkpoint...

@@ -9,7 +9,7 @@ Parameter Group 0
     lr: 0.01
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fb7159543d0>" 
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7ff722d4b4c0>" 
 will be used during training (effective maximum steps = 79575) - 
 Parameters : 
 (warmup_steps: null
