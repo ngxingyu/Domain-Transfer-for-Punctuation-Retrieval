@@ -165,8 +165,8 @@ class PunctuationDomainDatasets(IterableDataset):
         for path in labelled+unlabelled:
             self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
         self.max_length=max(self.ds_lengths)
-        self.len=int(self.max_length/num_samples)
         self.per_worker=int(self.max_length/self.num_workers)
+        self.len=int(self.per_worker/num_samples)
         self.class_weights=None
 
         for i,path in enumerate(labelled):

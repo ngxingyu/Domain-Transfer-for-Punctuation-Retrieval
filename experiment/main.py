@@ -26,7 +26,7 @@ def main(cfg: DictConfig)->None:
     data_id = str(int(time()))
     def savecounter():
         # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))
-        pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}.csv'))
+        pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}*'))
     atexit.register(savecounter)
 
     cfg.model.maximum_unfrozen=max(cfg.model.maximum_unfrozen,cfg.model.unfrozen)
@@ -37,14 +37,34 @@ def main(cfg: DictConfig)->None:
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     
+    # lr_finder_dm=PunctuationDataModule(
+    #         tokenizer= cfg.model.transformer_path,
+    #         labelled= list(cfg.model.dataset.labelled),
+    #         unlabelled= list(cfg.model.dataset.unlabelled),
+    #         punct_label_ids= {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)},
+    #         train_batch_size= cfg.model.dataset.train_ds.batch_size,
+    #         max_seq_length= cfg.model.dataset.max_seq_length,
+    #         val_batch_size= cfg.model.dataset.validation_ds.batch_size,
+    #         num_workers= 1,
+    #         pin_memory= False,
+    #         train_shuffle= True,
+    #         val_shuffle= False,
+    #         seed=cfg.seed,
+    #         data_id=data_id+'lr',
+    #         tmp_path=cfg.tmp_path,
+    #         test_unlabelled=False,
+    #     )
+    lrs=[1e-4,1e-6]
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
-        trainer.current_epoch=0
-        lr_finder = trainer.tuner.lr_find(model,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
-        # Results can be found in
-        pp(lr_finder.results)
-        new_lr = lr_finder.suggestion()
-        model.hparams.model.optim.lr = new_lr
-        model.dm.reset()
+        # trainer.current_epoch=0
+        # lr_finder = trainer.tuner.lr_find(model,datamodule=lr_finder_dm,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
+        # # Results can be found in
+        # pp(lr_finder.results)
+        # new_lr = lr_finder.suggestion()
+        # model.hparams.model.optim.lr = new_lr
+        # lr_finder_dm.reset()
+        # model.dm.reset()
+        model.hparams.model.optim.lr = lrs[model.hparams.model.unfrozen]
         trainer.current_epoch=0
         trainer.fit(model)
         try:

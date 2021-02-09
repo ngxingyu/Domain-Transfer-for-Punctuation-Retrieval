@@ -41,7 +41,7 @@ tmp_path: /home/nxingyu/data/tmp # /tmp #
 
 model:
     nemo_path: null
-    transformer_path: distilbert-base-uncased #google/electra-base-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
+    transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
     maximum_unfrozen: 1
     unfreeze_step: 1
@@ -75,7 +75,7 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  2
+        num_workers:  4
         pin_memory: true
         drop_last: true
         num_labels: 10
@@ -114,7 +114,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
 
     domain_head:
         domain_num_fc_layers: 1
