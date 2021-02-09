@@ -10,6 +10,7 @@ import torch
 import subprocess
 from time import time
 from itertools import cycle
+import math
 
 class PunctuationDomainDataset(IterableDataset):
 
@@ -242,18 +243,23 @@ class PunctuationInferenceDataset(Dataset):
             "labels": NeuralType(('B', 'T'), ChannelType()),
         }
 
-    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], degree:int = 0, ):
+    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0):
         """ Initializes BertPunctuationInferDataset. """
+        self.degree=degree
+        self.punct_label_ids=punct_label_ids
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(queries)
         features = chunk_to_len_batch(max_seq_length=max_seq_length, tokenizer=tokenizer,tokens=chunked['texts'],labelled=False)
         self.all_input_ids = features['input_ids']
         self.all_attention_mask = features['attention_mask']
         self.all_subtoken_mask = features['subtoken_mask']
+        self.num_samples=num_samples
 
     def __len__(self):
-        return len(self.all_input_ids)
+        return math.ceil(len(self.all_input_ids)/self.num_samples)
 
     def __getitem__(self, idx):
-        return {'input_ids':self.all_input_ids[idx],
-                'attention_mask':self.all_attention_mask[idx],
-                'subtoken_mask':self.all_subtoken_mask[idx]}
+        lower=idx*self.num_samples
+        upper=min(len(self.all_input_ids),(idx+1)*self.num_samples+1)
+        return {'input_ids':self.all_input_ids[lower:upper],
+                'attention_mask':self.all_attention_mask[lower:upper],
+                'subtoken_mask':self.all_subtoken_mask[lower:upper]}
