@@ -1,0 +1,12 @@
+[NeMo I 2021-02-09 11:10:37 exp_manager:183] Experiments will be logged at /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_11-10-37
+[NeMo I 2021-02-09 11:10:37 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-02-09 11:10:37 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-09 11:11:08 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-09 11:18:33 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-09 11:24:13 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+      warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+    

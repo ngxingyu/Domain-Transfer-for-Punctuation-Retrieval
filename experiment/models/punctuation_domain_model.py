@@ -15,13 +15,14 @@ from core.losses import (AggregatorLoss, CrossEntropyLoss, FocalDiceLoss, FocalL
 from pytorch_lightning.utilities import rank_zero_only
 from core.optim import get_optimizer, parse_optimizer_args, prepare_lr_scheduler
 from omegaconf import DictConfig, OmegaConf, open_dict
-from transformers import AutoModel
+from transformers import AutoModel, AutoTokenizer
 import torch.utils.data.dataloader as dataloader
-from data import PunctuationDataModule
+from data import PunctuationDataModule, PunctuationInferenceDataset
 from os import path
 import tempfile
 from core.common import Serialization, FileIO
 from time import time
+from core.utils import view_aligned
 
 # from nemo.core.neural_types import LogitsType, NeuralType
 # from nemo.collections.common.losses import AggregatorLoss, CrossEntropyLoss
@@ -51,6 +52,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self._trainer = trainer
 
         self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
+        self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
         self.ids_to_labels = {_[0]: _[1]
                               for _ in enumerate(self.hparams.model.punct_label_ids)}
         self.labels_to_ids = {_[1]: _[0]
@@ -708,3 +710,27 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 os.environ.pop('PL_TRAINER_GPUS')
 
         super().teardown(stage)
+
+    def add_punctuation(self, queries):
+        ds=PunctuationInferenceDataset(
+            tokenizer= self.tokenizer,
+            queries=queries, 
+            max_seq_length=self.hparams.model.dataset.max_seq_length,
+            punct_label_ids=self._cfg.model.punct_label_ids)
+        batch=ds[0]
+        attention_mask = batch['attention_mask']
+        subtoken_mask = batch['subtoken_mask']
+        # punct_labels = batch['labels']
+        # domain_labels = batch['domain']
+        input_ids = batch['input_ids']
+
+        labelled_mask=(subtoken_mask[:,0]>0)
+        # test_loss, punct_logits, domain_logits = self._make_step(batch)
+
+        punct_logits, domain_logits = self(
+            input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
+        )
+        
+        punct_preds = self.punctuation_loss.predict(punct_logits, subtoken_mask) \
+            if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits, axis=-1)*subtoken_mask
+        return view_aligned(input_ids,punct_preds, self.tokenizer,self.ids_to_labels)

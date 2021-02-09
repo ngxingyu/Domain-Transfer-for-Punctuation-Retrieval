@@ -20,3 +20,20 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 299 K     Trainable params
 13.2 M    Non-trainable params
 13.5 M    Total params
+Restored states from the checkpoint file at /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_11-10-37/lr_find_temp_model.ckpt
+Global seed set to 42
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 1.0 K 
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+299 K     Trainable params
+13.2 M    Non-trainable params
+13.5 M    Total params

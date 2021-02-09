@@ -3,6 +3,7 @@ import torch
 from torch import nn
 import regex as re
 import snoop
+from copy import deepcopy
 
 __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'view_aligned']
 
@@ -26,14 +27,15 @@ def position_to_mask(max_seq_length:int,indices:list):
         o[np.array(indices)%(max_seq_length-2)+1]=1
     except:
         pp('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
-        # o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
+        o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
 def align_labels_to_mask(mask,labels):
     '''[0,1,0],[2] -> [0,2,0]'''
     assert(sum(mask)==len(labels))
-    mask[mask>0]=torch.tensor(labels)
-    return mask.tolist()
+    m1=mask.copy()
+    m1[mask>0]=torch.tensor(labels)
+    return m1.tolist()
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
         return [re.sub(' ##','',' '.join(
@@ -101,7 +103,9 @@ def chunk_to_len(max_seq_length,tokenizer,tokens,labels=None):
     split_token_end_idxs=np.array_split(token_end_idxs,breakpoints)
     split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
     ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords]
-    masks=[position_to_mask(max_seq_length,_) for _ in split_token_end_idxs]
+    masks=[]
+    for _ in split_token_end_idxs:
+        masks.append(position_to_mask(max_seq_length,_).copy())
     padded_labels=None
     if labels!=None:
         split_labels=np.array_split(labels,breakpoints)
@@ -121,7 +125,7 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
     output = {'input_ids': torch.as_tensor(batch_ids, dtype=torch.long),
               'attention_mask': torch.as_tensor(batch_ids, dtype=torch.bool),
               'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)}
-    output['subtoken_mask']|=(output['input_ids']==101)|(output['input_ids']==102)
+    output['subtoken_mask']|=((output['input_ids']==101)|(output['input_ids']==102))
     output['subtoken_mask']&=labelled
     output['labels']=torch.as_tensor(batch_labels,dtype=torch.long) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.long)
     return output
