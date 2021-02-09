@@ -130,9 +130,13 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         )[0]
         punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
+        assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
+        assert not torch.isnan(attention_mask).any(), ('amask',attention_mask)
+        assert not torch.isnan(hidden_states).any(), (hidden_states,attention_mask.sum(1),'hiddenstate')
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
             attention_mask=attention_mask)
+        # print(attention_mask.sum(axis=1),domain_logits)
         return punct_logits, domain_logits
 
     def _make_step(self, batch):
@@ -157,6 +161,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         passed in as `batch`.
         """
         p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.trainer.max_epochs)
+        if (batch_idx%1000==0):
+            print('gamma:',p)
         self.grad_reverse.scale=2/(1+math.exp(-10*p))-1
         loss, _, _ = self._make_step(batch)
         lr = self._optimizer.param_groups[0]['lr']

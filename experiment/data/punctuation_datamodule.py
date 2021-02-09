@@ -54,9 +54,10 @@ class PunctuationDataModule(LightningDataModule):
         self.test_unlabelled=test_unlabelled
     
     def reset(self):
-        self.train_dataset.__iter__()
-        self.val_dataset.__iter__()
-        self.test_dataset.__iter__()
+        # self.setup('fit')
+        self.train_dataset=iter(self.train_dataset)
+        self.val_dataset=iter(self.val_dataset)
+        self.test_dataset=iter(self.test_dataset)
 
     def setup(self, stage=None):
         if stage=='fit' or stage is None:
