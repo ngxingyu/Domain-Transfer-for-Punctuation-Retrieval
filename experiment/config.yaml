@@ -66,7 +66,7 @@ model:
             # - ${base_path}/ted_talks_processed #
             - ${base_path}/open_subtitles_processed #  
         unlabelled:
-            - ${base_path}/ted_talks_processed #
+            # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
@@ -79,7 +79,7 @@ model:
         pin_memory: true
         drop_last: true
         num_labels: 10
-        num_domains: 2
+        num_domains: 1
         test_unlabelled: true
 
         train_ds:
@@ -123,7 +123,7 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
-        gamma: 0.2 #0.1 # coefficient of gradient reversal
+        gamma: 0 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
     
