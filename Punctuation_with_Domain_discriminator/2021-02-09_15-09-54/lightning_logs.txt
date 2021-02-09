@@ -37,3 +37,55 @@ Global seed set to 42
 10.9 K    Trainable params
 66.4 M    Non-trainable params
 66.4 M    Total params
+Epoch 0, global step 200: val_loss reached 108.49911 (best 108.49911), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=108.50-epoch=0.ckpt" as top 3
+Epoch 1, global step 400: val_loss reached 155.59180 (best 108.49911), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=155.59-epoch=1.ckpt" as top 3
+Epoch 2, global step 600: val_loss reached 46.96625 (best 46.96625), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=46.97-epoch=2.ckpt" as top 3
+Epoch 3, global step 800: val_loss reached 63.33499 (best 46.96625), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=63.33-epoch=3.ckpt" as top 3
+Epoch 4, global step 1000: val_loss reached 33.09097 (best 33.09097), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=33.09-epoch=4.ckpt" as top 3
+Epoch 5, global step 1200: val_loss reached 30.02221 (best 30.02221), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=30.02-epoch=5.ckpt" as top 3
+Epoch 6, global step 1400: val_loss reached 31.40887 (best 30.02221), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=31.41-epoch=6.ckpt" as top 3
+Epoch 7, step 1600: val_loss was not in top 3
+Epoch 8, global step 1800: val_loss reached 28.61345 (best 28.61345), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=28.61-epoch=8.ckpt" as top 3
+Epoch 9, global step 2000: val_loss reached 26.27475 (best 26.27475), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/checkpoints/Punctuation_with_Domain_discriminator---val_loss=26.27-epoch=9.ckpt" as top 3
+Global seed set to 42
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | DistilBertModel      | 66.4 M
+1 | punct_classifier    | TokenClassifier      | 7.7 K 
+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss    | LinearChainCRF       | 120   
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+7.1 M     Trainable params
+59.3 M    Non-trainable params
+66.4 M    Total params
+LR finder stopped early due to diverging loss.
+Restored states from the checkpoint file at /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_15-09-54/lr_find_temp_model.ckpt
+Failed to compute suggesting for `lr`. There might not be enough points.
+Traceback (most recent call last):
+  File "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/tuner/lr_finder.py", line 356, in suggestion
+    min_grad = np.gradient(loss).argmin()
+  File "<__array_function__ internals>", line 5, in gradient
+  File "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/numpy/lib/function_base.py", line 1052, in gradient
+    raise ValueError(
+ValueError: Shape of array too small to calculate a numerical gradient, at least (edge_order + 1) elements are required.
+Global seed set to 42
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | DistilBertModel      | 66.4 M
+1 | punct_classifier    | TokenClassifier      | 7.7 K 
+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss    | LinearChainCRF       | 120   
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+7.1 M     Trainable params
+59.3 M    Non-trainable params
+66.4 M    Total params
