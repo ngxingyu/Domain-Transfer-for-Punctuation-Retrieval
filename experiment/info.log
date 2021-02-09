@@ -1,3 +1,5 @@
+[INFO] - GPU available: True, used: False
+[INFO] - TPU available: None, using: 0 TPU cores
 [INFO] - shuffling train set
 [INFO] - Optimizer config = AdamW (
 Parameter Group 0
@@ -7,7 +9,7 @@ Parameter Group 0
     lr: 0.01
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f68053f0940>" 
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fb7159543d0>" 
 will be used during training (effective maximum steps = 79575) - 
 Parameters : 
 (warmup_steps: null
@@ -16,11 +18,26 @@ min_lr: 1.0e-10
 last_epoch: -1
 max_steps: 79575
 )
+[INFO] - 
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 513   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+299 K     Trainable params
+13.2 M    Non-trainable params
+13.5 M    Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.97      20.28      32.44       9732
+ (label_id: 0)                                          80.99      20.22      32.36       9732
 ! (label_id: 1)                                          1.45       2.63       1.87        152
-, (label_id: 2)                                          5.44      27.46       9.08        772
+, (label_id: 2)                                          5.42      27.46       9.05        772
 - (label_id: 3)                                          1.70      53.57       3.30         56
 . (label_id: 4)                                          3.12       0.85       1.34       1642
 : (label_id: 5)                                          0.00       0.00       0.00          0
@@ -29,9 +46,9 @@ label                                                precision    recall       f
 — (label_id: 8)                                          0.00       0.00       0.00          0
 … (label_id: 9)                                          0.93       2.04       1.28         98
 -------------------
-micro avg                                               18.04      18.04      18.04      12670
-macro avg                                               13.58      18.54       7.42      12670
-weighted avg                                            62.99      18.04      25.74      12670
+micro avg                                               18.00      18.00      18.00      12670
+macro avg                                               13.58      18.53       7.41      12670
+weighted avg                                            63.00      18.00      25.68      12670
 
 [INFO] - Domain report: 
 label                                                precision    recall       f1           support   

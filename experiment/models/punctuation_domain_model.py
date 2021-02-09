@@ -514,7 +514,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             seed=self._cfg.seed,
             data_id=self.data_id,
             tmp_path=self.hparams.tmp_path,
-            test_unlabelled=data_config.test_unlabelled
+            test_unlabelled=data_config.test_unlabelled,
+            attach_label_to_end=data_config.attach_label_to_end,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
@@ -722,7 +723,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             tokenizer= self.tokenizer,
             queries=queries, 
             max_seq_length=self.hparams.model.dataset.max_seq_length,
-            punct_label_ids=self._cfg.model.punct_label_ids)
+            punct_label_ids=self._cfg.model.punct_label_ids,
+            attach_label_to_end=self._cfg.model.dataset.attach_label_to_end)
         batch=ds[0]
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
