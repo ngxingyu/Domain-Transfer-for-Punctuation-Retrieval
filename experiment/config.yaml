@@ -41,7 +41,7 @@ tmp_path: /home/nxingyu/data/tmp # /tmp #
 
 model:
     nemo_path: null
-    transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
+    transformer_path: distilbert-base-uncased #google/electra-base-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
     maximum_unfrozen: 1
     unfreeze_step: 1
@@ -67,7 +67,7 @@ model:
             # - ${base_path}/open_subtitles_processed #  
         unlabelled:
             # - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -75,11 +75,11 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  4
+        num_workers:  2
         pin_memory: true
-        drop_last: false
+        drop_last: true
         num_labels: 10
-        num_domains: 2
+        num_domains: 1
         test_unlabelled: true
 
         train_ds:
@@ -114,7 +114,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'crf'
 
     domain_head:
         domain_num_fc_layers: 1
@@ -137,7 +137,7 @@ model:
 
     optim:
         name: adamw
-        lr: 1e-3
+        lr: 0.009261935523740748 #1e-3
         weight_decay: 0.00
         sched:
             name: WarmupAnnealing #CyclicLR

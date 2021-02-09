@@ -167,7 +167,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.max_length=max(self.ds_lengths)
         self.len=int(self.max_length/num_samples)
         self.per_worker=int(self.max_length/self.num_workers)
-
+        self.class_weights=None
 
         for i,path in enumerate(labelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
