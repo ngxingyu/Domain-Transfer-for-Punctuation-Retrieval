@@ -37,3 +37,29 @@ Global seed set to 42
 299 K     Trainable params
 13.2 M    Non-trainable params
 13.5 M    Total params
+Epoch 0, global step 5305: val_loss reached 0.20905 (best 0.20905), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.21-epoch=0.ckpt" as top 3
+Epoch 1, global step 10610: val_loss reached 0.17265 (best 0.17265), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.17-epoch=1.ckpt" as top 3
+Epoch 2, global step 15915: val_loss reached 0.05470 (best 0.05470), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.05-epoch=2.ckpt" as top 3
+Epoch 3, global step 21220: val_loss reached 0.02875 (best 0.02875), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.03-epoch=3.ckpt" as top 3
+Epoch 4, global step 26525: val_loss reached -0.03932 (best -0.03932), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.04-epoch=4.ckpt" as top 3
+Epoch 5, global step 31830: val_loss reached -0.04410 (best -0.04410), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.04-epoch=5.ckpt" as top 3
+Epoch 6, global step 37135: val_loss reached -0.04524 (best -0.04524), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=6.ckpt" as top 3
+Epoch 7, global step 42440: val_loss reached -0.04689 (best -0.04689), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=7.ckpt" as top 3
+Epoch 8, global step 47745: val_loss reached -0.04978 (best -0.04978), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=8.ckpt" as top 3
+Epoch 9, global step 53050: val_loss reached -0.04850 (best -0.04978), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=9.ckpt" as top 3
+Global seed set to 42
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 513   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+825 K     Trainable params
+12.7 M    Non-trainable params
+13.5 M    Total params

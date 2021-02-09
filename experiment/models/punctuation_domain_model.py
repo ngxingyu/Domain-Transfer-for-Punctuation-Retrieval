@@ -1,5 +1,6 @@
 # %%
 import copy
+import math
 import logging
 import os
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
@@ -153,14 +154,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         Lightning calls this inside the training loop with the data from the training dataloader
         passed in as `batch`.
         """
-        p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.model.max_epochs)
-        self.grad_reverse.scale=2/(1+exp(-10*p))-1
+        p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.trainer.max_epochs)
+        self.grad_reverse.scale=2/(1+math.exp(-10*p))-1
         loss, _, _ = self._make_step(batch)
         lr = self._optimizer.param_groups[0]['lr']
 
 
         self.log('lr', lr, prog_bar=True)
         self.log('train_loss', loss)
+        self.log('gamma', self.grad_reverse.scale)
 
         return {'loss': loss, 'lr': lr}
 

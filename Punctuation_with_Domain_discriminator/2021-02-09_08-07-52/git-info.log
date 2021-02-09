@@ -1,0 +1,252 @@
+commit hash: 08007e7bd84203d450e193af808686ac2c929dce
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/events.out.tfevents.1612771686.Titan.22251.0 b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/events.out.tfevents.1612771686.Titan.22251.0
+index 2a40109..6b14ff7 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/events.out.tfevents.1612771686.Titan.22251.0 and b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/events.out.tfevents.1612771686.Titan.22251.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/lightning_logs.txt
+index 439dccb..846b33e 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/lightning_logs.txt
+@@ -37,3 +37,4 @@ Global seed set to 42
+ 299 K     Trainable params
+ 13.2 M    Non-trainable params
+ 13.5 M    Total params
++Epoch 0, global step 5305: val_loss reached 0.69762 (best 0.69762), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.70-epoch=0.ckpt" as top 3
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_error_log.txt
+index c85c2a3..55977aa 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_error_log.txt
+@@ -8,3 +8,9 @@
+ [NeMo W 2021-02-08 16:13:48 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-08 17:54:41 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fcf47c80f70> was reported to be 21219 (when accessing len(dataloader)), but 21220 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-08 18:08:38 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fcf47c80550> was reported to be 2652 (when accessing len(dataloader)), but 2653 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_log_globalrank-0_localrank-0.txt
+index b01f19c..5270e5c 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-00-26/nemo_log_globalrank-0_localrank-0.txt
+@@ -10,3 +10,9 @@
+ [NeMo W 2021-02-08 16:13:48 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-08 17:54:41 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fcf47c80f70> was reported to be 21219 (when accessing len(dataloader)), but 21220 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-08 18:08:38 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fcf47c80550> was reported to be 2652 (when accessing len(dataloader)), but 2653 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/events.out.tfevents.1612772700.Titan.28938.0 b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/events.out.tfevents.1612772700.Titan.28938.0
+index ca85da6..04e8367 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/events.out.tfevents.1612772700.Titan.28938.0 and b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/events.out.tfevents.1612772700.Titan.28938.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/lightning_logs.txt
+index 50c4caa..0f48e2a 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/lightning_logs.txt
+@@ -37,3 +37,29 @@ Global seed set to 42
+ 299 K     Trainable params
+ 13.2 M    Non-trainable params
+ 13.5 M    Total params
++Epoch 0, global step 5305: val_loss reached 0.20905 (best 0.20905), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.21-epoch=0.ckpt" as top 3
++Epoch 1, global step 10610: val_loss reached 0.17265 (best 0.17265), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.17-epoch=1.ckpt" as top 3
++Epoch 2, global step 15915: val_loss reached 0.05470 (best 0.05470), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.05-epoch=2.ckpt" as top 3
++Epoch 3, global step 21220: val_loss reached 0.02875 (best 0.02875), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.03-epoch=3.ckpt" as top 3
++Epoch 4, global step 26525: val_loss reached -0.03932 (best -0.03932), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.04-epoch=4.ckpt" as top 3
++Epoch 5, global step 31830: val_loss reached -0.04410 (best -0.04410), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.04-epoch=5.ckpt" as top 3
++Epoch 6, global step 37135: val_loss reached -0.04524 (best -0.04524), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=6.ckpt" as top 3
++Epoch 7, global step 42440: val_loss reached -0.04689 (best -0.04689), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=7.ckpt" as top 3
++Epoch 8, global step 47745: val_loss reached -0.04978 (best -0.04978), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=8.ckpt" as top 3
++Epoch 9, global step 53050: val_loss reached -0.04850 (best -0.04978), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/checkpoints/Punctuation_with_Domain_discriminator---val_loss=-0.05-epoch=9.ckpt" as top 3
++Global seed set to 42
++
++  | Name                | Type                 | Params
++-------------------------------------------------------------
++0 | transformer         | ElectraModel         | 13.5 M
++1 | punct_classifier    | TokenClassifier      | 2.6 K 
++2 | domain_classifier   | SequenceClassifier   | 513   
++3 | punctuation_loss    | FocalDiceLoss        | 0     
++4 | domain_loss         | CrossEntropyLoss     | 0     
++5 | agg_loss            | AggregatorLoss       | 0     
++6 | punct_class_report  | ClassificationReport | 0     
++7 | domain_class_report | ClassificationReport | 0     
++-------------------------------------------------------------
++825 K     Trainable params
++12.7 M    Non-trainable params
++13.5 M    Total params
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_error_log.txt
+index 2503857..ce38185 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_error_log.txt
+@@ -8,3 +8,9 @@
+ [NeMo W 2021-02-08 16:25:22 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-08 17:13:54 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fbd320e2b50> was reported to be 21219 (when accessing len(dataloader)), but 21220 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-08 17:20:28 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fbd3c4dd8e0> was reported to be 2652 (when accessing len(dataloader)), but 2653 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_log_globalrank-0_localrank-0.txt
+index 48278bd..26f3ea7 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-08_16-23-25/nemo_log_globalrank-0_localrank-0.txt
+@@ -10,3 +10,9 @@
+ [NeMo W 2021-02-08 16:25:22 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-08 17:13:54 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fbd320e2b50> was reported to be 21219 (when accessing len(dataloader)), but 21220 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-08 17:20:28 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fbd3c4dd8e0> was reported to be 2652 (when accessing len(dataloader)), but 2653 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index e492246..e159db3 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -63,10 +63,10 @@ model:
+     dataset:
+         data_dir: /home/nxingyu/data # /root/data # 
+         labelled:
+-            # - ${base_path}/ted_talks_processed #
+-            - ${base_path}/open_subtitles_processed #  
++            - ${base_path}/ted_talks_processed #
++            # - ${base_path}/open_subtitles_processed #  
+         unlabelled:
+-            # - ${base_path}/ted_talks_processed #
++            - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+             # parameters for dataset preprocessing
+         max_seq_length: 128
+@@ -79,7 +79,7 @@ model:
+         pin_memory: true
+         drop_last: false
+         num_labels: 10
+-        num_domains: 1
++        num_domains: 2
+         test_unlabelled: true
+ 
+         train_ds:
+@@ -123,7 +123,7 @@ model:
+         log_softmax: false
+         use_transformer_init: true
+         loss: 'cel'
+-        gamma: 0.1 #0.1 # coefficient of gradient reversal
++        gamma: 0 #0.1 # coefficient of gradient reversal
+         pooling: 'mean_max' # 'mean' mean_max
+         idx_conditioned_on: 0
+     
+diff --git a/experiment/info.log b/experiment/info.log
+index 9e4b4d4..e69de29 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,83 +0,0 @@
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.001
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7fbd32b00be0>" 
+-will be used during training (effective maximum steps = 80) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-last_epoch: -1
+-max_steps: 80
+-)
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                           0.00       0.00       0.00        232
+-! (label_id: 1)                                          5.41       2.63       3.54        152
+-, (label_id: 2)                                         24.37      27.46      25.82        772
+-- (label_id: 3)                                          4.66      53.57       8.57         56
+-. (label_id: 4)                                         43.75       0.85       1.67       1642
+-: (label_id: 5)                                          0.00       0.00       0.00          0
+-; (label_id: 6)                                          0.00       0.00       0.00          0
+-? (label_id: 7)                                          4.76      22.94       7.89        218
+-— (label_id: 8)                                          0.00       0.00       0.00          0
+-… (label_id: 9)                                          8.33       2.04       3.28         98
+--------------------
+-micro avg                                                9.84       9.84       9.84       3170
+-macro avg                                               13.04      15.64       7.25       3170
+-weighted avg                                            29.52       9.84       8.12       3170
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        116
+--------------------
+-micro avg                                              100.00     100.00     100.00        116
+-macro avg                                              100.00     100.00     100.00        116
+-weighted avg                                           100.00     100.00     100.00        116
+-
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.007943282347242822
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7fbd3350f790>" 
+-will be used during training (effective maximum steps = 53050) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-last_epoch: -1
+-max_steps: 53050
+-)
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                           0.00       0.00       0.00        232
+-! (label_id: 1)                                          5.41       2.63       3.54        152
+-, (label_id: 2)                                         24.37      27.46      25.82        772
+-- (label_id: 3)                                          4.66      53.57       8.57         56
+-. (label_id: 4)                                         43.75       0.85       1.67       1642
+-: (label_id: 5)                                          0.00       0.00       0.00          0
+-; (label_id: 6)                                          0.00       0.00       0.00          0
+-? (label_id: 7)                                          4.76      22.94       7.89        218
+-— (label_id: 8)                                          0.00       0.00       0.00          0
+-… (label_id: 9)                                          8.33       2.04       3.28         98
+--------------------
+-micro avg                                                9.84       9.84       9.84       3170
+-macro avg                                               13.04      15.64       7.25       3170
+-weighted avg                                            29.52       9.84       8.12       3170
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        116
+--------------------
+-micro avg                                              100.00     100.00     100.00        116
+-macro avg                                              100.00     100.00     100.00        116
+-weighted avg                                           100.00     100.00     100.00        116
+-
+diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+index 4ac54f4..2a0fb9f 100644
+--- a/experiment/models/punctuation_domain_model.py
++++ b/experiment/models/punctuation_domain_model.py
+@@ -1,5 +1,6 @@
+ # %%
+ import copy
++import math
+ import logging
+ import os
+ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
+@@ -153,8 +154,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         Lightning calls this inside the training loop with the data from the training dataloader
+         passed in as `batch`.
+         """
+-        p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.model.max_epochs)
+-        self.grad_reverse.scale=2/(1+exp(-10*p))-1
++        p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.trainer.max_epochs)
++        self.grad_reverse.scale=2/(1+math.exp(-10*p))-1
+         loss, _, _ = self._make_step(batch)
+         lr = self._optimizer.param_groups[0]['lr']
+ 
