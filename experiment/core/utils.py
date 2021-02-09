@@ -26,7 +26,7 @@ def position_to_mask(max_seq_length:int,indices:list):
         o[np.array(indices)%(max_seq_length-2)+1]=1
     except:
         pp('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
-        o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
+        # o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
 def align_labels_to_mask(mask,labels):
