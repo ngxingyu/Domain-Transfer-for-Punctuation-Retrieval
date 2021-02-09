@@ -1,0 +1,266 @@
+commit hash: bda9e1c0f8f25984dc81e533fc76c3b6370a5da5
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/events.out.tfevents.1612874369.intern-instance.13672.0 b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/events.out.tfevents.1612874369.intern-instance.13672.0
+index 27ae516..100ff48 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/events.out.tfevents.1612874369.intern-instance.13672.0 and b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/events.out.tfevents.1612874369.intern-instance.13672.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/lightning_logs.txt
+index fbc2948..ccedce8 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/lightning_logs.txt
+@@ -15,3 +15,4 @@ TPU available: None, using: 0 TPU cores
+ 299 K     Trainable params
+ 13.2 M    Non-trainable params
+ 13.5 M    Total params
++Saving latest checkpoint...
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_error_log.txt
+index 8ba301e..0eabc81 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_error_log.txt
+@@ -5,3 +5,6 @@
+ [NeMo W 2021-02-09 20:39:29 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+       warnings.warn(*args, **kwargs)
+     
++[NeMo W 2021-02-09 20:57:17 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_log_globalrank-0_localrank-0.txt
+index 597f1fb..31c2f88 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_20-39-07/nemo_log_globalrank-0_localrank-0.txt
+@@ -7,3 +7,6 @@
+ [NeMo W 2021-02-09 20:39:29 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+       warnings.warn(*args, **kwargs)
+     
++[NeMo W 2021-02-09 20:57:17 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
+diff --git a/experiment/Inference.ipynb b/experiment/Inference.ipynb
+index 57ad8dc..99790f8 100644
+--- a/experiment/Inference.ipynb
++++ b/experiment/Inference.ipynb
+@@ -2,7 +2,7 @@
+  "cells": [
+   {
+    "cell_type": "code",
+-   "execution_count": 2,
++   "execution_count": 1,
+    "id": "modern-amplifier",
+    "metadata": {},
+    "outputs": [
+@@ -10,27 +10,7 @@
+      "output_type": "stream",
+      "name": "stdout",
+      "text": [
+-      "/home/nxingyu2/project/experiment\n",
+-      "shuffling <data.punctuation_dataset_multi.PunctuationDomainDataset object at 0x7f3fca1e4c40>\n",
+-      "20:36:28.84 LOG:\n",
+-      "20:36:28.90 .... os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)) = 0\n",
+-      "20:36:29.05 LOG:\n",
+-      "20:36:29.16 .... f\"1st {n} encoder layers of transformer frozen\" = '1st 12 encoder layers of transformer frozen'\n"
+-     ]
+-    },
+-    {
+-     "output_type": "error",
+-     "ename": "RuntimeError",
+-     "evalue": "Error(s) in loading state_dict for PunctuationDomainModel:\n\tUnexpected key(s) in state_dict: \"punctuation_loss.weight\". ",
+-     "traceback": [
+-      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+-      "\u001b[0;31mRuntimeError\u001b[0m                              Traceback (most recent call last)",
+-      "\u001b[0;32m<ipython-input-2-2cd77a8adcc6>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m     31\u001b[0m \u001b[0mids_to_labels\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m{\u001b[0m\u001b[0m_\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m0\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0m_\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;36m1\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0m_\u001b[0m \u001b[0;32min\u001b[0m \u001b[0menumerate\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcfg\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mmodel\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpunct_label_ids\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m}\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     32\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 33\u001b[0;31m model = PunctuationDomainModel.load_from_checkpoint(\n\u001b[0m\u001b[1;32m     34\u001b[0m     checkpoint_path=\"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_17-15-23/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt\")\n\u001b[1;32m     35\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+-      "\u001b[0;32m~/project/experiment/models/punctuation_domain_model.py\u001b[0m in \u001b[0;36mload_from_checkpoint\u001b[0;34m(cls, checkpoint_path, map_location, hparams_file, strict, *args, **kwargs)\u001b[0m\n\u001b[1;32m    629\u001b[0m             \u001b[0mcls\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_set_model_restore_state\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mis_being_restored\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mTrue\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    630\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 631\u001b[0;31m             checkpoint = super().load_from_checkpoint(\n\u001b[0m\u001b[1;32m    632\u001b[0m                 \u001b[0mcheckpoint_path\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mcheckpoint_path\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    633\u001b[0m                 \u001b[0;34m*\u001b[0m\u001b[0margs\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+-      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/core/saving.py\u001b[0m in \u001b[0;36mload_from_checkpoint\u001b[0;34m(cls, checkpoint_path, map_location, hparams_file, strict, **kwargs)\u001b[0m\n\u001b[1;32m    150\u001b[0m         \u001b[0mcheckpoint\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mcls\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mCHECKPOINT_HYPER_PARAMS_KEY\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mupdate\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    151\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 152\u001b[0;31m         \u001b[0mmodel\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mcls\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_load_model_state\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcheckpoint\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mstrict\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mstrict\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    153\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0mmodel\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    154\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+-      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/core/saving.py\u001b[0m in \u001b[0;36m_load_model_state\u001b[0;34m(cls, checkpoint, strict, **cls_kwargs_new)\u001b[0m\n\u001b[1;32m    196\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    197\u001b[0m         \u001b[0;31m# load the state_dict on the model automatically\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 198\u001b[0;31m         \u001b[0mmodel\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mload_state_dict\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mcheckpoint\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0;34m'state_dict'\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mstrict\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mstrict\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    199\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    200\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0mmodel\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+-      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/nn/modules/module.py\u001b[0m in \u001b[0;36mload_state_dict\u001b[0;34m(self, state_dict, strict)\u001b[0m\n\u001b[1;32m   1049\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1050\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mlen\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0merror_msgs\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;34m>\u001b[0m \u001b[0;36m0\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1051\u001b[0;31m             raise RuntimeError('Error(s) in loading state_dict for {}:\\n\\t{}'.format(\n\u001b[0m\u001b[1;32m   1052\u001b[0m                                self.__class__.__name__, \"\\n\\t\".join(error_msgs)))\n\u001b[1;32m   1053\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0m_IncompatibleKeys\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mmissing_keys\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0munexpected_keys\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+-      "\u001b[0;31mRuntimeError\u001b[0m: Error(s) in loading state_dict for PunctuationDomainModel:\n\tUnexpected key(s) in state_dict: \"punctuation_loss.weight\". "
++      "/home/nxingyu2/project/experiment\n"
+      ]
+     }
+    ],
+@@ -67,10 +47,81 @@
+     "labels_to_ids = {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)}\n",
+     "ids_to_labels = {_[0]:_[1] for _ in enumerate(cfg.model.punct_label_ids)}\n",
+     "\n",
+-    "model = PunctuationDomainModel.load_from_checkpoint(\n",
+-    "    checkpoint_path=\"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_17-15-23/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt\")\n",
++    "# model = PunctuationDomainModel.load_from_checkpoint(\n",
++    "#     checkpoint_path=\"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_17-15-23/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt\")\n",
+     "\n",
+-    "trainer = pl.Trainer(**cfg.trainer)"
++    "# trainer = pl.Trainer(**cfg.trainer)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 11,
++   "metadata": {},
++   "outputs": [
++    {
++     "output_type": "execute_result",
++     "data": {
++      "text/plain": [
++       "{'input_ids': tensor([[ 101, 7570, 9541, 9541, 9541,  102,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,\n",
++       "             0,    0,    0,    0,    0,    0,    0,    0]]),\n",
++       " 'attention_mask': tensor([[ True,  True,  True,  True,  True,  True, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False]]),\n",
++       " 'subtoken_mask': tensor([[ True, False, False, False,  True,  True, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False, False, False,\n",
++       "          False, False, False, False, False, False, False, False]]),\n",
++       " 'labels': tensor([[0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "          0, 0, 0, 0, 0, 0, 0, 0]])}"
++      ]
++     },
++     "metadata": {},
++     "execution_count": 11
++    }
++   ],
++   "source": [
++    "queries = [\n",
++    "    'Hooooooo!',\n",
++    "    # 'what can i do for you today',\n",
++    "    # 'how are you',\n",
++    "    # 'good morning everyone how have your weekends been its a really great day'\n",
++    "]\n",
++    "cfg.model.punct_label_ids=OmegaConf.create(sorted(cfg.model.punct_label_ids))\n",
++    "labels_to_ids = {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)}\n",
++    "ds=PunctuationInferenceDataset(tokenizer=AutoTokenizer.from_pretrained('google/electra-small-discriminator'), queries=queries, max_seq_length=128, punct_label_ids=labels_to_ids, degree=0, attach_label_to_end=True)\n",
++    "ds[0]"
+    ]
+   },
+   {
+@@ -94,12 +145,7 @@
+     }
+    ],
+    "source": [
+-    "queries = [\n",
+-    "    'we bought four shirts one pen and a mug from the nvidia gear store in santa clara',\n",
+-    "    'what can i do for you today',\n",
+-    "    'how are you',\n",
+-    "    'good morning everyone how have your weekends been its a really great day'\n",
+-    "]\n",
++    "\n",
+     "inference_results = model.add_punctuation(queries)\n",
+     "inference_results"
+    ]
+diff --git a/experiment/core/utils.py b/experiment/core/utils.py
+index a2a708d..c9470b8 100644
+--- a/experiment/core/utils.py
++++ b/experiment/core/utils.py
+@@ -99,6 +99,7 @@ def subword_tokenize(tokenizer,tokens):
+ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,tokens,labels=None):
+     subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens)
+     teim=token_end_idxs%(max_seq_length-2) if attach_label_to_end else token_start_idxs%(max_seq_length-2)
++
+     breakpoints=(np.argwhere(teim[1:]<teim[:-1]).flatten()+1).tolist()
+     split_token_idxs=np.array_split(token_end_idxs,breakpoints) if attach_label_to_end else np.array_split(token_start_idxs,breakpoints)
+     split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
+diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+index 6a0452f..d919d9c 100644
+--- a/experiment/data/punctuation_dataset_multi.py
++++ b/experiment/data/punctuation_dataset_multi.py
+@@ -271,7 +271,7 @@ class PunctuationInferenceDataset(Dataset):
+         self.degree=degree
+         self.punct_label_ids=punct_label_ids
+         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(queries)
+-        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],True)
++        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end)
+         self.attach_label_to_end=attach_label_to_end
+         # self.all_input_ids = features['input_ids']
+         # self.all_attention_mask = features['attention_mask']
+diff --git a/experiment/info.log b/experiment/info.log
+index 695cb09..5024c4f 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,60 +1,2 @@
+ [INFO] - GPU available: True, used: False
+ [INFO] - TPU available: None, using: 0 TPU cores
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.01
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fb7159543d0>" 
+-will be used during training (effective maximum steps = 79575) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-min_lr: 1.0e-10
+-last_epoch: -1
+-max_steps: 79575
+-)
+-[INFO] - 
+-  | Name                | Type                 | Params
+--------------------------------------------------------------
+-0 | transformer         | ElectraModel         | 13.5 M
+-1 | punct_classifier    | TokenClassifier      | 2.6 K 
+-2 | domain_classifier   | SequenceClassifier   | 513   
+-3 | punctuation_loss    | FocalDiceLoss        | 0     
+-4 | domain_loss         | CrossEntropyLoss     | 0     
+-5 | agg_loss            | AggregatorLoss       | 0     
+-6 | punct_class_report  | ClassificationReport | 0     
+-7 | domain_class_report | ClassificationReport | 0     
+--------------------------------------------------------------
+-299 K     Trainable params
+-13.2 M    Non-trainable params
+-13.5 M    Total params
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          80.99      20.22      32.36       9732
+-! (label_id: 1)                                          1.45       2.63       1.87        152
+-, (label_id: 2)                                          5.42      27.46       9.05        772
+-- (label_id: 3)                                          1.70      53.57       3.30         56
+-. (label_id: 4)                                          3.12       0.85       1.34       1642
+-: (label_id: 5)                                          0.00       0.00       0.00          0
+-; (label_id: 6)                                          0.00       0.00       0.00          0
+-? (label_id: 7)                                          1.42      22.94       2.67        218
+-— (label_id: 8)                                          0.00       0.00       0.00          0
+-… (label_id: 9)                                          0.93       2.04       1.28         98
+--------------------
+-micro avg                                               18.00      18.00      18.00      12670
+-macro avg                                               13.58      18.53       7.41      12670
+-weighted avg                                            63.00      18.00      25.68      12670
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        116
+--------------------
+-micro avg                                              100.00     100.00     100.00        116
+-macro avg                                              100.00     100.00     100.00        116
+-weighted avg                                           100.00     100.00     100.00        116
+-

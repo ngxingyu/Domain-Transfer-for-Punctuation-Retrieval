@@ -271,7 +271,7 @@ class PunctuationInferenceDataset(Dataset):
         self.degree=degree
         self.punct_label_ids=punct_label_ids
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(queries)
-        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],True)
+        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end)
         self.attach_label_to_end=attach_label_to_end
         # self.all_input_ids = features['input_ids']
         # self.all_attention_mask = features['attention_mask']
