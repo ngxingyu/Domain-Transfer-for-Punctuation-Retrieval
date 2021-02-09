@@ -92,6 +92,17 @@ class LinearChainCRF(torch.nn.Module):
             mask = logits.new_ones(logits.shape[:2], dtype=torch.bool)
         return self._viterbi_decode(logits,mask)
 
+    @jit.export
+    def predict(self, logits: Tensor, mask: Optional[Tensor] = None) -> LongTensor:
+        self._validate(logits, mask=mask)
+
+        if mask is None:
+            mask = logits.new_ones(logits.shape[:2], dtype=torch.bool)
+        out=[]
+        for p,m in iter(zip(logits,mask)):
+            out.append(pad_to_len(logits.shape[1],self._viterbi_decode(p.unsqueeze(0),m.unsqueeze(0))))
+        return torch.tensor(out)
+        
     def _viterbi_decode(self, logits: Tensor, mask: Tensor) -> LongTensor:
         """
         decode labels using viterbi algorithm
