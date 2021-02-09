@@ -459,5 +459,74 @@ testing gamma 0.1 vs just open subtitles:
 
 https://www.aclweb.org/anthology/2020.acl-main.370.pdf uses the formula of 2/(1+e^(-10p))-1 where p varies from 0 to 1. To repeat cycle every unfrozen layer.
 
+### 2021-02-09_16-21-19 warmup ted 
 
+: (label_id: 5)                                         20.69      19.57      20.11        368
+; (label_id: 6)                                          0.00       0.00       0.00        200
+? (label_id: 7)                                         22.42      29.15      25.35       1372
+ (label_id: 8)                                          6.83       9.44       7.93        932
+… (label_id: 9)                                          0.00       0.00       0.00        124
+-------------------
+micro avg                                               89.82      89.82      89.82     300124
+macro avg                                               31.58      32.56      31.95     300124
+weighted avg                                            90.46      89.82      90.11     300124
 
+[INFO] - Domain report:
+label                                                precision    recall       f1           support
+0 (label_id: 0)                                        100.00     100.00     100.00       2744
+-------------------
+micro avg                                              100.00     100.00     100.00       2744
+macro avg                                              100.00     100.00     100.00       2744
+weighted avg                                           100.00     100.00     100.00       2744
+
+Testing: 100%|| 100/100 [00:10<00:00,  9.74it/s]
+--------------------------------------------------------------------------------
+DATALOADER:0 TEST RESULTS
+{'domain_f1': 100.0,
+ 'domain_precision': 100.0,
+ 'domain_recall': 100.0,
+ 'punct_f1': 31.946725845336914,
+ 'punct_precision': 31.575754165649414,
+ 'punct_recall': 32.5594596862793,
+ 'test_loss': 0.23392203450202942}
+
+### 2021-02-09_16-44-40 cosine ted around the same:
+
+ (label_id: 0)                                          97.17      95.67      96.41     259964
+! (label_id: 1)                                          0.00       0.00       0.00        152
+, (label_id: 2)                                         43.51      47.93      45.61      19336
+- (label_id: 3)                                         69.47      61.49      65.23       1776
+. (label_id: 4)                                         55.49      62.29      58.69      15900
+: (label_id: 5)                                         20.45      19.57      20.00        368
+; (label_id: 6)                                          0.00       0.00       0.00        200
+? (label_id: 7)                                         22.67      29.74      25.73       1372
+ (label_id: 8)                                          6.85       9.44       7.94        932
+… (label_id: 9)                                          0.00       0.00       0.00        124
+-------------------
+micro avg                                               89.81      89.81      89.81     300124
+macro avg                                               31.56      32.61      31.96     300124
+weighted avg                                            90.47      89.81      90.11     300124
+
+[INFO] - Domain report:
+label                                                precision    recall       f1           support
+0 (label_id: 0)                                        100.00     100.00     100.00       2744
+-------------------
+micro avg                                              100.00     100.00     100.00       2744
+macro avg                                              100.00     100.00     100.00       2744
+weighted avg                                           100.00     100.00     100.00       2744
+
+Testing: 100%|| 100/100 [00:10<00:00,  9.29it/s]
+--------------------------------------------------------------------------------
+DATALOADER:0 TEST RESULTS
+{'domain_f1': 100.0,
+ 'domain_precision': 100.0,
+ 'domain_recall': 100.0,
+ 'punct_f1': 31.962158203125,
+ 'punct_precision': 31.560827255249023,
+ 'punct_recall': 32.61237335205078,
+ 'test_loss': 0.23370929062366486}
+
+ #####################################################################
+### 2021-02-09_16-54-29 domain adversarial
+
+### 2021-02-09_17-19-42 just open subtitles to compare train loss

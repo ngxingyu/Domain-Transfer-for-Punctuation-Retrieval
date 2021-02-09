@@ -1,0 +1,163 @@
+commit hash: 953fa623bede4ee117149aa46c2acf589001ede6
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/events.out.tfevents.1612860293.Titan.7050.0 b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/events.out.tfevents.1612860293.Titan.7050.0
+index c1dbdac..600f922 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/events.out.tfevents.1612860293.Titan.7050.0 and b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/events.out.tfevents.1612860293.Titan.7050.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/lightning_logs.txt
+index 085adc8..2fe9063 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/lightning_logs.txt
+@@ -47,3 +47,17 @@ Global seed set to 42
+ 825 K     Trainable params
+ 12.7 M    Non-trainable params
+ 13.5 M    Total params
++Epoch 0, global step 2199: val_loss reached 0.13598 (best 0.13598), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=0.ckpt" as top 3
++Epoch 1, global step 2399: val_loss reached 0.13598 (best 0.13598), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=1.ckpt" as top 3
++Epoch 2, global step 2599: val_loss reached 0.13598 (best 0.13598), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=2.ckpt" as top 3
++Epoch 3, global step 2799: val_loss reached 0.13598 (best 0.13598), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=3.ckpt" as top 3
++Epoch 4, global step 2999: val_loss reached 0.13598 (best 0.13598), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=4.ckpt" as top 3
++Epoch 5, step 3199: val_loss was not in top 3
++Epoch 6, step 3399: val_loss was not in top 3
++Epoch 7, step 3599: val_loss was not in top 3
++Epoch 8, step 3799: val_loss was not in top 3
++Epoch 9, step 3999: val_loss was not in top 3
++GPU available: True, used: True
++TPU available: None, using: 0 TPU cores
++Using environment variable NODE_RANK for node rank (0).
++LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_error_log.txt
+index 21bc8ca..955d1d3 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_error_log.txt
+@@ -11,3 +11,6 @@
+ [NeMo W 2021-02-09 17:00:43 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-09 17:16:40 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fce30736670> was reported to be 100 (when accessing len(dataloader)), but 101 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_log_globalrank-0_localrank-0.txt
+index 8f639a0..006a75e 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-44-40/nemo_log_globalrank-0_localrank-0.txt
+@@ -13,3 +13,6 @@
+ [NeMo W 2021-02-09 17:00:43 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+     
++[NeMo W 2021-02-09 17:16:40 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fce30736670> was reported to be 100 (when accessing len(dataloader)), but 101 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-54-29/events.out.tfevents.1612860903.Titan.12736.0 b/Punctuation_with_Domain_discriminator/2021-02-09_16-54-29/events.out.tfevents.1612860903.Titan.12736.0
+index 71d7b9a..b40aed4 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-09_16-54-29/events.out.tfevents.1612860903.Titan.12736.0 and b/Punctuation_with_Domain_discriminator/2021-02-09_16-54-29/events.out.tfevents.1612860903.Titan.12736.0 differ
+diff --git a/README.md b/README.md
+index ab4fdd1..e08912e 100644
+--- a/README.md
++++ b/README.md
+@@ -459,5 +459,73 @@ testing gamma 0.1 vs just open subtitles:
+ 
+ https://www.aclweb.org/anthology/2020.acl-main.370.pdf uses the formula of 2/(1+e^(-10p))-1 where p varies from 0 to 1. To repeat cycle every unfrozen layer.
+ 
++### 2021-02-09_16-21-19 warmup ted 
+ 
++: (label_id: 5)                                         20.69      19.57      20.11        368
++; (label_id: 6)                                          0.00       0.00       0.00        200
++? (label_id: 7)                                         22.42      29.15      25.35       1372
++ (label_id: 8)                                          6.83       9.44       7.93        932
++… (label_id: 9)                                          0.00       0.00       0.00        124
++-------------------
++micro avg                                               89.82      89.82      89.82     300124
++macro avg                                               31.58      32.56      31.95     300124
++weighted avg                                            90.46      89.82      90.11     300124
++
++[INFO] - Domain report:
++label                                                precision    recall       f1           support
++0 (label_id: 0)                                        100.00     100.00     100.00       2744
++-------------------
++micro avg                                              100.00     100.00     100.00       2744
++macro avg                                              100.00     100.00     100.00       2744
++weighted avg                                           100.00     100.00     100.00       2744
++
++Testing: 100%|| 100/100 [00:10<00:00,  9.74it/s]
++--------------------------------------------------------------------------------
++DATALOADER:0 TEST RESULTS
++{'domain_f1': 100.0,
++ 'domain_precision': 100.0,
++ 'domain_recall': 100.0,
++ 'punct_f1': 31.946725845336914,
++ 'punct_precision': 31.575754165649414,
++ 'punct_recall': 32.5594596862793,
++ 'test_loss': 0.23392203450202942}
++
++### 2021-02-09_16-44-40 cosine ted around the same:
++
++ (label_id: 0)                                          97.17      95.67      96.41     259964
++! (label_id: 1)                                          0.00       0.00       0.00        152
++, (label_id: 2)                                         43.51      47.93      45.61      19336
++- (label_id: 3)                                         69.47      61.49      65.23       1776
++. (label_id: 4)                                         55.49      62.29      58.69      15900
++: (label_id: 5)                                         20.45      19.57      20.00        368
++; (label_id: 6)                                          0.00       0.00       0.00        200
++? (label_id: 7)                                         22.67      29.74      25.73       1372
++ (label_id: 8)                                          6.85       9.44       7.94        932
++… (label_id: 9)                                          0.00       0.00       0.00        124
++-------------------
++micro avg                                               89.81      89.81      89.81     300124
++macro avg                                               31.56      32.61      31.96     300124
++weighted avg                                            90.47      89.81      90.11     300124
++
++[INFO] - Domain report:
++label                                                precision    recall       f1           support
++0 (label_id: 0)                                        100.00     100.00     100.00       2744
++-------------------
++micro avg                                              100.00     100.00     100.00       2744
++macro avg                                              100.00     100.00     100.00       2744
++weighted avg                                           100.00     100.00     100.00       2744
++
++Testing: 100%|| 100/100 [00:10<00:00,  9.29it/s]
++--------------------------------------------------------------------------------
++DATALOADER:0 TEST RESULTS
++{'domain_f1': 100.0,
++ 'domain_precision': 100.0,
++ 'domain_recall': 100.0,
++ 'punct_f1': 31.962158203125,
++ 'punct_precision': 31.560827255249023,
++ 'punct_recall': 32.61237335205078,
++ 'test_loss': 0.23370929062366486}
++
++ #####################################################################
++### 2021-02-09_16-54-29 domain adversarial
+ 
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 1911de8..8226922 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -66,7 +66,7 @@ model:
+             # - ${base_path}/ted_talks_processed #
+             - ${base_path}/open_subtitles_processed #  
+         unlabelled:
+-            - ${base_path}/ted_talks_processed #
++            # - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+             # parameters for dataset preprocessing
+         max_seq_length: 128
+@@ -79,7 +79,7 @@ model:
+         pin_memory: true
+         drop_last: true
+         num_labels: 10
+-        num_domains: 2
++        num_domains: 1
+         test_unlabelled: true
+ 
+         train_ds:
+@@ -123,7 +123,7 @@ model:
+         log_softmax: false
+         use_transformer_init: true
+         loss: 'cel'
+-        gamma: 0.2 #0.1 # coefficient of gradient reversal
++        gamma: 0 #0.1 # coefficient of gradient reversal
+         pooling: 'mean_max' # 'mean' mean_max
+         idx_conditioned_on: 0
+     
+diff --git a/experiment/info.log b/experiment/info.log
+index bc52a1b..e69de29 100644
+Binary files a/experiment/info.log and b/experiment/info.log differ
