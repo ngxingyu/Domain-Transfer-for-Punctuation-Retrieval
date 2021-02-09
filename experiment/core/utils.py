@@ -92,19 +92,19 @@ def subword_tokenize(tokenizer,tokens):
     subwords = list(map(tokenizer.tokenize, tokens))
     subword_lengths = list(map(len, subwords))
     subwords = list(flatten(subwords))
-    # token_start_idxs = np.cumsum([0]+subword_lengths[:-1])
+    token_start_idxs = np.cumsum([0]+subword_lengths[:-1])
     token_end_idxs = np.cumsum([0]+subword_lengths[:-1])+np.array(subword_lengths)-1
-    return subwords, token_end_idxs
+    return subwords, token_start_idxs,token_end_idxs
 
-def chunk_to_len(max_seq_length,tokenizer,tokens,labels=None):
-    subwords,token_end_idxs = subword_tokenize(tokenizer,tokens)
-    teim=token_end_idxs%(max_seq_length-2)
+def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,tokens,labels=None):
+    subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens)
+    teim=token_end_idxs%(max_seq_length-2) if attach_label_to_end else token_start_idxs%(max_seq_length-2)
     breakpoints=(np.argwhere(teim[1:]<teim[:-1]).flatten()+1).tolist()
-    split_token_end_idxs=np.array_split(token_end_idxs,breakpoints)
+    split_token_idxs=np.array_split(token_end_idxs,breakpoints) if attach_label_to_end else np.array_split(token_start_idxs,breakpoints)
     split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
     ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords]
     masks=[]
-    for _ in split_token_end_idxs:
+    for _ in split_token_idxs:
         masks.append(position_to_mask(max_seq_length,_).copy())
     padded_labels=None
     if labels!=None:
@@ -112,12 +112,12 @@ def chunk_to_len(max_seq_length,tokenizer,tokens,labels=None):
         padded_labels=[pad_to_len(max_seq_length,align_labels_to_mask(*_)) for _ in zip(masks,split_labels)]
     return ids,masks,padded_labels
     
-def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True,ignore_index=-100):
+def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True,ignore_index=-100, attach_label_to_end=True):
     batch_ids=[]
     batch_masks=[]
     batch_labels=[]
     for i,_ in enumerate(zip(tokens,tokens) if labels==None else zip(tokens,labels)):
-        a,b,c=chunk_to_len(max_seq_length,tokenizer,*_) if labels else chunk_to_len(max_seq_length,tokenizer,_[0])
+        a,b,c=chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,*_) if labels else chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,_[0])
         batch_ids.extend(a)
         batch_masks.extend(b)
         if labelled==True:
