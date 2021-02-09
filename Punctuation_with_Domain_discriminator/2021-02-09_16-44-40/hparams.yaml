@@ -79,7 +79,7 @@ model:
     activation: relu
     log_softmax: false
     use_transformer_init: true
-    loss: crf
+    loss: dice
   domain_head:
     domain_num_fc_layers: 1
     fc_dropout: 0.1
@@ -98,12 +98,13 @@ model:
     gamma: 1
   optim:
     name: adamw
-    lr: 0.009261935523740748
+    lr: 0.001
     weight_decay: 0.0
     sched:
-      name: WarmupAnnealing
+      name: CosineAnnealing
       warmup_steps: null
       warmup_ratio: 0.1
+      min_lr: 1.0e-10
       last_epoch: -1
       monitor: val_loss
       reduce_on_plateau: false

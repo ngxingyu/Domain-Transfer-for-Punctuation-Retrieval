@@ -1,0 +1,275 @@
+commit hash: 22df8b7032fa2ae6a488d957253de2d56042b4d6
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/events.out.tfevents.1612858879.Titan.27601.0 b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/events.out.tfevents.1612858879.Titan.27601.0
+index 4337671..16a35c9 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/events.out.tfevents.1612858879.Titan.27601.0 and b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/events.out.tfevents.1612858879.Titan.27601.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/lightning_logs.txt
+index a3fc0fb..201da45 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/lightning_logs.txt
+@@ -21,3 +21,27 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+ 13.2 M    Non-trainable params
+ 13.5 M    Total params
+ Epoch 0, global step 199: val_loss reached 54.61362 (best 54.61362), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/checkpoints/Punctuation_with_Domain_discriminator---val_loss=54.61-epoch=0.ckpt" as top 3
++Epoch 1, global step 399: val_loss reached 42.83130 (best 42.83130), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/checkpoints/Punctuation_with_Domain_discriminator---val_loss=42.83-epoch=1.ckpt" as top 3
++Epoch 2, global step 599: val_loss reached 32.94712 (best 32.94712), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/checkpoints/Punctuation_with_Domain_discriminator---val_loss=32.95-epoch=2.ckpt" as top 3
++Saving latest checkpoint...
++Epoch 3, global step 732: val_loss reached 32.94712 (best 32.94712), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/checkpoints/Punctuation_with_Domain_discriminator---val_loss=32.95-epoch=3.ckpt" as top 3
++Global seed set to 42
++
++  | Name                | Type                 | Params
++-------------------------------------------------------------
++0 | transformer         | ElectraModel         | 13.5 M
++1 | punct_classifier    | TokenClassifier      | 2.6 K 
++2 | domain_classifier   | SequenceClassifier   | 513   
++3 | punctuation_loss    | LinearChainCRF       | 120   
++4 | domain_loss         | CrossEntropyLoss     | 0     
++5 | agg_loss            | AggregatorLoss       | 0     
++6 | punct_class_report  | ClassificationReport | 0     
++7 | domain_class_report | ClassificationReport | 0     
++-------------------------------------------------------------
++825 K     Trainable params
++12.7 M    Non-trainable params
++13.5 M    Total params
++GPU available: True, used: True
++TPU available: None, using: 0 TPU cores
++Using environment variable NODE_RANK for node rank (0).
++LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_error_log.txt
+index f051996..43ff45a 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_error_log.txt
+@@ -11,3 +11,9 @@
+ [NeMo W 2021-02-09 16:25:45 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fe13a7e4820> was reported to be 99 (when accessing len(dataloader)), but 100 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+       warnings.warn(warn_msg)
+     
++[NeMo W 2021-02-09 16:37:26 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
++[NeMo W 2021-02-09 16:37:50 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fe13a7e45b0> was reported to be 100 (when accessing len(dataloader)), but 101 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_log_globalrank-0_localrank-0.txt
+index a183522..da0fc8b 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-07/nemo_log_globalrank-0_localrank-0.txt
+@@ -13,3 +13,9 @@
+ [NeMo W 2021-02-09 16:25:45 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fe13a7e4820> was reported to be 99 (when accessing len(dataloader)), but 100 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+       warnings.warn(warn_msg)
+     
++[NeMo W 2021-02-09 16:37:26 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
++[NeMo W 2021-02-09 16:37:50 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fe13a7e45b0> was reported to be 100 (when accessing len(dataloader)), but 101 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/events.out.tfevents.1612858892.Titan.27659.0 b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/events.out.tfevents.1612858892.Titan.27659.0
+index 5b09bdd..303bdf7 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/events.out.tfevents.1612858892.Titan.27659.0 and b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/events.out.tfevents.1612858892.Titan.27659.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/lightning_logs.txt
+index 4f17a12..a2aef56 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/lightning_logs.txt
+@@ -23,3 +23,32 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+ Epoch 0, global step 199: val_loss reached 0.66148 (best 0.66148), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.66-epoch=0.ckpt" as top 3
+ Epoch 1, global step 399: val_loss reached 0.23663 (best 0.23663), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.24-epoch=1.ckpt" as top 3
+ Epoch 2, global step 599: val_loss reached 0.17288 (best 0.17288), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.17-epoch=2.ckpt" as top 3
++Epoch 3, global step 799: val_loss reached 0.15670 (best 0.15670), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.16-epoch=3.ckpt" as top 3
++Epoch 4, global step 999: val_loss reached 0.14782 (best 0.14782), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.15-epoch=4.ckpt" as top 3
++Epoch 5, global step 1199: val_loss reached 0.14246 (best 0.14246), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=5.ckpt" as top 3
++Epoch 6, global step 1399: val_loss reached 0.13934 (best 0.13934), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=6.ckpt" as top 3
++Epoch 7, global step 1599: val_loss reached 0.13714 (best 0.13714), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=7.ckpt" as top 3
++Epoch 8, global step 1799: val_loss reached 0.13633 (best 0.13633), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=8.ckpt" as top 3
++Epoch 9, global step 1999: val_loss reached 0.13605 (best 0.13605), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=9.ckpt" as top 3
++Saving latest checkpoint...
++Global seed set to 42
++
++  | Name                | Type                 | Params
++-------------------------------------------------------------
++0 | transformer         | ElectraModel         | 13.5 M
++1 | punct_classifier    | TokenClassifier      | 2.6 K 
++2 | domain_classifier   | SequenceClassifier   | 513   
++3 | punctuation_loss    | FocalDiceLoss        | 0     
++4 | domain_loss         | CrossEntropyLoss     | 0     
++5 | agg_loss            | AggregatorLoss       | 0     
++6 | punct_class_report  | ClassificationReport | 0     
++7 | domain_class_report | ClassificationReport | 0     
++-------------------------------------------------------------
++825 K     Trainable params
++12.7 M    Non-trainable params
++13.5 M    Total params
++Epoch 0, global step 2199: val_loss reached 0.13605 (best 0.13605), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=0.ckpt" as top 3
++Epoch 1, global step 2399: val_loss reached 0.13605 (best 0.13605), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=1.ckpt" as top 3
++Epoch 2, step 2599: val_loss was not in top 3
++Epoch 3, step 2799: val_loss was not in top 3
++Epoch 4, step 2999: val_loss was not in top 3
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_error_log.txt
+index 39ac72a..89932b9 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_error_log.txt
+@@ -8,3 +8,6 @@
+ [NeMo W 2021-02-09 16:23:04 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f1a2a0bb850> was reported to be 99 (when accessing len(dataloader)), but 100 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+       warnings.warn(warn_msg)
+     
++[NeMo W 2021-02-09 16:36:51 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
++      warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_log_globalrank-0_localrank-0.txt
+index baa087a..cf62f3e 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-09_16-21-19/nemo_log_globalrank-0_localrank-0.txt
+@@ -10,3 +10,6 @@
+ [NeMo W 2021-02-09 16:23:04 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f1a2a0bb850> was reported to be 99 (when accessing len(dataloader)), but 100 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+       warnings.warn(warn_msg)
+     
++[NeMo W 2021-02-09 16:36:51 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
++      warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
++    
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 7a28782..fa6c702 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -137,13 +137,20 @@ model:
+ 
+     optim:
+         name: adamw
+-        lr: 0.009261935523740748 #1e-3
++        lr: 1e-3 #1e-3
+         weight_decay: 0.00
+         sched:
+-            name: WarmupAnnealing #CyclicLR
++            # name: CyclicLR
++            # base_lr: 1e-5
++            # max_lr: 1e-1
++            # mode: 'triangular2'
++            # last_epoch: -1
++
++            name: CosineAnnealing #WarmupAnnealing #CyclicLR
+             # Scheduler params
+             warmup_steps: null
+             warmup_ratio: 0.1
++            min_lr: 1e-10
+             # hold_steps: 6
+             last_epoch: -1
+ 
+diff --git a/experiment/info.log b/experiment/info.log
+index 38d3b4b..e69de29 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,117 +0,0 @@
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.0001
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f1a21b62cd0>" 
+-will be used during training (effective maximum steps = 2000) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-last_epoch: -1
+-max_steps: 2000
+-)
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          86.16      25.06      38.83       1540
+-! (label_id: 1)                                          0.00       0.00       0.00          2
+-, (label_id: 2)                                          8.60      38.03      14.03        142
+-- (label_id: 3)                                          4.62      30.00       8.00         20
+-. (label_id: 4)                                          0.00       0.00       0.00         96
+-: (label_id: 5)                                          0.00       0.00       0.00          0
+-; (label_id: 6)                                          0.00       0.00       0.00          0
+-? (label_id: 7)                                          0.00       0.00       0.00          4
+-— (label_id: 8)                                          0.00       0.00       0.00          0
+-… (label_id: 9)                                          0.00       0.00       0.00          0
+--------------------
+-micro avg                                               24.72      24.72      24.72       1804
+-macro avg                                               16.56      15.52      10.14       1804
+-weighted avg                                            74.28      24.72      34.34       1804
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00         20
+--------------------
+-micro avg                                              100.00     100.00     100.00         20
+-macro avg                                              100.00     100.00     100.00         20
+-weighted avg                                           100.00     100.00     100.00         20
+-
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          86.99     100.00      93.04     179900
+-! (label_id: 1)                                          0.00       0.00       0.00         52
+-, (label_id: 2)                                          0.00       0.00       0.00      13074
+-- (label_id: 3)                                          0.00       0.00       0.00       1062
+-. (label_id: 4)                                          0.00       0.00       0.00      11077
+-: (label_id: 5)                                          0.00       0.00       0.00        330
+-; (label_id: 6)                                          0.00       0.00       0.00        108
+-? (label_id: 7)                                          0.00       0.00       0.00        899
+-— (label_id: 8)                                          0.00       0.00       0.00        276
+-… (label_id: 9)                                          0.00       0.00       0.00         28
+--------------------
+-micro avg                                               86.99      86.99      86.99     206806
+-macro avg                                                8.70      10.00       9.30     206806
+-weighted avg                                            75.67      86.99      80.94     206806
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00       1959
+--------------------
+-micro avg                                              100.00     100.00     100.00       1959
+-macro avg                                              100.00     100.00     100.00       1959
+-weighted avg                                           100.00     100.00     100.00       1959
+-
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          94.70      97.81      96.23     179900
+-! (label_id: 1)                                          0.00       0.00       0.00         52
+-, (label_id: 2)                                         48.60      28.63      36.03      13074
+-- (label_id: 3)                                         63.84      53.86      58.43       1062
+-. (label_id: 4)                                         53.31      59.38      56.18      11077
+-: (label_id: 5)                                          0.00       0.00       0.00        330
+-; (label_id: 6)                                          0.00       0.00       0.00        108
+-? (label_id: 7)                                         20.00       1.22       2.31        899
+-— (label_id: 8)                                          0.00       0.00       0.00        276
+-… (label_id: 9)                                          0.00       0.00       0.00         28
+--------------------
+-micro avg                                               90.36      90.36      90.36     206806
+-macro avg                                               28.04      24.09      24.92     206806
+-weighted avg                                            88.72      90.36      89.31     206806
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00       1959
+--------------------
+-micro avg                                              100.00     100.00     100.00       1959
+-macro avg                                              100.00     100.00     100.00       1959
+-weighted avg                                           100.00     100.00     100.00       1959
+-
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          96.35      96.40      96.38     179900
+-! (label_id: 1)                                          0.00       0.00       0.00         52
+-, (label_id: 2)                                         43.32      40.33      41.77      13074
+-- (label_id: 3)                                         64.46      56.87      60.43       1062
+-. (label_id: 4)                                         53.28      62.91      57.69      11077
+-: (label_id: 5)                                          0.00       0.00       0.00        330
+-; (label_id: 6)                                          0.00       0.00       0.00        108
+-? (label_id: 7)                                         19.81       9.23      12.59        899
+-— (label_id: 8)                                          5.63       4.35       4.91        276
+-… (label_id: 9)                                          0.00       0.00       0.00         28
+--------------------
+-micro avg                                               90.11      90.11      90.11     206806
+-macro avg                                               28.29      27.01      27.38     206806
+-weighted avg                                            89.83      90.11      89.94     206806
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00       1959
+--------------------
+-micro avg                                              100.00     100.00     100.00       1959
+-macro avg                                              100.00     100.00     100.00       1959
+-weighted avg                                           100.00     100.00     100.00       1959
+-
