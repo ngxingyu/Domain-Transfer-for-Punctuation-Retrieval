@@ -99,6 +99,7 @@ def subword_tokenize(tokenizer,tokens):
 def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,tokens,labels=None):
     subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens)
     teim=token_end_idxs%(max_seq_length-2) if attach_label_to_end else token_start_idxs%(max_seq_length-2)
+
     breakpoints=(np.argwhere(teim[1:]<teim[:-1]).flatten()+1).tolist()
     split_token_idxs=np.array_split(token_end_idxs,breakpoints) if attach_label_to_end else np.array_split(token_start_idxs,breakpoints)
     split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
