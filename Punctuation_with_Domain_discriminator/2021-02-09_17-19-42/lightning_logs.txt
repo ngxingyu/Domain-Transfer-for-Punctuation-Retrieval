@@ -1,7 +1,7 @@
 Global seed set to 42
 GPU available: True, used: True
 TPU available: None, using: 0 TPU cores
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [3]
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
 Using native 16bit precision.
 Global seed set to 42
 initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
@@ -20,4 +20,3 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 299 K     Trainable params
 13.2 M    Non-trainable params
 13.5 M    Total params
-Saving latest checkpoint...
