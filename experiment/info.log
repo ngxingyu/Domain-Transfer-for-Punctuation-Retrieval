@@ -1,5 +1,11 @@
-[INFO] - GPU available: True, used: False
-[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - Lock 139721997549824 acquired on /root/.cache/huggingface/transformers/ca13c16218c6780ec76753d3afa19fcb7cc759e3f63ee87e441562d374762b3d.0824000443bf1ea1b536f53cf8bb9bfaac5e0143ee58dd462bceafeab8f45020.lock
+[INFO] - Lock 139721997549824 released on /root/.cache/huggingface/transformers/ca13c16218c6780ec76753d3afa19fcb7cc759e3f63ee87e441562d374762b3d.0824000443bf1ea1b536f53cf8bb9bfaac5e0143ee58dd462bceafeab8f45020.lock
+[INFO] - Lock 139721997851520 acquired on /root/.cache/huggingface/transformers/1ebdea26ed1a6268cdf5d1fe36450e89c70e306c97d39e62ede8a31f1c43f9ad.baa63624f08a59503441bce3d427225c61fe79bfa9f6d4c30cde7d072d863e0c.lock
+[INFO] - Lock 139721997851520 released on /root/.cache/huggingface/transformers/1ebdea26ed1a6268cdf5d1fe36450e89c70e306c97d39e62ede8a31f1c43f9ad.baa63624f08a59503441bce3d427225c61fe79bfa9f6d4c30cde7d072d863e0c.lock
+[INFO] - Lock 139721996674480 acquired on /root/.cache/huggingface/transformers/ece45ade3e01224cf31fed8e183b306d17b84e8abd415363474cfe72274f7814.d789d64ebfe299b0e416afc4a169632f903f693095b4629a7ea271d5a0cf2c99.lock
+[INFO] - Lock 139721996674480 released on /root/.cache/huggingface/transformers/ece45ade3e01224cf31fed8e183b306d17b84e8abd415363474cfe72274f7814.d789d64ebfe299b0e416afc4a169632f903f693095b4629a7ea271d5a0cf2c99.lock
+[INFO] - Lock 139721996674672 acquired on /root/.cache/huggingface/transformers/92992b36de47dee64b1d5a31c05d8d51e3075b918a218f5ba4f6e306c4b81b8c.7f2721073f19841be16f41b0a70b600ca6b880c8f3df6f3535cbc704371bdfa4.lock
+[INFO] - Lock 139721996674672 released on /root/.cache/huggingface/transformers/92992b36de47dee64b1d5a31c05d8d51e3075b918a218f5ba4f6e306c4b81b8c.7f2721073f19841be16f41b0a70b600ca6b880c8f3df6f3535cbc704371bdfa4.lock
 [INFO] - shuffling train set
 [INFO] - Optimizer config = AdamW (
 Parameter Group 0
@@ -9,7 +15,7 @@ Parameter Group 0
     lr: 0.01
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7ff722d4b4c0>" 
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f13833a2a90>" 
 will be used during training (effective maximum steps = 79575) - 
 Parameters : 
 (warmup_steps: null
@@ -18,26 +24,11 @@ min_lr: 1.0e-10
 last_epoch: -1
 max_steps: 79575
 )
-[INFO] - 
-  | Name                | Type                 | Params
--------------------------------------------------------------
-0 | transformer         | ElectraModel         | 13.5 M
-1 | punct_classifier    | TokenClassifier      | 2.6 K 
-2 | domain_classifier   | SequenceClassifier   | 513   
-3 | punctuation_loss    | FocalDiceLoss        | 0     
-4 | domain_loss         | CrossEntropyLoss     | 0     
-5 | agg_loss            | AggregatorLoss       | 0     
-6 | punct_class_report  | ClassificationReport | 0     
-7 | domain_class_report | ClassificationReport | 0     
--------------------------------------------------------------
-299 K     Trainable params
-13.2 M    Non-trainable params
-13.5 M    Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.99      20.22      32.36       9732
+ (label_id: 0)                                          80.91      20.20      32.33       9732
 ! (label_id: 1)                                          1.45       2.63       1.87        152
-, (label_id: 2)                                          5.42      27.46       9.05        772
+, (label_id: 2)                                          5.38      27.20       8.98        772
 - (label_id: 3)                                          1.70      53.57       3.30         56
 . (label_id: 4)                                          3.12       0.85       1.34       1642
 : (label_id: 5)                                          0.00       0.00       0.00          0
@@ -46,9 +37,9 @@ label                                                precision    recall       f
 — (label_id: 8)                                          0.00       0.00       0.00          0
 … (label_id: 9)                                          0.93       2.04       1.28         98
 -------------------
-micro avg                                               18.00      18.00      18.00      12670
-macro avg                                               13.58      18.53       7.41      12670
-weighted avg                                            63.00      18.00      25.68      12670
+micro avg                                               17.96      17.96      17.96      12670
+macro avg                                               13.56      18.49       7.39      12670
+weighted avg                                            62.93      17.96      25.65      12670
 
 [INFO] - Domain report: 
 label                                                precision    recall       f1           support   
