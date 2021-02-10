@@ -71,7 +71,7 @@ class PunctuationDomainDataset(IterableDataset):
     def __iter__(self):
         self.dataset=iter(pd.read_csv(
                 self.csv_file,
-                skiprows=(0 % self.len)*self.num_samples,
+                skiprows=(0 % self.len)*self.num_samples+1,
                 header=None,
                 dtype=str,
                 chunksize=self.num_samples,
