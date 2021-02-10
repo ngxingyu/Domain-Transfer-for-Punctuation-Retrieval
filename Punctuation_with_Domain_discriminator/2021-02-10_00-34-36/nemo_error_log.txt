@@ -1,0 +1,7 @@
+[NeMo W 2021-02-10 00:34:36 nemo_logging:349] /root/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: You have set progress_bar_refresh_rate < 20 on Google Colab. This may crash. Consider using progress_bar_refresh_rate >= 20 in Trainer.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-10 00:34:36 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-10 00:37:32 nemo_logging:349] /root/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
