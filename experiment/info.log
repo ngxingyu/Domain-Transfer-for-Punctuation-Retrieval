@@ -1,6 +1,8 @@
 [INFO] - GPU available: True, used: False
 [INFO] - TPU available: None, using: 0 TPU cores
 [INFO] - shuffling train set
+[INFO] - Global seed set to 42
+[INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 [INFO] - Optimizer config = AdamW (
 Parameter Group 0
     amsgrad: False
