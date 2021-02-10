@@ -595,3 +595,27 @@ Open subtitles Start
 | micro avg     | 81.47 | 81.47 | 81.47 | 15382574 |
 | macro avg     | 40.47 | 37.50 | 36.91 | 15382574 |
 | weighted avg  | 83.45 | 81.47 | 82.27 | 15382574 |
+
+
+TED
+label                                                precision    recall       f1           support
+ (label_id: 0)                                          96.86      96.25      96.56     339524
+! (label_id: 1)                                          0.00       0.00       0.00        156
+, (label_id: 2)                                         45.97      61.12      52.47      27252
+- (label_id: 3)                                         69.50      69.07      69.29       1940
+. (label_id: 4)                                         70.11      54.68      61.44      25152
+: (label_id: 5)                                          0.00       0.00       0.00        516
+; (label_id: 6)                                          0.00       0.00       0.00        328
+? (label_id: 7)                                         47.28      49.59      48.41       1960
+— (label_id: 8)                                          9.94       8.02       8.88       1596
+… (label_id: 9)                                          0.00       0.00       0.00        104
+-------------------
+micro avg                                               90.25      90.25      90.25     398528
+macro avg                                               33.97      33.87      33.70     398528
+weighted avg                                            90.70      90.25      90.34     398528
+
+
+'punct_f1': tensor(33.7035),
+ 'punct_precision': tensor(33.9651),
+ 'punct_recall': tensor(33.8733),
+ 'test_loss': tensor(0.2265)}
