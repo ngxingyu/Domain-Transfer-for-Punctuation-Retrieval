@@ -541,7 +541,7 @@ DATALOADER:0 TEST RESULTS
 
 ### 2021-02-09_16-44-40 cosine ted around the same
 
-||||||
+| label            | precision | recall | f1    | support   |
 |---|---|---|---|---|
 |  (label_id: 0)  | 97.17 | 95.67 | 96.41  | 259964 |
 | ! (label_id: 1) | 0.00  | 0.00  | 0.00   | 152    |
@@ -576,3 +576,22 @@ DATALOADER:0 TEST RESULTS
 ### 2021-02-09_16-54-29 domain adversarial
 
 ### 2021-02-09_17-19-42 just open subtitles to compare train loss
+
+
+Open subtitles Start 
+| label            | precision | recall | f1    | support   |
+|---|---|---|---|---|
+|  (label_id: 0)   |    95.80  |  93.08 | 94.42 | 11636630  |
+| ! (label_id: 1)  |    18.72  |  51.70 | 27.49 | 255832    |
+| , (label_id: 2)  |    40.04  |  39.95 | 40.00 | 943878    |
+| - (label_id: 3)  |    38.76  |  32.68 | 35.46 | 88054     |
+| . (label_id: 4)  |    54.70  |  48.39 | 51.35 | 1815054   |
+| : (label_id: 5)  |    94.10  |  38.08 | 54.22 | 4270      |
+| ; (label_id: 6)  |     0.00  |   0.00 | 0.00  | 1864      |
+| ? (label_id: 7)  |    41.60  |  52.62 | 46.46 | 480728    |
+| — (label_id: 8)  |     0.00  |   0.00 | 0.00  | 308       |
+| … (label_id: 9)  |    20.95  |  18.53 | 19.67 | 155956    |
+||||||
+| micro avg     | 81.47 | 81.47 | 81.47 | 15382574 |
+| macro avg     | 40.47 | 37.50 | 36.91 | 15382574 |
+| weighted avg  | 83.45 | 81.47 | 82.27 | 15382574 |
