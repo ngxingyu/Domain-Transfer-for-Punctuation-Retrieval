@@ -132,7 +132,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
         assert not torch.isnan(attention_mask).any(), ('amask',attention_mask)
-        assert not torch.isnan(hidden_states).any(), (hidden_states,attention_mask.sum(1),'hiddenstate')
+        if torch.isnan(hidden_states).any():
+            logging.error(hidden_states,attention_mask.sum(1),'hiddenstate')
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
             attention_mask=attention_mask)
