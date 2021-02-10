@@ -32,11 +32,11 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /root/project # /home/nxingyu2/project/ # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /kaggle/working/ASR # /home/nxingyu2/project/ # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /root/data # /home/nxingyu2/data # 
+base_path: /kaggle/input/preprocessed-english-spoken-transcripts # /root/data # /home/nxingyu2/data # 
 tmp_path: /tmp # /home/nxingyu2/data/tmp # 
 
 model:
@@ -61,7 +61,7 @@ model:
     punct_class_weights: false
     
     dataset:
-        data_dir: /root/data # /home/nxingyu2/data # 
+        data_dir: /kaggle/input/preprocessed-english-spoken-transcripts # /home/nxingyu2/data # 
         labelled:
             # - ${base_path}/ted_talks_processed #
             - ${base_path}/open_subtitles_processed #  
@@ -166,16 +166,16 @@ hydra:
             simple:
                 format: '[%(levelname)s] - %(message)s'
         handlers:
-          console:
-            class: logging.StreamHandler
-            formatter: simple
-            stream: ext://sys.stdout
-          file:
-            class: logging.FileHandler
-            level: INFO
-            formatter: simple
-            filename: info.log
-            encoding: utf8
-            mode: w
+            console:
+                class: logging.StreamHandler
+                formatter: simple
+                stream: ext://sys.stdout
+            file:
+                class: logging.FileHandler
+                level: INFO
+                formatter: simple
+                filename: info.log
+                encoding: utf8
+                mode: w
         root:
-          handlers: [console, file]
+            handlers: [console, file]
