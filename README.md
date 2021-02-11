@@ -619,3 +619,33 @@ weighted avg                                            90.70      90.25      90
  'punct_precision': tensor(33.9651),
  'punct_recall': tensor(33.8733),
  'test_loss': tensor(0.2265)}
+
+TED end
+ 'punct_f1': tensor(32.2363, device='cuda:0'),
+ 'punct_precision': tensor(30.6842, device='cuda:0'),
+ 'punct_recall': tensor(36.3651, device='cuda:0'),
+ 'test_loss': tensor(0.2000, device='cuda:0')}
+
+TED start
+'punct_f1': tensor(32.0951, device='cuda:0'),
+'punct_precision': tensor(30.3402, device='cuda:0'),
+'punct_recall': tensor(36.4819, device='cuda:0'),
+'test_loss': tensor(0.1911, device='cuda:0')}
+
+
+TED None
+{'punct_f1': tensor(35.3044, device='cuda:0'),
+ 'punct_precision': tensor(34.8901, device='cuda:0'),
+ 'punct_recall': tensor(35.7895, device='cuda:0'),
+ 'test_loss': tensor(0.2175, device='cuda:0')}
+
+electra-small can't train opensubtitles
+
+120111 distilbert ted
+'punct_f1': tensor(31.4019, device='cuda:0'),
+ 'punct_precision': tensor(31.2565, device='cuda:0'),
+ 'punct_recall': tensor(31.6210, device='cuda:0'),
+ 'test_loss': tensor(0.2392, device='cuda:0')}
+
+
+114802 distilbert opensub
