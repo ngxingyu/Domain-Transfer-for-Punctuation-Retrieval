@@ -1,0 +1,42 @@
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Using native 16bit precision.
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 513   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+299 K     Trainable params
+13.2 M    Non-trainable params
+13.5 M    Total params
+Epoch 0, global step 5254: val_loss reached 0.00853 (best 0.00853), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-11_08-42-15/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.01-epoch=0.ckpt" as top 3
+Saving latest checkpoint...
+Epoch 1, global step 8021: val_loss reached 0.00853 (best 0.00853), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-11_08-42-15/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.01-epoch=1.ckpt" as top 3
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 13.5 M
+1 | punct_classifier    | TokenClassifier      | 2.6 K 
+2 | domain_classifier   | SequenceClassifier   | 513   
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | domain_loss         | CrossEntropyLoss     | 0     
+5 | agg_loss            | AggregatorLoss       | 0     
+6 | punct_class_report  | ClassificationReport | 0     
+7 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+825 K     Trainable params
+12.7 M    Non-trainable params
+13.5 M    Total params
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]

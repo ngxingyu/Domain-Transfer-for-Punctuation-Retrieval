@@ -39,7 +39,7 @@ class PunctuationDomainDataset(IterableDataset):
         tmp_path='~/data/tmp',
         start=0,
         end=-1,
-        attach_label_to_end=True,
+        attach_label_to_end=None,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -154,7 +154,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  randomize:bool=True,
                  data_id='',
                  tmp_path='~/data/tmp',
-                 attach_label_to_end=True,
+                 attach_label_to_end=None,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -266,7 +266,7 @@ class PunctuationInferenceDataset(Dataset):
             "labels": NeuralType(('B', 'T'), ChannelType()),
         }
 
-    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0, attach_label_to_end:bool=True):
+    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0, attach_label_to_end:bool=None):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
         self.punct_label_ids=punct_label_ids

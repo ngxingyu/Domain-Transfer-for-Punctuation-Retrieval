@@ -38,7 +38,7 @@ def align_labels_to_mask(mask,labels):
     return m1.tolist()
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
-        return [re.sub(r'( ?\[((PAD)|(CLS)|(SEP))\] ?)',' ',re.sub(' ##','',' '.join(
+        return [re.sub(r'( ?\[((PAD)|(CLS)|(SEP))\] ?)',' ',re.sub(' +##','',' '.join( #[.?!,;:\-—… ]+
             [_[0]+_[1] for _ in list(
                 zip(tokenizer.convert_ids_to_tokens(_[0]),
                     [labels_to_ids[id] for id in _[1].tolist()])
@@ -113,7 +113,11 @@ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,tokens,labels=None
         padded_labels=[pad_to_len(max_seq_length,align_labels_to_mask(*_)) for _ in zip(masks,split_labels)]
     return ids,masks,padded_labels
     
-def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True,ignore_index=-100, attach_label_to_end=True):
+def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True,ignore_index=-100, attach_label_to_end=None):
+    no_mask=False
+    if attach_label_to_end is None:
+        no_mask=True
+        attach_label_to_end=True
     batch_ids=[]
     batch_masks=[]
     batch_labels=[]
@@ -126,8 +130,11 @@ def chunk_to_len_batch(max_seq_length,tokenizer,tokens,labels=None,labelled=True
     output = {'input_ids': torch.as_tensor(batch_ids, dtype=torch.long),
               'attention_mask': torch.as_tensor(batch_ids, dtype=torch.bool),
               'subtoken_mask': torch.as_tensor(batch_masks,dtype=torch.bool)}
-    output['subtoken_mask']|=((output['input_ids']==101)|(output['input_ids']==102))
-    output['subtoken_mask']&=labelled
+    if no_mask:
+        output['subtoken_mask']=output['attention_mask']&(output['input_ids']!=102)
+    else:
+        output['subtoken_mask']|=(output['input_ids']==101)  # dont want end token |(output['input_ids']==102)
+        output['subtoken_mask']&=labelled
     output['labels']=torch.as_tensor(batch_labels,dtype=torch.long) if labelled==True else torch.zeros_like(output['input_ids'],dtype=torch.long)
     return output
 
