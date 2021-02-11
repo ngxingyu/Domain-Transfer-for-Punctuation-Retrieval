@@ -25,7 +25,7 @@ class PunctuationDataModule(LightningDataModule):
             data_id: str = '',
             tmp_path:str = '~/data/tmp',
             test_unlabelled:bool = True,
-            attach_label_to_end:bool = True,
+            attach_label_to_end:bool = None,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
