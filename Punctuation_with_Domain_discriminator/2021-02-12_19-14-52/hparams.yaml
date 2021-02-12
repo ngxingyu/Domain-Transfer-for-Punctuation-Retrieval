@@ -2,7 +2,7 @@ seed: 42
 trainer:
   gpus: 1
   num_nodes: 1
-  max_epochs: 6
+  max_epochs: 15
   max_steps: null
   accumulate_grad_batches: 4
   gradient_clip_val: 0
@@ -15,7 +15,7 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/nxingyu2/project
+  exp_dir: /home/nxingyu2/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
@@ -23,7 +23,7 @@ base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
 model:
   nemo_path: null
-  transformer_path: google/electra-small-discriminator
+  transformer_path: google/electra-base-discriminator
   unfrozen: 0
   maximum_unfrozen: 1
   unfreeze_step: 1
@@ -43,7 +43,8 @@ model:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/open_subtitles_processed
-    unlabelled: null
+    unlabelled:
+    - /home/nxingyu2/data/ted_talks_processed
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -53,9 +54,9 @@ model:
     pin_memory: true
     drop_last: true
     num_labels: 10
-    num_domains: 1
+    num_domains: 2
     test_unlabelled: true
-    attach_label_to_end: false
+    attach_label_to_end: none
     train_ds:
       shuffle: true
       num_samples: -1
@@ -65,12 +66,12 @@ model:
       num_samples: -1
       batch_size: 4
   tokenizer:
-    tokenizer_name: google/electra-small-discriminator
+    tokenizer_name: google/electra-base-discriminator
     vocab_file: null
     tokenizer_model: null
     special_tokens: null
   language_model:
-    pretrained_model_name: google/electra-small-discriminator
+    pretrained_model_name: google/electra-base-discriminator
     lm_checkpoint: null
     config_file: null
     config: null
@@ -88,7 +89,7 @@ model:
     log_softmax: false
     use_transformer_init: true
     loss: cel
-    gamma: 0
+    gamma: 0.1
     pooling: mean_max
     idx_conditioned_on: 0
   dice_loss:
