@@ -1,6 +1,6 @@
 [INFO] - GPU available: True, used: True
 [INFO] - TPU available: None, using: 0 TPU cores
-[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
 [INFO] - Using native 16bit precision.
 [INFO] - shuffling train set
 [INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
@@ -12,7 +12,7 @@ Parameter Group 0
     lr: 0.01
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f2aadd1dd30>" 
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f98a67675e0>" 
 will be used during training (effective maximum steps = 78825) - 
 Parameters : 
 (warmup_steps: null
