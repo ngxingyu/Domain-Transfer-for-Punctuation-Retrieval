@@ -23,6 +23,7 @@ snoop.install()
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig)->None:
+    torch.set_printoptions(sci_mode=False)
     data_id = str(int(time()))
     def savecounter():
         # pp(os.system(f'rm -r {cfg.model.dataset.data_dir}/*.{data_id}.csv'))

@@ -132,7 +132,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
         assert not torch.isnan(attention_mask).any(), ('amask',attention_mask)
-        assert not torch.isnan(hidden_states).any(), (hidden_states,attention_mask.sum(1),'hiddenstate')
+        if torch.isnan(hidden_states).any():
+            logging.error(hidden_states,attention_mask.sum(1),'hiddenstate')
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
             attention_mask=attention_mask)
@@ -170,7 +171,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.log('lr', lr, prog_bar=True)
         self.log('train_loss', loss)
-        self.log('gamma', self.grad_reverse.scale)
+        self.log('gamma', self.grad_reverse.scale,logger=True)
 
         return {'loss': loss, 'lr': lr}
 
@@ -261,11 +262,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
 
         # calculate metrics and log classification report for Punctuation task
-        punct_precision, punct_recall, punct_f1, punct_report = self.punct_class_report.compute()
+        punct_precision, punct_recall, punct_f1, punct_report, punctuation_cm = self.punct_class_report.compute()
         logging.info(f'Punctuation report: {punct_report}')
 
         # calculate metrics and log classification report for domainalization task
-        domain_precision, domain_recall, domain_f1, domain_report = self.domain_class_report.compute()
+        domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
 
         self.log('val_loss', avg_loss, prog_bar=True)
@@ -275,6 +276,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.log('domain_precision', domain_precision)
         self.log('domain_f1', domain_f1)
         self.log('domain_recall', domain_recall)
+        # self.log('punctuation_cm', punctuation_cm)
+        # self.log('domain_cm', domain_cm)
 
     def test_epoch_end(self, outputs):
         if outputs is not None and len(outputs) == 0:
@@ -297,11 +300,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
 
         # calculate metrics and log classification report for Punctuation task
-        punct_precision, punct_recall, punct_f1, punct_report = self.punct_class_report.compute()
+        punct_precision, punct_recall, punct_f1, punct_report, punct_cm = self.punct_class_report.compute()
         logging.info(f'Punctuation report: {punct_report}')
 
         # calculate metrics and log classification report for domainalization task
-        domain_precision, domain_recall, domain_f1, domain_report = self.domain_class_report.compute()
+        domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
 
         self.log('test_loss', avg_loss, prog_bar=True)
@@ -311,6 +314,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.log('domain_precision', domain_precision)
         self.log('domain_f1', domain_f1)
         self.log('domain_recall', domain_recall)
+        # self.log('punctuation_cm', punct_cm)
+        # self.log('domain_cm', domain_cm)
 
     def setup_optimization(self, optim_config: Optional[Union[DictConfig, Dict]] = None):
         """
@@ -514,7 +519,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             seed=self._cfg.seed,
             data_id=self.data_id,
             tmp_path=self.hparams.tmp_path,
-            test_unlabelled=data_config.test_unlabelled
+            test_unlabelled=data_config.test_unlabelled,
+            attach_label_to_end=data_config.attach_label_to_end,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
@@ -722,7 +728,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             tokenizer= self.tokenizer,
             queries=queries, 
             max_seq_length=self.hparams.model.dataset.max_seq_length,
-            punct_label_ids=self._cfg.model.punct_label_ids)
+            punct_label_ids=self.labels_to_ids,
+            attach_label_to_end=self._cfg.model.dataset.attach_label_to_end)
         batch=ds[0]
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
