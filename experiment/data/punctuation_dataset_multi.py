@@ -39,6 +39,7 @@ class PunctuationDomainDataset(IterableDataset):
         tmp_path='~/data/tmp',
         start=0,
         end=-1,
+        attach_label_to_end=None,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -63,13 +64,14 @@ class PunctuationDomainDataset(IterableDataset):
         self.randomize=randomize
         self.target_file=target_file
         self.tmp_path=tmp_path
+        self.attach_label_to_end=attach_label_to_end
         if not (os.path.exists(self.target_file)):
             os.system(f'cp {self.csv_file} {self.target_file}')
 
     def __iter__(self):
         self.dataset=iter(pd.read_csv(
                 self.csv_file,
-                skiprows=(0 % self.len)*self.num_samples,
+                skiprows=(0 % self.len)*self.num_samples+1,
                 header=None,
                 dtype=str,
                 chunksize=self.num_samples,
@@ -152,6 +154,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  randomize:bool=True,
                  data_id='',
                  tmp_path='~/data/tmp',
+                 attach_label_to_end=None,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -177,7 +180,8 @@ class PunctuationDomainDatasets(IterableDataset):
                     punct_label_ids=punct_label_ids,domain=i,labelled=True,
                     randomize=randomize,
                     target_file=f'{target}.{split}.{data_id}.csv',
-                    tmp_path=tmp_path)
+                    tmp_path=tmp_path,
+                    attach_label_to_end=attach_label_to_end)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
             
@@ -189,7 +193,8 @@ class PunctuationDomainDatasets(IterableDataset):
                     punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,
                     randomize=randomize,
                     target_file=f'{target}.{split}.{data_id}.csv',
-                    tmp_path=tmp_path)
+                    tmp_path=tmp_path,
+                    attach_label_to_end=attach_label_to_end)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
 
@@ -261,12 +266,13 @@ class PunctuationInferenceDataset(Dataset):
             "labels": NeuralType(('B', 'T'), ChannelType()),
         }
 
-    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0):
+    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0, attach_label_to_end:bool=None):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
         self.punct_label_ids=punct_label_ids
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(queries)
-        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],True)
+        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end)
+        self.attach_label_to_end=attach_label_to_end
         # self.all_input_ids = features['input_ids']
         # self.all_attention_mask = features['attention_mask']
         # self.all_subtoken_mask = features['subtoken_mask']

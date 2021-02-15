@@ -19,7 +19,7 @@ trainer:
     # num_nodes: 1
     # max_epochs: 8
     # max_steps: null # precedence over max_epochs
-    # accumulate_grad_batches: 1 # accumulates grads every k batches
+    # accumulate_grad_batches: 4 # accumulates grads every k batches
     # gradient_clip_val: 0
     # amp_level: O0 # O1/O2 for mixed precision
     # precision: 32 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -32,16 +32,16 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/nxingyu2/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu/data # /root/data # 
-tmp_path: /home/nxingyu/data/tmp # /tmp # 
+base_path: /home/nxingyu2/data # /root/data # 
+tmp_path: /home/nxingyu2/data/tmp # /tmp # 
 
 model:
     nemo_path: null
-    transformer_path: google/electra-small-discriminator # distilbert-base-uncased #  filename to save the model and associated artifacts to .nemo file
+    transformer_path: google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
     maximum_unfrozen: 1
     unfreeze_step: 1
@@ -61,12 +61,12 @@ model:
     punct_class_weights: false
     
     dataset:
-        data_dir: /home/nxingyu/data # /root/data # 
+        data_dir: /home/nxingyu2/data # /root/data # 
         labelled:
             # - ${base_path}/ted_talks_processed #
             - ${base_path}/open_subtitles_processed #  
         unlabelled:
-            # - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # parameters for dataset preprocessing
         max_seq_length: 128
@@ -79,8 +79,9 @@ model:
         pin_memory: true
         drop_last: true
         num_labels: 10
-        num_domains: 1
+        num_domains: 2
         test_unlabelled: true
+        attach_label_to_end: none # false if attach to start none if dont mask
 
         train_ds:
             shuffle: true
@@ -123,7 +124,7 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
-        gamma: 0 #0.1 # coefficient of gradient reversal
+        gamma: 0.1 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
     
@@ -165,16 +166,16 @@ hydra:
             simple:
                 format: '[%(levelname)s] - %(message)s'
         handlers:
-          console:
-            class: logging.StreamHandler
-            formatter: simple
-            stream: ext://sys.stdout
-          file:
-            class: logging.FileHandler
-            level: INFO
-            formatter: simple
-            filename: info.log
-            encoding: utf8
-            mode: w
+            console:
+                class: logging.StreamHandler
+                formatter: simple
+                stream: ext://sys.stdout
+            file:
+                class: logging.FileHandler
+                level: INFO
+                formatter: simple
+                filename: info.log
+                encoding: utf8
+                mode: w
         root:
-          handlers: [console, file]
+            handlers: [console, file]

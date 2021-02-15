@@ -32,15 +32,16 @@ trainer:
     resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/nxingyu2/project/ # /root/experiments # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-    restore_path: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_11-57-58/
-    override_config_path: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-08_11-57-58/hparams.yaml
+    restore_path: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_17-15-23/
+    # 2021-02-08_11-57-58
+    override_config_path: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-06_17-15-23/hparams.yaml
 
-base_path: /home/nxingyu/data # /root/data # 
-tmp_path: /home/nxingyu/data/tmp # /tmp # 
+base_path: /home/nxingyu2/data # /root/data # 
+tmp_path: /home/nxingyu2/data/tmp # /tmp # 
 
 model:
     nemo_path: null
@@ -84,6 +85,7 @@ model:
         num_labels: 10
         num_domains: 2
         test_unlabelled: true
+        attach_label_to_end: false
 
         train_ds:
             shuffle: true

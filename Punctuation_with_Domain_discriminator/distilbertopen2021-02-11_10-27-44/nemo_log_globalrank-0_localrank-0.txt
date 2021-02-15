@@ -1,0 +1,15 @@
+[NeMo I 2021-02-11 10:27:44 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-11_10-27-44
+[NeMo I 2021-02-11 10:27:44 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-02-11 10:27:44 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-11 10:28:19 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-11 11:07:07 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f0d46639b50> was reported to be 21018 (when accessing len(dataloader)), but 21019 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-11 11:12:14 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f0d466c9b50> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-12 17:56:43 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f0d466c9a00> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    

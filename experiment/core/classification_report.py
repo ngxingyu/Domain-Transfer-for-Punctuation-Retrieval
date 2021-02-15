@@ -15,6 +15,7 @@
 from typing import Any, Dict, Optional
 
 import torch
+from torch.nn.functional import one_hot
 from pytorch_lightning.metrics import Metric
 from pytorch_lightning.metrics.utils import METRIC_EPS
 
@@ -82,11 +83,14 @@ class ClassificationReport(Metric):
         self.add_state(
             "num_examples_per_class", default=torch.zeros(num_classes), dist_reduce_fx='sum', persistent=False
         )
+        self.add_state("cm", default=torch.zeros((num_classes,num_classes)), dist_reduce_fx="sum", persistent=False)
 
     def update(self, predictions: torch.Tensor, labels: torch.Tensor):
         TP = []
         FN = []
         FP = []
+        CM = torch.zeros((self.num_classes,self.num_classes),dtype=torch.long).to(predictions.device)
+        CM.index_add_(0, predictions, one_hot(labels,num_classes=self.num_classes))
         for label_id in range(self.num_classes):
             current_label = labels == label_id
             label_predicted = predictions == label_id
@@ -98,11 +102,13 @@ class ClassificationReport(Metric):
         tp = torch.tensor(TP).to(predictions.device)
         fn = torch.tensor(FN).to(predictions.device)
         fp = torch.tensor(FP).to(predictions.device)
+        # cm = torch.tensor(CM).to(predictions.device)
         num_examples_per_class = tp + fn
 
         self.tp += tp
         self.fn += fn
         self.fp += fp
+        self.cm += CM
         self.num_examples_per_class += num_examples_per_class
 
     def compute(self):
@@ -156,16 +162,19 @@ class ClassificationReport(Metric):
             + '\n'
         )
 
+        report += "\n-------------------\n"
+        cm = '\n'.join([(' '.join('{:5.2f}'.format(x) for x in i)) for i in self.cm])
+        report += cm
         self.total_examples = total_examples
 
         if self.mode == 'macro':
-            return macro_precision, macro_recall, macro_f1, report
+            return macro_precision, macro_recall, macro_f1, report, cm
         elif self.mode == 'weighted':
-            return weighted_precision, weighted_recall, weighted_f1, report
+            return weighted_precision, weighted_recall, weighted_f1, report, cm
         elif self.mode == 'micro':
-            return micro_precision, micro_recall, micro_f1, report
+            return micro_precision, micro_recall, micro_f1, report, cm
         elif self.mode == 'all':
-            return precision, recall, f1, report
+            return precision, recall, f1, report, cm
         else:
             raise ValueError(
                 f'{self.mode} mode is not supported. Choose "macro" to get aggregated numbers \
