@@ -151,9 +151,8 @@ def preprocess(tedtalks):
     tedtalks=tedtalks.apply(striptrailingtext)
     print('reduce whitespaces')
     tedtalks=tedtalks.apply(reducewhitespaces)
-    
-    print('tolower')
-    tedtalks=tedtalks.str.lower()
+    # print('tolower')
+    # tedtalks=tedtalks.str.lower()
 
     print('--done--')
     return tedtalks

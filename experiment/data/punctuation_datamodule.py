@@ -24,7 +24,8 @@ class PunctuationDataModule(LightningDataModule):
             seed: int = 42,
             data_id: str = '',
             tmp_path:str = '~/data/tmp',
-            test_unlabelled:bool = True
+            test_unlabelled:bool = True,
+            attach_label_to_end:bool = None,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -52,6 +53,7 @@ class PunctuationDataModule(LightningDataModule):
         self.data_id=data_id
         self.tmp_path=tmp_path
         self.test_unlabelled=test_unlabelled
+        self.attach_label_to_end=attach_label_to_end
     
     def reset(self):
         # self.setup('fit')
@@ -70,7 +72,8 @@ class PunctuationDataModule(LightningDataModule):
                     tokenizer=self.tokenizer,
                     randomize=self.train_shuffle,
                     data_id=self.data_id,
-                    tmp_path=self.tmp_path)
+                    tmp_path=self.tmp_path,
+                    attach_label_to_end=self.attach_label_to_end)
             self.val_dataset = PunctuationDomainDatasets(split='dev',
                     num_samples=self.val_batch_size,
                     max_seq_length=self.max_seq_length,
@@ -80,7 +83,8 @@ class PunctuationDataModule(LightningDataModule):
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
-                    tmp_path=self.tmp_path)
+                    tmp_path=self.tmp_path,
+                    attach_label_to_end=self.attach_label_to_end)
         if stage=='test' or stage is None:
             if (len(self.unlabelled)>0) and self.test_unlabelled:
                 self.test_dataset = PunctuationDomainDatasets(split='test',
@@ -92,7 +96,8 @@ class PunctuationDataModule(LightningDataModule):
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
-                    tmp_path=self.tmp_path
+                    tmp_path=self.tmp_path,
+                    attach_label_to_end=self.attach_label_to_end
                     )
             else: self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
@@ -103,7 +108,8 @@ class PunctuationDataModule(LightningDataModule):
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
-                    tmp_path=self.tmp_path
+                    tmp_path=self.tmp_path,
+                    attach_label_to_end=self.attach_label_to_end
                     )
 
         logging.info(f"shuffling train set")
