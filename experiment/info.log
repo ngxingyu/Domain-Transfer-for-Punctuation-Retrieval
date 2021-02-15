@@ -41,3 +41,54 @@ micro avg                                              100.00     100.00     100
 macro avg                                              100.00     100.00     100.00        116
 weighted avg                                           100.00     100.00     100.00        116
 
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          98.29      89.22      93.53   11474980
+! (label_id: 1)                                         23.10      46.77      30.93     265232
+, (label_id: 2)                                         40.68      46.97      43.60     931692
+- (label_id: 3)                                         33.88      47.07      39.40      86716
+. (label_id: 4)                                         50.28      59.98      54.70    1723480
+: (label_id: 5)                                          0.00       0.00       0.00       4384
+; (label_id: 6)                                          0.00       0.00       0.00       2080
+? (label_id: 7)                                         42.98      59.30      49.83     466000
+— (label_id: 8)                                          0.00       0.00       0.00        608
+… (label_id: 9)                                         13.34      22.96      16.88     148828
+-------------------
+micro avg                                               80.67      80.67      80.67   15104000
+macro avg                                               30.25      37.23      32.89   15104000
+weighted avg                                            84.98      80.67      82.47   15104000
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00     140864
+-------------------
+micro avg                                              100.00     100.00     100.00     140864
+macro avg                                              100.00     100.00     100.00     140864
+weighted avg                                           100.00     100.00     100.00     140864
+
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          98.07      90.60      94.18   11474980
+! (label_id: 1)                                         23.63      48.06      31.69     265232
+, (label_id: 2)                                         43.93      43.82      43.88     931692
+- (label_id: 3)                                         45.18      42.09      43.58      86716
+. (label_id: 4)                                         50.22      64.67      56.54    1723480
+: (label_id: 5)                                          0.00       0.00       0.00       4384
+; (label_id: 6)                                          0.00       0.00       0.00       2080
+? (label_id: 7)                                         48.86      56.83      52.54     466000
+— (label_id: 8)                                          0.00       0.00       0.00        608
+… (label_id: 9)                                         17.07      22.06      19.24     148828
+-------------------
+micro avg                                               81.97      81.97      81.97   15104000
+macro avg                                               32.70      36.81      34.16   15104000
+weighted avg                                            85.30      81.97      83.33   15104000
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                        100.00     100.00     100.00     140864
+-------------------
+micro avg                                              100.00     100.00     100.00     140864
+macro avg                                              100.00     100.00     100.00     140864
+weighted avg                                           100.00     100.00     100.00     140864
+
+[INFO] - Internal process exited
