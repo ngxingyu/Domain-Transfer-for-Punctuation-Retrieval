@@ -20,3 +20,4 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 299 K     Trainable params
 13.2 M    Non-trainable params
 13.5 M    Total params
+Saving latest checkpoint...
