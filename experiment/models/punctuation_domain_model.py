@@ -98,7 +98,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss, weight=self.hparams.model.punct_class_weights)
         else: 
             self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self.hparams.model.punct_class_weights)
-                                 
+
+        if self.hparams.model.punct_head.bilstm:
+            self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
         if not self.hparams.model.domain_head.loss in ['cel']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
@@ -128,6 +130,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         hidden_states = self.transformer(
             input_ids=input_ids, attention_mask=attention_mask
         )[0]
+        if self.hparams.model.punct_head.bilstm:
+            hidden_states,_=self.bilstm(hidden_states)
         punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
@@ -521,6 +525,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             tmp_path=self.hparams.tmp_path,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
+            manual_len=data_config.train_ds.manual_len
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
@@ -680,11 +685,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             set_requires_grad_for_module(layer, True)
         
         # Set output layer to true.
-        last_iter=iter(encoder.layer[-1].children())
-        last = next(last_iter)
-        for last in last_iter:
-            continue
-        set_requires_grad_for_module(last, True)
+        # last_iter=iter(encoder.layer[n-1].children())
+        # last = next(last_iter)
+        # for last in last_iter:
+        #     continue
+        # set_requires_grad_for_module(last, True)
 
     def freeze(self) -> None:
         try:
