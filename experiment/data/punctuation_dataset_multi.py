@@ -155,6 +155,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  data_id='',
                  tmp_path='~/data/tmp',
                  attach_label_to_end=None,
+                 manual_len:int=0,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -167,10 +168,11 @@ class PunctuationDomainDatasets(IterableDataset):
         self.ds_lengths=[]
         for path in labelled+unlabelled:
             self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
-        self.max_length=max(self.ds_lengths)
+        self.max_length=max(self.ds_lengths) if manual_len==0 else manual_len
         self.per_worker=int(self.max_length/self.num_workers)
-        self.len=int(self.per_worker/num_samples)
+        self.len=int(self.per_worker/num_samples) 
         self.class_weights=None
+
 
         for i,path in enumerate(labelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
