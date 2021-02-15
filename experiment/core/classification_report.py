@@ -90,6 +90,7 @@ class ClassificationReport(Metric):
         FN = []
         FP = []
         CM = torch.zeros((self.num_classes,self.num_classes),dtype=torch.long).to(predictions.device)
+        predictions=predictions.long()
         CM.index_add_(0, predictions, one_hot(labels,num_classes=self.num_classes))
         for label_id in range(self.num_classes):
             current_label = labels == label_id
