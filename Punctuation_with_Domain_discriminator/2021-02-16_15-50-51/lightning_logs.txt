@@ -1,0 +1,24 @@
+Global seed set to 42
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+Using native 16bit precision.
+Global seed set to 42
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 108 M 
+1 | punct_classifier    | TokenClassifier      | 8.5 K 
+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | bilstm              | LSTM                 | 7.1 M 
+5 | domain_loss         | CrossEntropyLoss     | 0     
+6 | agg_loss            | AggregatorLoss       | 0     
+7 | punct_class_report  | ClassificationReport | 0     
+8 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+7.1 M     Trainable params
+108 M     Non-trainable params
+115 M     Total params
+Epoch 0, global step 98: val_loss reached 0.30492 (best 0.30492), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-16_15-50-51/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.30-epoch=0.ckpt" as top 3
