@@ -66,12 +66,12 @@ class PunctuationDomainDataset(IterableDataset):
         self.tmp_path=tmp_path
         self.attach_label_to_end=attach_label_to_end
         if not (os.path.exists(self.target_file)):
-            os.system(f'cp {self.csv_file} {self.target_file}')
+            os.system(f"sed '1d' {self.csv_file} > {self.target_file}")
 
     def __iter__(self):
         self.dataset=iter(pd.read_csv(
                 self.csv_file,
-                skiprows=(0 % self.len)*self.num_samples+1,
+                skiprows=(0 % self.len)*self.num_samples,
                 header=None,
                 dtype=str,
                 chunksize=self.num_samples,
@@ -83,7 +83,7 @@ class PunctuationDomainDataset(IterableDataset):
         batch = next(self.dataset)[1]
 
         l=batch.str.split().map(len).values
-        n=16
+        n=8
         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)

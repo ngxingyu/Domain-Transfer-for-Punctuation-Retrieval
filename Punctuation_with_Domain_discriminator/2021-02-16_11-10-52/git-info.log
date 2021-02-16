@@ -1,0 +1,309 @@
+commit hash: c523cbaa0b6d3efca5ac9fbc9e89b8678b7e7788
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/events.out.tfevents.1613379232.Titan.2419.0 b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/events.out.tfevents.1613379232.Titan.2419.0
+index 55e3ccc..dbd3b7a 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/events.out.tfevents.1613379232.Titan.2419.0 and b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/events.out.tfevents.1613379232.Titan.2419.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/lightning_logs.txt
+index 46e1e6e..74b73ca 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/lightning_logs.txt
+@@ -21,3 +21,28 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+ 7.1 M     Trainable params
+ 108 M     Non-trainable params
+ 115 M     Total params
++Epoch 0, global step 656: val_loss reached 146.20628 (best 146.20628), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=146.21-epoch=0.ckpt" as top 3
++Epoch 1, global step 1313: val_loss reached 25.70970 (best 25.70970), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=25.71-epoch=1.ckpt" as top 3
++Epoch 2, global step 1970: val_loss reached 7.76796 (best 7.76796), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=7.77-epoch=2.ckpt" as top 3
++Epoch 3, global step 2627: val_loss reached 1.31258 (best 1.31258), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.31-epoch=3.ckpt" as top 3
++Epoch 4, global step 3284: val_loss reached 2.27040 (best 1.31258), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=2.27-epoch=4.ckpt" as top 3
++Epoch 5, global step 3941: val_loss reached 7.67466 (best 1.31258), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/checkpoints/Punctuation_with_Domain_discriminator---val_loss=7.67-epoch=5.ckpt" as top 3
++Saving latest checkpoint...
++Epoch 6, step 4031: val_loss was not in top 3
++Global seed set to 42
++
++  | Name                | Type                 | Params
++-------------------------------------------------------------
++0 | transformer         | ElectraModel         | 108 M 
++1 | punct_classifier    | TokenClassifier      | 7.7 K 
++2 | domain_classifier   | SequenceClassifier   | 3.1 K 
++3 | punctuation_loss    | FocalDiceLoss        | 0     
++4 | bilstm              | LSTM                 | 7.1 M 
++5 | domain_loss         | CrossEntropyLoss     | 0     
++6 | agg_loss            | AggregatorLoss       | 0     
++7 | punct_class_report  | ClassificationReport | 0     
++8 | domain_class_report | ClassificationReport | 0     
++-------------------------------------------------------------
++14.2 M    Trainable params
++101 M     Non-trainable params
++115 M     Total params
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_error_log.txt
+index 8512f6f..40a936f 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_error_log.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_error_log.txt
+@@ -2,3 +2,12 @@
+ [NeMo W 2021-02-15 16:53:52 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+       warnings.warn(*args, **kwargs)
+     
++[NeMo W 2021-02-15 19:19:00 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f5700031460> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-15 19:29:14 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f5700085d30> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-16 08:30:30 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_log_globalrank-0_localrank-0.txt
+index ffe9ee9..bf9ce42 100644
+--- a/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_log_globalrank-0_localrank-0.txt
++++ b/Punctuation_with_Domain_discriminator/2021-02-15_16-53-18/nemo_log_globalrank-0_localrank-0.txt
+@@ -4,3 +4,12 @@
+ [NeMo W 2021-02-15 16:53:52 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+       warnings.warn(*args, **kwargs)
+     
++[NeMo W 2021-02-15 19:19:00 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f5700031460> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-15 19:29:14 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f5700085d30> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
++      warnings.warn(warn_msg)
++    
++[NeMo W 2021-02-16 08:30:30 nemo_logging:349] /home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:50: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
++      warnings.warn(*args, **kwargs)
++    
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 9762568..06a1ef4 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -2,11 +2,11 @@ seed: 42
+ trainer:
+     gpus: 1 # the number of gpus, 0 for CPU
+     num_nodes: 1
+-    max_epochs: 8
++    max_epochs: 5
+     max_steps: null # precedence over max_epochs
+     accumulate_grad_batches: 4 # accumulates grads every k batches
+     gradient_clip_val: 0
+-    amp_level: O1 # O1/O2 for mixed precision
++    amp_level: O2 # O1/O2 for mixed precision
+     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+     accelerator: ddp
+     checkpoint_callback: false  # Provided by exp_manager
+@@ -41,11 +41,10 @@ tmp_path: /home/nxingyu/data/tmp # /tmp #
+ 
+ model:
+     nemo_path: null
+-    transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
++    transformer_path: google/electra-base-discriminator #google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+     unfrozen: 0
+-    maximum_unfrozen: 2
++    maximum_unfrozen: 5
+     unfreeze_step: 1
+-    # unfreeze_every: 3
+     punct_label_ids:
+         - ""
+         - "!"
+@@ -58,16 +57,16 @@ model:
+         - "—"
+         - "…"
+ 
+-    punct_class_weights: false
++    punct_class_weights: false #false
+     
+     dataset:
+         data_dir: /home/nxingyu/data # /root/data # 
+         labelled:
+-            # - ${base_path}/ted_talks_processed #
+-            - ${base_path}/open_subtitles_processed #  
+-        unlabelled:
+             - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
++        unlabelled:
++            # - ${base_path}/ted_talks_processed #
++            # - ${base_path}/open_subtitles_processed #  
+             # parameters for dataset preprocessing
+         max_seq_length: 128
+         pad_label: ''
+@@ -75,19 +74,19 @@ model:
+         ignore_start_end: false
+         use_cache: false
+         # shared among dataloaders
+-        num_workers:  12
+-        pin_memory: true
++        num_workers:  4
++        pin_memory: false
+         drop_last: true
+         num_labels: 10
+-        num_domains: 2
++        num_domains: 1
+         test_unlabelled: true
+         attach_label_to_end: none # false if attach to start none if dont mask
+ 
+         train_ds:
+             shuffle: true
+             num_samples: -1
+-            batch_size: 32
+-            manual_len: 0 #default 0 84074
++            batch_size: 16
++            manual_len: 20 #default 0 84074
+ 
+         validation_ds:
+             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
+@@ -113,11 +112,11 @@ model:
+     punct_head:
+         punct_num_fc_layers: 1
+         fc_dropout: 0.1
+-        activation: 'relu'
++        activation: 'gelu'
+         log_softmax: false
+         use_transformer_init: true
+         loss: 'dice'
+-        bilstm: true
++        bilstm: false
+ 
+     domain_head:
+         domain_num_fc_layers: 1
+@@ -126,7 +125,7 @@ model:
+         log_softmax: false
+         use_transformer_init: true
+         loss: 'cel'
+-        gamma: 0.01 #0.1 # coefficient of gradient reversal
++        gamma: 0 #0.1 # coefficient of gradient reversal
+         pooling: 'mean_max' # 'mean' mean_max
+         idx_conditioned_on: 0
+     
+@@ -136,14 +135,15 @@ model:
+         macro_average: true
+ 
+     focal_loss: 
+-        gamma: 1
++        gamma: 2
+ 
+     frozen_lr:
+-        - 1e-2
+-        - 5e-3
++        - 1e-1
++        - 1e-1
++        - 1e-1
+ 
+     optim:
+-        name: adamw
++        name: adagrad
+         lr: 1e-2 #1e-3
+         weight_decay: 0.00
+         sched:
+diff --git a/experiment/core/layers/multi_layer_perceptron.py b/experiment/core/layers/multi_layer_perceptron.py
+index 63318cc..ba4489f 100644
+--- a/experiment/core/layers/multi_layer_perceptron.py
++++ b/experiment/core/layers/multi_layer_perceptron.py
+@@ -14,6 +14,7 @@
+ # limitations under the License.
+ 
+ import torch
++from torch import nn
+ 
+ class MultiLayerPerceptron(torch.nn.Module):
+     """
+@@ -37,10 +38,16 @@ class MultiLayerPerceptron(torch.nn.Module):
+     ):
+         super().__init__()
+         self.layers = 0
++        activations = {
++            'relu': nn.ReLU(),
++            'gelu': nn.GELU(),
++            'sigmoid': nn.Sigmoid(),
++            'tanh': nn.Tanh()
++        }
+         for _ in range(num_layers - 1):
+             layer = torch.nn.Linear(hidden_size, hidden_size)
+             setattr(self, f'layer{self.layers}', layer)
+-            setattr(self, f'layer{self.layers + 1}', getattr(torch, activation))
++            setattr(self, f'layer{self.layers + 1}', activations[activation]) #getattr(torch, activation)
+             self.layers += 2
+         layer = torch.nn.Linear(hidden_size, num_classes)
+         setattr(self, f'layer{self.layers}', layer)
+diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+index d5e42aa..3b75cab 100644
+--- a/experiment/data/punctuation_dataset_multi.py
++++ b/experiment/data/punctuation_dataset_multi.py
+@@ -66,12 +66,12 @@ class PunctuationDomainDataset(IterableDataset):
+         self.tmp_path=tmp_path
+         self.attach_label_to_end=attach_label_to_end
+         if not (os.path.exists(self.target_file)):
+-            os.system(f'cp {self.csv_file} {self.target_file}')
++            os.system(f"sed '1d' {self.csv_file} > {self.target_file}")
+ 
+     def __iter__(self):
+         self.dataset=iter(pd.read_csv(
+                 self.csv_file,
+-                skiprows=(0 % self.len)*self.num_samples+1,
++                skiprows=(0 % self.len)*self.num_samples,
+                 header=None,
+                 dtype=str,
+                 chunksize=self.num_samples,
+diff --git a/experiment/info.log b/experiment/info.log
+index 188b5f1..e69de29 100644
+Binary files a/experiment/info.log and b/experiment/info.log differ
+diff --git a/experiment/main.py b/experiment/main.py
+index 324f489..7f97cb4 100644
+--- a/experiment/main.py
++++ b/experiment/main.py
+@@ -23,6 +23,7 @@ snoop.install()
+ 
+ @hydra.main(config_name="config")
+ def main(cfg: DictConfig)->None:
++    os.environ["TOKENIZERS_PARALLELISM"] = "false"
+     torch.set_printoptions(sci_mode=False)
+     data_id = str(int(time()))
+     def savecounter():
+@@ -34,7 +35,7 @@ def main(cfg: DictConfig)->None:
+ 
+     pp(cfg)
+     pl.seed_everything(cfg.seed)
+-    trainer = pl.Trainer(**cfg.trainer)
++    trainer = pl.Trainer(**cfg.trainer,track_grad_norm=2)
+     exp_manager(trainer, cfg.exp_manager)
+     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
+     
+diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+index 0e46e67..edb0d55 100644
+--- a/experiment/models/punctuation_domain_model.py
++++ b/experiment/models/punctuation_domain_model.py
+@@ -245,9 +245,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         }
+ 
+     def validation_epoch_end(self, outputs):
+-        # print('next epoch:',self.current_epoch+1, (self.current_epoch+1)%self.hparams.model.unfreeze_every)
+-        # if ((self.current_epoch+1)%self.hparams.model.unfreeze_every==0):
+-        #     self.unfreeze(self.hparams.model.unfreeze_step)
++        
+         self.dm.train_dataset.shuffle()
+         if outputs is not None and len(outputs) == 0:
+             return {}
+@@ -690,6 +688,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         # for last in last_iter:
+         #     continue
+         # set_requires_grad_for_module(last, True)
++        for name, param in self.transformer.named_parameters():                
++            if param.requires_grad:
++                print(name)
++
+ 
+     def freeze(self) -> None:
+         try:
+@@ -701,6 +703,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+ 
+         self.frozen = len(encoder.layer)-self.hparams.model.unfrozen
+         self.freeze_transformer_to(self.frozen)
++        for name, param in encoder.named_parameters(): 
++            if param.requires_grad: 
++                print(name, param.data)
+ 
+     def unfreeze(self, i: int = 1):
+         self.frozen -= i
+@@ -710,6 +715,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         #     self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
+         #     self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
+         self.freeze_transformer_to(max(0, self.frozen))
++        
+ 
+     def teardown(self, stage: str):
+         """
