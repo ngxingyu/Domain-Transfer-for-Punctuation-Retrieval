@@ -53,10 +53,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
         self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
+        if self._cfg.model.no_space_label is not None:
+            self.hparams.model.punct_label_ids.append(self._cfg.model.no_space_label)
         self.ids_to_labels = {_[0]: _[1]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
         self.labels_to_ids = {_[1]: _[0]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
         self.data_id=data_id
         self.setup_datamodule()
 
@@ -523,7 +525,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             tmp_path=self.hparams.tmp_path,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
-            manual_len=data_config.train_ds.manual_len
+            manual_len=data_config.train_ds.manual_len,
+            no_space_label=self._cfg.model.no_space_label,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
