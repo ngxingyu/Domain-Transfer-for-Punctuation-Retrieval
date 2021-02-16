@@ -51,3 +51,14 @@ Saving latest checkpoint...
 108 M     Total params
 Epoch 0, step 84079: val_loss was not in top 3
 Epoch 1, step 89334: val_loss was not in top 3
+Epoch 2, step 94589: val_loss was not in top 3
+Epoch 3, step 99844: val_loss was not in top 3
+Epoch 4, step 105099: val_loss was not in top 3
+Epoch 5, step 110354: val_loss was not in top 3
+Epoch 6, step 115609: val_loss was not in top 3
+Epoch 7, step 120864: val_loss was not in top 3
+Epoch 8, step 126119: val_loss was not in top 3
+Epoch 9, step 131374: val_loss was not in top 3
+Epoch 10, step 136629: val_loss was not in top 3
+Epoch 11, step 141884: val_loss was not in top 3
+Epoch 12, step 147139: val_loss was not in top 3
