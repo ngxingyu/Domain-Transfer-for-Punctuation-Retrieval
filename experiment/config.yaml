@@ -76,7 +76,7 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  4
+        num_workers:  8
         pin_memory: false
         drop_last: true
         num_labels: 11
@@ -88,7 +88,7 @@ model:
             shuffle: true
             num_samples: -1
             batch_size: 32
-            manual_len: 1000 #default 0 84074
+            manual_len: 000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
