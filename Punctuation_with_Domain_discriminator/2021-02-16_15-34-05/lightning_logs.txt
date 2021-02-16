@@ -31,3 +31,9 @@ Epoch 6, global step 174: val_loss reached 0.34186 (best 0.34031), saving model 
 Epoch 7, global step 199: val_loss reached 0.34567 (best 0.34031), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-16_15-34-05/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.35-epoch=7.ckpt" as top 3
 Epoch 8, global step 224: val_loss reached 0.33876 (best 0.33876), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-16_15-34-05/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.34-epoch=8.ckpt" as top 3
 Epoch 9, step 249: val_loss was not in top 3
+Epoch 10, step 274: val_loss was not in top 3
+Epoch 11, step 299: val_loss was not in top 3
+Epoch 12, step 324: val_loss was not in top 3
+Epoch 13, step 349: val_loss was not in top 3
+Epoch 14, step 374: val_loss was not in top 3
+Epoch 15, step 399: val_loss was not in top 3
