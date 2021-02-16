@@ -53,10 +53,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
         self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
+        if self._cfg.model.no_space_label is not None:
+            self.hparams.model.punct_label_ids.append(self._cfg.model.no_space_label)
         self.ids_to_labels = {_[0]: _[1]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
         self.labels_to_ids = {_[1]: _[0]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
         self.data_id=data_id
         self.setup_datamodule()
 
@@ -98,7 +100,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss, weight=self.hparams.model.punct_class_weights)
         else: 
             self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self.hparams.model.punct_class_weights)
-                                 
+
+        if self.hparams.model.punct_head.bilstm:
+            self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
         if not self.hparams.model.domain_head.loss in ['cel']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
@@ -128,6 +132,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         hidden_states = self.transformer(
             input_ids=input_ids, attention_mask=attention_mask
         )[0]
+        if self.hparams.model.punct_head.bilstm:
+            hidden_states,_=self.bilstm(hidden_states)
         punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
@@ -241,9 +247,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         }
 
     def validation_epoch_end(self, outputs):
-        # print('next epoch:',self.current_epoch+1, (self.current_epoch+1)%self.hparams.model.unfreeze_every)
-        # if ((self.current_epoch+1)%self.hparams.model.unfreeze_every==0):
-        #     self.unfreeze(self.hparams.model.unfreeze_step)
+        
         self.dm.train_dataset.shuffle()
         if outputs is not None and len(outputs) == 0:
             return {}
@@ -521,6 +525,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             tmp_path=self.hparams.tmp_path,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
+            manual_len=data_config.train_ds.manual_len,
+            no_space_label=self._cfg.model.no_space_label,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
@@ -680,11 +686,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             set_requires_grad_for_module(layer, True)
         
         # Set output layer to true.
-        last_iter=iter(encoder.layer[-1].children())
-        last = next(last_iter)
-        for last in last_iter:
-            continue
-        set_requires_grad_for_module(last, True)
+        # last_iter=iter(encoder.layer[n-1].children())
+        # last = next(last_iter)
+        # for last in last_iter:
+        #     continue
+        # set_requires_grad_for_module(last, True)
+        for name, param in self.transformer.named_parameters():                
+            if param.requires_grad:
+                print(name)
+
 
     def freeze(self) -> None:
         try:
@@ -696,6 +706,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.frozen = len(encoder.layer)-self.hparams.model.unfrozen
         self.freeze_transformer_to(self.frozen)
+        for name, param in encoder.named_parameters(): 
+            if param.requires_grad: 
+                print(name, param.data)
 
     def unfreeze(self, i: int = 1):
         self.frozen -= i
@@ -705,6 +718,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         #     self.frozen+=self.hparams.model.unfrozen-self.hparams.model.maximum_unfrozen
         #     self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
         self.freeze_transformer_to(max(0, self.frozen))
+        
 
     def teardown(self, stage: str):
         """
