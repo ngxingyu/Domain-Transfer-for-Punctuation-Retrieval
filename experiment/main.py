@@ -23,6 +23,7 @@ snoop.install()
 
 @hydra.main(config_name="config")
 def main(cfg: DictConfig)->None:
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     torch.set_printoptions(sci_mode=False)
     data_id = str(int(time()))
     def savecounter():
@@ -34,7 +35,7 @@ def main(cfg: DictConfig)->None:
 
     pp(cfg)
     pl.seed_everything(cfg.seed)
-    trainer = pl.Trainer(**cfg.trainer)
+    trainer = pl.Trainer(**cfg.trainer,track_grad_norm=2)
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     
