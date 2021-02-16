@@ -2,7 +2,7 @@ import torch
 from torch import Tensor, LongTensor, nn
 from torch.nn.functional import log_softmax
 import torch.jit as jit
-from core.utils import align_labels_to_mask
+from core.utils import align_labels_to_mask, pad_to_len
 from typing import Optional, List
 
 class LinearChainCRF(torch.nn.Module):

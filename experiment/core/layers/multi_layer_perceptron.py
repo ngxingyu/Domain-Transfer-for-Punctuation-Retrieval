@@ -14,6 +14,7 @@
 # limitations under the License.
 
 import torch
+from torch import nn
 
 class MultiLayerPerceptron(torch.nn.Module):
     """
@@ -37,10 +38,16 @@ class MultiLayerPerceptron(torch.nn.Module):
     ):
         super().__init__()
         self.layers = 0
+        activations = {
+            'relu': nn.ReLU(),
+            'gelu': nn.GELU(),
+            'sigmoid': nn.Sigmoid(),
+            'tanh': nn.Tanh()
+        }
         for _ in range(num_layers - 1):
             layer = torch.nn.Linear(hidden_size, hidden_size)
             setattr(self, f'layer{self.layers}', layer)
-            setattr(self, f'layer{self.layers + 1}', getattr(torch, activation))
+            setattr(self, f'layer{self.layers + 1}', activations[activation]) #getattr(torch, activation)
             self.layers += 2
         layer = torch.nn.Linear(hidden_size, num_classes)
         setattr(self, f'layer{self.layers}', layer)
