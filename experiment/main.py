@@ -36,8 +36,8 @@ def main(cfg: DictConfig)->None:
     pp(cfg)
     pl.seed_everything(cfg.seed)
     trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
-    exp_manager(trainer, cfg.exp_manager)
-    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
+    log_dir=exp_manager(trainer, cfg.exp_manager).__str__()
+    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id,log_dir=log_dir)
     
     # lr_finder_dm=PunctuationDataModule(
     #         tokenizer= cfg.model.transformer_path,

@@ -1,0 +1,22 @@
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Using native 16bit precision.
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 2.4 M 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | bilstm                     | LSTM                 | 7.1 M 
+5 | domain_loss                | CrossEntropyLoss     | 0     
+6 | agg_loss                   | AggregatorLoss       | 0     
+7 | punct_class_report         | ClassificationReport | 0     
+8 | chunked_punct_class_report | ClassificationReport | 0     
+9 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+10.6 M    Trainable params
+108 M     Non-trainable params
+119 M     Total params

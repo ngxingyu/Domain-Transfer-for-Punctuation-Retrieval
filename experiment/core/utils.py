@@ -26,7 +26,7 @@ def position_to_mask(max_seq_length:int,indices:list):
     try:
         o[np.array(indices)%(max_seq_length-2)+1]=1
     except:
-        pp('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
+        # pp('empty array')
         o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
