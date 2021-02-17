@@ -62,3 +62,9 @@ Epoch 9, step 131374: val_loss was not in top 3
 Epoch 10, step 136629: val_loss was not in top 3
 Epoch 11, step 141884: val_loss was not in top 3
 Epoch 12, step 147139: val_loss was not in top 3
+Epoch 13, step 152394: val_loss was not in top 3
+Epoch 14, step 157649: val_loss was not in top 3
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
