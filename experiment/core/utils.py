@@ -46,14 +46,18 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
             )]
         )))) for _ in zip(texts,tags)]
 
-def text2masks(n, labels_to_ids):
+def text2masks(n, labels_to_ids,label_map):
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
+        labels=''.join(labels_to_ids.keys())
         if n==0: 
-            refilter="(?<=[.?!,;:\-—… ])(?=[^.?!,;:\-—… ])|$"
+            refilter=f"(?<=[{labels} ])(?=[^{labels} ])|$"
         else:
-            refilter="[.?!,;:\-—…]{1,%d}(?= *[^.?!,;:\-—…]+|$)|(?<=[^.?!,;:\-—…]) +(?=[^.?!,;:\-—…])"%(n)
+            refilter=f"[{labels}]{{1,{n}}}(?= *[^{labels}]+|$)|(?<=[^{labels}]) +(?=[^{labels}])"
         text=re.sub(r'^[_\W]*','',text)
+        for k,v in label_map.items():
+            text=re.sub(f"(?<=[{labels} ]){k}+","",text)
+            text=re.sub(f"(?<=[A-Za-z0-9 ]){k}+",v,text)
         word=re.split(refilter,text, flags=re.V1)
         punct=re.findall(refilter,text, flags=re.V1)
         wordlist,punctlist=([] for _ in range(2))
@@ -65,29 +69,29 @@ def text2masks(n, labels_to_ids):
         for i in zip(word,punct): #+[''] to correspond to the last word or '' after the last punctuation.
             w,p=i[0].strip(),i[1].strip()
             if w!='':
-                wordlist.append(re.sub(r'[.?!,;:\-—… ]','',w))
-                punctlist.append(0 if not w[-1] in '.?!,;:-—…' else labels_to_ids[w[-1]])
+                wordlist.append(re.sub(f'[{labels} ]','',w))
+                punctlist.append(0 if not w[-1] in labels else labels_to_ids[w[-1]])
             if p!='':
                 wordlist.append(p)
                 punctlist.append(0)
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids):
+def chunk_examples_with_degree(n, labels_to_ids,label_map):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
         output['texts']=[]
         output['tags']=[]
         for sentence in examples:
-            text,tag=text2masks(n, labels_to_ids)(sentence)
+            text,tag=text2masks(n, labels_to_ids, label_map)(sentence)
             output['texts'].append(text)
             output['tags'].append(tag)
             # output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
             # not necessary since all the leading punctuations are stripped
         return output
     return chunk_examples
-assert(chunk_examples_with_degree(0,{'': 0, '!': 1, ',': 2, '-': 3, '.': 4, ':': 5, ';': 6, '?': 7, '—': 8, '…': 9})(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 9]]})
+assert(chunk_examples_with_degree(0,{'': 0, '!': 1, ',': 2, '-': 3, '.': 4, ':': 5, '?': 6, '—': 7},{'…':'.',';':'.'})(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 4]]})
 
 def subword_tokenize(tokenizer,tokens):
     subwords = list(map(tokenizer.tokenize, tokens))
