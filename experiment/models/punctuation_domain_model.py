@@ -59,6 +59,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                               for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
         self.labels_to_ids = {_[1]: _[0]
                               for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
+        self.label_map=pp({k:v for k,v in self._cfg.model.label_map.items()})
         self.data_id=data_id
         self.setup_datamodule()
 
@@ -513,6 +514,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             labelled= list(data_config.labelled),
             unlabelled= list(data_config.unlabelled),
             punct_label_ids= labels_to_ids,
+            label_map=self.label_map,
             train_batch_size= data_config.train_ds.batch_size,
             max_seq_length= data_config.max_seq_length,
             val_batch_size= data_config.validation_ds.batch_size,
@@ -743,6 +745,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             queries=queries, 
             max_seq_length=self.hparams.model.dataset.max_seq_length,
             punct_label_ids=self.labels_to_ids,
+            label_map=self.label_map,
             attach_label_to_end=self._cfg.model.dataset.attach_label_to_end)
         batch=ds[0]
         attention_mask = batch['attention_mask']

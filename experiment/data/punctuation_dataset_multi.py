@@ -32,6 +32,7 @@ class PunctuationDomainDataset(IterableDataset):
         max_seq_length:int=256,
         degree=0,
         punct_label_ids: Dict[str, int] = None,
+        label_map:Dict[str,str] = None,
         domain=0,
         labelled=True,
         randomize=True,
@@ -41,6 +42,7 @@ class PunctuationDomainDataset(IterableDataset):
         end=-1,
         attach_label_to_end=None,
         no_space_label=None,
+        manual_len=0,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -56,9 +58,11 @@ class PunctuationDomainDataset(IterableDataset):
         
         self.csv_file =   csv_file
         self.max_seq_length =   max_seq_length
-        self.set_num_samples(csv_file, num_samples)
+        self.manual_len=manual_len
+        self.set_num_samples(csv_file, num_samples, manual_len)
         self.domain=  domain
         self.punct_label_ids=punct_label_ids
+        self.label_map=label_map
         self.labelled=  labelled
         self.tokenizer= tokenizer
         self.degree=degree
@@ -90,7 +94,7 @@ class PunctuationDomainDataset(IterableDataset):
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
 
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(batch)
+        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,no_space_label=self.no_space_label)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
@@ -101,9 +105,11 @@ class PunctuationDomainDataset(IterableDataset):
         else:
             return batched
 
-    def set_num_samples(self,csv_file,num_samples):
+    def set_num_samples(self,csv_file,num_samples, manual_len):
         self.num_samples = num_samples
         self.total_samples=int(subprocess.Popen(['wc', '-l', csv_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        if manual_len>0:
+            self.total_samples=min(manual_len,self.total_samples)
         self.len = int(self.total_samples / self.num_samples)
         
 
@@ -150,6 +156,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  num_samples:int,
                  max_seq_length:int,
                  punct_label_ids: Dict[str, int],
+                 label_map:Dict[str,str],
                  labelled: List[str],
                  unlabelled: List[str],
                  tokenizer,
@@ -167,11 +174,11 @@ class PunctuationDomainDatasets(IterableDataset):
         self.iterables=[]
         self.randomize=randomize
         self.punct_label_ids=punct_label_ids
-
+        self.label_map=label_map
         self.ds_lengths=[]
         for path in labelled+unlabelled:
             self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
-        self.max_length=max(self.ds_lengths) if manual_len==0 else manual_len
+        self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
         self.len=int(self.per_worker/num_samples) 
         self.class_weights=None
@@ -182,12 +189,15 @@ class PunctuationDomainDatasets(IterableDataset):
             dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=i,labelled=True,
+                    punct_label_ids=punct_label_ids,
+                    label_map=label_map,
+                    domain=i,labelled=True,
                     randomize=randomize,
                     target_file=f'{target}.{split}.{data_id}.csv',
                     tmp_path=tmp_path,
                     attach_label_to_end=attach_label_to_end,
-                    no_space_label=no_space_label,)
+                    no_space_label=no_space_label,
+                    manual_len=manual_len,)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
             
@@ -196,12 +206,14 @@ class PunctuationDomainDatasets(IterableDataset):
             dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
                     num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,domain=len(labelled)+i,labelled=False,
+                    punct_label_ids=punct_label_ids,
+                    label_map=label_map,domain=len(labelled)+i,labelled=False,
                     randomize=randomize,
                     target_file=f'{target}.{split}.{data_id}.csv',
                     tmp_path=tmp_path,
                     attach_label_to_end=attach_label_to_end,
-                    no_space_label=no_space_label,)
+                    no_space_label=no_space_label,
+                    manual_len=manual_len,)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
 
@@ -273,11 +285,12 @@ class PunctuationInferenceDataset(Dataset):
             "labels": NeuralType(('B', 'T'), ChannelType()),
         }
 
-    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], num_samples:int=256, degree:int = 0, attach_label_to_end:bool=None,no_space_label=None,):
+    def __init__(self, tokenizer, queries: List[str], max_seq_length: int, punct_label_ids:Dict[str,int], label_map:Dict[str,str], num_samples:int=256, degree:int = 0, attach_label_to_end:bool=None,no_space_label=None,):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
         self.punct_label_ids=punct_label_ids
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids)(queries)
+        self.label_map = label_map
+        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(queries)
         self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,)
         self.attach_label_to_end=attach_label_to_end
         # self.all_input_ids = features['input_ids']
