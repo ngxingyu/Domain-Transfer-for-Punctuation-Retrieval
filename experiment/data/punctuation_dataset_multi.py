@@ -89,7 +89,7 @@ class PunctuationDomainDataset(IterableDataset):
         batch = next(self.dataset)[1]
 
         l=batch.str.split().map(len).values
-        n=8
+        n=16
         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
@@ -114,7 +114,8 @@ class PunctuationDomainDataset(IterableDataset):
         
 
     def __len__(self):
-        return self.len
+        pp('dataset')
+        return pp(self.len)
     
     def shuffle(self, randomize=True, seed=42):
         pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
@@ -177,7 +178,10 @@ class PunctuationDomainDatasets(IterableDataset):
         self.label_map=label_map
         self.ds_lengths=[]
         for path in labelled+unlabelled:
-            self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+            if manual_len>0:
+                self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+            else:
+                self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
         self.len=int(self.per_worker/num_samples) 
@@ -245,7 +249,7 @@ class PunctuationDomainDatasets(IterableDataset):
             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
-        return self.len
+        return pp(self.len)
 
     def shuffle(self, randomize=True, seed=42):
         worker_info = get_worker_info()

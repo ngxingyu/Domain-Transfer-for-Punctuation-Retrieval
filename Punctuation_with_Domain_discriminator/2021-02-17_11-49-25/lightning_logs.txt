@@ -56,3 +56,48 @@ Epoch 1, global step 1682: val_loss reached 0.19387 (best 0.19241), saving model
 Epoch 2, step 1781: val_loss was not in top 3
 Epoch 3, step 1880: val_loss was not in top 3
 Epoch 4, step 1979: val_loss was not in top 3
+Epoch 5, step 2078: val_loss was not in top 3
+Epoch 6, step 2177: val_loss was not in top 3
+Epoch 7, step 2276: val_loss was not in top 3
+Epoch 8, step 2375: val_loss was not in top 3
+Epoch 9, step 2474: val_loss was not in top 3
+Epoch 10, step 2573: val_loss was not in top 3
+Epoch 11, step 2672: val_loss was not in top 3
+Epoch 12, step 2771: val_loss was not in top 3
+Epoch 13, step 2870: val_loss was not in top 3
+Epoch 14, step 2969: val_loss was not in top 3
+
+  | Name                | Type                 | Params
+-------------------------------------------------------------
+0 | transformer         | ElectraModel         | 108 M 
+1 | punct_classifier    | TokenClassifier      | 1.2 M 
+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss    | FocalDiceLoss        | 0     
+4 | bilstm              | LSTM                 | 7.1 M 
+5 | domain_loss         | CrossEntropyLoss     | 0     
+6 | agg_loss            | AggregatorLoss       | 0     
+7 | punct_class_report  | ClassificationReport | 0     
+8 | domain_class_report | ClassificationReport | 0     
+-------------------------------------------------------------
+22.5 M    Trainable params
+94.7 M    Non-trainable params
+117 M     Total params
+Epoch 0, step 3068: val_loss was not in top 3
+Epoch 1, step 3167: val_loss was not in top 3
+Epoch 2, step 3266: val_loss was not in top 3
+Epoch 3, step 3365: val_loss was not in top 3
+Epoch 4, step 3464: val_loss was not in top 3
+Epoch 5, step 3563: val_loss was not in top 3
+Epoch 6, step 3662: val_loss was not in top 3
+Epoch 7, step 3761: val_loss was not in top 3
+Epoch 8, step 3860: val_loss was not in top 3
+Epoch 9, step 3959: val_loss was not in top 3
+Epoch 10, step 4058: val_loss was not in top 3
+Epoch 11, step 4157: val_loss was not in top 3
+Epoch 12, step 4256: val_loss was not in top 3
+Epoch 13, step 4355: val_loss was not in top 3
+Epoch 14, step 4454: val_loss was not in top 3
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]

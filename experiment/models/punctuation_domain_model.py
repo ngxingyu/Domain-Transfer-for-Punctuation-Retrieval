@@ -39,6 +39,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                  cfg: DictConfig,
                  trainer: pl.Trainer = None,
                  data_id: str = '',
+                 log_dir: str = '',
                  ):
         if trainer is not None and not isinstance(trainer, pl.Trainer):
             raise ValueError(
@@ -46,6 +47,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             )
         super().__init__()
         self._cfg = cfg
+        self._cfg.log_dir=log_dir
         self.save_hyperparameters(cfg)
         self._optimizer = None
         self._scheduler = None
@@ -63,6 +65,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                               for k,v in self.ids_to_labels.items()}
         self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
         self.data_id=data_id
+        assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
         self.setup_datamodule()
 
         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
@@ -341,6 +344,27 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # calculate metrics and log classification report for domainalization task
         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
+
+        path=f"{self.hparams.log_dir}/test.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+        logging.info(f'saving to {path}')
+        with open(path,'w') as f:
+            f.write("Punct report\n")
+            f.write(punct_report)
+            f.write("\nChunked Punct report\n")
+            f.write(chunked_punct_report)
+            f.write("\nDomain report\n")
+            f.write(domain_report)
+            f.write('\n\n')
+            f.write(f'test_loss: {avg_loss}\n')
+            f.write(f'punct_precision: {punct_precision}\n')
+            f.write(f'punct_f1: {punct_f1}\n')
+            f.write(f'punct_recall: {punct_recall}\n')
+            f.write(f'chunked_punct_precision: {chunked_punct_precision}\n')
+            f.write(f'chunked_punct_f1: {chunked_punct_f1}\n')
+            f.write(f'chunked_punct_recall: {chunked_punct_recall}\n')
+            f.write(f'domain_precision: {domain_precision}\n')
+            f.write(f'domain_f1: {domain_f1}\n')
+            f.write(f'domain_recall: {domain_recall}\n')
 
         self.log('test_loss', avg_loss, prog_bar=True)
         self.log('punct_precision', punct_precision)

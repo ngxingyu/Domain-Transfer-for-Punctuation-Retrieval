@@ -36,6 +36,7 @@ def main(cfg : DictConfig) -> None:
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
     checkpoint_path="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+    model.hparams.log_dir="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/"
     trainer = pl.Trainer(**cfg.trainer)
     # trainer = pl.Trainer(gpus=gpu)
     trainer.test(model,ckpt_path=None)
