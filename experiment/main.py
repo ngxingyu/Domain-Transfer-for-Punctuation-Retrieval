@@ -35,7 +35,7 @@ def main(cfg: DictConfig)->None:
 
     pp(cfg)
     pl.seed_everything(cfg.seed)
-    trainer = pl.Trainer(**cfg.trainer,track_grad_norm=2)
+    trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
     exp_manager(trainer, cfg.exp_manager)
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
     
@@ -56,17 +56,17 @@ def main(cfg: DictConfig)->None:
     #         tmp_path=cfg.tmp_path,
     #         test_unlabelled=False,
     #     )
+
     lrs=[1e-2,1e-5] if cfg.model.frozen_lr is None else list(cfg.model.frozen_lr)
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         # trainer.current_epoch=0
-        # lr_finder = trainer.tuner.lr_find(model,datamodule=lr_finder_dm,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
+        # lr_finder = trainer.tuner.lr_find(model,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
         # # Results can be found in
         # pp(lr_finder.results)
         # new_lr = lr_finder.suggestion()
         # model.hparams.model.optim.lr = new_lr
-        # lr_finder_dm.reset()
         # model.dm.reset()
-        model.hparams.model.optim.lr = lrs[model.hparams.model.unfrozen]
+        model.hparams.model.optim.lr = lrs.pop(0)
         trainer.current_epoch=0
         trainer.fit(model)
         try:
