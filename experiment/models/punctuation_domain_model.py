@@ -768,7 +768,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.freeze_transformer_to(self.frozen)
         for name, param in encoder.named_parameters(): 
             if param.requires_grad: 
-                print(name, param.data)
+                print(name)
 
     def unfreeze(self, i: int = 1):
         self.frozen -= i
