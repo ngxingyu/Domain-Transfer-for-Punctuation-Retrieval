@@ -88,14 +88,14 @@ class PunctuationDomainDataset(IterableDataset):
     def __next__(self):
         batch = next(self.dataset)[1]
 
-        l=batch.str.split().map(len).values
-        n=16
-        a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
-        b=np.minimum(l,a+self.max_seq_length*n)
-        batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+        # l=batch.str.split().map(len).values
+        # n=16
+        # a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+        # b=np.minimum(l,a+self.max_seq_length*n)
+        # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
 
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(batch)
-        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,no_space_label=self.no_space_label)
+        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
         gc.collect()
@@ -166,7 +166,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  tmp_path='~/data/tmp',
                  attach_label_to_end=None,
                  manual_len:int=0,
-                 no_space_label:int=2,
+                 no_space_label:int=None,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers

@@ -84,7 +84,8 @@ class PunctuationDataModule(LightningDataModule):
                     data_id=self.data_id,
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
-                    manual_len=self.manual_len)
+                    manual_len=self.manual_len,
+                    no_space_label=self.no_space_label)
             self.val_dataset = PunctuationDomainDatasets(split='dev',
                     num_samples=self.val_batch_size,
                     max_seq_length=self.max_seq_length,
@@ -96,7 +97,8 @@ class PunctuationDataModule(LightningDataModule):
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
                     tmp_path=self.tmp_path,
-                    attach_label_to_end=self.attach_label_to_end)
+                    attach_label_to_end=self.attach_label_to_end,
+                    no_space_label=self.no_space_label)
         if stage=='test' or stage is None:
             if (len(self.unlabelled)>0) and self.test_unlabelled:
                 self.test_dataset = PunctuationDomainDatasets(split='test',
@@ -110,7 +112,8 @@ class PunctuationDataModule(LightningDataModule):
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
                     tmp_path=self.tmp_path,
-                    attach_label_to_end=self.attach_label_to_end
+                    attach_label_to_end=self.attach_label_to_end,
+                    no_space_label=self.no_space_label
                     )
             else: self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
@@ -123,7 +126,8 @@ class PunctuationDataModule(LightningDataModule):
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
                     tmp_path=self.tmp_path,
-                    attach_label_to_end=self.attach_label_to_end
+                    attach_label_to_end=self.attach_label_to_end,
+                    no_space_label=self.no_space_label
                     )
 
         logging.info(f"shuffling train set")
