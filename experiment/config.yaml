@@ -96,7 +96,7 @@ model:
         num_domains: 2
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
-
+        pad_start_and_end: 64
         train_ds:
             shuffle: true
             num_samples: -1

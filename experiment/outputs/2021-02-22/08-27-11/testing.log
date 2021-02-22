@@ -1,0 +1,6 @@
+[2021-02-22 08:27:16,534][root][INFO] - shuffling train set
+[2021-02-22 08:27:18,744][lightning][INFO] - GPU available: True, used: True
+[2021-02-22 08:27:18,744][lightning][INFO] - TPU available: None, using: 0 TPU cores
+[2021-02-22 08:27:18,744][lightning][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+[2021-02-22 08:27:18,745][lightning][INFO] - Using native 16bit precision.
+[2021-02-22 08:27:18,749][lightning][INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
