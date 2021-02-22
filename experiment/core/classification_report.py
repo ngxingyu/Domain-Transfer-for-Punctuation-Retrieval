@@ -18,6 +18,7 @@ import torch
 from torch.nn.functional import one_hot
 from pytorch_lightning.metrics import Metric
 from pytorch_lightning.metrics.utils import METRIC_EPS
+import pandas as pd
 
 __all__ = ['ClassificationReport']
 
@@ -164,8 +165,11 @@ class ClassificationReport(Metric):
         )
 
         report += "\n-------------------\n"
-        cm = '\n'.join([(' '.join('{:5.2f}'.format(x) for x in i)) for i in self.cm])
+        if self.ids_to_labels :
+            report += ('{:>12}'*len(self.ids_to_labels.values())).format(*self.ids_to_labels.values()) +'\n'
+        cm = '\n'.join([(' '.join('{:>12.2f}'.format(x) for x in i)) for i in self.cm])
         report += cm
+        report += "\n-------------------\n"
         self.total_examples = total_examples
 
         if self.mode == 'macro':
