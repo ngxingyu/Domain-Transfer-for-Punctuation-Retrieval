@@ -9,3 +9,9 @@ experiment/lightning_logs/*/checkpoints/
 **/__pycache__/*
 experiment/.hydra/
 Punctuation_with_Domain_discriminator/*/checkpoints/
+Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=18.05-epoch=10.ckpt
+Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=18.04-epoch=11.ckpt
+Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=17.64-epoch=8.ckpt
+./Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=18.05-epoch=10.ckpt
+./Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=18.04-epoch=11.ckpt
+./Punctuation_with_Domain_discriminator/bilstmcrf2021-02-16_14-25-10/checkpoints/Punctuation_with_Domain_discriminator---val_loss=17.64-epoch=8.ckpt
