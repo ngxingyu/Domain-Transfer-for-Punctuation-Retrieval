@@ -96,7 +96,7 @@ class PunctuationDomainDataset(IterableDataset):
         # b=np.minimum(l,a+self.max_seq_length*n)
         # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
 
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.pad_start_and_end)(batch)
+        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
@@ -310,7 +310,7 @@ class PunctuationInferenceDataset(Dataset):
         self.degree=degree
         self.punct_label_ids=punct_label_ids
         self.label_map = label_map
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.pad_start_and_end)(queries)
+        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(queries)
         self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,)
         self.attach_label_to_end=attach_label_to_end
         # self.all_input_ids = features['input_ids']
