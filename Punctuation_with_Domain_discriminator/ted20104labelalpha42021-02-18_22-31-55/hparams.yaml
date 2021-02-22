@@ -50,6 +50,7 @@ model:
     unlabelled: null
     max_seq_length: 128
     pad_label: ''
+    pad_examples: true
     ignore_extra_tokens: false
     ignore_start_end: false
     use_cache: false

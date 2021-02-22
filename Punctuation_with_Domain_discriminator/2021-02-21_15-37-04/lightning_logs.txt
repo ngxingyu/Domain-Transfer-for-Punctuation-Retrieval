@@ -21,3 +21,24 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 113 M     Total params
 Epoch 0, global step 624: val_loss reached 39.13414 (best 39.13414), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=39.13-epoch=0.ckpt" as top 3
 Epoch 1, global step 1249: val_loss reached 38.60223 (best 38.60223), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=38.60-epoch=1.ckpt" as top 3
+Epoch 2, global step 1874: val_loss reached 38.55209 (best 38.55209), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=38.55-epoch=2.ckpt" as top 3
+Epoch 3, global step 2499: val_loss reached 38.22637 (best 38.22637), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=38.23-epoch=3.ckpt" as top 3
+Epoch 4, global step 3124: val_loss reached 38.05367 (best 38.05367), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=38.05-epoch=4.ckpt" as top 3
+Epoch 5, global step 3749: val_loss reached 37.89869 (best 37.89869), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-21_15-37-04/checkpoints/Punctuation_with_Domain_discriminator---val_loss=37.90-epoch=5.ckpt" as top 3
+Saving latest checkpoint...
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 6.9 K 
+2 | domain_classifier          | SequenceClassifier   | 4.7 M 
+3 | punctuation_loss           | LinearChainCRF       | 99    
+4 | domain_loss                | CrossEntropyLoss     | 0     
+5 | agg_loss                   | AggregatorLoss       | 0     
+6 | punct_class_report         | ClassificationReport | 0     
+7 | chunked_punct_class_report | ClassificationReport | 0     
+8 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+11.8 M    Trainable params
+101 M     Non-trainable params
+113 M     Total params
