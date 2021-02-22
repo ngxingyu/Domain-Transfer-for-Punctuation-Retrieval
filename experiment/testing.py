@@ -49,7 +49,7 @@ def main(cfg : DictConfig) -> None:
                     tmp_path=model.dm.tmp_path,
                     attach_label_to_end=model.dm.attach_label_to_end,
                     no_space_label=model.dm.no_space_label,
-                    pad_start_and_end=model.dm.pad_start_and_end,
+                    pad_start=model.dm.pad_start,
                     )
     model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     trainer = pl.Trainer(**cfg.trainer)
