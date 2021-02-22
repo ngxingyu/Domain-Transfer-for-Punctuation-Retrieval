@@ -97,7 +97,7 @@ model:
         num_domains: 2
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
-        pad_start: 32
+        pad_start: 64
         train_ds:
             shuffle: true
             num_samples: -1
@@ -126,12 +126,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 3
+        punct_num_fc_layers: 0
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'crf'
         bilstm: false
 
     domain_head:
@@ -147,7 +147,7 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 4
+        alpha: 3
         macro_average: true
 
     focal_loss: 
