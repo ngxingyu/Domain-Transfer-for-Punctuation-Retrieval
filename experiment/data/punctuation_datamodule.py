@@ -29,7 +29,7 @@ class PunctuationDataModule(LightningDataModule):
             attach_label_to_end:bool = None,
             manual_len:int = 0,
             no_space_label: str = None,
-            pad_start_and_end:int = 0,
+            pad_start:int = 0,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -60,7 +60,7 @@ class PunctuationDataModule(LightningDataModule):
         self.test_unlabelled=test_unlabelled
         self.attach_label_to_end=attach_label_to_end
         self.manual_len=manual_len
-        self.pad_start_and_end=pad_start_and_end
+        self.pad_start=pad_start
         try:
             self.no_space_label=self.punct_label_ids[no_space_label]
         except:
@@ -88,7 +88,7 @@ class PunctuationDataModule(LightningDataModule):
                     attach_label_to_end=self.attach_label_to_end,
                     manual_len=self.manual_len,
                     no_space_label=self.no_space_label,
-                    pad_start_and_end=self.pad_start_and_end,
+                    pad_start=self.pad_start,
                     )
             self.val_dataset = PunctuationDomainDatasets(split='dev',
                     num_samples=self.val_batch_size,
@@ -103,7 +103,7 @@ class PunctuationDataModule(LightningDataModule):
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
                     no_space_label=self.no_space_label,
-                    pad_start_and_end=self.pad_start_and_end,
+                    pad_start=self.pad_start,
                     )
         if stage=='test' or stage is None:
             if (len(self.unlabelled)>0) and self.test_unlabelled:
@@ -120,7 +120,7 @@ class PunctuationDataModule(LightningDataModule):
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
                     no_space_label=self.no_space_label,
-                    pad_start_and_end=self.pad_start_and_end,
+                    pad_start=self.pad_start,
                     )
             else: self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
@@ -135,7 +135,7 @@ class PunctuationDataModule(LightningDataModule):
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
                     no_space_label=self.no_space_label,
-                    pad_start_and_end=self.pad_start_and_end,
+                    pad_start=self.pad_start,
                     )
 
         logging.info(f"shuffling train set")
