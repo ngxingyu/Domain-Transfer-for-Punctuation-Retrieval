@@ -1,10 +1,5 @@
-[2021-02-22 08:27:16,534][root][INFO] - shuffling train set
-[2021-02-22 08:27:18,744][lightning][INFO] - GPU available: True, used: True
-[2021-02-22 08:27:18,744][lightning][INFO] - TPU available: None, using: 0 TPU cores
-[2021-02-22 08:27:18,744][lightning][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
-[2021-02-22 08:27:18,745][lightning][INFO] - Using native 16bit precision.
-[2021-02-22 08:27:18,749][lightning][INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
-[2021-02-22 09:05:31,879][root][INFO] - Punctuation report: 
+Punct report
+
 label                                                precision    recall       f1           support   
  (label_id: 0)                                          96.04      98.31      97.16   33608340
 ! (label_id: 1)                                         53.78      14.02      22.24     578536
@@ -33,7 +28,8 @@ weighted avg                                            91.30      91.72      91
         0.00         0.00         0.00         0.00         0.00         0.00         0.00         0.00         0.00
 -------------------
 
-[2021-02-22 09:05:31,884][root][INFO] - Chunked Punctuation report: 
+Chunked Punct report
+
 label                                                precision    recall       f1           support   
  (label_id: 0)                                          96.19      98.40      97.28   16871868
 ! (label_id: 1)                                         53.94      14.21      22.49     290624
@@ -62,7 +58,8 @@ weighted avg                                            91.56      91.96      91
         0.00         0.00         0.00         0.00         0.00         0.00         0.00         0.00         0.00
 -------------------
 
-[2021-02-22 09:05:31,887][root][INFO] - Domain report: 
+Domain report
+
 label                                                precision    recall       f1           support   
 0 (label_id: 0)                                        100.00      93.65      96.72     411352
 1 (label_id: 1)                                          0.00       0.00       0.00          0
@@ -77,5 +74,14 @@ weighted avg                                           100.00      93.65      96
     26120.00         0.00
 -------------------
 
-[2021-02-22 09:05:31,887][root][INFO] - saving to /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-20_22-21-25//test.txt
-[2021-02-22 09:05:31,930][wandb.sdk.internal.internal][INFO] - Internal process exited
+
+test_loss: 31.315528869628906
+punct_precision: 68.0217056274414
+punct_f1: 61.5281982421875
+punct_recall: 58.5203857421875
+chunked_punct_precision: 68.34056091308594
+chunked_punct_f1: 62.17266845703125
+chunked_punct_recall: 59.3353271484375
+domain_precision: 100.0
+domain_f1: 96.72099304199219
+domain_recall: 93.65020751953125

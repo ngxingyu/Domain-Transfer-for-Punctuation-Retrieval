@@ -46,6 +46,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
             )]
         )))) for _ in zip(texts,tags)]
 
+def text2masks(n, labels_to_ids,label_map, pad_start_and_end=0):
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
         labels=''.join(labels_to_ids.keys())
@@ -78,7 +79,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids,label_map,pad_start_and_end):
+def chunk_examples_with_degree(n, labels_to_ids,label_map,):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
@@ -92,7 +93,7 @@ def chunk_examples_with_degree(n, labels_to_ids,label_map,pad_start_and_end):
             # not necessary since all the leading punctuations are stripped
         return output
     return chunk_examples
-assert(chunk_examples_with_degree(0,{'': 0, '!': 1, ',': 2, '-': 3, '.': 4, ':': 5, '?': 6, '—': 7},{'…':'.',';':'.'},0)(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 4]]})
+assert(chunk_examples_with_degree(0,{'': 0, '!': 1, ',': 2, '-': 3, '.': 4, ':': 5, '?': 6, '—': 7},{'…':'.',';':'.'})(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 4]]})
 
 def subword_tokenize(tokenizer,tokens):
     subwords = list(map(tokenizer.tokenize, tokens))

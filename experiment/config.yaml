@@ -77,8 +77,8 @@ model:
         data_dir: /home/nxingyu2/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            # - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/ted_talks_processed #
+            # - ${base_path}/open_subtitles_processed #  
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -96,12 +96,12 @@ model:
         num_domains: 2
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
-        pad_start_and_end: 64
+        pad_start_and_end: 0
         train_ds:
             shuffle: true
             num_samples: -1
             batch_size: 16
-            manual_len: 40000 #default 0 84074
+            manual_len: 20000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
