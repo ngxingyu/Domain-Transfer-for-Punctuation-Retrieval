@@ -1,3 +1,7 @@
+[INFO] - GPU available: True, used: True
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[INFO] - Using native 16bit precision.
 [INFO] - shuffling train set
 [INFO] - Optimizer config = AdamW (
 Parameter Group 0
@@ -16,6 +20,22 @@ min_lr: 1.0e-08
 last_epoch: -1
 max_steps: 3750
 )
+[INFO] - 
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 6.9 K 
+2 | domain_classifier          | SequenceClassifier   | 4.7 M 
+3 | punctuation_loss           | LinearChainCRF       | 99    
+4 | domain_loss                | CrossEntropyLoss     | 0     
+5 | agg_loss                   | AggregatorLoss       | 0     
+6 | punct_class_report         | ClassificationReport | 0     
+7 | chunked_punct_class_report | ClassificationReport | 0     
+8 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+18.9 M    Trainable params
+94.7 M    Non-trainable params
+113 M     Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
  (label_id: 0)                                          72.95      38.21      50.15      57792
@@ -100,3 +120,5 @@ weighted avg                                           100.00     100.00     100
    394112.00
 -------------------
 
+[INFO] - Epoch 0, step 8124: val_loss was not in top 3
+[INFO] - Internal process exited
