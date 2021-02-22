@@ -88,6 +88,8 @@ The process of converting continuous text is as follows:
 ``` console
 bash ~/project/get-data.sh
 
+bash ~/project/experiment/data/disfl2csv.sh /home/nxingyu/data/LDC99T42/treebank_3/dysfl/dff/swbd /home/nxingyu/data/ddfl.csv
+
 python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
 
