@@ -2,9 +2,9 @@ seed: 42
 trainer:
   gpus: 1
   num_nodes: 1
-  max_epochs: 6
+  max_epochs: 8
   max_steps: null
-  accumulate_grad_batches: 4
+  accumulate_grad_batches: 16
   gradient_clip_val: 0
   amp_level: O1
   precision: 16
@@ -15,13 +15,13 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/nxingyu/project/
+  exp_dir: /home/nxingyu2/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/nxingyu/data
-tmp_path: /home/nxingyu/data/tmp
-log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-22_09-44-06
+base_path: /home/nxingyu2/data
+tmp_path: /home/nxingyu2/data/tmp
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-22_14-06-14
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -42,11 +42,12 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
+  pad_start_and_end: 0
   punct_class_weights: false
   dataset:
-    data_dir: /home/nxingyu/data
+    data_dir: /home/nxingyu2/data
     labelled:
-    - /home/nxingyu/data/open_subtitles_processed
+    - /home/nxingyu2/data/ted_talks_processed
     unlabelled: null
     max_seq_length: 128
     pad_label: ''
@@ -60,11 +61,11 @@ model:
     num_domains: 2
     test_unlabelled: true
     attach_label_to_end: null
-    pad_start_and_end: 0
+    pad_start: 64
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 32
+      batch_size: 16
       manual_len: 20000
     validation_ds:
       shuffle: true
@@ -81,12 +82,12 @@ model:
     config_file: null
     config: null
   punct_head:
-    punct_num_fc_layers: 3
+    punct_num_fc_layers: 0
     fc_dropout: 0.1
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: dice
+    loss: crf
     bilstm: false
   domain_head:
     domain_num_fc_layers: 3
