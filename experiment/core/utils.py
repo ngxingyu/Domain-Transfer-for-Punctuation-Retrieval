@@ -74,8 +74,6 @@ def text2masks(n, labels_to_ids,label_map):
             if p!='':
                 wordlist.append(p)
                 punctlist.append(0)
-        wordlist=['']*pad_start_and_end+wordlist+['']*pad_start_and_end
-        punctlist=['']*pad_start_and_end+wordlist+[0]*pad_start_and_end
         return(wordlist,punctlist)
     return text2masks
 
