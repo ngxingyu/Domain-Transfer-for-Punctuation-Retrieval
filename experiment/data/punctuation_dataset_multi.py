@@ -43,7 +43,7 @@ class PunctuationDomainDataset(IterableDataset):
         attach_label_to_end=None,
         no_space_label=None,
         manual_len=0,
-        pad_start_and_end=0,
+        pad_start=0,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -72,7 +72,7 @@ class PunctuationDomainDataset(IterableDataset):
         self.tmp_path=tmp_path
         self.attach_label_to_end=attach_label_to_end
         self.no_space_label=no_space_label
-        self.pad_start_and_end=pad_start_and_end
+        self.pad_start=pad_start
         if not (os.path.exists(self.target_file)):
             os.system(f"sed '1d' {self.csv_file} > {self.target_file}")
 
@@ -97,7 +97,7 @@ class PunctuationDomainDataset(IterableDataset):
         # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
 
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(batch)
-        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label)
+        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, pad_start=self.pad_start)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
         gc.collect()
@@ -169,7 +169,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  attach_label_to_end=None,
                  manual_len:int=0,
                  no_space_label:int=None,
-                 pad_start_and_end:int=0,
+                 pad_start:int=0,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -205,7 +205,7 @@ class PunctuationDomainDatasets(IterableDataset):
                     attach_label_to_end=attach_label_to_end,
                     no_space_label=no_space_label,
                     manual_len=manual_len,
-                    pad_start_and_end=pad_start_and_end,)
+                    pad_start=pad_start,)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
             
@@ -222,7 +222,7 @@ class PunctuationDomainDatasets(IterableDataset):
                     attach_label_to_end=attach_label_to_end,
                     no_space_label=no_space_label,
                     manual_len=manual_len,
-                    pad_start_and_end=pad_start_and_end,)
+                    pad_start=pad_start,)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
 
@@ -304,14 +304,14 @@ class PunctuationInferenceDataset(Dataset):
     degree:int = 0, 
     attach_label_to_end:bool=None,
     no_space_label=None,
-    pad_start_and_end:int=0,
+    pad_start:int=0,
     ):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
         self.punct_label_ids=punct_label_ids
         self.label_map = label_map
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(queries)
-        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,)
+        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,pad_start=pad_start)
         self.attach_label_to_end=attach_label_to_end
         # self.all_input_ids = features['input_ids']
         # self.all_attention_mask = features['attention_mask']
