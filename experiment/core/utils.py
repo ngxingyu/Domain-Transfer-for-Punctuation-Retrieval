@@ -46,7 +46,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
             )]
         )))) for _ in zip(texts,tags)]
 
-def text2masks(n, labels_to_ids,label_map, pad_start_and_end=0):
+def text2masks(n, labels_to_ids,label_map):
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
         labels=''.join(labels_to_ids.keys())
@@ -79,14 +79,14 @@ def text2masks(n, labels_to_ids,label_map, pad_start_and_end=0):
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids,label_map,):
+def chunk_examples_with_degree(n, labels_to_ids,label_map):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
         output['texts']=[]
         output['tags']=[]
         for sentence in examples:
-            text,tag=text2masks(n, labels_to_ids, label_map,pad_start_and_end)(sentence)
+            text,tag=text2masks(n, labels_to_ids, label_map)(sentence)
             output['texts'].append(text)
             output['tags'].append(tag)
             # output['tags'].append([0]+tag if text[0]!='' else tag) # [0]+tag so that in all case, the first tag refers to [CLS]
