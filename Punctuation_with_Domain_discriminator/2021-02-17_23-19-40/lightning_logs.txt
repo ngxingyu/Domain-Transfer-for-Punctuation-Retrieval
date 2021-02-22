@@ -1,0 +1,244 @@
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+Using native 16bit precision.
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 2.4 M 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | bilstm                     | LSTM                 | 7.1 M 
+5 | domain_loss                | CrossEntropyLoss     | 0     
+6 | agg_loss                   | AggregatorLoss       | 0     
+7 | punct_class_report         | ClassificationReport | 0     
+8 | chunked_punct_class_report | ClassificationReport | 0     
+9 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+10.6 M    Trainable params
+108 M     Non-trainable params
+119 M     Total params
+Epoch 0, global step 62: val_loss reached 0.37320 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.37-epoch=0.ckpt" as top 3
+Epoch 0, global step 124: val_loss reached 0.51103 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.51-epoch=0.ckpt" as top 3
+Epoch 0, global step 187: val_loss reached 2.11771 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=2.12-epoch=0.ckpt" as top 3
+Epoch 0, step 249: val_loss was not in top 3
+Epoch 0, global step 312: val_loss reached 0.69488 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.69-epoch=0.ckpt" as top 3
+Epoch 1, global step 375: val_loss reached 0.68167 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.68-epoch=1.ckpt" as top 3
+Epoch 1, global step 437: val_loss reached 0.42402 (best 0.37320), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.42-epoch=1.ckpt" as top 3
+Epoch 1, step 500: val_loss was not in top 3
+Epoch 1, step 562: val_loss was not in top 3
+Epoch 1, step 625: val_loss was not in top 3
+Epoch 2, step 688: val_loss was not in top 3
+Epoch 2, step 750: val_loss was not in top 3
+Epoch 2, step 813: val_loss was not in top 3
+Epoch 2, step 875: val_loss was not in top 3
+Epoch 2, step 938: val_loss was not in top 3
+Epoch 3, step 1001: val_loss was not in top 3
+Epoch 3, step 1063: val_loss was not in top 3
+Epoch 3, step 1126: val_loss was not in top 3
+Epoch 3, step 1188: val_loss was not in top 3
+Epoch 3, step 1251: val_loss was not in top 3
+Epoch 4, step 1314: val_loss was not in top 3
+Epoch 4, step 1376: val_loss was not in top 3
+Epoch 4, step 1439: val_loss was not in top 3
+Epoch 4, step 1501: val_loss was not in top 3
+Epoch 4, step 1564: val_loss was not in top 3
+Epoch 5, step 1627: val_loss was not in top 3
+Epoch 5, step 1689: val_loss was not in top 3
+Epoch 5, step 1752: val_loss was not in top 3
+Epoch 5, step 1814: val_loss was not in top 3
+Epoch 5, step 1877: val_loss was not in top 3
+Epoch 6, step 1940: val_loss was not in top 3
+Epoch 6, step 2002: val_loss was not in top 3
+Epoch 6, step 2065: val_loss was not in top 3
+Epoch 6, step 2127: val_loss was not in top 3
+Epoch 6, step 2190: val_loss was not in top 3
+Epoch 7, step 2253: val_loss was not in top 3
+Epoch 7, step 2315: val_loss was not in top 3
+Epoch 7, step 2378: val_loss was not in top 3
+Epoch 7, step 2440: val_loss was not in top 3
+Epoch 7, step 2503: val_loss was not in top 3
+Epoch 8, step 2566: val_loss was not in top 3
+Epoch 8, step 2628: val_loss was not in top 3
+Epoch 8, step 2691: val_loss was not in top 3
+Epoch 8, step 2753: val_loss was not in top 3
+Epoch 8, step 2816: val_loss was not in top 3
+Epoch 9, step 2879: val_loss was not in top 3
+Epoch 9, step 2941: val_loss was not in top 3
+Epoch 9, step 3004: val_loss was not in top 3
+Epoch 9, step 3066: val_loss was not in top 3
+Epoch 9, step 3129: val_loss was not in top 3
+Epoch 10, step 3192: val_loss was not in top 3
+Epoch 10, step 3254: val_loss was not in top 3
+Epoch 10, step 3317: val_loss was not in top 3
+Epoch 10, step 3379: val_loss was not in top 3
+Epoch 10, global step 3442: val_loss reached 0.26448 (best 0.26448), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.26-epoch=10.ckpt" as top 3
+Epoch 11, step 3505: val_loss was not in top 3
+Epoch 11, step 3567: val_loss was not in top 3
+Epoch 11, step 3630: val_loss was not in top 3
+Epoch 11, step 3692: val_loss was not in top 3
+Epoch 11, step 3755: val_loss was not in top 3
+Epoch 12, step 3818: val_loss was not in top 3
+Epoch 12, step 3880: val_loss was not in top 3
+Epoch 12, step 3943: val_loss was not in top 3
+Epoch 12, step 4005: val_loss was not in top 3
+Epoch 12, step 4068: val_loss was not in top 3
+Epoch 13, step 4131: val_loss was not in top 3
+Epoch 13, step 4193: val_loss was not in top 3
+Epoch 13, step 4256: val_loss was not in top 3
+Epoch 13, step 4318: val_loss was not in top 3
+Epoch 13, step 4381: val_loss was not in top 3
+Epoch 14, step 4444: val_loss was not in top 3
+Epoch 14, step 4506: val_loss was not in top 3
+Epoch 14, step 4569: val_loss was not in top 3
+Epoch 14, step 4631: val_loss was not in top 3
+Epoch 14, step 4694: val_loss was not in top 3
+Epoch 15, step 4757: val_loss was not in top 3
+Epoch 15, step 4819: val_loss was not in top 3
+Epoch 15, step 4882: val_loss was not in top 3
+Epoch 15, step 4944: val_loss was not in top 3
+Epoch 15, step 5007: val_loss was not in top 3
+Epoch 16, step 5070: val_loss was not in top 3
+Epoch 16, step 5132: val_loss was not in top 3
+Epoch 16, step 5195: val_loss was not in top 3
+Epoch 16, step 5257: val_loss was not in top 3
+Epoch 16, step 5320: val_loss was not in top 3
+Epoch 17, step 5383: val_loss was not in top 3
+Epoch 17, step 5445: val_loss was not in top 3
+Epoch 17, step 5508: val_loss was not in top 3
+Epoch 17, step 5570: val_loss was not in top 3
+Epoch 17, step 5633: val_loss was not in top 3
+Epoch 18, step 5696: val_loss was not in top 3
+Epoch 18, step 5758: val_loss was not in top 3
+Epoch 18, step 5821: val_loss was not in top 3
+Epoch 18, step 5883: val_loss was not in top 3
+Epoch 18, step 5946: val_loss was not in top 3
+Epoch 19, step 6009: val_loss was not in top 3
+Epoch 19, step 6071: val_loss was not in top 3
+Epoch 19, step 6134: val_loss was not in top 3
+Epoch 19, step 6196: val_loss was not in top 3
+Epoch 19, step 6259: val_loss was not in top 3
+Saving latest checkpoint...
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 2.4 M 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | bilstm                     | LSTM                 | 7.1 M 
+5 | domain_loss                | CrossEntropyLoss     | 0     
+6 | agg_loss                   | AggregatorLoss       | 0     
+7 | punct_class_report         | ClassificationReport | 0     
+8 | chunked_punct_class_report | ClassificationReport | 0     
+9 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+17.7 M    Trainable params
+101 M     Non-trainable params
+119 M     Total params
+Epoch 0, step 6322: val_loss was not in top 3
+Epoch 0, step 6384: val_loss was not in top 3
+Epoch 0, step 6447: val_loss was not in top 3
+Epoch 0, step 6509: val_loss was not in top 3
+Epoch 0, step 6572: val_loss was not in top 3
+Epoch 1, step 6635: val_loss was not in top 3
+Epoch 1, step 6697: val_loss was not in top 3
+Epoch 1, step 6760: val_loss was not in top 3
+Epoch 1, step 6822: val_loss was not in top 3
+Epoch 1, step 6885: val_loss was not in top 3
+Epoch 2, step 6948: val_loss was not in top 3
+Epoch 2, step 7010: val_loss was not in top 3
+Epoch 2, step 7073: val_loss was not in top 3
+Epoch 2, step 7135: val_loss was not in top 3
+Epoch 2, step 7198: val_loss was not in top 3
+Epoch 3, step 7261: val_loss was not in top 3
+Epoch 3, step 7323: val_loss was not in top 3
+Epoch 3, step 7386: val_loss was not in top 3
+Epoch 3, step 7448: val_loss was not in top 3
+Epoch 3, step 7511: val_loss was not in top 3
+Epoch 4, step 7574: val_loss was not in top 3
+Epoch 4, step 7636: val_loss was not in top 3
+Epoch 4, step 7699: val_loss was not in top 3
+Epoch 4, step 7761: val_loss was not in top 3
+Epoch 4, step 7824: val_loss was not in top 3
+Epoch 5, global step 7887: val_loss reached 0.38076 (best 0.26448), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_23-19-40/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.38-epoch=5.ckpt" as top 3
+Epoch 5, step 7949: val_loss was not in top 3
+Epoch 5, step 8012: val_loss was not in top 3
+Epoch 5, step 8074: val_loss was not in top 3
+Epoch 5, step 8137: val_loss was not in top 3
+Epoch 6, step 8200: val_loss was not in top 3
+Epoch 6, step 8262: val_loss was not in top 3
+Epoch 6, step 8325: val_loss was not in top 3
+Epoch 6, step 8387: val_loss was not in top 3
+Epoch 6, step 8450: val_loss was not in top 3
+Epoch 7, step 8513: val_loss was not in top 3
+Epoch 7, step 8575: val_loss was not in top 3
+Epoch 7, step 8638: val_loss was not in top 3
+Epoch 7, step 8700: val_loss was not in top 3
+Epoch 7, step 8763: val_loss was not in top 3
+Epoch 8, step 8826: val_loss was not in top 3
+Epoch 8, step 8888: val_loss was not in top 3
+Epoch 8, step 8951: val_loss was not in top 3
+Epoch 8, step 9013: val_loss was not in top 3
+Epoch 8, step 9076: val_loss was not in top 3
+Epoch 9, step 9139: val_loss was not in top 3
+Epoch 9, step 9201: val_loss was not in top 3
+Epoch 9, step 9264: val_loss was not in top 3
+Epoch 9, step 9326: val_loss was not in top 3
+Epoch 9, step 9389: val_loss was not in top 3
+Epoch 10, step 9452: val_loss was not in top 3
+Epoch 10, step 9514: val_loss was not in top 3
+Epoch 10, step 9577: val_loss was not in top 3
+Epoch 10, step 9639: val_loss was not in top 3
+Epoch 10, step 9702: val_loss was not in top 3
+Epoch 11, step 9765: val_loss was not in top 3
+Epoch 11, step 9827: val_loss was not in top 3
+Epoch 11, step 9890: val_loss was not in top 3
+Epoch 11, step 9952: val_loss was not in top 3
+Epoch 11, step 10015: val_loss was not in top 3
+Epoch 12, step 10078: val_loss was not in top 3
+Epoch 12, step 10140: val_loss was not in top 3
+Epoch 12, step 10203: val_loss was not in top 3
+Epoch 12, step 10265: val_loss was not in top 3
+Epoch 12, step 10328: val_loss was not in top 3
+Epoch 13, step 10391: val_loss was not in top 3
+Epoch 13, step 10453: val_loss was not in top 3
+Epoch 13, step 10516: val_loss was not in top 3
+Epoch 13, step 10578: val_loss was not in top 3
+Epoch 13, step 10641: val_loss was not in top 3
+Epoch 14, step 10704: val_loss was not in top 3
+Epoch 14, step 10766: val_loss was not in top 3
+Epoch 14, step 10829: val_loss was not in top 3
+Epoch 14, step 10891: val_loss was not in top 3
+Epoch 14, step 10954: val_loss was not in top 3
+Epoch 15, step 11017: val_loss was not in top 3
+Epoch 15, step 11079: val_loss was not in top 3
+Epoch 15, step 11142: val_loss was not in top 3
+Epoch 15, step 11204: val_loss was not in top 3
+Epoch 15, step 11267: val_loss was not in top 3
+Epoch 16, step 11330: val_loss was not in top 3
+Epoch 16, step 11392: val_loss was not in top 3
+Epoch 16, step 11455: val_loss was not in top 3
+Epoch 16, step 11517: val_loss was not in top 3
+Epoch 16, step 11580: val_loss was not in top 3
+Epoch 17, step 11643: val_loss was not in top 3
+Epoch 17, step 11705: val_loss was not in top 3
+Epoch 17, step 11768: val_loss was not in top 3
+Epoch 17, step 11830: val_loss was not in top 3
+Epoch 17, step 11893: val_loss was not in top 3
+Epoch 18, step 11956: val_loss was not in top 3
+Epoch 18, step 12018: val_loss was not in top 3
+Epoch 18, step 12081: val_loss was not in top 3
+Epoch 18, step 12143: val_loss was not in top 3
+Epoch 18, step 12206: val_loss was not in top 3
+Epoch 19, step 12269: val_loss was not in top 3
+Epoch 19, step 12331: val_loss was not in top 3
+Epoch 19, step 12394: val_loss was not in top 3
+Epoch 19, step 12456: val_loss was not in top 3
+Epoch 19, step 12519: val_loss was not in top 3
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]

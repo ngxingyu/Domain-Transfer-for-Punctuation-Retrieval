@@ -99,13 +99,14 @@ class FocalDiceLoss(_WeightedLoss):
     epsilon: float
     square_denominator: bool
 
-    def __init__(self, weight: Optional[Tensor] = None, size_average=None, ignore_index: int = -100,
+    def __init__(self, weight: Optional[Tensor] = None, num_labels:int=10, size_average=None, ignore_index: int = -100,
                  reduce=None, reduction: str = 'mean', macro_average=True, alpha = 1.0, epsilon = 0.05, 
                  square_denominator = False, log_softmax=False) -> None:
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
         super(FocalDiceLoss, self).__init__(weight, size_average, reduce, reduction)
         self.ignore_index = ignore_index
+        self.num_classes=num_labels
         self.macro_average = macro_average
         self.alpha = alpha
         self.epsilon = epsilon
@@ -115,7 +116,6 @@ class FocalDiceLoss(_WeightedLoss):
     def forward(self, logits: Tensor, labels: Tensor, loss_mask=None) -> Tensor:
         logits_flatten = torch.flatten(logits, start_dim=0, end_dim=-2)
         labels_flatten = torch.flatten(labels, start_dim=0, end_dim=-1)
-        self.num_classes=logits_flatten.shape[-1]
         if loss_mask is not None:
             if loss_mask.dtype is not torch.bool:
                 loss_mask = loss_mask > 0.5

@@ -39,6 +39,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                  cfg: DictConfig,
                  trainer: pl.Trainer = None,
                  data_id: str = '',
+                 log_dir: str = '',
                  ):
         if trainer is not None and not isinstance(trainer, pl.Trainer):
             raise ValueError(
@@ -46,6 +47,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             )
         super().__init__()
         self._cfg = cfg
+        self._cfg.log_dir=log_dir
         self.save_hyperparameters(cfg)
         self._optimizer = None
         self._scheduler = None
@@ -54,12 +56,16 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
         self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
         if self._cfg.model.no_space_label is not None:
-            self.hparams.model.punct_label_ids.append(self._cfg.model.no_space_label)
+            s=set(self.hparams.model.punct_label_ids)
+            s.add(self._cfg.model.no_space_label)
+            self.hparams.model.punct_label_ids=sorted(list(s))
         self.ids_to_labels = {_[0]: _[1]
-                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
-        self.labels_to_ids = {_[1]: _[0]
-                              for _ in enumerate(sorted(self.hparams.model.punct_label_ids))}
+                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+        self.labels_to_ids = {v:k
+                              for k,v in self.ids_to_labels.items()}
+        self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
         self.data_id=data_id
+        assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
         self.setup_datamodule()
 
         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
@@ -93,7 +99,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self.hparams.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
-            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss, weight=self.hparams.model.punct_class_weights)
+            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss, weight=self.hparams.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'crf':
             self.punctuation_loss = LinearChainCRF(self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'focal':
@@ -117,6 +123,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             mode='macro',
             dist_sync_on_step=True,
         )
+
+        self.chunked_punct_class_report = ClassificationReport(
+            num_classes=self.hparams.model.dataset.num_labels,
+            label_ids=self.labels_to_ids,
+            mode='macro',
+            dist_sync_on_step=True,
+        )
+
+
         self.domain_class_report = ClassificationReport(
             num_classes=self.hparams.model.dataset.num_domains,
             label_ids={v:v for v in list(range(self.hparams.model.dataset.num_domains))},
@@ -223,15 +238,28 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        labelled_mask=subtoken_mask[:,0]>0
+        if self.hparams.model.test_chunk_percent:
+            chunk=self.hparams.model.test_chunk_percent
+        else:
+            chunk=0.5
+        chunk_mask=torch.zeros_like(subtoken_mask)
+        chunk_mask[:,torch.arange(int((0.5-chunk/2)*subtoken_mask.shape[-1]),int((0.5+chunk/2)*subtoken_mask.shape[-1]))]=1
+        chunk_mask=chunk_mask[labelled_mask][subtoken_mask[labelled_mask]]
 
-        labelled_mask=(subtoken_mask[:,0]>0)
         test_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
+        chunked_punct_preds = punct_preds[chunk_mask]
 
+        
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
+        chunked_punct_labels = punct_labels[chunk_mask]
+
+
         self.punct_class_report.update(punct_preds, punct_labels)
+        self.chunked_punct_class_report.update(chunked_punct_preds, chunked_punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
         self.domain_class_report.update(domain_preds, domain_labels)
@@ -241,6 +269,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             'punct_tp': self.punct_class_report.tp,
             'punct_fn': self.punct_class_report.fn,
             'punct_fp': self.punct_class_report.fp,
+            'chunked_punct_tp': self.chunked_punct_class_report.tp,
+            'chunked_punct_fn': self.chunked_punct_class_report.fn,
+            'chunked_punct_fp': self.chunked_punct_class_report.fp,
             'domain_tp': self.domain_class_report.tp,
             'domain_fn': self.domain_class_report.fn,
             'domain_fp': self.domain_class_report.fp,
@@ -307,17 +338,45 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punct_precision, punct_recall, punct_f1, punct_report, punct_cm = self.punct_class_report.compute()
         logging.info(f'Punctuation report: {punct_report}')
 
+        chunked_punct_precision, chunked_punct_recall, chunked_punct_f1, chunked_punct_report, chunked_punct_cm = self.chunked_punct_class_report.compute()
+        logging.info(f'Chunked Punctuation report: {chunked_punct_report}')
+
         # calculate metrics and log classification report for domainalization task
         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
+
+        path=f"{self.hparams.log_dir}/test.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+        logging.info(f'saving to {path}')
+        with open(path,'w') as f:
+            f.write("Punct report\n")
+            f.write(punct_report)
+            f.write("\nChunked Punct report\n")
+            f.write(chunked_punct_report)
+            f.write("\nDomain report\n")
+            f.write(domain_report)
+            f.write('\n\n')
+            f.write(f'test_loss: {avg_loss}\n')
+            f.write(f'punct_precision: {punct_precision}\n')
+            f.write(f'punct_f1: {punct_f1}\n')
+            f.write(f'punct_recall: {punct_recall}\n')
+            f.write(f'chunked_punct_precision: {chunked_punct_precision}\n')
+            f.write(f'chunked_punct_f1: {chunked_punct_f1}\n')
+            f.write(f'chunked_punct_recall: {chunked_punct_recall}\n')
+            f.write(f'domain_precision: {domain_precision}\n')
+            f.write(f'domain_f1: {domain_f1}\n')
+            f.write(f'domain_recall: {domain_recall}\n')
 
         self.log('test_loss', avg_loss, prog_bar=True)
         self.log('punct_precision', punct_precision)
         self.log('punct_f1', punct_f1)
         self.log('punct_recall', punct_recall)
+        self.log('chunked_punct_precision', chunked_punct_precision)
+        self.log('chunked_punct_f1', chunked_punct_f1)
+        self.log('chunked_punct_recall', chunked_punct_recall)
         self.log('domain_precision', domain_precision)
         self.log('domain_f1', domain_f1)
         self.log('domain_recall', domain_recall)
+
         # self.log('punctuation_cm', punct_cm)
         # self.log('domain_cm', domain_cm)
 
@@ -513,6 +572,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             labelled= list(data_config.labelled),
             unlabelled= list(data_config.unlabelled),
             punct_label_ids= labels_to_ids,
+            label_map=self.label_map,
             train_batch_size= data_config.train_ds.batch_size,
             max_seq_length= data_config.max_seq_length,
             val_batch_size= data_config.validation_ds.batch_size,
@@ -708,7 +768,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.freeze_transformer_to(self.frozen)
         for name, param in encoder.named_parameters(): 
             if param.requires_grad: 
-                print(name, param.data)
+                print(name)
 
     def unfreeze(self, i: int = 1):
         self.frozen -= i
@@ -743,6 +803,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             queries=queries, 
             max_seq_length=self.hparams.model.dataset.max_seq_length,
             punct_label_ids=self.labels_to_ids,
+            label_map=self.label_map,
             attach_label_to_end=self._cfg.model.dataset.attach_label_to_end)
         batch=ds[0]
         attention_mask = batch['attention_mask']
