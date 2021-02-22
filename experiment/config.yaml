@@ -32,12 +32,12 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu2/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/nxingyu/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu2/data # /root/data # 
-tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+base_path: /home/nxingyu/data # /root/data # 
+tmp_path: /home/nxingyu/data/tmp # /tmp # 
 log_dir: null
 
 model:
@@ -51,19 +51,19 @@ model:
         - ","
         - "."
         - "?"
-        - "-"
-        - "!"
-        - ":"
-        - "—"
+        # - "-"
+        # - "!"
+        # - ":"
+        # - "—"
 
         # - ";"
         # - "…"
 
     label_map:
-        # "-": ","
-        # ":": ","
-        # "—": ","
-        # "!": "."
+        "-": ","
+        ":": ","
+        "—": ","
+        "!": "."
 
         "…": "."
         ";": "."
@@ -74,11 +74,11 @@ model:
     punct_class_weights: false #false
     
     dataset:
-        data_dir: /home/nxingyu2/data # /root/data # 
+        data_dir: /home/nxingyu/data # /root/data # 
         labelled:
-            # - ${base_path}/ted2010 #
+            - ${base_path}/ted2010 #
             # - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/open_subtitles_processed #  
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -125,12 +125,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 0
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
         bilstm: false
 
     domain_head:
@@ -146,7 +146,7 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 5
+        alpha: 4
         macro_average: true
 
     focal_loss: 
