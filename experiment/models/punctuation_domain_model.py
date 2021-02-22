@@ -587,6 +587,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             attach_label_to_end=data_config.attach_label_to_end,
             manual_len=data_config.train_ds.manual_len,
             no_space_label=self._cfg.model.no_space_label,
+            pad_start_and_end=data_config.pad_start_and_end
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
