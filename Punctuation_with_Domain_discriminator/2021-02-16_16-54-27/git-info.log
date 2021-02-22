@@ -1,0 +1,46 @@
+commit hash: 14f9b49a0dc4548fe8afdd3bb110e30cbffc05b1
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 7ba42b1..6813b0d 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -76,7 +76,7 @@ model:
+         ignore_start_end: false
+         use_cache: false
+         # shared among dataloaders
+-        num_workers:  4
++        num_workers:  8
+         pin_memory: false
+         drop_last: true
+         num_labels: 11
+@@ -88,7 +88,7 @@ model:
+             shuffle: true
+             num_samples: -1
+             batch_size: 32
+-            manual_len: 1000 #default 0 84074
++            manual_len: 000 #default 0 84074
+ 
+         validation_ds:
+             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
+diff --git a/experiment/info.log b/experiment/info.log
+index cece79e..e69de29 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,18 +0,0 @@
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.01
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7fecfe6f4cd0>" 
+-will be used during training (effective maximum steps = 620) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-min_lr: 1.0e-08
+-last_epoch: -1
+-max_steps: 620
+-)
