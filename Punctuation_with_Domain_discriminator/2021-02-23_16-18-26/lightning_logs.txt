@@ -21,3 +21,7 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
 5.9 M     Trainable params
 108 M     Non-trainable params
 114 M     Total params
+Epoch 0, global step 49: val_loss reached 0.85856 (best 0.85856), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_16-18-26/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.86-epoch=0.ckpt" as top 3
+Epoch 1, global step 99: val_loss reached 0.38031 (best 0.38031), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_16-18-26/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.38-epoch=1.ckpt" as top 3
+Epoch 2, global step 149: val_loss reached 0.37979 (best 0.37979), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_16-18-26/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.38-epoch=2.ckpt" as top 3
+Epoch 3, global step 199: val_loss reached 0.37111 (best 0.37111), saving model to "/home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_16-18-26/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.37-epoch=3.ckpt" as top 3
