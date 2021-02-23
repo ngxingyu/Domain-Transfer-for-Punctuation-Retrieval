@@ -164,4 +164,6 @@ if __name__ == "__main__":
             script+=re.sub('\n',' ',line)
     with open (args.output, 'a') as f:
         writer=csv.writer(f)
-        writer.writerow((args.filename,preprocess(script)))
+        script=preprocess(script).strip()
+        if bool(script):
+            writer.writerow((args.filename,script))

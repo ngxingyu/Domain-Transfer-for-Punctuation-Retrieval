@@ -21,7 +21,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu/data
 tmp_path: /home/nxingyu/data/tmp
-log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_14-44-23
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-23_15-52-51
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -65,12 +65,12 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 8
       manual_len: 20000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 8
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
