@@ -15,13 +15,13 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/nxingyu2/project/
+  exp_dir: /home/nxingyu/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/nxingyu2/data
-tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-20_22-21-25
+base_path: /home/nxingyu/data
+tmp_path: /home/nxingyu/data/tmp
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-02-22_09-48-50
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -36,19 +36,18 @@ model:
   - '-'
   - '!'
   - ':'
-  - —
+  - …
   label_map:
-    …: .
+    —: ','
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
   punct_class_weights: false
   dataset:
-    data_dir: /home/nxingyu2/data
+    data_dir: /home/nxingyu/data
     labelled:
-    - /home/nxingyu2/data/open_subtitles_processed
-    unlabelled:
-    - /home/nxingyu2/data/ted_talks_processed
+    - /home/nxingyu/data/open_subtitles_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -61,15 +60,16 @@ model:
     num_domains: 2
     test_unlabelled: true
     attach_label_to_end: null
+    pad_start: 0
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
-      manual_len: 40000
+      batch_size: 8
+      manual_len: 20000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 8
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -100,7 +100,7 @@ model:
     idx_conditioned_on: 0
   dice_loss:
     epsilon: 0.01
-    alpha: 5
+    alpha: 3
     macro_average: true
   focal_loss:
     gamma: 3
