@@ -60,7 +60,7 @@ model:
     num_domains: 2
     test_unlabelled: true
     attach_label_to_end: null
-    pad_start_and_end: 0
+    pad_start: 0
     train_ds:
       shuffle: true
       num_samples: -1
