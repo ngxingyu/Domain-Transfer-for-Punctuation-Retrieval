@@ -1,8 +1,5 @@
 
 
-
-
-
 #%%
 import hydra
 import numpy as np
