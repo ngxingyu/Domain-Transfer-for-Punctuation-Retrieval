@@ -42,7 +42,7 @@ def remove_disf(text):
     return s
 
 def to_emdash(s):
-    return re.sub('--','',s)
+    return re.sub('--','…',s)
 
 def strip_accents(s):
    return ''.join(c for c in unicodedata.normalize('NFKD', s)
