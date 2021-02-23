@@ -91,8 +91,9 @@ bash ~/project/get-data.sh
 bash ~/project/experiment/data/disfl2csv.sh /home/nxingyu/data/LDC99T42/treebank_3/dysfl/dff/swbd /home/nxingyu/data/switchboard_processed.csv
 bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
 
-bash ~/project/experiment/data/utt2csv.sh /home/nxingyu/data/utt switchboardutt_processed.csv
-sed -i 1i"id,transcript" switchboard*
+bash ~/project/experiment/data/utt2csv.sh /home/nxingyu/data/utt /home/nxingyu/data/switchboardutt_processed.csv
+bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
+sed -i 1i"id,transcript" switchboard_*
 
 python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1

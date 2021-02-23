@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 2 # accumulates grads every k batches
+    accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -32,12 +32,12 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu2/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/nxingyu/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu2/data # /root/data # 
-tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+base_path: /home/nxingyu/data # /root/data # 
+tmp_path: /home/nxingyu/data/tmp # /tmp # 
 log_dir: null
 
 model:
@@ -75,15 +75,17 @@ model:
     punct_class_weights: false #false
     
     dataset:
-        data_dir: /home/nxingyu2/data # /root/data # 
+        data_dir: /home/nxingyu/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/ted_talks_processed #
+            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            # parameters for dataset preprocessing
+            # - ${base_path}/switchboardutt_processed
+        # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
         ignore_extra_tokens: false
@@ -101,7 +103,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
+            batch_size: 16
             manual_len: 20000 #default 0 84074
 
         validation_ds:
@@ -110,7 +112,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -147,7 +149,7 @@ model:
     
     dice_loss:
         epsilon: 0.01
-        alpha: 3
+        alpha: 2
         macro_average: true
 
     focal_loss: 
