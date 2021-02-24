@@ -1,6 +1,5 @@
 
 
-
 #%%
 import hydra
 import numpy as np
@@ -23,7 +22,7 @@ import atexit
 from copy import deepcopy
 import snoop
 snoop.install()
-exp='opencrfacc42021-02-22_09-48-50'
+exp='2021-02-23_09-59-35'
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 def main(cfg : DictConfig) -> None:
     torch.set_printoptions(sci_mode=False)
@@ -44,7 +43,7 @@ def main(cfg : DictConfig) -> None:
                     max_seq_length=model.dm.max_seq_length,
                     punct_label_ids=model.dm.punct_label_ids,
                     label_map=model.dm.label_map,
-                    labelled=['/home/nxingyu/data/open_subtitles_processed'],
+                    labelled=['/home/nxingyu/data/ted_talks_processed'],
                     unlabelled=[],
                     tokenizer=model.dm.tokenizer,
                     randomize=model.dm.val_shuffle,
@@ -52,7 +51,7 @@ def main(cfg : DictConfig) -> None:
                     tmp_path=model.dm.tmp_path,
                     attach_label_to_end=model.dm.attach_label_to_end,
                     no_space_label=model.dm.no_space_label,
-                    pad_start=0,
+                    pad_start=model.dm.pad_start,
                     )
     model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
     trainer = pl.Trainer(**cfg.trainer)
