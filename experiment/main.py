@@ -58,6 +58,7 @@ def main(cfg: DictConfig)->None:
     #     )
 
     lrs=[1e-2,1e-5] if cfg.model.frozen_lr is None else list(cfg.model.frozen_lr)
+    gamma=[1e-1,1e-2] if cfg.model.gamma is None else list(cfg.model.gamma)
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         # trainer.current_epoch=0
         # lr_finder = trainer.tuner.lr_find(model,min_lr=1e-8, max_lr=0.5, num_training=80) #, early_stop_threshold=None
@@ -67,6 +68,7 @@ def main(cfg: DictConfig)->None:
         # model.hparams.model.optim.lr = new_lr
         # model.dm.reset()
         model.hparams.model.optim.lr = lrs.pop(0)
+        model.hparams.model.domain_head.gamma=gamma.pop(0)
         trainer.current_epoch=0
         trainer.fit(model)
         try:

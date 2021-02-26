@@ -113,6 +113,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
+        # if self.hparams.model.domain_head.predict_labelled:
+        #     if self.hparams.model.domain_head.loss == 'focal':
+        #         self.domain_loss = BinaryFocalLossWithLogits(alpha=self.hparams.model.domain_head.weight[0],**self.hparams.model.focal_loss)
+        #     else:
+        #         self.domain_loss = BCEWithLogitsLoss(pos_weight=[self.hparams.model.domain_head.weight[0]/sum(self.hparams.model.domain_head.weight)])
+        # else:
+        # if self.hparams.model.domain_head.loss == 'focal':
+        #     self.domain_loss = FocalLoss(weight=list(self.hparams.model.domain_head.weight),**self.hparams.model.focal_loss, logits_ndim=2)
+        # else:
         self.domain_loss = CrossEntropyLoss(logits_ndim=2)
 
         self.agg_loss = AggregatorLoss(num_inputs=2)
@@ -158,6 +167,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
             attention_mask=attention_mask)
+        # if self.hparams.model.domain_head.predict_labelled:
+        #     domain_logits=domain_logits.flatten()
         # print(attention_mask.sum(axis=1),domain_logits)
         return punct_logits, domain_logits
 
@@ -167,6 +178,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        # domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         punct_logits, domain_logits = self(
             input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )
@@ -206,6 +218,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        # domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         labelled_mask=subtoken_mask[:,0]>0
 
         val_loss, punct_logits, domain_logits = self._make_step(batch)
@@ -217,6 +230,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
+        pp(domain_preds,domain_labels)
         self.domain_class_report.update(domain_preds, domain_labels)
 
         return {
@@ -238,6 +252,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        # domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         labelled_mask=subtoken_mask[:,0]>0
         if self.hparams.model.test_chunk_percent:
             chunk=self.hparams.model.test_chunk_percent
@@ -810,7 +825,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
         # punct_labels = batch['labels']
-        # domain_labels = batch['domain']
+        # domain_labels = subtoken_mask[:,0]>0 if self.hparams.model.domain_head.predict_labelled else batch['domain']
         input_ids = batch['input_ids']
 
         labelled_mask=(subtoken_mask[:,0]>0)
