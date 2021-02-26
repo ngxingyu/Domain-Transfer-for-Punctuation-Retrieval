@@ -10,7 +10,7 @@ class FocalLoss(torch.nn.NLLLoss):
     __constants__ = ['gamma', 'reduction']
     gamma: int
 
-    def __init__(self, weight: Optional[Tensor] = None, gamma=2, size_average=None, 
+    def __init__(self, weight = None, gamma=2, size_average=None, 
                 ignore_index: int = -100, reduce=None, reduction: str = 'mean') -> None:         
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
