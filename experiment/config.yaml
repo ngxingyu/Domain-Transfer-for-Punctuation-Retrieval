@@ -83,7 +83,7 @@ model:
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed
+            - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -149,7 +149,8 @@ model:
         weight:
             - 0.8
             - 0.2
-            
+
+
     dice_loss:
         epsilon: 0.01
         alpha: 2
@@ -173,7 +174,7 @@ model:
         - 4e-1
         - 1e-4
         - 1e-5
-
+        
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
