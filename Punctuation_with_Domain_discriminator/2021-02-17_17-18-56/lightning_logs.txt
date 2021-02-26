@@ -1,4 +1,0 @@
-GPU available: True, used: True
-TPU available: None, using: 0 TPU cores
-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-Using native 16bit precision.

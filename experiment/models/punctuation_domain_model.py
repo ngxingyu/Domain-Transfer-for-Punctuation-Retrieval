@@ -109,11 +109,14 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
-        if not self.hparams.model.domain_head.loss in ['cel']:
+        if not self.hparams.model.domain_head.loss in ['cel','focal']:
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
-        self.domain_loss = CrossEntropyLoss(logits_ndim=2)
+        if self.hparams.model.punct_head.loss == 'focal':
+            self.domain_loss = FocalLoss(logits_ndim=2)
+        else:
+            self.domain_loss = CrossEntropyLoss(logits_ndim=2)
 
         self.agg_loss = AggregatorLoss(num_inputs=2)
 
@@ -158,6 +161,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         domain_logits = self.domain_classifier(
             hidden_states=reverse_grad_hidden_states,
             attention_mask=attention_mask)
+        # if self.hparams.model.domain_head.predict_labelled:
+        #     domain_logits=domain_logits.flatten()
         # print(attention_mask.sum(axis=1),domain_logits)
         return punct_logits, domain_logits
 
@@ -166,7 +171,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
-        domain_labels = batch['domain']
+        # domain_labels = batch['domain']
+        domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         punct_logits, domain_logits = self(
             input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )
@@ -206,19 +212,18 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         domain_labels = batch['domain']
+        # domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         labelled_mask=subtoken_mask[:,0]>0
 
         val_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
-        # pp(punct_preds.device)
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=-1)
         domain_labels = domain_labels.view(-1)
         self.domain_class_report.update(domain_preds, domain_labels)
-
         return {
             'val_loss': val_loss,
             'punct_tp': self.punct_class_report.tp,
@@ -237,7 +242,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
-        domain_labels = batch['domain']
+        # domain_labels = batch['domain']
+        domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         labelled_mask=subtoken_mask[:,0]>0
         if self.hparams.model.test_chunk_percent:
             chunk=self.hparams.model.test_chunk_percent
@@ -810,7 +816,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
         # punct_labels = batch['labels']
-        # domain_labels = batch['domain']
+        # domain_labels = subtoken_mask[:,0]>0 if self.hparams.model.domain_head.predict_labelled else batch['domain']
         input_ids = batch['input_ids']
 
         labelled_mask=(subtoken_mask[:,0]>0)
