@@ -180,6 +180,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.punct_label_ids=punct_label_ids
         self.label_map=label_map
         self.ds_lengths=[]
+        self.labelled=labelled
         for path in labelled+unlabelled:
             if manual_len>0:
                 self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
