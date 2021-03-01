@@ -69,9 +69,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.setup_datamodule()
 
         if (self.hparams.model.punct_class_weights>0 and self.hparams.model.punct_head.loss!='crf'):
-            self.hparams.model.punct_class_weights=pp(OmegaConf.create([
+            self.hparams.model.punct_class_weights=OmegaConf.create([
                 x**self.hparams.model.punct_class_weights for x in\
-                     self.dm.train_dataset.determine_class_weights().tolist()]))
+                     self.dm.train_dataset.determine_class_weights().tolist()])
         else:
             self.hparams.model.punct_class_weights=None
 
@@ -119,7 +119,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         domain_weight=None if self.hparams.model.domain_head.weight is None else list(self.hparams.model.domain_head.weight)
         if (len(self.hparams.model.dataset.labelled)==0)or(len(self.hparams.model.dataset.unlabelled)==0):
             domain_weight=None
-        pp(domain_weight)
         if self.hparams.model.punct_head.loss == 'focal':
             self.domain_loss = FocalLoss(weight=domain_weight)
         else:
@@ -281,7 +280,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.chunked_punct_class_report.update(chunked_punct_preds, chunked_punct_labels)
         domain_preds = torch.argmax(domain_logits, axis=1)
         domain_labels = domain_labels.view(-1)
-        pp(domain_logits,domain_labels,domain_preds)
         self.domain_class_report.update(domain_preds, domain_labels)
 
         return {
