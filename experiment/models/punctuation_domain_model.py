@@ -179,7 +179,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punctuation_loss = self.punctuation_loss(
             logits=punct_logits[subtoken_mask[:,0]>0], labels=punct_labels[subtoken_mask[:,0]>0], loss_mask=subtoken_mask[subtoken_mask[:,0]>0])
         
-        self.hparams.model.domain_head.gamma=punctuation_loss
+        self.hparams.model.domain_head.gamma=punctuation_loss.item()
         domain_loss = self.domain_loss(
             logits=domain_logits, labels=domain_labels)
         loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
