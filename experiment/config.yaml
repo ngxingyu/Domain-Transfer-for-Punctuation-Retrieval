@@ -72,7 +72,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weights: false #false
+    punct_class_weights: 0.5 #0 if don't weight
     
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
@@ -84,7 +84,7 @@ model:
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed
+            # - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -144,7 +144,7 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
-        gamma: 1 #0.1 # coefficient of gradient reversal
+        gamma: 1 #0.1 # coefficient of gradient reversal, will be updated from gamma list below.
         pooling: 'mean' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
