@@ -1,0 +1,31 @@
+[NeMo W 2021-02-23 14:19:01 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-23 14:19:05 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-23 14:19:06 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-23 14:19:09 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-23 14:19:09 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-23 14:19:09 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-23 14:19:10 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-23 14:19:50 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+      warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+    
+[NeMo W 2021-02-23 14:22:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f43b0039700> was reported to be 399 (when accessing len(dataloader)), but 400 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-23 14:23:31 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f43b0039e80> was reported to be 50 (when accessing len(dataloader)), but 51 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-23 16:17:46 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f439c0cbb20> was reported to be 50 (when accessing len(dataloader)), but 51 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
