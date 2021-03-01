@@ -354,7 +354,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
 
-        path=f"{self.hparams.log_dir}/test{self.frozen}.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+        path=f"{self.hparams.log_dir}/test-{self.dm.test_dataset.labelled.split('/')[-1]}-{self.frozen}.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
         logging.info(f'saving to {path}')
         with open(path,'w') as f:
             f.write("Punct report\n")
