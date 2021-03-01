@@ -43,28 +43,29 @@ log_dir: null
 model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 1
+    unfrozen: 0
     maximum_unfrozen: 3
     unfreeze_step: 1
+    test_every_layer: true
     punct_label_ids:
         - ""
         - ","
         - "."
         - "?"
-        - "-"
         - "!"
-        - ":"
-        - "…"
 
+        # - "-"
+        # - "…"
+        # - ":"
         # - "—"
         # - ";"
 
     label_map:
-        # "-": ","
         # "!": "."
-        # ":": ","
-        # "…": "."
 
+        "-": ","
+        ":": ","
+        "…": "."
         "—": ","
         ";": "."
 
@@ -142,25 +143,25 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'focal'
+        loss: 'cel'
         gamma: 1 #0.1 # coefficient of gradient reversal
-        pooling: 'mean_max' # 'mean' mean_max
+        pooling: 'mean' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
-            - 0.6
-            - 0.4
+            - 0.5
+            - 0.5
 
 
     dice_loss:
         epsilon: 0.01
-        alpha: 2
+        alpha: 3
         macro_average: true
 
     focal_loss: 
         gamma: 2
 
     frozen_lr:
-        # - 1e-2
+        - 1e-2
         - 1e-3
         - 1e-4
         - 1e-4
