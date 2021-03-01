@@ -1,0 +1,30 @@
+[NeMo I 2021-02-18 19:47:19 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-18_19-47-19
+[NeMo I 2021-02-18 19:47:19 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-02-18 19:47:19 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-02-18 19:47:24 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-18 19:47:24 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-18 19:47:27 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-18 19:47:27 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-18 19:47:27 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-02-18 19:47:28 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-02-18 19:47:30 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fa3701433d0> was reported to be 2 (when accessing len(dataloader)), but 3 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-18 19:48:30 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fa383ee3dc0> was reported to be 128 (when accessing len(dataloader)), but 129 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-02-18 20:12:18 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fa3700fd8e0> was reported to be 3 (when accessing len(dataloader)), but 4 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
