@@ -2,7 +2,7 @@ seed: 42
 trainer:
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 2
+    max_epochs: 8
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 0
@@ -52,8 +52,8 @@ model:
         - ","
         - "."
         - "?"
-
         # - "!"
+
         # - "-"
         # - "…"
         # - ":"
@@ -78,9 +78,9 @@ model:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            # - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed #
+            # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -154,7 +154,7 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 1
+        alpha: 3
         macro_average: true
 
     focal_loss: 
