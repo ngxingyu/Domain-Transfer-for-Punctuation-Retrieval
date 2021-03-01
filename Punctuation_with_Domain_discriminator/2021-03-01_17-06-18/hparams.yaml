@@ -21,34 +21,34 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-01_10-59-09
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-01_17-06-18
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 1
+  unfrozen: 0
   maximum_unfrozen: 3
   unfreeze_step: 1
+  test_every_layer: true
   punct_label_ids:
   - ''
   - ','
   - .
   - '?'
-  - '-'
-  - '!'
-  - ':'
-  - …
   label_map:
+    '!': .
+    '-': ','
+    ':': ','
+    …: .
     —: ','
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
-  punct_class_weights: false
+  punct_class_weights: 0.1
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
-    unlabelled:
-    - /home/nxingyu2/data/switchboardutt_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -98,18 +98,19 @@ model:
     use_transformer_init: true
     loss: focal
     gamma: 1
-    pooling: mean_max
+    pooling: mean
     idx_conditioned_on: 0
     weight:
-    - 0.6
-    - 0.4
+    - 0.5
+    - 0.5
   dice_loss:
     epsilon: 0.01
-    alpha: 2
+    alpha: 3
     macro_average: true
   focal_loss:
     gamma: 2
   frozen_lr:
+  - 0.01
   - 0.001
   - 0.0001
   - 0.0001
@@ -117,11 +118,11 @@ model:
   - 1.0e-07
   - 1.0e-08
   gamma:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 0.1
+  - 0.1
+  - 0.1
+  - 0.1
+  - 0.1
   optim:
     name: adamw
     lr: 0.01
