@@ -113,10 +113,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('domain_head loss not found, fallback to cross entropy loss')
             self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
+        domain_weight=None if self.hparams.model.domain_head.weight is None else list(self.hparams.model.domain_head.weight)
         if self.hparams.model.punct_head.loss == 'focal':
-            self.domain_loss = FocalLoss(weight=list(self.hparams.model.domain_head.weight))
+            self.domain_loss = FocalLoss(weight=domain_weight)
         else:
-            self.domain_loss = CrossEntropyLoss(logits_ndim=2, weight=list(self.hparams.model.domain_head.weight))
+            self.domain_loss = CrossEntropyLoss(logits_ndim=2, weight=domain_weight)
 
         self.agg_loss = AggregatorLoss(num_inputs=2)
 
@@ -353,7 +354,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
         logging.info(f'Domain report: {domain_report}')
 
-        path=f"{self.hparams.log_dir}/test.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+        path=f"{self.hparams.log_dir}/test{self.frozen}.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
         logging.info(f'saving to {path}')
         with open(path,'w') as f:
             f.write("Punct report\n")
