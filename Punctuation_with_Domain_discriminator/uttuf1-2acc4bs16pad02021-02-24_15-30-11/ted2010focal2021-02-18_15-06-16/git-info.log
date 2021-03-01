@@ -1,0 +1,2528 @@
+commit hash: 75754a819d9f2c3acd220c2a6b3c936e4942c8ab
+diff --git a/.ipynb_checkpoints/processing-checkpoint.ipynb b/.ipynb_checkpoints/processing-checkpoint.ipynb
+index 7569d2b..7e68e77 100644
+--- a/.ipynb_checkpoints/processing-checkpoint.ipynb
++++ b/.ipynb_checkpoints/processing-checkpoint.ipynb
+@@ -1,5 +1,179 @@
+ {
+  "cells": [
++  {
++   "cell_type": "code",
++   "execution_count": 35,
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "import pandas as pd\n",
++    "import regex as re\n",
++    "import argparse, os, csv\n",
++    "import xml.etree.ElementTree as ET\n",
++    "\n",
++    "# args = parser.parse_args()\n",
++    "# tree=ET.parse('')\n",
++    "rows=dict()\n",
++    "speakertag=r'((?<=[^\\w\\d \\\",])|^) *(?![?\\.,!:\\-\\—\\[\\]\\(\\)])(?:[A-Z\\d][^\\s.?!\\[\\]\\(\\)]*\\s?)*:(?=[^\\w]*[A-Z])'#lookahead keeps semicolon in false cases.\n",
++    "talkid=-1\n",
++    "with open(\"/home/nxingyu2/data/2012-03/texts/en/fr/en-fr/train.tags.en-fr.en\",'r') as f:\n",
++    "    for line in f:\n",
++    "        if line[:8]=='<talkid>':\n",
++    "            talkid=int(re.search(\"(?<=<talkid>)[0-9]+\",line)[0])\n",
++    "            continue\n",
++    "        if line[0]!='<':\n",
++    "            line=re.sub('\\n',' ',line)\n",
++    "            if not talkid in rows.keys():\n",
++    "                rows[talkid]=''\n",
++    "            rows[talkid]+=line\n",
++    "\n",
++    "tedtalks=pd.DataFrame.from_dict({'id':rows.keys(),'transcript':rows.values()})\n",
++    "   \n",
++    "            "
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 44,
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "#             if '–' in line:\n",
++    "#                 print('endash',line)\n",
++    "#             if '(' in line or ')' in line:\n",
++    "#                 print('par',line)\n",
++    "#             line=re.sub(speakertag,' ',line)\n",
++    "#             line=\n",
++    "#             line = re.sub(r'\\.{3,}(?= )','…',line) #ellipsis without trailing punctuation\n",
++    "#             line=re.sub(r'\\.{3,}([^\\w\\s])','…\\g<1>',line) #ellipsis with trailing punctuation\n",
++    "#             line=re.sub('–','-',line)\n",
++    "\n",
++    "def to_emdash(s):\n",
++    "    return re.sub('--','—',s)\n",
++    "\n",
++    "def strip_accents(s):\n",
++    "    return ''.join(c for c in unicodedata.normalize('NFKD', s)\n",
++    "                  if unicodedata.category(c) != 'Mn')\n",
++    "\n",
++    "def removespeakertags(text):\n",
++    "    return re.sub(speakertag,' ',text)\n",
++    "\n",
++    "def removenametags(text):\n",
++    "    # return re.sub(r\"(?<=[a-z][.?!;]) *[ A-z.,\\-']{1,25}:\",' ',text)\n",
++    "    return re.sub(r\"(?<=[a-z][.?!;])([\\(\\[]* *)[ A-Za-z.,\\-']{1,25}:\", \"\\g<1>\",text)\n",
++    "\n",
++    "def removeparentheses(text):\n",
++    "    return re.sub(parenthesestoremove, ' ',text)\n",
++    "\n",
++    "def removeparenthesesaroundsentence(text):\n",
++    "    return re.sub(parenthesesaroundsentence,r'\\g<1>',text)\n",
++    "\n",
++    "def removedashafterpunct(text):\n",
++    "    return re.sub(r\"([^A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+ *)-+( *[^- ])\",r\"\\g<1> \\g<2>\",text)\n",
++    "\n",
++    "def removesquarebrackets(text):\n",
++    "    return re.sub(squarebracketsaroundsentence, r'\\g<1>',text)\n",
++    "\n",
++    "def removemusic(text):\n",
++    "    text = re.sub(r'♫( *[^♫ ])+ *♫', ' ',text)\n",
++    "    return re.sub(r'♪( *[^♫ ])+ *♪', ' ',text)\n",
++    "\n",
++    "def reducewhitespaces(text):\n",
++    "    text=re.sub(r'(?<=[.?!,;:\\—\\-]) *(?=[.?!,;:\\—\\-])','',text)\n",
++    "    return re.sub(r'\\s+', ' ',text)\n",
++    "\n",
++    "def removeemptyquotes(text):\n",
++    "    text= re.sub(r\"'[_^\\W]*'\",' ',text)\n",
++    "    text= re.sub(r\"\\([_^\\W]*\\)\",' ',text)\n",
++    "    text= re.sub(r\"\\[[_^\\W]*\\]\",' ',text)\n",
++    "    return re.sub(r'\"[_^\\W]*\"',' ',text)\n",
++    "\n",
++    "def ellipsistounicode(text):\n",
++    "    text = re.sub(r'\\.{3,}(?= )','…',text) #ellipsis without trailing punctuation\n",
++    "    return re.sub(r'\\.{3,}([^\\w\\s])','…\\g<1>',text) #ellipsis with trailing punctuation\n",
++    "\n",
++    "def removenonsentencepunct(text):\n",
++    "    return re.sub(r'[^A-Za-z\\d\\s$%&+=€²£¢¥…,.!?;:\\-\\–\\—\\']',' ',text)\n",
++    "\n",
++    "def combinerepeatedpunct(text):\n",
++    "    newtext=[text,re.sub(r'([_^\\W]+) *\\1+','\\g<1> ',text)]\n",
++    "    i=1\n",
++    "    while (newtext[0]!=newtext[1]):\n",
++    "        i+=1\n",
++    "        newtext[i%2]=re.sub(r'([_^\\W]+) *\\1+','\\g<1> ',newtext[(1+i)%2])\n",
++    "    return newtext[i%2]\n",
++    "\n",
++    "def endashtohyphen(text):\n",
++    "    return re.sub('–','-',text)\n",
++    "\n",
++    "def removedashafterpunct(text):\n",
++    "    return re.sub(r\"([^A-Za-z0-9 ]+ *)-+( *[^- ])\",r\"\\g<1> \\g<2>\",text)\n",
++    "\n",
++    "def pronouncesymbol(text):\n",
++    "    text=re.sub(\"\\$ *([\\d](\\.[\\d])?+)\", \"\\g<1> dollars \",text)\n",
++    "    text=re.sub('\\£ *([\\d](\\.[\\d])?+)', \" pounds \",text)\n",
++    "    text=re.sub(\"\\$\", \" dollars \",text)\n",
++    "    text=re.sub(\"\\£\", \" pounds \",text)\n",
++    "    text=re.sub('€', \" euro \",text)\n",
++    "    text=re.sub('¥', \" yen \",text)\n",
++    "    text=re.sub(\"¢\",\" cents \",text)\n",
++    "    text=re.sub('(?<=\\d)\\.(?=\\d)',' point ',text)\n",
++    "    text=re.sub('\\+',' plus ',text)\n",
++    "    text=re.sub('%',' percent ',text)\n",
++    "    text=re.sub('²',' squared ',text)\n",
++    "    text=re.sub('&', ' and ',text)\n",
++    "    return text\n",
++    "\n",
++    "def stripleadingpunctuation(text):\n",
++    "    return re.sub(r'^[^A-Z]*','',text)\n",
++    "\n",
++    "def striptrailingtext(text):\n",
++    "    return re.sub(r'[^!.?…;]*$','',text)\n",
++    "\n",
++    "def preprocess(tedtalks):\n",
++    "    print('stripping accents')\n",
++    "    tedtalks=tedtalks.apply(strip_accents)\n",
++    "    print('removing speaker tags')\n",
++    "    tedtalks=tedtalks.apply(removespeakertags)\n",
++    "    print('removing name tags')\n",
++    "    tedtalks=tedtalks.apply(removenametags) # Remove *Mr Brown: *Hi!\n",
++    "    print('removing non-sentence parenthesis')\n",
++    "    tedtalks=tedtalks.apply(removeparentheses) # Remove (Whispers) without punct\n",
++    "    print('removing parenthesis')\n",
++    "    tedtalks=tedtalks.apply(removeparenthesesaroundsentence) #Remove -> (<- Hi Everyone! ->)<-\n",
++    "    print('removing square brackets')\n",
++    "    tedtalks=tedtalks.apply(removesquarebrackets) #Remove entire [unclear text]\n",
++    "    print('removing music lyrics')\n",
++    "    tedtalks=tedtalks.apply(removemusic)\n",
++    "    print('removing empty tags')\n",
++    "    tedtalks=tedtalks.apply(removeemptyquotes)\n",
++    "    print('removing non-sentence punctuation')\n",
++    "    tedtalks=tedtalks.apply(removenonsentencepunct)\n",
++    "    print('change to unicode ellipsis')\n",
++    "    tedtalks=tedtalks.apply(ellipsistounicode)\n",
++    "    print('2 hyphen to emdash')\n",
++    "    tedtalks=tedtalks.apply(to_emdash)\n",
++    "    print('endash to hyphen')\n",
++    "    tedtalks=tedtalks.apply(endashtohyphen)\n",
++    "    print('remove hyphen after punct')\n",
++    "    tedtalks=tedtalks.apply(removedashafterpunct)\n",
++    "    print('combine repeated punctuation')\n",
++    "    tedtalks=tedtalks.apply(combinerepeatedpunct)\n",
++    "    print('pronounce symbol')\n",
++    "    tedtalks=tedtalks.apply(pronouncesymbol)\n",
++    "    print('strip leading')\n",
++    "    tedtalks=tedtalks.apply(stripleadingpunctuation)\n",
++    "    print('strip trailing')\n",
++    "    tedtalks=tedtalks.apply(striptrailingtext)\n",
++    "    print('reduce whitespaces')\n",
++    "    tedtalks=tedtalks.apply(reducewhitespaces)\n",
++    "    print('--done--')\n",
++    "    return tedtalks\n",
++    "    \n",
++    "    \n",
++    "train.to_csv('/home/nxingyu2/data/ted2010.train.csv',index=None)"
++   ]
++  },
+   {
+    "cell_type": "code",
+    "execution_count": 13,
+@@ -358,7 +532,7 @@
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 451,
++   "execution_count": 488,
+    "metadata": {},
+    "outputs": [],
+    "source": [
+@@ -379,12 +553,12 @@
+     "    return subwords, token_end_idxs\n",
+     "\n",
+     "def position_to_mask(max_len,indices):\n",
+-    "    o=np.zeros(max_len,dtype=int)\n",
++    "    o=np.zeros(max_len,dtype=np.int)\n",
+     "    o[indices%(max_len-2)+1]=1\n",
+     "    return o\n",
+     "\n",
+     "def pad_ids_to_len(max_len,ids):\n",
+-    "    o=np.zeros(max_len, dtype=int)\n",
++    "    o=np.zeros(max_len, dtype=np.int)\n",
+     "    o[:len(ids)]=np.array(ids)\n",
+     "    return o\n",
+     "\n",
+@@ -408,55 +582,63 @@
+     "        batch_ids.append(a)\n",
+     "        batch_masks.append(b)\n",
+     "        batch_labels.append(c)\n",
+-    "    return torch.cat(batch_ids), torch.cat(batch_masks), torch.cat(batch_labels)\n"
++    "    return PunctuationDataset(torch.cat(batch_ids), torch.cat(batch_masks), torch.cat(batch_labels))"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 449,
++   "execution_count": 489,
+    "metadata": {},
+-   "outputs": [
+-    {
+-     "name": "stdout",
+-     "output_type": "stream",
+-     "text": [
+-      "[126, 126, 126, 126, 126, 126, 126, 126, 126, 127, 125, 126, 126, 126, 126, 127, 125, 126, 126, 126, 126, 126, 126, 126, 126, 126, 126, 90]\n"
+-     ]
+-    }
+-   ],
++   "outputs": [],
+    "source": [
+-    "tokens=data['texts'][1]\n",
+-    "labels=data['tags'][1]\n",
+-    "chunk_to_len(max_len,tokens,labels)\n"
++    "# data=ted['dev'].map(chunk_examples_with_degree(degree), batched=True, batch_size=128,remove_columns=ted['dev'].column_names)\n",
++    "dev_data=chunk_to_len_batch(max_len,data['texts'],data['tags'])"
+    ]
+   },
+   {
+    "cell_type": "code",
+-   "execution_count": 456,
++   "execution_count": 491,
+    "metadata": {},
+    "outputs": [
+     {
+      "data": {
+       "text/plain": [
+-       "tensor([ 0, 59, 72, 57, 68, 68, 67, 81, 57, 81, 75, 53, 73, 42, 79, 24, 70, 54,\n",
+-       "        72, 51, 68, 42, 54, 65, 80, 76, 59, 36, 48, 66, 59, 52, 62, 33, 74, 37,\n",
+-       "        52, 73, 71, 65, 64, 76, 57, 35, 66, 49, 42, 72, 46, 76, 82, 66, 43, 57,\n",
+-       "        52, 44, 74, 58, 56, 70, 52, 38, 50, 80, 70, 62, 47, 81, 74, 35, 62, 33,\n",
+-       "        50, 62, 61, 75, 63, 63, 48, 38, 66, 61, 62, 68, 47, 54, 65, 52, 71, 59,\n",
+-       "        83, 40, 66, 60, 73, 50, 81, 29, 74, 50, 54, 67, 54, 65, 44, 65, 56, 77,\n",
+-       "        50, 56, 52, 56, 54, 34, 47, 36, 19, 29, 29, 10,  6,  6,  6,  0,  2,  0,\n",
+-       "         0,  0])"
++       "{'input_ids': tensor([  101,  1045,  2064,  1005,  1056,  2393,  2021,  2023,  4299,  2000,\n",
++       "          2228,  2055,  2043,  2017,  1005,  2128,  1037,  2210,  4845,  1998,\n",
++       "          2035,  2115,  2814,  3198,  2017,  2065,  1037, 22519,  2071,  2507,\n",
++       "          2017,  2028,  4299,  1999,  1996,  2088,  2054,  2052,  2009,  2022,\n",
++       "          1998,  1045,  2467,  4660,  2092,  1045,  1005,  1040,  2215,  1996,\n",
++       "          4299,  2000,  2031,  1996,  9866,  2000,  2113,  3599,  2054,  2000,\n",
++       "          4299,  2005,  2092,  2059,  2017,  1005,  1040,  2022, 14180,  2138,\n",
++       "          2017,  1005,  1040,  2113,  2054,  2000,  4299,  2005,  1998,  2017,\n",
++       "          1005,  1040,  2224,  2039,  2115,  4299,  1998,  2085,  2144,  2057,\n",
++       "          2069,  2031,  2028,  4299,  4406,  2197,  2095,  2027,  2018,  2093,\n",
++       "          8996,  1045,  1005,  1049,  2025,  2183,  2000,  4299,  2005,  2008,\n",
++       "          2061,  2292,  1005,  1055,  2131,  2000,  2054,  1045,  2052,  2066,\n",
++       "          2029,  2003,  2088,  3521,  1998,  1045,  2113,   102]),\n",
++       " 'attention_mask': tensor([0., 1., 0., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 1., 1., 1.,\n",
++       "         1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n",
++       "         1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 1., 1., 1., 1., 1., 1., 1.,\n",
++       "         1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 1., 1., 1., 1., 0., 0.,\n",
++       "         1., 1., 1., 1., 1., 1., 1., 0., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n",
++       "         1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 0., 0., 1., 1., 1., 1., 1.,\n",
++       "         1., 1., 1., 0., 0., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1., 1.,\n",
++       "         1., 0.]),\n",
++       " 'labels': tensor([0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0,\n",
++       "         0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 7, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0,\n",
++       "         0, 0, 0, 0, 0, 0, 0, 4, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0,\n",
++       "         0, 2, 0, 2, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 4,\n",
++       "         0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
++       "         0, 0, 0, 0, 0, 0, 0, 0])}"
+       ]
+      },
+-     "execution_count": 456,
++     "execution_count": 491,
+      "metadata": {},
+      "output_type": "execute_result"
+     }
+    ],
+    "source": [
+-    "# tokens=data['texts'][:5]\n",
+-    "# labels=data['tags'][:5]\n",
+-    "# sample5=chunk_to_len_batch(max_len,tokens,labels)"
++    "dev_data[0]"
+    ]
+   },
+   {
+@@ -721,6 +903,490 @@
+     "arr_offset[0]"
+    ]
+   },
++  {
++   "cell_type": "code",
++   "execution_count": 571,
++   "metadata": {},
++   "outputs": [
++    {
++     "ename": "AttributeError",
++     "evalue": "'Tensor' object has no attribute 'astype'",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[0;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
++      "\u001b[0;32m<ipython-input-571-b0ee4aa28e3e>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mtorch\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mhstack\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mtorch\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mzeros\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;36m5\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0mtorch\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mzeros\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;36m5\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mastype\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtorch\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mlong\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
++      "\u001b[0;31mAttributeError\u001b[0m: 'Tensor' object has no attribute 'astype'"
++     ]
++    }
++   ],
++   "source": [
++    "torch.hstack([torch.zeros(5),torch.zeros(5)]).astype(torch.long)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 642,
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "# import numpy as np\n",
++    "# !rm 'sample.csv'\n",
++    "# # f=open('sample','ab')\n",
++    "# with open(\"sample.csv\",\"ab\") as f:\n",
++    "#     np.savetxt(f,torch.hstack([torch.ones(1,10),torch.zeros(1,10),torch.zeros(1,10)]),)\n",
++    "#     np.savetxt(f,torch.hstack([torch.zeros(1,10),torch.ones(1,10),torch.zeros(1,10)]),)\n",
++    "#     np.savetxt(f,torch.hstack([torch.zeros(1,10),torch.zeros(1,10),torch.ones(1,10)]),)\n",
++    "# f.close()\n",
++    "# np.loadtxt(\"./data/ted_talks_processed.test-batched.csv\").shape\n",
++    "import torch.utils.data as data\n",
++    "\n",
++    "class CSVDataset(data.Dataset):\n",
++    "    def __init__(self, path, chunksize, nb_samples):\n",
++    "        self.path = path\n",
++    "        self.chunksize = chunksize\n",
++    "        self.len = int(nb_samples / self.chunksize)\n",
++    "\n",
++    "    def __getitem__(self, index):\n",
++    "        print(index)\n",
++    "        x = next(\n",
++    "            pd.read_csv(\n",
++    "                self.path,\n",
++    "                skiprows=(index%self.len)*self.chunksize,\n",
++    "                chunksize=self.chunksize,\n",
++    "                header=None,\n",
++    "                delimiter=' '))\n",
++    "        x = torch.from_numpy(x.values).reshape(-1,3,128)\n",
++    "        return x[:,0,:],x[:,1,:],x[:,2,:]\n",
++    "#         return x\n",
++    "\n",
++    "    def __len__(self):\n",
++    "        return self.len\n",
++    "ted_train_batched=CSVDataset('./data/ted_talks_processed.train-batched.csv',1000,57676)\n",
++    "ted_dev_batched=CSVDataset('./data/ted_talks_processed.dev-batched.csv',1000,7439)\n",
++    "ted_test_batched=CSVDataset('./data/ted_talks_processed.test-batched.csv',1000,7236)\n",
++    "open_test_batched=CSVDataset('./data/open_subtitles_processed.test-batched.csv',1000,568113)\n",
++    "# test_batched[0].shape\n",
++    "# pd.read_csv('./data/ted_talks_processed.dev-batched.csv',header=None,delimiter=' ')\n"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 646,
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/html": [
++       "<div>\n",
++       "<style scoped>\n",
++       "    .dataframe tbody tr th:only-of-type {\n",
++       "        vertical-align: middle;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe tbody tr th {\n",
++       "        vertical-align: top;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe thead th {\n",
++       "        text-align: right;\n",
++       "    }\n",
++       "</style>\n",
++       "<table border=\"1\" class=\"dataframe\">\n",
++       "  <thead>\n",
++       "    <tr style=\"text-align: right;\">\n",
++       "      <th></th>\n",
++       "      <th>0</th>\n",
++       "      <th>1</th>\n",
++       "      <th>2</th>\n",
++       "      <th>3</th>\n",
++       "      <th>4</th>\n",
++       "      <th>5</th>\n",
++       "      <th>6</th>\n",
++       "      <th>7</th>\n",
++       "      <th>8</th>\n",
++       "      <th>9</th>\n",
++       "      <th>...</th>\n",
++       "      <th>374</th>\n",
++       "      <th>375</th>\n",
++       "      <th>376</th>\n",
++       "      <th>377</th>\n",
++       "      <th>378</th>\n",
++       "      <th>379</th>\n",
++       "      <th>380</th>\n",
++       "      <th>381</th>\n",
++       "      <th>382</th>\n",
++       "      <th>383</th>\n",
++       "    </tr>\n",
++       "  </thead>\n",
++       "  <tbody>\n",
++       "    <tr>\n",
++       "      <th>0</th>\n",
++       "      <td>101</td>\n",
++       "      <td>2054</td>\n",
++       "      <td>1996</td>\n",
++       "      <td>3109</td>\n",
++       "      <td>2003</td>\n",
++       "      <td>2008</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>5037</td>\n",
++       "      <td>4157</td>\n",
++       "      <td>1998</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>1</th>\n",
++       "      <td>101</td>\n",
++       "      <td>2000</td>\n",
++       "      <td>2022</td>\n",
++       "      <td>7294</td>\n",
++       "      <td>1996</td>\n",
++       "      <td>6971</td>\n",
++       "      <td>1010</td>\n",
++       "      <td>1045</td>\n",
++       "      <td>1005</td>\n",
++       "      <td>1049</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2</th>\n",
++       "      <td>101</td>\n",
++       "      <td>2222</td>\n",
++       "      <td>2022</td>\n",
++       "      <td>2204</td>\n",
++       "      <td>2005</td>\n",
++       "      <td>3010</td>\n",
++       "      <td>2945</td>\n",
++       "      <td>1012</td>\n",
++       "      <td>2057</td>\n",
++       "      <td>2097</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>3</th>\n",
++       "      <td>101</td>\n",
++       "      <td>2183</td>\n",
++       "      <td>2000</td>\n",
++       "      <td>3288</td>\n",
++       "      <td>2032</td>\n",
++       "      <td>2067</td>\n",
++       "      <td>1012</td>\n",
++       "      <td>3357</td>\n",
++       "      <td>2185</td>\n",
++       "      <td>2013</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>4</th>\n",
++       "      <td>101</td>\n",
++       "      <td>2054</td>\n",
++       "      <td>2055</td>\n",
++       "      <td>26879</td>\n",
++       "      <td>17083</td>\n",
++       "      <td>3051</td>\n",
++       "      <td>1005</td>\n",
++       "      <td>1055</td>\n",
++       "      <td>4861</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>...</th>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>568108</th>\n",
++       "      <td>101</td>\n",
++       "      <td>1010</td>\n",
++       "      <td>2012</td>\n",
++       "      <td>2115</td>\n",
++       "      <td>2067</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2022</td>\n",
++       "      <td>6176</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2017</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>568109</th>\n",
++       "      <td>101</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>2428</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>2033</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>2054</td>\n",
++       "      <td>2055</td>\n",
++       "      <td>2009</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>568110</th>\n",
++       "      <td>101</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>4030</td>\n",
++       "      <td>2091</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2054</td>\n",
++       "      <td>1005</td>\n",
++       "      <td>1055</td>\n",
++       "      <td>1999</td>\n",
++       "      <td>2023</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>568111</th>\n",
++       "      <td>101</td>\n",
++       "      <td>3040</td>\n",
++       "      <td>11132</td>\n",
++       "      <td>2055</td>\n",
++       "      <td>2023</td>\n",
++       "      <td>1029</td>\n",
++       "      <td>1996</td>\n",
++       "      <td>28997</td>\n",
++       "      <td>2003</td>\n",
++       "      <td>6728</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>568112</th>\n",
++       "      <td>101</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2954</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2272</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2886</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>2204</td>\n",
++       "      <td>1529</td>\n",
++       "      <td>...</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "      <td>0</td>\n",
++       "    </tr>\n",
++       "  </tbody>\n",
++       "</table>\n",
++       "<p>568113 rows × 384 columns</p>\n",
++       "</div>"
++      ],
++      "text/plain": [
++       "        0     1      2      3      4     5     6      7     8     9    ...  \\\n",
++       "0       101  2054   1996   3109   2003  2008  1029   5037  4157  1998  ...   \n",
++       "1       101  2000   2022   7294   1996  6971  1010   1045  1005  1049  ...   \n",
++       "2       101  2222   2022   2204   2005  3010  2945   1012  2057  2097  ...   \n",
++       "3       101  2183   2000   3288   2032  2067  1012   3357  2185  2013  ...   \n",
++       "4       101  2054   2055  26879  17083  3051  1005   1055  4861  1029  ...   \n",
++       "...     ...   ...    ...    ...    ...   ...   ...    ...   ...   ...  ...   \n",
++       "568108  101  1010   2012   2115   2067  1529  2022   6176  1529  2017  ...   \n",
++       "568109  101  1029   2428   1029   2033  1029  2054   2055  2009  1029  ...   \n",
++       "568110  101  1029   4030   2091   1529  2054  1005   1055  1999  2023  ...   \n",
++       "568111  101  3040  11132   2055   2023  1029  1996  28997  2003  6728  ...   \n",
++       "568112  101  1529   2954   1529   2272  1529  2886   1529  2204  1529  ...   \n",
++       "\n",
++       "        374  375  376  377  378  379  380  381  382  383  \n",
++       "0         0    0    0    0    0    0    0    0    0    0  \n",
++       "1         0    0    0    0    0    0    0    0    0    0  \n",
++       "2         0    0    0    0    0    0    0    0    0    0  \n",
++       "3         0    0    0    0    0    0    0    0    0    0  \n",
++       "4         0    0    0    0    0    0    0    0    0    0  \n",
++       "...     ...  ...  ...  ...  ...  ...  ...  ...  ...  ...  \n",
++       "568108    0    0    0    0    0    0    0    0    0    0  \n",
++       "568109    0    0    0    0    0    0    0    0    0    0  \n",
++       "568110    0    0    0    0    0    0    0    0    0    0  \n",
++       "568111    0    0    0    0    0    0    0    0    0    0  \n",
++       "568112    0    0    0    0    0    0    0    0    0    0  \n",
++       "\n",
++       "[568113 rows x 384 columns]"
++      ]
++     },
++     "execution_count": 646,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "# ted_train_batched[5]\n",
++    "pd.read_csv('./data/open_subtitles_processed.test-batched.csv',header=None,delimiter=' ')"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 520,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stderr",
++     "output_type": "stream",
++     "text": [
++      "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/field.py:150: UserWarning: Field class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.\n",
++      "  warnings.warn('{} class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.'.format(self.__class__.__name__), UserWarning)\n",
++      "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/example.py:68: UserWarning: Example class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.\n",
++      "  warnings.warn('Example class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.', UserWarning)\n",
++      "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/example.py:52: UserWarning: Example class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.\n",
++      "  warnings.warn('Example class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.', UserWarning)\n"
++     ]
++    }
++   ],
++   "source": [
++    "from torchtext import data\n",
++    "dev = data.TabularDataset(\n",
++    "    path='/home/nxingyu/project/data/ted_talks_processed.dev.csv', format='csv',\n",
++    "    fields={'transcript': ('transcripts', data.Field(sequential=False)),})\n",
++    "# train_iter = data.BucketIterator(dataset=ted['dev'], batch_size=32)"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 524,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stderr",
++     "output_type": "stream",
++     "text": [
++      "/home/nxingyu/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/iterator.py:48: UserWarning: Iterator class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.\n",
++      "  warnings.warn('{} class will be retired soon and moved to torchtext.legacy. Please see the most recent release notes for further information.'.format(self.__class__.__name__), UserWarning)\n"
++     ]
++    },
++    {
++     "ename": "AttributeError",
++     "evalue": "'Field' object has no attribute 'vocab'",
++     "output_type": "error",
++     "traceback": [
++      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
++      "\u001b[0;31mAttributeError\u001b[0m                            Traceback (most recent call last)",
++      "\u001b[0;32m<ipython-input-524-eef636d2104e>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0mtrain_iter\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mdata\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mIterator\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdataset\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mdev\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mbatch_size\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m32\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 2\u001b[0;31m \u001b[0mnext\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0miter\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtrain_iter\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
++      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/iterator.py\u001b[0m in \u001b[0;36m__iter__\u001b[0;34m(self)\u001b[0m\n\u001b[1;32m    160\u001b[0m                     \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    161\u001b[0m                         \u001b[0mminibatch\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0msort\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mkey\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0msort_key\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mreverse\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mTrue\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 162\u001b[0;31m                 \u001b[0;32myield\u001b[0m \u001b[0mBatch\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mminibatch\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mdataset\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mdevice\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    163\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mrepeat\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    164\u001b[0m                 \u001b[0;32mreturn\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
++      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/batch.py\u001b[0m in \u001b[0;36m__init__\u001b[0;34m(self, data, dataset, device)\u001b[0m\n\u001b[1;32m     34\u001b[0m                 \u001b[0;32mif\u001b[0m \u001b[0mfield\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     35\u001b[0m                     \u001b[0mbatch\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0mgetattr\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mx\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mname\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mx\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mdata\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m---> 36\u001b[0;31m                     \u001b[0msetattr\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mname\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mfield\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mprocess\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mbatch\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mdevice\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mdevice\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m     37\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m     38\u001b[0m     \u001b[0;34m@\u001b[0m\u001b[0mclassmethod\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
++      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/field.py\u001b[0m in \u001b[0;36mprocess\u001b[0;34m(self, batch, device)\u001b[0m\n\u001b[1;32m    232\u001b[0m         \"\"\"\n\u001b[1;32m    233\u001b[0m         \u001b[0mpadded\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpad\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mbatch\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 234\u001b[0;31m         \u001b[0mtensor\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mnumericalize\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mpadded\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mdevice\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mdevice\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    235\u001b[0m         \u001b[0;32mreturn\u001b[0m \u001b[0mtensor\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    236\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
++      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/field.py\u001b[0m in \u001b[0;36mnumericalize\u001b[0;34m(self, arr, device)\u001b[0m\n\u001b[1;32m    333\u001b[0m                 \u001b[0marr\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mvocab\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mstoi\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mx\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mx\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mex\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mex\u001b[0m \u001b[0;32min\u001b[0m \u001b[0marr\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    334\u001b[0m             \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 335\u001b[0;31m                 \u001b[0marr\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mvocab\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mstoi\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mx\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mx\u001b[0m \u001b[0;32min\u001b[0m \u001b[0marr\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    336\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    337\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpostprocessing\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
++      "\u001b[0;32m~/miniconda3/envs/NLP/lib/python3.8/site-packages/torchtext/data/field.py\u001b[0m in \u001b[0;36m<listcomp>\u001b[0;34m(.0)\u001b[0m\n\u001b[1;32m    333\u001b[0m                 \u001b[0marr\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mvocab\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mstoi\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mx\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mx\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mex\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mex\u001b[0m \u001b[0;32min\u001b[0m \u001b[0marr\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    334\u001b[0m             \u001b[0;32melse\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 335\u001b[0;31m                 \u001b[0marr\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mvocab\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mstoi\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mx\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mx\u001b[0m \u001b[0;32min\u001b[0m \u001b[0marr\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    336\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    337\u001b[0m             \u001b[0;32mif\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpostprocessing\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mnot\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
++      "\u001b[0;31mAttributeError\u001b[0m: 'Field' object has no attribute 'vocab'"
++     ]
++    }
++   ],
++   "source": []
++  },
+   {
+    "cell_type": "code",
+    "execution_count": 119,
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/cmd-args.log b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/cmd-args.log
+deleted file mode 100644
+index 11a5d8e..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/cmd-args.log
++++ /dev/null
+@@ -1 +0,0 @@
+-main.py
+\ No newline at end of file
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/events.out.tfevents.1613548228.intern-instance.32277.0 b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/events.out.tfevents.1613548228.intern-instance.32277.0
+deleted file mode 100644
+index 282ddc8..0000000
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/events.out.tfevents.1613548228.intern-instance.32277.0 and /dev/null differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/git-info.log b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/git-info.log
+deleted file mode 100644
+index 3f1a26f..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/git-info.log
++++ /dev/null
+@@ -1,272 +0,0 @@
+-commit hash: 49f437be4dc897ae49942253feec6e44513b972e
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0
+-index 72a6b47..5665c36 100644
+-Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 and b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 differ
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-index 8780f5e..80b2cf4 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-@@ -40,6 +40,7 @@ model:
+-     …: .
+-     ;: .
+-   no_space_label: '#'
+-+  test_chunk_percent: 0.5
+-   punct_class_weights: false
+-   dataset:
+-     data_dir: /home/nxingyu2/data
+-@@ -54,7 +55,7 @@ model:
+-     num_workers: 4
+-     pin_memory: false
+-     drop_last: true
+--    num_labels: 11
+-+    num_labels: 9
+-     num_domains: 1
+-     test_unlabelled: true
+-     attach_label_to_end: none
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-index 6942473..8ca803c 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-@@ -56,3 +56,48 @@ Epoch 1, global step 1682: val_loss reached 0.19387 (best 0.19241), saving model
+- Epoch 2, step 1781: val_loss was not in top 3
+- Epoch 3, step 1880: val_loss was not in top 3
+- Epoch 4, step 1979: val_loss was not in top 3
+-+Epoch 5, step 2078: val_loss was not in top 3
+-+Epoch 6, step 2177: val_loss was not in top 3
+-+Epoch 7, step 2276: val_loss was not in top 3
+-+Epoch 8, step 2375: val_loss was not in top 3
+-+Epoch 9, step 2474: val_loss was not in top 3
+-+Epoch 10, step 2573: val_loss was not in top 3
+-+Epoch 11, step 2672: val_loss was not in top 3
+-+Epoch 12, step 2771: val_loss was not in top 3
+-+Epoch 13, step 2870: val_loss was not in top 3
+-+Epoch 14, step 2969: val_loss was not in top 3
+-+
+-+  | Name                | Type                 | Params
+-+-------------------------------------------------------------
+-+0 | transformer         | ElectraModel         | 108 M 
+-+1 | punct_classifier    | TokenClassifier      | 1.2 M 
+-+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+-+3 | punctuation_loss    | FocalDiceLoss        | 0     
+-+4 | bilstm              | LSTM                 | 7.1 M 
+-+5 | domain_loss         | CrossEntropyLoss     | 0     
+-+6 | agg_loss            | AggregatorLoss       | 0     
+-+7 | punct_class_report  | ClassificationReport | 0     
+-+8 | domain_class_report | ClassificationReport | 0     
+-+-------------------------------------------------------------
+-+22.5 M    Trainable params
+-+94.7 M    Non-trainable params
+-+117 M     Total params
+-+Epoch 0, step 3068: val_loss was not in top 3
+-+Epoch 1, step 3167: val_loss was not in top 3
+-+Epoch 2, step 3266: val_loss was not in top 3
+-+Epoch 3, step 3365: val_loss was not in top 3
+-+Epoch 4, step 3464: val_loss was not in top 3
+-+Epoch 5, step 3563: val_loss was not in top 3
+-+Epoch 6, step 3662: val_loss was not in top 3
+-+Epoch 7, step 3761: val_loss was not in top 3
+-+Epoch 8, step 3860: val_loss was not in top 3
+-+Epoch 9, step 3959: val_loss was not in top 3
+-+Epoch 10, step 4058: val_loss was not in top 3
+-+Epoch 11, step 4157: val_loss was not in top 3
+-+Epoch 12, step 4256: val_loss was not in top 3
+-+Epoch 13, step 4355: val_loss was not in top 3
+-+Epoch 14, step 4454: val_loss was not in top 3
+-+GPU available: True, used: True
+-+TPU available: None, using: 0 TPU cores
+-+Using environment variable NODE_RANK for node rank (0).
+-+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-index 01b5cea..950d6a0 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-@@ -8,3 +8,6 @@
+- [NeMo W 2021-02-17 11:50:55 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b091f3d0> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-       warnings.warn(warn_msg)
+-     
+-+[NeMo W 2021-02-17 13:03:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b0974a90> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-index 76321e4..2cf0e0c 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-@@ -10,3 +10,6 @@
+- [NeMo W 2021-02-17 11:50:55 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b091f3d0> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-       warnings.warn(warn_msg)
+-     
+-+[NeMo W 2021-02-17 13:03:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b0974a90> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0
+-index 9b6538f..d09da1e 100644
+-Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 and b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 differ
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-index d56406b..c177ddb 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-@@ -19,3 +19,8 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+- 7.7 M     Trainable params
+- 108 M     Non-trainable params
+- 116 M     Total params
+-+Epoch 0, global step 2626: val_loss reached 0.06840 (best 0.06840), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.07-epoch=0.ckpt" as top 3
+-+Epoch 1, global step 5253: val_loss reached 0.01696 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=1.ckpt" as top 3
+-+Epoch 2, global step 7880: val_loss reached 0.01890 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=2.ckpt" as top 3
+-+Saving latest checkpoint...
+-+Epoch 3, global step 8484: val_loss reached 0.01890 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=3.ckpt" as top 3
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-index d8819de..e75da19 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-@@ -2,3 +2,12 @@
+- [NeMo W 2021-02-17 12:17:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-       warnings.warn(*args, **kwargs)
+-     
+-+[NeMo W 2021-02-17 13:01:44 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc72c6c1850> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 13:06:36 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc770032130> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 15:01:57 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+-+      warnings.warn(*args, **kwargs)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-index 8207f2f..e4933a9 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-@@ -4,3 +4,12 @@
+- [NeMo W 2021-02-17 12:17:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-       warnings.warn(*args, **kwargs)
+-     
+-+[NeMo W 2021-02-17 13:01:44 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc72c6c1850> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 13:06:36 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc770032130> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 15:01:57 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+-+      warnings.warn(*args, **kwargs)
+-+    
+-diff --git a/experiment/config.yaml b/experiment/config.yaml
+-index 9006e36..4e438d7 100644
+---- a/experiment/config.yaml
+-+++ b/experiment/config.yaml
+-@@ -2,9 +2,9 @@ seed: 42
+- trainer:
+-     gpus: 1 # the number of gpus, 0 for CPU
+-     num_nodes: 1
+--    max_epochs: 15
+-+    max_epochs: 20
+-     max_steps: null # precedence over max_epochs
+--    accumulate_grad_batches: 1 # accumulates grads every k batches
+-+    accumulate_grad_batches: 4 # accumulates grads every k batches
+-     gradient_clip_val: 0
+-     amp_level: O1 # O1/O2 for mixed precision
+-     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+-@@ -82,7 +82,7 @@ model:
+-         ignore_start_end: false
+-         use_cache: false
+-         # shared among dataloaders
+--        num_workers:  4
+-+        num_workers:  8
+-         pin_memory: false
+-         drop_last: true
+-         num_labels: 9
+-@@ -94,7 +94,7 @@ model:
+-             shuffle: true
+-             num_samples: -1
+-             batch_size: 32
+--            manual_len: 4000 #default 0 84074
+-+            manual_len: 3000 #default 0 84074
+- 
+-         validation_ds:
+-             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
+-@@ -118,13 +118,13 @@ model:
+-         # unfrozen_layers: 1
+-     
+-     punct_head:
+--        punct_num_fc_layers: 2
+-+        punct_num_fc_layers: 3
+-         fc_dropout: 0.1
+-         activation: 'gelu'
+-         log_softmax: false
+-         use_transformer_init: true
+-         loss: 'dice'
+--        bilstm: true
+-+        bilstm: false
+- 
+-     domain_head:
+-         domain_num_fc_layers: 1
+-@@ -147,7 +147,7 @@ model:
+- 
+-     frozen_lr:
+-         - 2e-2
+--        - 1e-4
+-+        - 5e-4
+-         - 5e-6
+-         - 5e-7
+-         - 1e-7
+-diff --git a/experiment/core/utils.py b/experiment/core/utils.py
+-index 6226a01..2d3c063 100644
+---- a/experiment/core/utils.py
+-+++ b/experiment/core/utils.py
+-@@ -26,7 +26,7 @@ def position_to_mask(max_seq_length:int,indices:list):
+-     try:
+-         o[np.array(indices)%(max_seq_length-2)+1]=1
+-     except:
+--        pp('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
+-+        # pp('empty array')
+-         o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
+-     return o
+- 
+-diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+-index dda9cf5..cc59795 100644
+---- a/experiment/data/punctuation_dataset_multi.py
+-+++ b/experiment/data/punctuation_dataset_multi.py
+-@@ -114,7 +114,8 @@ class PunctuationDomainDataset(IterableDataset):
+-         
+- 
+-     def __len__(self):
+--        return self.len
+-+        pp('dataset')
+-+        return pp(self.len)
+-     
+-     def shuffle(self, randomize=True, seed=42):
+-         pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
+-@@ -177,7 +178,10 @@ class PunctuationDomainDatasets(IterableDataset):
+-         self.label_map=label_map
+-         self.ds_lengths=[]
+-         for path in labelled+unlabelled:
+--            self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+-+            if manual_len>0:
+-+                self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+-+            else:
+-+                self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+-         self.max_length=max(self.ds_lengths) 
+-         self.per_worker=int(self.max_length/self.num_workers)
+-         self.len=int(self.per_worker/num_samples) 
+-@@ -245,7 +249,7 @@ class PunctuationDomainDatasets(IterableDataset):
+-             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+- 
+-     def __len__(self):
+--        return self.len
+-+        return pp(self.len)
+- 
+-     def shuffle(self, randomize=True, seed=42):
+-         worker_info = get_worker_info()
+-diff --git a/experiment/info.log b/experiment/info.log
+-index 688df06..dc33065 100644
+-Binary files a/experiment/info.log and b/experiment/info.log differ
+-diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+-index 71700f4..e689302 100644
+---- a/experiment/models/punctuation_domain_model.py
+-+++ b/experiment/models/punctuation_domain_model.py
+-@@ -63,6 +63,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+-                               for k,v in self.ids_to_labels.items()}
+-         self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
+-         self.data_id=data_id
+-+        assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-         self.setup_datamodule()
+- 
+-         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/hparams.yaml b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/hparams.yaml
+deleted file mode 100644
+index f9dd10a..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/hparams.yaml
++++ /dev/null
+@@ -1,122 +0,0 @@
+-seed: 42
+-trainer:
+-  gpus: 1
+-  num_nodes: 1
+-  max_epochs: 20
+-  max_steps: null
+-  accumulate_grad_batches: 4
+-  gradient_clip_val: 0
+-  amp_level: O1
+-  precision: 16
+-  accelerator: ddp
+-  checkpoint_callback: false
+-  logger: false
+-  log_every_n_steps: 1
+-  val_check_interval: 1.0
+-  resume_from_checkpoint: null
+-exp_manager:
+-  exp_dir: /home/nxingyu2/project/
+-  name: Punctuation_with_Domain_discriminator
+-  create_tensorboard_logger: true
+-  create_checkpoint_callback: true
+-base_path: /home/nxingyu2/data
+-tmp_path: /home/nxingyu2/data/tmp
+-model:
+-  nemo_path: null
+-  transformer_path: google/electra-base-discriminator
+-  unfrozen: 0
+-  maximum_unfrozen: 2
+-  unfreeze_step: 1
+-  punct_label_ids:
+-  - ''
+-  - '!'
+-  - ','
+-  - '-'
+-  - .
+-  - ':'
+-  - '?'
+-  - —
+-  label_map:
+-    …: .
+-    ;: .
+-  no_space_label: '#'
+-  test_chunk_percent: 0.5
+-  punct_class_weights: false
+-  dataset:
+-    data_dir: /home/nxingyu2/data
+-    labelled:
+-    - /home/nxingyu2/data/open_subtitles_processed
+-    unlabelled: null
+-    max_seq_length: 128
+-    pad_label: ''
+-    ignore_extra_tokens: false
+-    ignore_start_end: false
+-    use_cache: false
+-    num_workers: 8
+-    pin_memory: false
+-    drop_last: true
+-    num_labels: 9
+-    num_domains: 1
+-    test_unlabelled: true
+-    attach_label_to_end: none
+-    train_ds:
+-      shuffle: true
+-      num_samples: -1
+-      batch_size: 32
+-      manual_len: 3000
+-    validation_ds:
+-      shuffle: true
+-      num_samples: -1
+-      batch_size: 32
+-  tokenizer:
+-    tokenizer_name: google/electra-base-discriminator
+-    vocab_file: null
+-    tokenizer_model: null
+-    special_tokens: null
+-  language_model:
+-    pretrained_model_name: google/electra-base-discriminator
+-    lm_checkpoint: null
+-    config_file: null
+-    config: null
+-  punct_head:
+-    punct_num_fc_layers: 3
+-    fc_dropout: 0.1
+-    activation: gelu
+-    log_softmax: false
+-    use_transformer_init: true
+-    loss: dice
+-    bilstm: false
+-  domain_head:
+-    domain_num_fc_layers: 1
+-    fc_dropout: 0.1
+-    activation: relu
+-    log_softmax: false
+-    use_transformer_init: true
+-    loss: cel
+-    gamma: 0.1
+-    pooling: mean_max
+-    idx_conditioned_on: 0
+-  dice_loss:
+-    epsilon: 0.01
+-    alpha: 3
+-    macro_average: true
+-  focal_loss:
+-    gamma: 2
+-  frozen_lr:
+-  - 0.02
+-  - 0.0005
+-  - 5.0e-06
+-  - 5.0e-07
+-  - 1.0e-07
+-  optim:
+-    name: adamw
+-    lr: 0.01
+-    weight_decay: 0.0
+-    sched:
+-      name: CosineAnnealing
+-      warmup_steps: null
+-      warmup_ratio: 0.1
+-      min_lr: 1.0e-08
+-      last_epoch: -1
+-      monitor: val_loss
+-      reduce_on_plateau: false
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/lightning_logs.txt
+deleted file mode 100644
+index d990740..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/lightning_logs.txt
++++ /dev/null
+@@ -1,108 +0,0 @@
+-GPU available: True, used: True
+-TPU available: None, using: 0 TPU cores
+-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+-Using native 16bit precision.
+-initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+-
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 1.2 M 
+-2 | domain_classifier          | SequenceClassifier   | 1.5 K 
+-3 | punctuation_loss           | FocalDiceLoss        | 0     
+-4 | domain_loss                | CrossEntropyLoss     | 0     
+-5 | agg_loss                   | AggregatorLoss       | 0     
+-6 | punct_class_report         | ClassificationReport | 0     
+-7 | chunked_punct_class_report | ClassificationReport | 0     
+-8 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-1.2 M     Trainable params
+-108 M     Non-trainable params
+-110 M     Total params
+-Epoch 0, global step 23: val_loss reached 0.20797 (best 0.20797), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.21-epoch=0.ckpt" as top 3
+-Epoch 1, global step 47: val_loss reached 0.21217 (best 0.20797), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.21-epoch=1.ckpt" as top 3
+-Epoch 2, global step 71: val_loss reached 0.20422 (best 0.20422), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.20-epoch=2.ckpt" as top 3
+-Epoch 3, global step 95: val_loss reached 0.12150 (best 0.12150), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.12-epoch=3.ckpt" as top 3
+-Epoch 4, global step 119: val_loss reached 0.11584 (best 0.11584), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.12-epoch=4.ckpt" as top 3
+-Epoch 5, global step 143: val_loss reached 0.11417 (best 0.11417), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.11-epoch=5.ckpt" as top 3
+-Epoch 6, global step 167: val_loss reached 0.11546 (best 0.11417), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.12-epoch=6.ckpt" as top 3
+-Epoch 7, global step 191: val_loss reached 0.10206 (best 0.10206), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.10-epoch=7.ckpt" as top 3
+-Epoch 8, global step 215: val_loss reached 0.10457 (best 0.10206), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.10-epoch=8.ckpt" as top 3
+-Epoch 9, global step 239: val_loss reached 0.10407 (best 0.10206), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.10-epoch=9.ckpt" as top 3
+-Epoch 10, step 263: val_loss was not in top 3
+-Epoch 11, global step 287: val_loss reached 0.07005 (best 0.07005), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.07-epoch=11.ckpt" as top 3
+-Epoch 12, global step 311: val_loss reached 0.02657 (best 0.02657), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.03-epoch=12.ckpt" as top 3
+-Epoch 13, global step 335: val_loss reached 0.05531 (best 0.02657), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.06-epoch=13.ckpt" as top 3
+-Epoch 14, step 359: val_loss was not in top 3
+-Epoch 15, global step 383: val_loss reached 0.02220 (best 0.02220), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=15.ckpt" as top 3
+-Epoch 16, global step 407: val_loss reached 0.01779 (best 0.01779), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=16.ckpt" as top 3
+-Epoch 17, global step 431: val_loss reached 0.01862 (best 0.01779), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=17.ckpt" as top 3
+-Epoch 18, global step 455: val_loss reached 0.01871 (best 0.01779), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=18.ckpt" as top 3
+-Epoch 19, step 479: val_loss was not in top 3
+-Saving latest checkpoint...
+-
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 1.2 M 
+-2 | domain_classifier          | SequenceClassifier   | 1.5 K 
+-3 | punctuation_loss           | FocalDiceLoss        | 0     
+-4 | domain_loss                | CrossEntropyLoss     | 0     
+-5 | agg_loss                   | AggregatorLoss       | 0     
+-6 | punct_class_report         | ClassificationReport | 0     
+-7 | chunked_punct_class_report | ClassificationReport | 0     
+-8 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-8.3 M     Trainable params
+-101 M     Non-trainable params
+-110 M     Total params
+-Epoch 0, step 503: val_loss was not in top 3
+-Epoch 1, step 527: val_loss was not in top 3
+-Epoch 2, step 551: val_loss was not in top 3
+-Epoch 3, step 575: val_loss was not in top 3
+-Epoch 4, step 599: val_loss was not in top 3
+-Epoch 5, step 623: val_loss was not in top 3
+-Epoch 6, step 647: val_loss was not in top 3
+-Epoch 7, step 671: val_loss was not in top 3
+-Epoch 8, step 695: val_loss was not in top 3
+-Epoch 9, step 719: val_loss was not in top 3
+-Epoch 10, step 743: val_loss was not in top 3
+-Epoch 11, step 767: val_loss was not in top 3
+-Epoch 12, step 791: val_loss was not in top 3
+-Epoch 13, step 815: val_loss was not in top 3
+-Epoch 14, step 839: val_loss was not in top 3
+-Epoch 15, step 863: val_loss was not in top 3
+-Epoch 16, step 887: val_loss was not in top 3
+-Epoch 17, step 911: val_loss was not in top 3
+-Epoch 18, step 935: val_loss was not in top 3
+-Epoch 19, step 959: val_loss was not in top 3
+-
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 1.2 M 
+-2 | domain_classifier          | SequenceClassifier   | 1.5 K 
+-3 | punctuation_loss           | FocalDiceLoss        | 0     
+-4 | domain_loss                | CrossEntropyLoss     | 0     
+-5 | agg_loss                   | AggregatorLoss       | 0     
+-6 | punct_class_report         | ClassificationReport | 0     
+-7 | chunked_punct_class_report | ClassificationReport | 0     
+-8 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-15.4 M    Trainable params
+-94.7 M    Non-trainable params
+-110 M     Total params
+-Epoch 0, step 983: val_loss was not in top 3
+-Epoch 1, step 1007: val_loss was not in top 3
+-Epoch 2, step 1031: val_loss was not in top 3
+-Epoch 3, step 1055: val_loss was not in top 3
+-Epoch 4, step 1079: val_loss was not in top 3
+-Epoch 5, step 1103: val_loss was not in top 3
+-Epoch 6, step 1127: val_loss was not in top 3
+-Epoch 7, step 1151: val_loss was not in top 3
+-Epoch 8, step 1175: val_loss was not in top 3
+-Epoch 9, step 1199: val_loss was not in top 3
+-Epoch 10, step 1223: val_loss was not in top 3
+-Epoch 11, step 1247: val_loss was not in top 3
+-Epoch 12, step 1271: val_loss was not in top 3
+-Epoch 13, step 1295: val_loss was not in top 3
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_error_log.txt
+deleted file mode 100644
+index caf1cb9..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_error_log.txt
++++ /dev/null
+@@ -1,25 +0,0 @@
+-[NeMo W 2021-02-17 15:49:58 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+-[NeMo W 2021-02-17 15:50:23 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:23 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:28 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-      warnings.warn(*args, **kwargs)
+-    
+-[NeMo W 2021-02-17 15:51:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7feb635f9670> was reported to be 93 (when accessing len(dataloader)), but 94 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-      warnings.warn(warn_msg)
+-    
+-[NeMo W 2021-02-17 15:56:16 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7feb636c44c0> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-      warnings.warn(warn_msg)
+-    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_log_globalrank-0_localrank-0.txt
+deleted file mode 100644
+index fe3756a..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58/nemo_log_globalrank-0_localrank-0.txt
++++ /dev/null
+@@ -1,27 +0,0 @@
+-[NeMo I 2021-02-17 15:49:58 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_15-49-58
+-[NeMo I 2021-02-17 15:49:58 exp_manager:519] TensorboardLogger has been set up
+-[NeMo W 2021-02-17 15:49:58 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+-[NeMo W 2021-02-17 15:50:23 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:23 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:26 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:66: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 15:50:28 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-      warnings.warn(*args, **kwargs)
+-    
+-[NeMo W 2021-02-17 15:51:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7feb635f9670> was reported to be 93 (when accessing len(dataloader)), but 94 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-      warnings.warn(warn_msg)
+-    
+-[NeMo W 2021-02-17 15:56:16 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7feb636c44c0> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-      warnings.warn(warn_msg)
+-    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/cmd-args.log b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/cmd-args.log
+deleted file mode 100644
+index 11a5d8e..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/cmd-args.log
++++ /dev/null
+@@ -1 +0,0 @@
+-main.py
+\ No newline at end of file
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/events.out.tfevents.1613567392.intern-instance.29489.0 b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/events.out.tfevents.1613567392.intern-instance.29489.0
+deleted file mode 100644
+index 27406d2..0000000
+Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/events.out.tfevents.1613567392.intern-instance.29489.0 and /dev/null differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/git-info.log b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/git-info.log
+deleted file mode 100644
+index 5020716..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/git-info.log
++++ /dev/null
+@@ -1,404 +0,0 @@
+-commit hash: 49f437be4dc897ae49942253feec6e44513b972e
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0
+-index 72a6b47..5665c36 100644
+-Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 and b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/events.out.tfevents.1613533775.intern-instance.25711.0 differ
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-index 8780f5e..80b2cf4 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/hparams.yaml
+-@@ -40,6 +40,7 @@ model:
+-     …: .
+-     ;: .
+-   no_space_label: '#'
+-+  test_chunk_percent: 0.5
+-   punct_class_weights: false
+-   dataset:
+-     data_dir: /home/nxingyu2/data
+-@@ -54,7 +55,7 @@ model:
+-     num_workers: 4
+-     pin_memory: false
+-     drop_last: true
+--    num_labels: 11
+-+    num_labels: 9
+-     num_domains: 1
+-     test_unlabelled: true
+-     attach_label_to_end: none
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-index 6942473..8ca803c 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/lightning_logs.txt
+-@@ -56,3 +56,48 @@ Epoch 1, global step 1682: val_loss reached 0.19387 (best 0.19241), saving model
+- Epoch 2, step 1781: val_loss was not in top 3
+- Epoch 3, step 1880: val_loss was not in top 3
+- Epoch 4, step 1979: val_loss was not in top 3
+-+Epoch 5, step 2078: val_loss was not in top 3
+-+Epoch 6, step 2177: val_loss was not in top 3
+-+Epoch 7, step 2276: val_loss was not in top 3
+-+Epoch 8, step 2375: val_loss was not in top 3
+-+Epoch 9, step 2474: val_loss was not in top 3
+-+Epoch 10, step 2573: val_loss was not in top 3
+-+Epoch 11, step 2672: val_loss was not in top 3
+-+Epoch 12, step 2771: val_loss was not in top 3
+-+Epoch 13, step 2870: val_loss was not in top 3
+-+Epoch 14, step 2969: val_loss was not in top 3
+-+
+-+  | Name                | Type                 | Params
+-+-------------------------------------------------------------
+-+0 | transformer         | ElectraModel         | 108 M 
+-+1 | punct_classifier    | TokenClassifier      | 1.2 M 
+-+2 | domain_classifier   | SequenceClassifier   | 1.5 K 
+-+3 | punctuation_loss    | FocalDiceLoss        | 0     
+-+4 | bilstm              | LSTM                 | 7.1 M 
+-+5 | domain_loss         | CrossEntropyLoss     | 0     
+-+6 | agg_loss            | AggregatorLoss       | 0     
+-+7 | punct_class_report  | ClassificationReport | 0     
+-+8 | domain_class_report | ClassificationReport | 0     
+-+-------------------------------------------------------------
+-+22.5 M    Trainable params
+-+94.7 M    Non-trainable params
+-+117 M     Total params
+-+Epoch 0, step 3068: val_loss was not in top 3
+-+Epoch 1, step 3167: val_loss was not in top 3
+-+Epoch 2, step 3266: val_loss was not in top 3
+-+Epoch 3, step 3365: val_loss was not in top 3
+-+Epoch 4, step 3464: val_loss was not in top 3
+-+Epoch 5, step 3563: val_loss was not in top 3
+-+Epoch 6, step 3662: val_loss was not in top 3
+-+Epoch 7, step 3761: val_loss was not in top 3
+-+Epoch 8, step 3860: val_loss was not in top 3
+-+Epoch 9, step 3959: val_loss was not in top 3
+-+Epoch 10, step 4058: val_loss was not in top 3
+-+Epoch 11, step 4157: val_loss was not in top 3
+-+Epoch 12, step 4256: val_loss was not in top 3
+-+Epoch 13, step 4355: val_loss was not in top 3
+-+Epoch 14, step 4454: val_loss was not in top 3
+-+GPU available: True, used: True
+-+TPU available: None, using: 0 TPU cores
+-+Using environment variable NODE_RANK for node rank (0).
+-+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-index 01b5cea..950d6a0 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_error_log.txt
+-@@ -8,3 +8,6 @@
+- [NeMo W 2021-02-17 11:50:55 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b091f3d0> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-       warnings.warn(warn_msg)
+-     
+-+[NeMo W 2021-02-17 13:03:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b0974a90> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-index 76321e4..2cf0e0c 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/nemo_log_globalrank-0_localrank-0.txt
+-@@ -10,3 +10,6 @@
+- [NeMo W 2021-02-17 11:50:55 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b091f3d0> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-       warnings.warn(warn_msg)
+-     
+-+[NeMo W 2021-02-17 13:03:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f83b0974a90> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0
+-index 9b6538f..d09da1e 100644
+-Binary files a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 and b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/events.out.tfevents.1613535472.intern-instance.5941.0 differ
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-index d56406b..c177ddb 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/lightning_logs.txt
+-@@ -19,3 +19,8 @@ initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+- 7.7 M     Trainable params
+- 108 M     Non-trainable params
+- 116 M     Total params
+-+Epoch 0, global step 2626: val_loss reached 0.06840 (best 0.06840), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.07-epoch=0.ckpt" as top 3
+-+Epoch 1, global step 5253: val_loss reached 0.01696 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=1.ckpt" as top 3
+-+Epoch 2, global step 7880: val_loss reached 0.01890 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=2.ckpt" as top 3
+-+Saving latest checkpoint...
+-+Epoch 3, global step 8484: val_loss reached 0.01890 (best 0.01696), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.02-epoch=3.ckpt" as top 3
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-index d8819de..e75da19 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_error_log.txt
+-@@ -2,3 +2,12 @@
+- [NeMo W 2021-02-17 12:17:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-       warnings.warn(*args, **kwargs)
+-     
+-+[NeMo W 2021-02-17 13:01:44 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc72c6c1850> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 13:06:36 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc770032130> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 15:01:57 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+-+      warnings.warn(*args, **kwargs)
+-+    
+-diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-index 8207f2f..e4933a9 100644
+---- a/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-+++ b/Punctuation_with_Domain_discriminator/2021-02-17_12-17-21/nemo_log_globalrank-0_localrank-0.txt
+-@@ -4,3 +4,12 @@
+- [NeMo W 2021-02-17 12:17:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-       warnings.warn(*args, **kwargs)
+-     
+-+[NeMo W 2021-02-17 13:01:44 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc72c6c1850> was reported to be 2627 (when accessing len(dataloader)), but 2628 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 13:06:36 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc770032130> was reported to be 328 (when accessing len(dataloader)), but 329 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+-+      warnings.warn(warn_msg)
+-+    
+-+[NeMo W 2021-02-17 15:01:57 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+-+      warnings.warn(*args, **kwargs)
+-+    
+-diff --git a/experiment/config.yaml b/experiment/config.yaml
+-index 9006e36..234e5a9 100644
+---- a/experiment/config.yaml
+-+++ b/experiment/config.yaml
+-@@ -2,9 +2,9 @@ seed: 42
+- trainer:
+-     gpus: 1 # the number of gpus, 0 for CPU
+-     num_nodes: 1
+--    max_epochs: 15
+-+    max_epochs: 20
+-     max_steps: null # precedence over max_epochs
+--    accumulate_grad_batches: 1 # accumulates grads every k batches
+-+    accumulate_grad_batches: 4 # accumulates grads every k batches
+-     gradient_clip_val: 0
+-     amp_level: O1 # O1/O2 for mixed precision
+-     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+-@@ -12,7 +12,7 @@ trainer:
+-     checkpoint_callback: false  # Provided by exp_manager
+-     logger: false #false  # Provided by exp_manager
+-     log_every_n_steps: 1  # Interval of logging.
+--    val_check_interval: 1.0  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
+-+    val_check_interval: 0.2  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
+-     resume_from_checkpoint: null
+- 
+-     # gpus: 0 # the number of gpus, 0 for CPU
+-@@ -38,12 +38,13 @@ exp_manager:
+-     create_checkpoint_callback: true 
+- base_path: /home/nxingyu2/data # /root/data # 
+- tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+-+log_dir: null
+- 
+- model:
+-     nemo_path: null
+-     transformer_path: google/electra-base-discriminator #google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+-     unfrozen: 0
+--    maximum_unfrozen: 2
+-+    maximum_unfrozen: 1
+-     unfreeze_step: 1
+-     punct_label_ids:
+-         - ""
+-@@ -63,7 +64,7 @@ model:
+-         ";": "."
+- 
+-     no_space_label: '#'
+--    test_chunk_percent: 0.5
+-+    test_chunk_percent: 0.75
+- 
+-     punct_class_weights: false #false
+-     
+-@@ -73,7 +74,7 @@ model:
+-             # - ${base_path}/ted_talks_processed #
+-             - ${base_path}/open_subtitles_processed #  
+-         unlabelled:
+--            # - ${base_path}/ted_talks_processed #
+-+            - ${base_path}/ted_talks_processed #
+-             # - ${base_path}/open_subtitles_processed #  
+-             # parameters for dataset preprocessing
+-         max_seq_length: 128
+-@@ -82,11 +83,11 @@ model:
+-         ignore_start_end: false
+-         use_cache: false
+-         # shared among dataloaders
+--        num_workers:  4
+-+        num_workers:  8
+-         pin_memory: false
+-         drop_last: true
+-         num_labels: 9
+--        num_domains: 1
+-+        num_domains: 2
+-         test_unlabelled: true
+-         attach_label_to_end: none # false if attach to start none if dont mask
+- 
+-@@ -94,7 +95,7 @@ model:
+-             shuffle: true
+-             num_samples: -1
+-             batch_size: 32
+--            manual_len: 4000 #default 0 84074
+-+            manual_len: 40000 #default 0 84074
+- 
+-         validation_ds:
+-             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
+-@@ -118,7 +119,7 @@ model:
+-         # unfrozen_layers: 1
+-     
+-     punct_head:
+--        punct_num_fc_layers: 2
+-+        punct_num_fc_layers: 3
+-         fc_dropout: 0.1
+-         activation: 'gelu'
+-         log_softmax: false
+-@@ -127,9 +128,9 @@ model:
+-         bilstm: true
+- 
+-     domain_head:
+--        domain_num_fc_layers: 1
+-+        domain_num_fc_layers: 2
+-         fc_dropout: 0.1
+--        activation: 'relu'
+-+        activation: 'gelu'
+-         log_softmax: false
+-         use_transformer_init: true
+-         loss: 'cel'
+-@@ -147,7 +148,7 @@ model:
+- 
+-     frozen_lr:
+-         - 2e-2
+--        - 1e-4
+-+        - 5e-4
+-         - 5e-6
+-         - 5e-7
+-         - 1e-7
+-diff --git a/experiment/core/utils.py b/experiment/core/utils.py
+-index 6226a01..2d3c063 100644
+---- a/experiment/core/utils.py
+-+++ b/experiment/core/utils.py
+-@@ -26,7 +26,7 @@ def position_to_mask(max_seq_length:int,indices:list):
+-     try:
+-         o[np.array(indices)%(max_seq_length-2)+1]=1
+-     except:
+--        pp('position_to_mask',np.array(indices)%(max_seq_length-2)+1)
+-+        # pp('empty array')
+-         o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
+-     return o
+- 
+-diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+-index dda9cf5..e2021a3 100644
+---- a/experiment/data/punctuation_dataset_multi.py
+-+++ b/experiment/data/punctuation_dataset_multi.py
+-@@ -89,7 +89,7 @@ class PunctuationDomainDataset(IterableDataset):
+-         batch = next(self.dataset)[1]
+- 
+-         l=batch.str.split().map(len).values
+--        n=8
+-+        n=16
+-         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+-         b=np.minimum(l,a+self.max_seq_length*n)
+-         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+-@@ -114,7 +114,8 @@ class PunctuationDomainDataset(IterableDataset):
+-         
+- 
+-     def __len__(self):
+--        return self.len
+-+        pp('dataset')
+-+        return pp(self.len)
+-     
+-     def shuffle(self, randomize=True, seed=42):
+-         pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
+-@@ -177,7 +178,10 @@ class PunctuationDomainDatasets(IterableDataset):
+-         self.label_map=label_map
+-         self.ds_lengths=[]
+-         for path in labelled+unlabelled:
+--            self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+-+            if manual_len>0:
+-+                self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+-+            else:
+-+                self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+-         self.max_length=max(self.ds_lengths) 
+-         self.per_worker=int(self.max_length/self.num_workers)
+-         self.len=int(self.per_worker/num_samples) 
+-@@ -245,7 +249,7 @@ class PunctuationDomainDatasets(IterableDataset):
+-             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+- 
+-     def __len__(self):
+--        return self.len
+-+        return pp(self.len)
+- 
+-     def shuffle(self, randomize=True, seed=42):
+-         worker_info = get_worker_info()
+-diff --git a/experiment/info.log b/experiment/info.log
+-index 688df06..104c5dd 100644
+-Binary files a/experiment/info.log and b/experiment/info.log differ
+-diff --git a/experiment/main.py b/experiment/main.py
+-index da25a34..fcccc12 100644
+---- a/experiment/main.py
+-+++ b/experiment/main.py
+-@@ -36,8 +36,8 @@ def main(cfg: DictConfig)->None:
+-     pp(cfg)
+-     pl.seed_everything(cfg.seed)
+-     trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
+--    exp_manager(trainer, cfg.exp_manager)
+--    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id)
+-+    log_dir=exp_manager(trainer, cfg.exp_manager).__str__()
+-+    model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id,log_dir=log_dir)
+-     
+-     # lr_finder_dm=PunctuationDataModule(
+-     #         tokenizer= cfg.model.transformer_path,
+-diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+-index 71700f4..a00d22e 100644
+---- a/experiment/models/punctuation_domain_model.py
+-+++ b/experiment/models/punctuation_domain_model.py
+-@@ -39,6 +39,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+-                  cfg: DictConfig,
+-                  trainer: pl.Trainer = None,
+-                  data_id: str = '',
+-+                 log_dir: str = '',
+-                  ):
+-         if trainer is not None and not isinstance(trainer, pl.Trainer):
+-             raise ValueError(
+-@@ -46,6 +47,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+-             )
+-         super().__init__()
+-         self._cfg = cfg
+-+        self._cfg.log_dir=log_dir
+-         self.save_hyperparameters(cfg)
+-         self._optimizer = None
+-         self._scheduler = None
+-@@ -63,6 +65,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+-                               for k,v in self.ids_to_labels.items()}
+-         self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
+-         self.data_id=data_id
+-+        assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-         self.setup_datamodule()
+- 
+-         if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
+-@@ -342,6 +345,27 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+-         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
+-         logging.info(f'Domain report: {domain_report}')
+- 
+-+        path=f"{self.hparams.log_dir}/test.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+-+        logging.info(f'saving to {path}')
+-+        with open(path,'w') as f:
+-+            f.write("Punct report\n")
+-+            f.write(punct_report)
+-+            f.write("\nChunked Punct report\n")
+-+            f.write(chunked_punct_report)
+-+            f.write("\nDomain report\n")
+-+            f.write(domain_report)
+-+            f.write('\n\n')
+-+            f.write(f'test_loss: {avg_loss}\n')
+-+            f.write(f'punct_precision: {punct_precision}\n')
+-+            f.write(f'punct_f1: {punct_f1}\n')
+-+            f.write(f'punct_recall: {punct_recall}\n')
+-+            f.write(f'chunked_punct_precision: {chunked_punct_precision}\n')
+-+            f.write(f'chunked_punct_f1: {chunked_punct_f1}\n')
+-+            f.write(f'chunked_punct_recall: {chunked_punct_recall}\n')
+-+            f.write(f'domain_precision: {domain_precision}\n')
+-+            f.write(f'domain_f1: {domain_f1}\n')
+-+            f.write(f'domain_recall: {domain_recall}\n')
+-+
+-         self.log('test_loss', avg_loss, prog_bar=True)
+-         self.log('punct_precision', punct_precision)
+-         self.log('punct_f1', punct_f1)
+-diff --git a/experiment/testing.py b/experiment/testing.py
+-index 072dbf5..ab840ad 100644
+---- a/experiment/testing.py
+-+++ b/experiment/testing.py
+-@@ -36,6 +36,7 @@ def main(cfg : DictConfig) -> None:
+-     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
+-     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
+-     checkpoint_path="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+-+    model.hparams.log_dir="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/"
+-     trainer = pl.Trainer(**cfg.trainer)
+-     # trainer = pl.Trainer(gpus=gpu)
+-     trainer.test(model,ckpt_path=None)
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/hparams.yaml b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/hparams.yaml
+deleted file mode 100644
+index 20ba40a..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/hparams.yaml
++++ /dev/null
+@@ -1,124 +0,0 @@
+-seed: 42
+-trainer:
+-  gpus: 1
+-  num_nodes: 1
+-  max_epochs: 20
+-  max_steps: null
+-  accumulate_grad_batches: 4
+-  gradient_clip_val: 0
+-  amp_level: O1
+-  precision: 16
+-  accelerator: ddp
+-  checkpoint_callback: false
+-  logger: false
+-  log_every_n_steps: 1
+-  val_check_interval: 0.2
+-  resume_from_checkpoint: null
+-exp_manager:
+-  exp_dir: /home/nxingyu2/project/
+-  name: Punctuation_with_Domain_discriminator
+-  create_tensorboard_logger: true
+-  create_checkpoint_callback: true
+-base_path: /home/nxingyu2/data
+-tmp_path: /home/nxingyu2/data/tmp
+-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22
+-model:
+-  nemo_path: null
+-  transformer_path: google/electra-base-discriminator
+-  unfrozen: 0
+-  maximum_unfrozen: 1
+-  unfreeze_step: 1
+-  punct_label_ids:
+-  - ''
+-  - '!'
+-  - ','
+-  - '-'
+-  - .
+-  - ':'
+-  - '?'
+-  - —
+-  label_map:
+-    …: .
+-    ;: .
+-  no_space_label: '#'
+-  test_chunk_percent: 0.75
+-  punct_class_weights: false
+-  dataset:
+-    data_dir: /home/nxingyu2/data
+-    labelled:
+-    - /home/nxingyu2/data/open_subtitles_processed
+-    unlabelled:
+-    - /home/nxingyu2/data/ted_talks_processed
+-    max_seq_length: 128
+-    pad_label: ''
+-    ignore_extra_tokens: false
+-    ignore_start_end: false
+-    use_cache: false
+-    num_workers: 8
+-    pin_memory: false
+-    drop_last: true
+-    num_labels: 9
+-    num_domains: 2
+-    test_unlabelled: true
+-    attach_label_to_end: none
+-    train_ds:
+-      shuffle: true
+-      num_samples: -1
+-      batch_size: 32
+-      manual_len: 40000
+-    validation_ds:
+-      shuffle: true
+-      num_samples: -1
+-      batch_size: 32
+-  tokenizer:
+-    tokenizer_name: google/electra-base-discriminator
+-    vocab_file: null
+-    tokenizer_model: null
+-    special_tokens: null
+-  language_model:
+-    pretrained_model_name: google/electra-base-discriminator
+-    lm_checkpoint: null
+-    config_file: null
+-    config: null
+-  punct_head:
+-    punct_num_fc_layers: 3
+-    fc_dropout: 0.1
+-    activation: gelu
+-    log_softmax: false
+-    use_transformer_init: true
+-    loss: dice
+-    bilstm: true
+-  domain_head:
+-    domain_num_fc_layers: 2
+-    fc_dropout: 0.1
+-    activation: gelu
+-    log_softmax: false
+-    use_transformer_init: true
+-    loss: cel
+-    gamma: 0.1
+-    pooling: mean_max
+-    idx_conditioned_on: 0
+-  dice_loss:
+-    epsilon: 0.01
+-    alpha: 3
+-    macro_average: true
+-  focal_loss:
+-    gamma: 2
+-  frozen_lr:
+-  - 0.02
+-  - 0.0005
+-  - 5.0e-06
+-  - 5.0e-07
+-  - 1.0e-07
+-  optim:
+-    name: adamw
+-    lr: 0.01
+-    weight_decay: 0.0
+-    sched:
+-      name: CosineAnnealing
+-      warmup_steps: null
+-      warmup_ratio: 0.1
+-      min_lr: 1.0e-08
+-      last_epoch: -1
+-      monitor: val_loss
+-      reduce_on_plateau: false
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/lightning_logs.txt
+deleted file mode 100644
+index 6ce2f94..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/lightning_logs.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-GPU available: True, used: True
+-TPU available: None, using: 0 TPU cores
+-LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+-Using native 16bit precision.
+-initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+-
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 1.2 M 
+-2 | domain_classifier          | SequenceClassifier   | 2.4 M 
+-3 | punctuation_loss           | FocalDiceLoss        | 0     
+-4 | bilstm                     | LSTM                 | 7.1 M 
+-5 | domain_loss                | CrossEntropyLoss     | 0     
+-6 | agg_loss                   | AggregatorLoss       | 0     
+-7 | punct_class_report         | ClassificationReport | 0     
+-8 | chunked_punct_class_report | ClassificationReport | 0     
+-9 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-10.6 M    Trainable params
+-108 M     Non-trainable params
+-119 M     Total params
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_error_log.txt b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_error_log.txt
+deleted file mode 100644
+index 1f3f446..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_error_log.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-[NeMo W 2021-02-17 21:09:22 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+-[NeMo W 2021-02-17 21:09:47 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:47 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-      warnings.warn(*args, **kwargs)
+-    
+diff --git a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_log_globalrank-0_localrank-0.txt b/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_log_globalrank-0_localrank-0.txt
+deleted file mode 100644
+index 507c7be..0000000
+--- a/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22/nemo_log_globalrank-0_localrank-0.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-[NeMo I 2021-02-17 21:09:22 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_21-09-22
+-[NeMo I 2021-02-17 21:09:22 exp_manager:519] TensorboardLogger has been set up
+-[NeMo W 2021-02-17 21:09:22 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+-[NeMo W 2021-02-17 21:09:47 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:47 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:50 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+-      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+-    
+-[NeMo W 2021-02-17 21:09:52 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+-      warnings.warn(*args, **kwargs)
+-    
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 234e5a9..163ae4b 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -2,7 +2,7 @@ seed: 42
+ trainer:
+     gpus: 1 # the number of gpus, 0 for CPU
+     num_nodes: 1
+-    max_epochs: 20
++    max_epochs: 4
+     max_steps: null # precedence over max_epochs
+     accumulate_grad_batches: 4 # accumulates grads every k batches
+     gradient_clip_val: 0
+@@ -12,7 +12,7 @@ trainer:
+     checkpoint_callback: false  # Provided by exp_manager
+     logger: false #false  # Provided by exp_manager
+     log_every_n_steps: 1  # Interval of logging.
+-    val_check_interval: 0.2  # Set to 0.25 to check 4 times per epoch, or an int for number of iterations
++    val_check_interval: 1.0 #0.2  # Set to 0.25 to check 4 times per epoch, 1.0 for normal, or an int for number of iterations
+     resume_from_checkpoint: null
+ 
+     # gpus: 0 # the number of gpus, 0 for CPU
+@@ -44,37 +44,42 @@ model:
+     nemo_path: null
+     transformer_path: google/electra-base-discriminator #google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+     unfrozen: 0
+-    maximum_unfrozen: 1
++    maximum_unfrozen: 6
+     unfreeze_step: 1
+     punct_label_ids:
+         - ""
+-        - "!"
+         - ","
+-        - "-"
+         - "."
+-        - ":"
+         - "?"
+-        - "—"
+ 
++        # - "-"
++        # - "!"
++        # - ":"
++        # - "—"
+         # - ";"
+         # - "…"
+ 
+     label_map:
++        "-": ","
++        ":": ","
++        "—": ","
++        "!": "."
+         "…": "."
+         ";": "."
+ 
+     no_space_label: '#'
+-    test_chunk_percent: 0.75
++    test_chunk_percent: 0.5
+ 
+     punct_class_weights: false #false
+     
+     dataset:
+         data_dir: /home/nxingyu2/data # /root/data # 
+         labelled:
++            - ${base_path}/ted2010 #
+             # - ${base_path}/ted_talks_processed #
+-            - ${base_path}/open_subtitles_processed #  
++            # - ${base_path}/open_subtitles_processed #  
+         unlabelled:
+-            - ${base_path}/ted_talks_processed #
++            # - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+             # parameters for dataset preprocessing
+         max_seq_length: 128
+@@ -94,7 +99,7 @@ model:
+         train_ds:
+             shuffle: true
+             num_samples: -1
+-            batch_size: 32
++            batch_size: 8
+             manual_len: 40000 #default 0 84074
+ 
+         validation_ds:
+@@ -103,7 +108,7 @@ model:
+             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
+             shuffle: true
+             num_samples: -1
+-            batch_size: 32
++            batch_size: 4
+ 
+     tokenizer:
+         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
+@@ -124,23 +129,23 @@ model:
+         activation: 'gelu'
+         log_softmax: false
+         use_transformer_init: true
+-        loss: 'dice'
+-        bilstm: true
++        loss: 'focal'
++        bilstm: false
+ 
+     domain_head:
+         domain_num_fc_layers: 2
+         fc_dropout: 0.1
+-        activation: 'gelu'
++        activation: 'relu'
+         log_softmax: false
+         use_transformer_init: true
+         loss: 'cel'
+-        gamma: 0.1 #0.1 # coefficient of gradient reversal
++        gamma: 0.01 #0.1 # coefficient of gradient reversal
+         pooling: 'mean_max' # 'mean' mean_max
+         idx_conditioned_on: 0
+     
+     dice_loss:
+         epsilon: 0.01
+-        alpha: 3
++        alpha: 4
+         macro_average: true
+ 
+     focal_loss: 
+@@ -148,9 +153,11 @@ model:
+ 
+     frozen_lr:
+         - 2e-2
+-        - 5e-4
+-        - 5e-6
+-        - 5e-7
++        - 1e-3
++        - 4e-4
++        - 1e-4
++        - 1e-5
++        - 1e-6
+         - 1e-7
+ 
+     optim:
+diff --git a/experiment/data/punctuation_datamodule.py b/experiment/data/punctuation_datamodule.py
+index 4950246..f41d06a 100644
+--- a/experiment/data/punctuation_datamodule.py
++++ b/experiment/data/punctuation_datamodule.py
+@@ -84,7 +84,8 @@ class PunctuationDataModule(LightningDataModule):
+                     data_id=self.data_id,
+                     tmp_path=self.tmp_path,
+                     attach_label_to_end=self.attach_label_to_end,
+-                    manual_len=self.manual_len)
++                    manual_len=self.manual_len,
++                    no_space_label=self.no_space_label)
+             self.val_dataset = PunctuationDomainDatasets(split='dev',
+                     num_samples=self.val_batch_size,
+                     max_seq_length=self.max_seq_length,
+@@ -96,7 +97,8 @@ class PunctuationDataModule(LightningDataModule):
+                     randomize=self.val_shuffle,
+                     data_id=self.data_id,
+                     tmp_path=self.tmp_path,
+-                    attach_label_to_end=self.attach_label_to_end)
++                    attach_label_to_end=self.attach_label_to_end,
++                    no_space_label=self.no_space_label)
+         if stage=='test' or stage is None:
+             if (len(self.unlabelled)>0) and self.test_unlabelled:
+                 self.test_dataset = PunctuationDomainDatasets(split='test',
+@@ -110,7 +112,8 @@ class PunctuationDataModule(LightningDataModule):
+                     randomize=self.val_shuffle,
+                     data_id=self.data_id,
+                     tmp_path=self.tmp_path,
+-                    attach_label_to_end=self.attach_label_to_end
++                    attach_label_to_end=self.attach_label_to_end,
++                    no_space_label=self.no_space_label
+                     )
+             else: self.test_dataset = PunctuationDomainDatasets(split='test',
+                     num_samples=self.val_batch_size,
+@@ -123,7 +126,8 @@ class PunctuationDataModule(LightningDataModule):
+                     randomize=self.val_shuffle,
+                     data_id=self.data_id,
+                     tmp_path=self.tmp_path,
+-                    attach_label_to_end=self.attach_label_to_end
++                    attach_label_to_end=self.attach_label_to_end,
++                    no_space_label=self.no_space_label
+                     )
+ 
+         logging.info(f"shuffling train set")
+diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+index e2021a3..0751259 100644
+--- a/experiment/data/punctuation_dataset_multi.py
++++ b/experiment/data/punctuation_dataset_multi.py
+@@ -88,11 +88,11 @@ class PunctuationDomainDataset(IterableDataset):
+     def __next__(self):
+         batch = next(self.dataset)[1]
+ 
+-        l=batch.str.split().map(len).values
+-        n=16
+-        a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
+-        b=np.minimum(l,a+self.max_seq_length*n)
+-        batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
++        # l=batch.str.split().map(len).values
++        # n=16
++        # a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
++        # b=np.minimum(l,a+self.max_seq_length*n)
++        # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+ 
+         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map)(batch)
+         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,no_space_label=self.no_space_label)
+@@ -166,7 +166,7 @@ class PunctuationDomainDatasets(IterableDataset):
+                  tmp_path='~/data/tmp',
+                  attach_label_to_end=None,
+                  manual_len:int=0,
+-                 no_space_label:int=2,
++                 no_space_label:int=None,
+                  ):
+         worker_info = get_worker_info()
+         self.num_workers=1 if worker_info is None else worker_info.num_workers
+diff --git a/experiment/info.log b/experiment/info.log
+index 3fb93c0..dc33065 100644
+Binary files a/experiment/info.log and b/experiment/info.log differ
+diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+index a00d22e..35d934c 100644
+--- a/experiment/models/punctuation_domain_model.py
++++ b/experiment/models/punctuation_domain_model.py
+@@ -768,7 +768,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         self.freeze_transformer_to(self.frozen)
+         for name, param in encoder.named_parameters(): 
+             if param.requires_grad: 
+-                print(name, param.data)
++                print(name)
+ 
+     def unfreeze(self, i: int = 1):
+         self.frozen -= i
+diff --git a/experiment/testing.py b/experiment/testing.py
+index ab840ad..e793b04 100644
+--- a/experiment/testing.py
++++ b/experiment/testing.py
+@@ -21,7 +21,8 @@ from copy import deepcopy
+ import snoop
+ snoop.install()
+ 
+-@hydra.main(config_path="../Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/",config_name="hparams.yaml")
++
++@hydra.main(config_path="../Punctuation_with_Domain_discriminator/2021-02-18_14-19-13/",config_name="hparams.yaml")
+ def main(cfg : DictConfig) -> None:
+     torch.set_printoptions(sci_mode=False)
+     # trainer=pl.Trainer(**cfg.trainer)
+@@ -35,8 +36,8 @@ def main(cfg : DictConfig) -> None:
+     # gpu = 1 if cfg.trainer.gpus != 0 else 0
+     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
+     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
+-    checkpoint_path="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+-    model.hparams.log_dir="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-17_11-49-25/"
++    checkpoint_path="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-18_14-19-13/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
++    model.hparams.log_dir="/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-18_14-19-13/"
+     trainer = pl.Trainer(**cfg.trainer)
+     # trainer = pl.Trainer(gpus=gpu)
+     trainer.test(model,ckpt_path=None)
+diff --git a/processing.ipynb b/processing.ipynb
+index 9ee65ec..043daa8 100644
+--- a/processing.ipynb
++++ b/processing.ipynb
+@@ -1,5 +1,254 @@
+ {
+  "cells": [
++  {
++   "cell_type": "code",
++   "execution_count": 52,
++   "metadata": {},
++   "outputs": [
++    {
++     "data": {
++      "text/plain": [
++       "<xml.etree.ElementTree.ElementTree at 0x7f074228a160>"
++      ]
++     },
++     "execution_count": 52,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "import pandas as pd\n",
++    "import regex as re\n",
++    "import argparse, os, csv\n",
++    "\n",
++    "            "
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 110,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "stripping accents\n",
++      "removing speaker tags\n",
++      "removing name tags\n",
++      "removing non-sentence parenthesis\n",
++      "removing parenthesis\n",
++      "removing square brackets\n",
++      "removing music lyrics\n",
++      "removing empty tags\n",
++      "removing non-sentence punctuation\n",
++      "change to unicode ellipsis\n",
++      "2 hyphen to emdash\n",
++      "endash to hyphen\n",
++      "remove hyphen after punct\n",
++      "combine repeated punctuation\n",
++      "pronounce symbol\n",
++      "strip leading\n",
++      "strip trailing\n",
++      "reduce whitespaces\n",
++      "--done--\n"
++     ]
++    }
++   ],
++   "source": [
++    "import unicodedata\n",
++    "import xml.etree.ElementTree as ET\n",
++    "\n",
++    "parentheses=r'\\([^)(]+[^)( ] *\\)'\n",
++    "parenthesestokeep=r'\\([^)(]+[^)(.!?—\\-, ] *\\)'\n",
++    "speakertag=r'((?<=[^\\w\\d \\\",])|^) *(?![?\\.,!:\\-\\—\\[\\]\\(\\)])(?:[A-Z\\d][^\\s.?!\\[\\]\\(\\)]*\\s?)*:(?=[^\\w]*[A-Z])'#lookahead keeps semicolon in false cases.\n",
++    "parenthesestoremove=r'\\(([^\\(\\)]+[\\w ]+)\\):?'\n",
++    "parenthesesaroundsentence=r'\\(([^\\w]*[^\\(\\)]+[_^\\W]+)\\):?'\n",
++    "squarebracketsaroundsentence=r'\\[([^\\[\\]]+)\\]' #generic since it seems like the square brackets just denote unclear speech.\n",
++    "\n",
++    "\n",
++    "def to_emdash(s):\n",
++    "    return re.sub('--','—',s)\n",
++    "\n",
++    "def strip_accents(s):\n",
++    "    return ''.join(c for c in unicodedata.normalize('NFKD', s)\n",
++    "                  if unicodedata.category(c) != 'Mn')\n",
++    "\n",
++    "def removespeakertags(text):\n",
++    "    return re.sub(speakertag,' ',text)\n",
++    "\n",
++    "def removenametags(text):\n",
++    "    # return re.sub(r\"(?<=[a-z][.?!;]) *[ A-z.,\\-']{1,25}:\",' ',text)\n",
++    "    return re.sub(r\"(?<=[a-z][.?!;])([\\(\\[]* *)[ A-Za-z.,\\-']{1,25}:\", \"\\g<1>\",text)\n",
++    "\n",
++    "def removeparentheses(text):\n",
++    "    return re.sub(parenthesestoremove, ' ',text)\n",
++    "\n",
++    "def removeparenthesesaroundsentence(text):\n",
++    "    return re.sub(parenthesesaroundsentence,r'\\g<1>',text)\n",
++    "\n",
++    "def removedashafterpunct(text):\n",
++    "    return re.sub(r\"([^A-Za-zÀ-ÖØ-öø-ÿ0-9 ]+ *)-+( *[^- ])\",r\"\\g<1> \\g<2>\",text)\n",
++    "\n",
++    "def removesquarebrackets(text):\n",
++    "    return re.sub(squarebracketsaroundsentence, r'\\g<1>',text)\n",
++    "\n",
++    "def removemusic(text):\n",
++    "    text = re.sub(r'♫( *[^♫ ])+ *♫', ' ',text)\n",
++    "    return re.sub(r'♪( *[^♫ ])+ *♪', ' ',text)\n",
++    "\n",
++    "def reducewhitespaces(text):\n",
++    "    text=re.sub(r'(?<=[.?!,;:\\—\\-]) *(?=[.?!,;:\\—\\-])','',text)\n",
++    "    return re.sub(r'\\s+', ' ',text)\n",
++    "\n",
++    "def removeemptyquotes(text):\n",
++    "    text= re.sub(r\"'[_^\\W]*'\",' ',text)\n",
++    "    text= re.sub(r\"\\([_^\\W]*\\)\",' ',text)\n",
++    "    text= re.sub(r\"\\[[_^\\W]*\\]\",' ',text)\n",
++    "    return re.sub(r'\"[_^\\W]*\"',' ',text)\n",
++    "\n",
++    "def ellipsistounicode(text):\n",
++    "    text = re.sub(r'\\.{3,}(?= )','…',text) #ellipsis without trailing punctuation\n",
++    "    return re.sub(r'\\.{3,}([^\\w\\s])','…\\g<1>',text) #ellipsis with trailing punctuation\n",
++    "\n",
++    "def removenonsentencepunct(text):\n",
++    "    return re.sub(r'[^A-Za-z\\d\\s$%&+=€²£¢¥…,.!?;:\\-\\–\\—\\']',' ',text)\n",
++    "\n",
++    "def combinerepeatedpunct(text):\n",
++    "    newtext=[text,re.sub(r'([_^\\W]+) *\\1+','\\g<1> ',text)]\n",
++    "    i=1\n",
++    "    while (newtext[0]!=newtext[1]):\n",
++    "        i+=1\n",
++    "        newtext[i%2]=re.sub(r'([_^\\W]+) *\\1+','\\g<1> ',newtext[(1+i)%2])\n",
++    "    return newtext[i%2]\n",
++    "\n",
++    "def endashtohyphen(text):\n",
++    "    return re.sub('–','-',text)\n",
++    "\n",
++    "def removedashafterpunct(text):\n",
++    "    return re.sub(r\"([^A-Za-z0-9 ]+ *)-+( *[^- ])\",r\"\\g<1> \\g<2>\",text)\n",
++    "\n",
++    "def pronouncesymbol(text):\n",
++    "    text=re.sub(\"\\$ *([\\d](\\.[\\d])?+)\", \"\\g<1> dollars \",text)\n",
++    "    text=re.sub('\\£ *([\\d](\\.[\\d])?+)', \" pounds \",text)\n",
++    "    text=re.sub(\"\\$\", \" dollars \",text)\n",
++    "    text=re.sub(\"\\£\", \" pounds \",text)\n",
++    "    text=re.sub('€', \" euro \",text)\n",
++    "    text=re.sub('¥', \" yen \",text)\n",
++    "    text=re.sub(\"¢\",\" cents \",text)\n",
++    "    text=re.sub('(?<=\\d)\\.(?=\\d)',' point ',text)\n",
++    "    text=re.sub('\\+',' plus ',text)\n",
++    "    text=re.sub('%',' percent ',text)\n",
++    "    text=re.sub('²',' squared ',text)\n",
++    "    text=re.sub('&', ' and ',text)\n",
++    "    return text\n",
++    "\n",
++    "def stripleadingpunctuation(text):\n",
++    "    return re.sub(r'^[^A-Z]*','',text)\n",
++    "\n",
++    "def striptrailingtext(text):\n",
++    "    return re.sub(r'[^!.?…;]*$','',text)\n",
++    "\n",
++    "def preprocess(tedtalks):\n",
++    "    print('stripping accents')\n",
++    "    tedtalks=tedtalks.apply(strip_accents)\n",
++    "    print('removing speaker tags')\n",
++    "    tedtalks=tedtalks.apply(removespeakertags)\n",
++    "    print('removing name tags')\n",
++    "    tedtalks=tedtalks.apply(removenametags) # Remove *Mr Brown: *Hi!\n",
++    "    print('removing non-sentence parenthesis')\n",
++    "    tedtalks=tedtalks.apply(removeparentheses) # Remove (Whispers) without punct\n",
++    "    print('removing parenthesis')\n",
++    "    tedtalks=tedtalks.apply(removeparenthesesaroundsentence) #Remove -> (<- Hi Everyone! ->)<-\n",
++    "    print('removing square brackets')\n",
++    "    tedtalks=tedtalks.apply(removesquarebrackets) #Remove entire [unclear text]\n",
++    "    print('removing music lyrics')\n",
++    "    tedtalks=tedtalks.apply(removemusic)\n",
++    "    print('removing empty tags')\n",
++    "    tedtalks=tedtalks.apply(removeemptyquotes)\n",
++    "    print('removing non-sentence punctuation')\n",
++    "    tedtalks=tedtalks.apply(removenonsentencepunct)\n",
++    "    print('change to unicode ellipsis')\n",
++    "    tedtalks=tedtalks.apply(ellipsistounicode)\n",
++    "    print('2 hyphen to emdash')\n",
++    "    tedtalks=tedtalks.apply(to_emdash)\n",
++    "    print('endash to hyphen')\n",
++    "    tedtalks=tedtalks.apply(endashtohyphen)\n",
++    "    print('remove hyphen after punct')\n",
++    "    tedtalks=tedtalks.apply(removedashafterpunct)\n",
++    "    print('combine repeated punctuation')\n",
++    "    tedtalks=tedtalks.apply(combinerepeatedpunct)\n",
++    "    print('pronounce symbol')\n",
++    "    tedtalks=tedtalks.apply(pronouncesymbol)\n",
++    "    print('strip leading')\n",
++    "    tedtalks=tedtalks.apply(stripleadingpunctuation)\n",
++    "    print('strip trailing')\n",
++    "    tedtalks=tedtalks.apply(striptrailingtext)\n",
++    "    print('reduce whitespaces')\n",
++    "    tedtalks=tedtalks.apply(reducewhitespaces)\n",
++    "    print('--done--')\n",
++    "    return tedtalks\n",
++    "\n",
++    "def text2csv(source:str,target:str):\n",
++    "    rows=dict()\n",
++    "    talkid=-1\n",
++    "    with open(source,'r') as f:\n",
++    "        for line in f:\n",
++    "            if line[:8]=='<talkid>':\n",
++    "                talkid=int(re.search(\"(?<=<talkid>)[0-9]+\",line)[0])\n",
++    "                print(talkid)\n",
++    "                continue\n",
++    "            if line[0]!='<':\n",
++    "                line=re.sub('\\n',' ',line)\n",
++    "                if not talkid in rows.keys():\n",
++    "                    rows[talkid]=''\n",
++    "                rows[talkid]+=line\n",
++    "\n",
++    "    tedtalks=pd.DataFrame.from_dict({'id':rows.keys(),'transcript':rows.values()})\n",
++    "\n",
++    "    tedtalks.loc[:,'transcript'] = preprocess(tedtalks.transcript.astype(str))\n",
++    "    tedtalks=tedtalks.loc[tedtalks.transcript.map(lambda x:len(x.split())>=1)]\n",
++    "    tedtalks.to_csv(target,index=None)\n",
++    "    \n",
++    "def xml2csv(source:str,target:str):\n",
++    "    tree=ET.parse(source)\n",
++    "    tree.getroot()[0]\n",
++    "    rows={}\n",
++    "    for child in tree.getroot()[0]:\n",
++    "        talkid=int(child[3].text)\n",
++    "        if not talkid in rows.keys():\n",
++    "            rows[talkid]=''\n",
++    "        for i in child.findall('seg'):\n",
++    "            rows[talkid]+=re.sub('\\n',' ',i.text)\n",
++    "    tedtalks=pd.DataFrame.from_dict({'id':rows.keys(),'transcript':rows.values()})\n",
++    "\n",
++    "    tedtalks.loc[:,'transcript'] = preprocess(tedtalks.transcript.astype(str))\n",
++    "    tedtalks=tedtalks.loc[tedtalks.transcript.map(lambda x:len(x.split())>=1)]\n",
++    "    tedtalks.to_csv(target,index=None)        \n",
++    "            \n",
++    "xml2csv(\"/home/nxingyu2/data/2012-03/texts/en/fr/en-fr/IWSLT12.TALK.tst2010.en-fr.en.xml\",        \n",
++    "        '/home/nxingyu2/data/ted2010.test.csv')"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 109,
++   "metadata": {},
++   "outputs": [],
++   "source": [
++    "tree=ET.parse(\"/home/nxingyu2/data/2012-03/texts/en/fr/en-fr/IWSLT12.TALK.tst2010.en-fr.en.xml\")\n",
++    "tree.getroot()[0]\n",
++    "rows={}\n",
++    "# print(tre)\n",
++    "# for child in tree.getroot()[0]:\n",
++    "#     talkid=int(child[3].text)\n",
++    "#     if not talkid in rows.keys():\n",
++    "#         rows[talkid]=''\n",
++    "#     print(child.findall('seg'))\n",
++    "#     for i in child.findall('seg'):\n",
++    "#         rows[talkid]+=re.sub('\\n',' ',i.text)"
++   ]
++  },
+   {
+    "cell_type": "code",
+    "execution_count": 13,
