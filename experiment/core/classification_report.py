@@ -121,8 +121,8 @@ class ClassificationReport(Metric):
             aggregated precision, recall, f1, report
         """
         total_examples = torch.sum(self.num_examples_per_class)
-        num_non_empty_classes = torch.nonzero(self.num_examples_per_class).size(0)
-
+        # num_non_empty_classes = torch.nonzero(self.num_examples_per_class).size(0)
+        num_non_empty_classes = self.num_examples_per_class.size(0)
         precision = torch.true_divide(self.tp * 100, (self.tp + self.fp + METRIC_EPS))
         recall = torch.true_divide(self.tp * 100, (self.tp + self.fn + METRIC_EPS))
         f1 = torch.true_divide(2 * precision * recall, (precision + recall + METRIC_EPS))

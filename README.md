@@ -608,3 +608,11 @@ Open subtitles Start
 | micro avg | 81.47 | 81.47 | 81.47 | 15382574 |
 | macro avg | 40.47 | 37.50 | 36.91 | 15382574 |
 | weighted avg | 83.45 | 81.47 | 82.27 | 15382574 |
+
+
+
+
+
+### Log 25 Feb 2021
+
+- Just realised the classification report returns the macro f1 based on labels with positive support which isn't what we want, so have to check this properly.
