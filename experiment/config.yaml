@@ -43,8 +43,8 @@ log_dir: null
 model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 1
-    maximum_unfrozen: 3
+    unfrozen: 0
+    maximum_unfrozen: 2
     unfreeze_step: 1
     punct_label_ids:
         - ""
@@ -147,8 +147,8 @@ model:
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
         weight:
-            - 0.6
-            - 0.4
+            - 0.5
+            - 0.5
 
 
     dice_loss:
@@ -169,11 +169,11 @@ model:
         - 1e-8
 
     gamma:
-        - 1
-        - 1
-        - 1
-        - 1
-        - 1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
         # - 1e-0
         # - 5e-1
         # - 4e-1
