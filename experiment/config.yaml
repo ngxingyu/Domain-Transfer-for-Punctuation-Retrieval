@@ -52,8 +52,8 @@ model:
         - ","
         - "."
         - "?"
-
         # - "!"
+
         # - "-"
         # - "…"
         # - ":"
@@ -78,9 +78,9 @@ model:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            # - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed #
+            # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -154,7 +154,7 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 2
+        alpha: 3
         macro_average: true
 
     focal_loss: 
