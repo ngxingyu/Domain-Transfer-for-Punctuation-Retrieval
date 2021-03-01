@@ -1,7 +1,7 @@
 [INFO] - Global seed set to 42
 [INFO] - GPU available: True, used: True
 [INFO] - TPU available: None, using: 0 TPU cores
-[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [2]
 [INFO] - Using native 16bit precision.
 [INFO] - shuffling train set
 [INFO] - Global seed set to 42
@@ -27,18 +27,18 @@ max_steps: 104
   | Name                       | Type                 | Params
 --------------------------------------------------------------------
 0 | transformer                | ElectraModel         | 108 M 
-1 | punct_classifier           | TokenClassifier      | 3.8 K 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
 2 | domain_classifier          | SequenceClassifier   | 1.5 K 
-3 | punctuation_loss           | LinearChainCRF       | 35    
+3 | punctuation_loss           | FocalDiceLoss        | 0     
 4 | domain_loss                | CrossEntropyLoss     | 0     
 5 | agg_loss                   | AggregatorLoss       | 0     
 6 | punct_class_report         | ClassificationReport | 0     
 7 | chunked_punct_class_report | ClassificationReport | 0     
 8 | domain_class_report        | ClassificationReport | 0     
 --------------------------------------------------------------------
-5.4 K     Trainable params
+1.2 M     Trainable params
 108 M     Non-trainable params
-108 M     Total params
+110 M     Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
  (label_id: 0)                                          60.00       0.72       1.43      16566
