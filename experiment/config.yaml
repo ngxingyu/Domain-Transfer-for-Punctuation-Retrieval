@@ -143,7 +143,7 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'focal'
         gamma: 1 #0.1 # coefficient of gradient reversal
         pooling: 'mean' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
