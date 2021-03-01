@@ -43,7 +43,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                  ):
         if trainer is not None and not isinstance(trainer, pl.Trainer):
             raise ValueError(
-                f"trainer constructor argument must be either None or pytroch_lightning.Trainer. But got {type(trainer)} instead."
+                f"trainer constructor argument must be either None or pytorch_lightning.Trainer. But got {type(trainer)} instead."
             )
         super().__init__()
         self._cfg = cfg
@@ -114,6 +114,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
         domain_weight=None if self.hparams.model.domain_head.weight is None else list(self.hparams.model.domain_head.weight)
+        if (len(self.hparams.model.dataset.labelled)==0)or(len(self.hparams.model.dataset.unlabelled)==0):
+            domain_weight=None
+        pp(domain_weight)
         if self.hparams.model.punct_head.loss == 'focal':
             self.domain_loss = FocalLoss(weight=domain_weight)
         else:
@@ -173,7 +176,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']
         # domain_labels = batch['domain']
-        domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
+        if (len(self.hparams.model.dataset.labelled)==0)or(len(self.hparams.model.dataset.unlabelled)==0):
+            domain_labels =torch.zeros_like(subtoken_mask[:,0]).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
+        else:
+            domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
+
         punct_logits, domain_logits = self(
             input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )
