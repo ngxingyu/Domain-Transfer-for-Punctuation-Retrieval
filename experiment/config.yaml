@@ -72,7 +72,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weights: 0.5 #0 if don't weight
+    punct_class_weights: 0.1 #0 if don't weight
     
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
@@ -128,12 +128,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 0
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
         bilstm: false
 
     domain_head:
