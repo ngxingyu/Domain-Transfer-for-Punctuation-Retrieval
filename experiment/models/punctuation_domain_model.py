@@ -114,9 +114,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
         if self.hparams.model.punct_head.loss == 'focal':
-            self.domain_loss = FocalLoss(logits_ndim=2)
+            self.domain_loss = FocalLoss(weight=list(self.hparams.model.domain_head.weight))
         else:
-            self.domain_loss = CrossEntropyLoss(logits_ndim=2)
+            self.domain_loss = CrossEntropyLoss(logits_ndim=2, weight=list(self.hparams.model.domain_head.weight))
 
         self.agg_loss = AggregatorLoss(num_inputs=2)
 
