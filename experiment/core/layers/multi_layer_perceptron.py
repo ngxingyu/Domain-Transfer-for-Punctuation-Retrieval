@@ -65,4 +65,6 @@ class MultiLayerPerceptron(torch.nn.Module):
 
         if self.log_softmax:
             output_states = torch.log_softmax(output_states, dim=-1)
+        else:
+            output_states = torch.softmax(output_states, dim=-1)
         return output_states
