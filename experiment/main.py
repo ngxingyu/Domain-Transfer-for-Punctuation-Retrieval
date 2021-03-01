@@ -35,7 +35,6 @@ def main(cfg: DictConfig)->None:
 
     pp(cfg)
     pl.seed_everything(cfg.seed)
-    gpu = 1 if cfg.trainer.gpus != 0 else 0
     
     trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
     log_dir=exp_manager(trainer, cfg.exp_manager).__str__()
@@ -74,8 +73,6 @@ def main(cfg: DictConfig)->None:
         trainer.current_epoch=0
         trainer.fit(model)
         try:
-            test_trainer = pl.Trainer(gpus=gpu)
-            test_trainer.test(model,ckpt_path=None)
             model.unfreeze(cfg.model.unfreeze_step)
         except:
             pp('training complete.')
@@ -85,7 +82,7 @@ def main(cfg: DictConfig)->None:
 
     
     
-    
+    gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
     test_trainer = pl.Trainer(gpus=gpu)
     test_trainer.test(model,ckpt_path=None)
