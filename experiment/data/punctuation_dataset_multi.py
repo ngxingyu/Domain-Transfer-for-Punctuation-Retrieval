@@ -91,7 +91,7 @@ class PunctuationDomainDataset(IterableDataset):
         batch = next(self.dataset)[1]
 
         l=batch.str.split().map(len).values
-        n=8
+        n=16
         a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         b=np.minimum(l,a+self.max_seq_length*n)
         batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)

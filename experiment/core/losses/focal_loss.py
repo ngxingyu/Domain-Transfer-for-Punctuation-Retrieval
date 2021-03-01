@@ -18,8 +18,8 @@ class FocalLoss(torch.nn.NLLLoss):
         self.gamma = gamma
 
     def forward(self, logits: Tensor, labels: Tensor, loss_mask=None) -> Tensor:
-        logits_flatten = torch.flatten(logits, start_dim=0, end_dim=-2)
-        labels_flatten = torch.flatten(labels, start_dim=0, end_dim=-1)
+        logits_flatten = torch.flatten(logits, start_dim=0, end_dim=1) #try change from -2 to 1
+        labels_flatten = torch.flatten(labels, start_dim=0, end_dim=1) #try change from -1 to 1
         self.num_classes=logits_flatten.shape[-1]
         
         if loss_mask is not None:

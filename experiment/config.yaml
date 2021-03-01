@@ -32,12 +32,12 @@ trainer:
     # resume_from_checkpoint: null
 
 exp_manager:
-    exp_dir: /home/nxingyu2/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+    exp_dir: /home/${env:USER}/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/nxingyu2/data # /root/data # 
-tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+base_path: /home/${env:USER}/data # /root/data # 
+tmp_path: /home/${env:USER}/data/tmp # /tmp # 
 log_dir: null
 
 model:
@@ -74,7 +74,7 @@ model:
     punct_class_weights: false #false
     
     dataset:
-        data_dir: /home/nxingyu2/data # /root/data # 
+        data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
             - ${base_path}/ted_talks_processed #
