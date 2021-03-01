@@ -68,8 +68,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
         self.setup_datamodule()
 
-        if (self.hparams.model.punct_class_weights==True and self.hparams.model.punct_head.loss!='crf'):
-            self.hparams.model.punct_class_weights=OmegaConf.create(self.dm.train_dataset.determine_class_weights().tolist())
+        if (self.hparams.model.punct_class_weights>0 and self.hparams.model.punct_head.loss!='crf'):
+            self.hparams.model.punct_class_weights=pp(OmegaConf.create([
+                x**self.hparams.model.punct_class_weights for x in\
+                     self.dm.train_dataset.determine_class_weights().tolist()]))
         else:
             self.hparams.model.punct_class_weights=None
 
