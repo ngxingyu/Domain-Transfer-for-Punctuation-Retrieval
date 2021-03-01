@@ -23,3 +23,12 @@
 [NeMo W 2021-03-01 17:06:34 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
       warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
     
+[NeMo W 2021-03-01 17:08:26 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc79ec7e850> was reported to be 199 (when accessing len(dataloader)), but 200 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-01 17:08:44 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc79ec80bb0> was reported to be 25 (when accessing len(dataloader)), but 26 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-01 18:27:59 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fc77c08e8b0> was reported to be 25 (when accessing len(dataloader)), but 26 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
