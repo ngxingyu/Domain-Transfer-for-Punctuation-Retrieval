@@ -54,6 +54,7 @@ def text2masks(n, labels_to_ids,label_map):
             refilter=f"(?<=[{labels} ])(?=[^{labels} ])|$"
         else:
             refilter=f"[{labels}]{{1,{n}}}(?= *[^{labels}]+|$)|(?<=[^{labels}]) +(?=[^{labels}])"
+        # text=re.sub(f'…[\w {labels}]{0,15}…','…',text)
         text=re.sub(r'^[_\W]*','',text)
         for k,v in label_map.items():
             text=re.sub(f"(?<=[{labels} ]){k}+","",text)
