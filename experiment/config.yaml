@@ -142,13 +142,13 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
-        gamma: 0.1 #0.1 # coefficient of gradient reversal
+        loss: 'focal'
+        gamma: 1 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
         weight:
-            - 0.8
-            - 0.2
+            - 0.6
+            - 0.4
 
 
     dice_loss:
@@ -169,11 +169,16 @@ model:
         - 1e-8
 
     gamma:
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
         # - 1e-0
-        - 5e-1
-        - 4e-1
-        - 1e-4
-        - 1e-5
+        # - 5e-1
+        # - 4e-1
+        # - 1e-4
+        # - 1e-5
         
     optim:
         name: adamw #novograd #adamw
