@@ -127,12 +127,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 3
+        punct_num_fc_layers: 0
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'crf'
         bilstm: false
 
     domain_head:
@@ -147,8 +147,8 @@ model:
         pooling: 'mean_max' # 'mean' mean_max
         idx_conditioned_on: 0
         weight:
-            - 0.8
-            - 0.2
+            - 0.6
+            - 0.4
 
 
     dice_loss:
