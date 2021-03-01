@@ -21,7 +21,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-01_15-40-46
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-01_15-53-18
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -43,13 +43,12 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
-  punct_class_weights: false
+  punct_class_weights: 0.8
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
-    unlabelled:
-    - /home/nxingyu2/data/switchboardutt_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -83,12 +82,12 @@ model:
     config_file: null
     config: null
   punct_head:
-    punct_num_fc_layers: 0
+    punct_num_fc_layers: 3
     fc_dropout: 0.1
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: crf
+    loss: dice
     bilstm: false
   domain_head:
     predict_labelled: true
