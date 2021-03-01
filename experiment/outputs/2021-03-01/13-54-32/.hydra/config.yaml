@@ -21,12 +21,12 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-01_09-28-23
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-02-23_12-22-51
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 1
-  maximum_unfrozen: 3
+  unfrozen: 0
+  maximum_unfrozen: 2
   unfreeze_step: 1
   punct_label_ids:
   - ''
@@ -42,13 +42,13 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
+  pad_start_and_end: 0
   punct_class_weights: false
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
-    unlabelled:
-    - /home/nxingyu2/data/switchboardutt_processed
+    unlabelled: null
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -61,16 +61,16 @@ model:
     num_domains: 2
     test_unlabelled: true
     attach_label_to_end: null
-    pad_start: 0
+    pad_start: 64
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
       manual_len: 20000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -82,45 +82,37 @@ model:
     config_file: null
     config: null
   punct_head:
-    punct_num_fc_layers: 0
+    punct_num_fc_layers: 3
     fc_dropout: 0.1
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: crf
+    loss: dice
     bilstm: false
   domain_head:
-    predict_labelled: true
-    domain_num_fc_layers: 1
+    domain_num_fc_layers: 3
     fc_dropout: 0.1
     activation: relu
     log_softmax: false
     use_transformer_init: true
     loss: cel
-    gamma: 0.1
+    gamma: 0.01
     pooling: mean_max
     idx_conditioned_on: 0
-    weight:
-    - 0.6
-    - 0.4
   dice_loss:
     epsilon: 0.01
     alpha: 2
     macro_average: true
   focal_loss:
-    gamma: 2
+    gamma: 3
   frozen_lr:
+  - 0.02
   - 0.001
-  - 0.0001
+  - 0.0004
   - 0.0001
   - 1.0e-05
+  - 1.0e-06
   - 1.0e-07
-  - 1.0e-08
-  gamma:
-  - 0.5
-  - 0.4
-  - 0.0001
-  - 1.0e-05
   optim:
     name: adamw
     lr: 0.01
