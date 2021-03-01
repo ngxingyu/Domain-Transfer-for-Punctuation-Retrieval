@@ -1,0 +1,560 @@
+commit hash: dcc8e3d952a9c1cecc9eeaef072230bb1d89fcf3
+diff --git a/NLP.yml b/NLP.yml
+index bc9aa5d..4ae7fd2 100644
+--- a/NLP.yml
++++ b/NLP.yml
+@@ -5,161 +5,237 @@ channels:
+   - defaults
+ dependencies:
+   - _libgcc_mutex=0.1=main
++  - _pytorch_select=0.2=gpu_0
++  - _tflow_select=2.3.0=mkl
++  - absl-py=0.11.0=py38h578d9bd_0
++  - aiohttp=3.7.3=py38h25fe258_0
++  - argon2-cffi=20.1.0=py38h7b6447c_1
+   - astroid=2.4.2=py38_0
+-  - backcall=0.2.0=py_0
++  - astunparse=1.6.3=py_0
++  - async-timeout=3.0.1=py_1000
++  - async_generator=1.10=pyhd3eb1b0_0
++  - attrs=20.3.0=pyhd3eb1b0_0
++  - autopep8=1.5.4=py_0
++  - backcall=0.2.0=pyhd3eb1b0_0
+   - blas=1.0=mkl
++  - bleach=3.2.3=pyhd3eb1b0_0
++  - blinker=1.4=py_1
++  - brotlipy=0.7.0=py38h8df0ef7_1001
++  - c-ares=1.17.1=h36c2ea0_0
+   - ca-certificates=2021.1.19=h06a4308_0
++  - cachetools=4.2.1=pyhd8ed1ab_0
+   - certifi=2020.12.5=py38h06a4308_0
++  - cffi=1.14.4=py38h261ae71_0
++  - chardet=3.0.4=py38h924ce5b_1008
++  - click=7.1.2=pyh9f0ad1d_0
+   - code-server=3.8.0=ha770c72_0
+-  - cuda91=1.0=h4c16780_0
+-  - cudatoolkit=10.2.89=hfd86e86_1
+-  - decorator=4.4.2=py_0
+-  - icu=68.1=h58526e2_0
++  - cryptography=3.3.1=py38h3c74f83_0
++  - cudatoolkit=10.1.243=h6bb024c_0
++  - cudnn=7.6.5=cuda10.1_0
++  - dbus=1.13.18=hb2f20db_0
++  - decorator=4.4.2=pyhd3eb1b0_0
++  - defusedxml=0.6.0=py_0
++  - entrypoints=0.3=py38_0
++  - expat=2.2.10=he6710b0_2
++  - fontconfig=2.13.0=h9420a91_0
++  - freetype=2.10.4=h5ab3b9f_0
++  - fsspec=0.8.5=pyhd8ed1ab_0
++  - future=0.18.2=py38h578d9bd_3
++  - gast=0.3.3=py_0
++  - glib=2.66.1=h92f7085_0
++  - google-auth=1.24.0=pyhd3deb0d_0
++  - google-pasta=0.2.0=py_0
++  - gst-plugins-base=1.14.0=h8213a91_2
++  - gstreamer=1.14.0=h28cd5cc_2
++  - hdf5=1.10.6=hb1b8bf9_0
++  - icu=58.2=he6710b0_3
++  - idna=2.10=pyh9f0ad1d_0
++  - importlib-metadata=2.0.0=py_1
++  - importlib_metadata=2.0.0=1
+   - intel-openmp=2020.2=254
+-  - ipython=7.19.0=py38hb070fc8_0
++  - ipykernel=5.3.4=py38h5ca1d4c_0
++  - ipython=7.19.0=py38hb070fc8_1
+   - ipython_genutils=0.2.0=pyhd3eb1b0_1
+-  - jedi=0.18.0=py38h06a4308_1
++  - ipywidgets=7.6.3=pyhd3eb1b0_1
++  - jedi=0.17.0=py38_0
++  - jinja2=2.11.2=pyhd3eb1b0_0
++  - jpeg=9b=h024ee3a_2
++  - jsonschema=3.2.0=py_2
++  - jupyter=1.0.0=py38_7
++  - jupyter_client=6.1.7=py_0
++  - jupyter_console=6.2.0=py_0
++  - jupyter_core=4.7.0=py38h06a4308_0
++  - jupyterlab_pygments=0.1.2=py_0
++  - jupyterlab_widgets=1.0.0=pyhd3eb1b0_1
++  - keras-preprocessing=1.1.0=py_1
+   - lazy-object-proxy=1.4.3=py38h27cfd23_2
+   - ld_impl_linux-64=2.33.1=h53a641e_7
+   - libedit=3.1.20191231=h14c3975_1
+   - libffi=3.3=he6710b0_2
+   - libgcc-ng=9.1.0=hdf63c60_0
++  - libgfortran-ng=7.3.0=hdf63c60_0
++  - libpng=1.6.37=hbc83047_0
++  - libprotobuf=3.13.0.1=h8b12597_0
++  - libsodium=1.0.18=h7b6447c_0
+   - libstdcxx-ng=9.1.0=hdf63c60_0
+-  - libuv=1.40.0=hd18ef5c_0
++  - libuuid=1.0.3=h1bed415_2
++  - libuv=1.40.0=h7b6447c_0
++  - libxcb=1.14=h7b6447c_0
++  - libxml2=2.9.10=hb55368b_3
++  - markdown=3.3.3=pyh9f0ad1d_0
++  - markupsafe=1.1.1=py38h7b6447c_0
+   - mccabe=0.6.1=py38_1
++  - mistune=0.8.4=py38h7b6447c_1000
+   - mkl=2020.2=256
+   - mkl-service=2.3.0=py38he904b0f_0
+   - mkl_fft=1.2.0=py38h23d657b_0
+   - mkl_random=1.1.1=py38h0573a6f_0
++  - multidict=5.1.0=py38h27cfd23_2
++  - nbclient=0.5.1=py_0
++  - nbconvert=6.0.7=py38_0
++  - nbformat=5.1.2=pyhd3eb1b0_1
+   - ncurses=6.2=he6710b0_1
+-  - nodejs=12.19.0=hfa01f41_2
++  - nest-asyncio=1.4.3=pyhd3eb1b0_0
++  - ninja=1.10.2=py38hff7bd54_0
++  - nodejs=12.4.0=he1b5a44_0
++  - notebook=6.2.0=py38h06a4308_0
+   - numpy=1.19.2=py38h54aff64_0
+   - numpy-base=1.19.2=py38hfa32c7d_0
+   - openssl=1.1.1i=h27cfd23_0
+-  - pandas=1.2.1=py38ha9443f7_0
++  - opt_einsum=3.1.0=py_0
++  - packaging=20.9=pyhd3eb1b0_0
++  - pandoc=2.11=hb0f4dca_0
++  - pandocfilters=1.4.3=py38h06a4308_1
+   - parso=0.8.1=pyhd3eb1b0_0
++  - pcre=8.44=he6710b0_0
+   - pexpect=4.8.0=pyhd3eb1b0_3
+   - pickleshare=0.7.5=pyhd3eb1b0_1003
+   - pip=20.3.3=py38h06a4308_0
++  - prometheus_client=0.9.0=pyhd3eb1b0_0
+   - prompt-toolkit=3.0.8=py_0
++  - prompt_toolkit=3.0.8=0
+   - ptyprocess=0.7.0=pyhd3eb1b0_2
++  - pyasn1=0.4.8=py_0
++  - pycodestyle=2.6.0=py_0
++  - pycparser=2.20=py_2
+   - pygments=2.7.4=pyhd3eb1b0_0
++  - pyjwt=2.0.1=pyhd8ed1ab_0
+   - pylint=2.6.0=py38_0
++  - pyopenssl=20.0.1=pyhd8ed1ab_0
++  - pyparsing=2.4.7=pyhd3eb1b0_0
++  - pyqt=5.9.2=py38h05f1152_4
++  - pyrsistent=0.17.3=py38h7b6447c_0
++  - pysocks=1.7.1=py38h578d9bd_3
+   - python=3.8.5=h7579374_1
+-  - python-dateutil=2.8.1=py_0
++  - python-dateutil=2.8.1=pyhd3eb1b0_0
+   - python_abi=3.8=1_cp38
+-  - pytz=2020.5=pyhd3eb1b0_0
+-  - readline=8.0=h7b6447c_0
++  - pytorch=1.7.1=py3.8_cuda10.1.243_cudnn7.6.3_0
++  - pyzmq=20.0.0=py38h2531618_1
++  - qt=5.9.7=h5867ecd_1
++  - qtconsole=4.7.7=py_0
++  - qtpy=1.9.0=py_0
++  - readline=8.1=h27cfd23_0
++  - requests=2.25.1=pyhd3deb0d_0
++  - requests-oauthlib=1.3.0=pyh9f0ad1d_0
++  - rope=0.18.0=py_0
++  - rsa=4.7=pyhd3deb0d_0
++  - send2trash=1.5.0=pyhd3eb1b0_1
+   - setuptools=52.0.0=py38h06a4308_0
++  - sip=4.19.13=py38he6710b0_0
+   - six=1.15.0=py38h06a4308_0
+   - sqlite=3.33.0=h62c20be_0
++  - tensorboard=2.3.0=pyh4dce500_0
++  - tensorboard-plugin-wit=1.8.0=pyh44b312d_0
++  - tensorflow=2.2.0=mkl_py38h6d3daf0_0
++  - tensorflow-base=2.2.0=mkl_py38h5059a2d_0
++  - tensorflow-estimator=2.2.0=pyh208ff02_0
++  - termcolor=1.1.0=py38_1
++  - terminado=0.9.2=py38h06a4308_0
++  - testpath=0.4.4=pyhd3eb1b0_0
+   - tk=8.6.10=hbc83047_0
+-  - traitlets=5.0.5=py_0
++  - toml=0.10.1=py_0
++  - tornado=6.1=py38h27cfd23_0
++  - traitlets=5.0.5=pyhd3eb1b0_0
++  - typing-extensions=3.7.4.3=0
++  - typing_extensions=3.7.4.3=py_0
++  - urllib3=1.26.3=pyhd8ed1ab_0
+   - wcwidth=0.2.5=py_0
++  - webencodings=0.5.1=py38_1
++  - werkzeug=1.0.1=pyh9f0ad1d_0
+   - wheel=0.36.2=pyhd3eb1b0_0
++  - widgetsnbextension=3.5.1=py38_0
++  - wrapt=1.11.2=py38h7b6447c_0
+   - xz=5.2.5=h7b6447c_0
++  - yaml=0.2.5=h516909a_0
++  - yarl=1.6.3=py38h25fe258_0
++  - zeromq=4.3.3=he6710b0_3
++  - zipp=3.4.0=pyhd3eb1b0_0
+   - zlib=1.2.11=h7b6447c_3
+   - pip:
+-    - absl-py==0.11.0
+-    - aiohttp==3.7.3
+     - alabaster==0.7.12
+     - antlr4-python3-runtime==4.8
+-    - apex==0.1
+     - appdirs==1.4.4
+-    - argon2-cffi==20.1.0
+     - asttokens==2.0.4
+-    - async-generator==1.10
+-    - async-timeout==3.0.1
+     - attrdict==2.0.1
+-    - attrs==20.3.0
+     - audioread==2.1.9
+     - babel==2.9.0
+     - black==19.10b0
+-    - bleach==3.2.3
+-    - boto3==1.16.61
+-    - botocore==1.19.61
++    - boto3==1.16.63
++    - botocore==1.19.63
+     - braceexpand==0.1.6
+-    - cachetools==4.2.1
+-    - cffi==1.14.4
+-    - chardet==3.0.4
+-    - click==7.1.2
++    - cheap-repr==0.4.4
+     - colorama==0.4.4
+     - configparser==5.0.1
+     - cycler==0.10.0
+     - cython==0.29.21
+     - datasets==1.2.1
+-    - defusedxml==0.6.0
+     - dill==0.3.3
+     - distance==0.1.3
+     - docker-pycreds==0.4.0
+     - docopt==0.6.2
+     - docutils==0.16
+     - editdistance==0.5.3
+-    - entrypoints==0.3
+     - executing==0.5.4
+     - filelock==3.0.12
+     - frozendict==1.2
+-    - fsspec==0.8.5
+-    - future==0.18.2
+     - g2p-en==2.1.0
+     - gdown==3.12.2
+     - gitdb==4.0.5
+     - gitpython==3.1.12
+-    - google-auth==1.24.0
+     - google-auth-oauthlib==0.4.2
+     - grpcio==1.35.0
+     - h5py==3.1.0
+-    - hydra==2.5
+-    - hydra-core==1.0.5
++    - hydra-core==1.1.0.dev3
+     - icecream==2.1.0
+-    - idna==2.10
+     - imagesize==1.2.0
+     - importlib-resources==5.1.0
+     - inflect==5.0.2
+     - iniconfig==1.1.1
+-    - ipykernel==5.4.3
+-    - ipywidgets==7.6.3
+     - isort==4.3.21
+-    - jinja2==2.11.2
+     - jmespath==0.10.0
+     - joblib==1.0.0
+-    - jsonschema==3.2.0
+-    - jupyter==1.0.0
+-    - jupyter-client==6.1.11
+-    - jupyter-console==6.2.0
+-    - jupyter-core==4.7.0
+-    - jupyterlab-pygments==0.1.2
+-    - jupyterlab-widgets==1.0.0
++    - kaggle==1.5.10
+     - kaldi-io==0.9.4
+     - kaldi-python-io==1.2.1
+     - kiwisolver==1.3.1
+     - latexcodec==2.0.1
+     - librosa==0.8.0
+     - llvmlite==0.35.0
+-    - markdown==3.3.3
+-    - markupsafe==1.1.1
++    - logging==0.4.9.6
+     - marshmallow==3.10.0
+-    - matplotlib==3.3.3
++    - matplotlib==3.3.4
+     - megatron-lm==1.1.5
+-    - mistune==0.8.4
+     - msgpack==1.0.2
+-    - multidict==5.1.0
+     - multiprocess==0.70.11.1
+-    - nbclient==0.5.1
+-    - nbconvert==6.0.7
+-    - nbformat==5.1.2
+     - nemo-toolkit==1.0.0b2
+-    - nest-asyncio==1.4.3
+     - nltk==3.5
+-    - notebook==6.2.0
+     - num2words==0.5.10
+     - numba==0.52.0
+     - oauthlib==3.1.0
+     - objectio==0.2.29
+-    - omegaconf==2.0.6
+-    - onnx==1.8.0
+-    - packaging==20.8
+-    - pandocfilters==1.4.3
++    - omegaconf==2.1.0.dev17
++    - onnx==1.8.1
++    - pandas==1.2.1
+     - parameterized==0.8.1
+     - pathspec==0.8.1
+     - pathtools==0.1.2
+@@ -169,52 +245,38 @@ dependencies:
+     - pipreqs==0.4.10
+     - pluggy==0.13.1
+     - pooch==1.3.0
+-    - portalocker==2.1.0
+-    - prometheus-client==0.9.0
+     - promise==2.3
+     - protobuf==3.14.0
+     - psutil==5.8.0
+     - py==1.10.0
+     - pyarrow==3.0.0
+-    - pyasn1==0.4.8
+     - pyasn1-modules==0.2.8
+     - pybind11==2.6.2
+     - pybtex==0.24.0
+     - pybtex-docutils==1.0.0
+-    - pycparser==2.20
+-    - pydub==0.24.1
+-    - pyparsing==2.4.7
+     - pypinyin==0.40.0
+-    - pyrsistent==0.17.3
+-    - pysocks==1.7.1
+     - pystoi==0.3.3
+     - pytest==6.2.2
+     - pytest-runner==5.2
+-    - python-levenshtein==0.12.1
+-    - pytorch-lightning==1.1.3
+-    - pyyaml==5.4.1
+-    - pyzmq==21.0.2
+-    - qtconsole==5.0.2
+-    - qtpy==1.9.0
++    - python-slugify==4.0.1
++    - pytorch-lightning==1.1.5
++    - pytz==2020.5
++    - pyyaml==5.3.1
+     - rapidfuzz==0.14.2
+     - regex==2020.11.13
+-    - requests==2.25.1
+-    - requests-oauthlib==1.3.0
+     - resampy==0.2.2
+-    - rsa==4.7
+     - ruamel-yaml==0.16.12
+     - ruamel-yaml-clib==0.2.2
+     - s3transfer==0.3.4
+-    - sacrebleu==1.5.0
+     - sacremoses==0.0.43
+     - scikit-learn==0.24.1
+     - scipy==1.6.0
+-    - send2trash==1.5.0
+     - sentencepiece==0.1.95
+     - sentry-sdk==0.19.5
+     - shortuuid==1.0.1
+     - simplejson==3.17.2
+     - smmap==3.0.5
++    - snoop==0.2.5
+     - snowballstemmer==2.1.0
+     - soundfile==0.10.3.post1
+     - sox==1.4.1
+@@ -227,35 +289,24 @@ dependencies:
+     - sphinxcontrib-qthelp==1.0.3
+     - sphinxcontrib-serializinghtml==1.1.4
+     - subprocess32==3.5.4
+-    - tensorboard==2.4.1
+-    - tensorboard-plugin-wit==1.8.0
+-    - terminado==0.9.2
+-    - testpath==0.4.4
++    - tensorboardx==2.1
++    - text-unidecode==1.3
+     - threadpoolctl==2.1.0
+     - tokenizers==0.9.4
+-    - toml==0.10.2
+     - torch==1.7.1
+     - torch-stft==0.1.4
+-    - torchtext==0.8.1
++    - torchtools==0.2.5
+     - torchvision==0.8.2
+-    - tornado==6.1
+     - tqdm==4.49.0
+     - transformers==4.2.2
+     - typed-ast==1.4.2
+     - typer==0.3.2
+-    - typing-extensions==3.7.4.3
+     - unidecode==1.1.2
+-    - urllib3==1.26.3
+     - wandb==0.10.15
+     - watchdog==0.10.4
+     - webdataset==0.1.40
+-    - webencodings==0.5.1
+-    - werkzeug==1.0.1
+     - wget==3.2
+-    - widgetsnbextension==3.5.1
+-    - wrapt==1.12.1
+     - xxhash==2.0.0
+     - yarg==0.1.9
+-    - yarl==1.6.3
+     - youtokentome==1.0.6
+ prefix: /home/nxingyu/miniconda3/envs/NLP
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 915cc49..d3395e0 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -2,7 +2,7 @@ seed: 42
+ trainer:
+     gpus: 1 # the number of gpus, 0 for CPU
+     num_nodes: 1
+-    max_epochs: 2
++    max_epochs: 8
+     max_steps: null # precedence over max_epochs
+     accumulate_grad_batches: 4 # accumulates grads every k batches
+     gradient_clip_val: 0
+@@ -52,8 +52,8 @@ model:
+         - ","
+         - "."
+         - "?"
+-
+         # - "!"
++
+         # - "-"
+         # - "…"
+         # - ":"
+@@ -78,9 +78,9 @@ model:
+         data_dir: /home/${env:USER}/data # /root/data # 
+         labelled:
+             # - ${base_path}/ted2010 #
+-            # - ${base_path}/ted_talks_processed #
++            - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+-            - ${base_path}/switchboardutt_processed #
++            # - ${base_path}/switchboardutt_processed #
+         unlabelled:
+             # - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+@@ -154,7 +154,7 @@ model:
+ 
+     dice_loss:
+         epsilon: 0.01
+-        alpha: 1
++        alpha: 3
+         macro_average: true
+ 
+     focal_loss: 
+diff --git a/experiment/data/punctuation_dataset_multi.py b/experiment/data/punctuation_dataset_multi.py
+index d34b33a..2da26e2 100644
+--- a/experiment/data/punctuation_dataset_multi.py
++++ b/experiment/data/punctuation_dataset_multi.py
+@@ -180,6 +180,7 @@ class PunctuationDomainDatasets(IterableDataset):
+         self.punct_label_ids=punct_label_ids
+         self.label_map=label_map
+         self.ds_lengths=[]
++        self.labelled=labelled
+         for path in labelled+unlabelled:
+             if manual_len>0:
+                 self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+diff --git a/experiment/info.log b/experiment/info.log
+index 5fc3200..a4bbbb5 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -1,84 +1,5 @@
++[INFO] - Global seed set to 42
+ [INFO] - GPU available: True, used: True
+ [INFO] - TPU available: None, using: 0 TPU cores
+-[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
++[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [2]
+ [INFO] - Using native 16bit precision.
+-[INFO] - shuffling train set
+-[INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.001
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f1f8ee04790>" 
+-will be used during training (effective maximum steps = 400) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-min_lr: 1.0e-08
+-last_epoch: -1
+-max_steps: 400
+-)
+-[INFO] - 
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 1.2 M 
+-2 | domain_classifier          | SequenceClassifier   | 3.1 K 
+-3 | punctuation_loss           | FocalDiceLoss        | 0     
+-4 | domain_loss                | CrossEntropyLoss     | 0     
+-5 | agg_loss                   | AggregatorLoss       | 0     
+-6 | punct_class_report         | ClassificationReport | 0     
+-7 | chunked_punct_class_report | ClassificationReport | 0     
+-8 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-8.3 M     Trainable params
+-101 M     Non-trainable params
+-110 M     Total params
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          88.38      37.36      52.51      32611
+-! (label_id: 1)                                          0.00       0.00       0.00         10
+-# (label_id: 2)                                          1.95      16.57       3.49       1358
+-, (label_id: 3)                                          1.59       0.40       0.64        997
+-- (label_id: 4)                                          0.24       4.90       0.46        102
+-. (label_id: 5)                                          4.48       4.72       4.60        932
+-: (label_id: 6)                                          0.04      11.76       0.09         17
+-? (label_id: 7)                                          0.00       0.00       0.00         71
+-… (label_id: 8)                                          0.00       0.00       0.00          6
+--------------------
+-micro avg                                               34.52      34.52      34.52      36104
+-macro avg                                               10.74       8.41       6.87      36104
+-weighted avg                                            80.06      34.52      47.70      36104
+-
+--------------------
+-                       !           #           ,           -           .           :           ?           …
+-    12182.00         5.00       661.00       447.00        46.00       411.00         8.00        22.00         2.00
+-     1145.00         0.00        52.00        48.00        10.00        65.00         1.00         6.00         0.00
+-    10705.00         1.00       225.00       312.00        17.00       256.00         6.00        27.00         3.00
+-      225.00         0.00        21.00         4.00         0.00         2.00         0.00         0.00         0.00
+-     1914.00         0.00       114.00        15.00         5.00         4.00         0.00         1.00         0.00
+-      874.00         0.00        20.00        37.00         3.00        44.00         0.00         3.00         1.00
+-     4235.00         4.00       128.00       113.00        11.00       135.00         2.00        12.00         0.00
+-      193.00         0.00         6.00         1.00         0.00         0.00         0.00         0.00         0.00
+-     1138.00         0.00       131.00        20.00        10.00        15.00         0.00         0.00         0.00
+--------------------
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                         50.65     100.00      67.24        156
+-1 (label_id: 1)                                        100.00       2.56       5.00        156
+--------------------
+-micro avg                                               51.28      51.28      51.28        312
+-macro avg                                               75.32      51.28      36.12        312
+-weighted avg                                            75.32      51.28      36.12        312
+-
+--------------------
+-           0           1
+-      156.00       152.00
+-        0.00         4.00
+--------------------
+-
+-[INFO] - Internal process exited
+diff --git a/experiment/models/punctuation_domain_model.py b/experiment/models/punctuation_domain_model.py
+index 8544a01..415ce15 100644
+--- a/experiment/models/punctuation_domain_model.py
++++ b/experiment/models/punctuation_domain_model.py
+@@ -363,7 +363,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
+         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
+         logging.info(f'Domain report: {domain_report}')
+ 
+-        path=f"{self.hparams.log_dir}/test-{self.dm.test_dataset.labelled.split('/')[-1]}-{self.frozen}.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
++        path=f"{self.hparams.log_dir}/test-{''.join([_.split('/')[-1][:3] for _ in self.dm.test_dataset.labelled])}-{self.frozen}.txt" if self.hparams.log_dir!='' else f'{self.hparams.exp_manager.exp_dir}{self.hparams.exp_manager.name}'
+         logging.info(f'saving to {path}')
+         with open(path,'w') as f:
+             f.write("Punct report\n")
