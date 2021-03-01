@@ -72,6 +72,8 @@ def main(cfg: DictConfig)->None:
         trainer.current_epoch=0
         trainer.fit(model)
         try:
+            test_trainer = pl.Trainer(gpus=gpu)
+            test_trainer.test(model,ckpt_path=None)
             model.unfreeze(cfg.model.unfreeze_step)
         except:
             pp('training complete.')
@@ -81,10 +83,11 @@ def main(cfg: DictConfig)->None:
 
     
     
-    gpu = 1 if cfg.trainer.gpus != 0 else 0
+    # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model.dm.setup('test')
-    trainer = pl.Trainer(gpus=gpu)
-    trainer.test(model,ckpt_path=None)
+    test_trainer = pl.Trainer(gpus=gpu)
+    test_trainer.test(model,ckpt_path=None)
+    
 
 
 # @hydra.main(config_name="config.yaml")
