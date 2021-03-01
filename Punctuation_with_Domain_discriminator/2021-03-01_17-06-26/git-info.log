@@ -1,0 +1,46 @@
+commit hash: e5e3a7b585263720cf9fac59481ed5e557e90aa8
+diff --git a/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/events.out.tfevents.1614588695.intern-instance.10428.0 b/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/events.out.tfevents.1614588695.intern-instance.10428.0
+index 0b5f440..b3b5ecb 100644
+Binary files a/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/events.out.tfevents.1614588695.intern-instance.10428.0 and b/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/events.out.tfevents.1614588695.intern-instance.10428.0 differ
+diff --git a/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/lightning_logs.txt b/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/lightning_logs.txt
+index c7c649c..2b0f4e2 100644
+--- a/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/lightning_logs.txt
++++ b/Punctuation_with_Domain_discriminator/2021-03-01_16-51-14/lightning_logs.txt
+@@ -100,3 +100,6 @@ Global seed set to 42
+ Epoch 0, step 374: val_loss was not in top 3
+ Epoch 1, step 389: val_loss was not in top 3
+ Epoch 2, step 404: val_loss was not in top 3
++Epoch 3, step 419: val_loss was not in top 3
++Epoch 4, step 434: val_loss was not in top 3
++Epoch 5, step 449: val_loss was not in top 3
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 13b5035..6d38b7f 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -84,7 +84,7 @@ model:
+         unlabelled:
+             # - ${base_path}/ted_talks_processed #
+             # - ${base_path}/open_subtitles_processed #  
+-            # - ${base_path}/switchboardutt_processed
++            - ${base_path}/switchboardutt_processed
+         # parameters for dataset preprocessing
+         max_seq_length: 128
+         pad_label: ''
+@@ -128,12 +128,12 @@ model:
+         # unfrozen_layers: 1
+     
+     punct_head:
+-        punct_num_fc_layers: 3
++        punct_num_fc_layers: 0
+         fc_dropout: 0.1
+         activation: 'gelu'
+         log_softmax: false
+         use_transformer_init: true
+-        loss: 'dice'
++        loss: 'crf'
+         bilstm: false
+ 
+     domain_head:
+diff --git a/experiment/info.log b/experiment/info.log
+index 53b68be..a89131d 100644
+Binary files a/experiment/info.log and b/experiment/info.log differ

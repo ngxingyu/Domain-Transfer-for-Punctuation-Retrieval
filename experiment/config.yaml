@@ -84,7 +84,7 @@ model:
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed
+            - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -128,12 +128,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 3
+        punct_num_fc_layers: 0
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'crf'
         bilstm: false
 
     domain_head:
@@ -143,8 +143,8 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
-        gamma: 1 #0.1 # coefficient of gradient reversal, will be updated from gamma list below.
+        loss: 'focal'
+        gamma: 1 #0.1 # coefficient of gradient reversal
         pooling: 'mean' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
@@ -170,11 +170,11 @@ model:
         - 1e-8
 
     gamma:
-        - 1
-        - 1
-        - 1
-        - 1
-        - 1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
+        - 0.1
         # - 1e-0
         # - 5e-1
         # - 4e-1
