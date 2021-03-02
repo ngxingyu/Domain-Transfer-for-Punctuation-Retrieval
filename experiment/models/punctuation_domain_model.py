@@ -58,7 +58,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if self._cfg.model.no_space_label is not None:
             s=set(self.hparams.model.punct_label_ids)
             s.add(self._cfg.model.no_space_label)
-            self.hparams.model.punct_label_ids=sorted(list(s))
+            self._cfg.model.punct_label_ids=sorted(list(s))
         self.ids_to_labels = {_[0]: _[1]
                               for _ in enumerate(self.hparams.model.punct_label_ids)}
         self.labels_to_ids = {v:k
@@ -68,12 +68,13 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
         self.setup_datamodule()
 
-        if (self.hparams.model.punct_class_weights>0 and self.hparams.model.punct_head.loss!='crf'):
-            self.hparams.model.punct_class_weights=OmegaConf.create([
-                x**self.hparams.model.punct_class_weights for x in\
-                     self.dm.train_dataset.determine_class_weights().tolist()])
-        else:
-            self.hparams.model.punct_class_weights=None
+        if self._cfg.model.punct_class_weights==None:
+            if (self.hparams.model.punct_class_weight_factor>0 and self.hparams.model.punct_head.loss!='crf'):
+                self._cfg.model.punct_class_weights=OmegaConf.create([
+                    x**self.hparams.model.punct_class_weight_factor for x in\
+                        self.dm.train_dataset.determine_class_weights().tolist()])
+            else:
+                self._cfg.model.punct_class_weights=None
 
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size,
@@ -100,15 +101,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         if not self.hparams.model.punct_head.loss in ['cel', 'dice', 'crf', 'focal']:
             self.log('punct_head loss not found, fallback to cross entropy loss')
-            self.hparams.model.punct_head.loss = 'cel'
+            self._cfg.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
-            self.punctuation_loss = FocalDiceLoss(**self.hparams.model.dice_loss, weight=self.hparams.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
+            self.punctuation_loss = FocalDiceLoss(**self._cfg.model.dice_loss, weight=self._cfg.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'crf':
-            self.punctuation_loss = LinearChainCRF(self.hparams.model.dataset.num_labels)
+            self.punctuation_loss = LinearChainCRF(self._cfg.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'focal':
-            self.punctuation_loss = FocalLoss(**self.hparams.model.focal_loss, weight=self.hparams.model.punct_class_weights)
+            self.punctuation_loss = FocalLoss(**self._cfg.model.focal_loss, weight=self._cfg.model.punct_class_weights)
         else: 
-            self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self.hparams.model.punct_class_weights)
+            self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self._cfg.model.punct_class_weights)
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
