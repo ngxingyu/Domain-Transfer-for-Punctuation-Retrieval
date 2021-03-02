@@ -72,7 +72,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.2
+    punct_class_weight_factor: 0
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -104,7 +104,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
+            batch_size: 16
             manual_len: 20000 #default 0 84074
 
         validation_ds:
@@ -113,7 +113,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -129,7 +129,7 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 2
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
@@ -155,7 +155,7 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 8
+        alpha: 5
         macro_average: true
 
     focal_loss: 
