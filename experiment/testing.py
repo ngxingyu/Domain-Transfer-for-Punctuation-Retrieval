@@ -22,7 +22,7 @@ import atexit
 from copy import deepcopy
 import snoop
 snoop.install()
-exp='2021-03-02_08-46-23'
+exp='2021-03-02_10-34-43'
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 def main(cfg : DictConfig) -> None:
     torch.set_printoptions(sci_mode=False)
@@ -45,8 +45,8 @@ def main(cfg : DictConfig) -> None:
                     max_seq_length=model.dm.max_seq_length,
                     punct_label_ids=model.dm.punct_label_ids,
                     label_map=model.dm.label_map,
-                    labelled=['/home/nxingyu/data/switchboardutt_processed'],
-                    # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
+                    # labelled=['/home/nxingyu/data/switchboardutt_processed'],
+                    labelled=['/home/nxingyu/data/open_subtitles_processed'],
                     # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
                     unlabelled=[],
                     tokenizer=model.dm.tokenizer,
