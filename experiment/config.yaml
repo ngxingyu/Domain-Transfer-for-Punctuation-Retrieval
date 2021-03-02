@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 4 # accumulates grads every k batches
+    accumulate_grad_batches: 2 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -52,11 +52,12 @@ model:
         - ","
         - "."
         - "?"
-        # - "!"
 
+        # - "!"
         # - "-"
         # - "…"
         # - ":"
+
         # - "—"
         # - ";"
 
@@ -66,6 +67,7 @@ model:
         "-": ","
         ":": ","
         "…": "."
+
         "—": ","
         ";": "."
 
@@ -80,7 +82,7 @@ model:
         labelled:
             # - ${base_path}/ted2010 #
             - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
@@ -104,7 +106,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
+            batch_size: 16
             manual_len: 20000 #default 0 84074
 
         validation_ds:
@@ -113,7 +115,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -138,7 +140,7 @@ model:
         bilstm: false
 
     domain_head:
-        predict_labelled: true # if false: treats every domain separately, if true: splits into labelled and unlabelled
+        predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
         domain_num_fc_layers: 1
         fc_dropout: 0.1
         activation: 'relu'
@@ -146,7 +148,7 @@ model:
         use_transformer_init: true
         loss: 'focal'
         gamma: 1 #0.1 # coefficient of gradient reversal
-        pooling: 'token' # 'mean' # 'mean_max' # 'token'
+        pooling: 'mean_max' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
             - 0.5
@@ -155,27 +157,27 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 8
+        alpha: 6
         macro_average: true
 
     focal_loss: 
-        gamma: 2
+        gamma: 6
 
     frozen_lr:
-        - 5e-2
         - 1e-2
-        - 5e-3
         - 1e-4
+        - 1e-5
+        - 1e-5
         - 1e-5
         - 1e-7
         - 1e-8
 
     gamma:
-        - 0.5
-        - 0.5
-        - 0.5
-        - 0.5
-        - 0.5
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.8
+        - 0.8
         # - 1e-0
         # - 5e-1
         # - 4e-1

@@ -22,7 +22,7 @@ import atexit
 from copy import deepcopy
 import snoop
 snoop.install()
-exp='2021-03-02_08-46-23'
+exp='2021-03-02_11-08-13'
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 def main(cfg : DictConfig) -> None:
     torch.set_printoptions(sci_mode=False)
@@ -37,7 +37,7 @@ def main(cfg : DictConfig) -> None:
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
-    checkpoint_path=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
     # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.28-epoch=10.ckpt")
     
     model.dm.test_dataset=PunctuationDomainDatasets(split='test',
@@ -45,7 +45,7 @@ def main(cfg : DictConfig) -> None:
                     max_seq_length=model.dm.max_seq_length,
                     punct_label_ids=model.dm.punct_label_ids,
                     label_map=model.dm.label_map,
-                    labelled=['/home/nxingyu/data/switchboardutt_processed'],
+                    labelled=['/home/nxingyu2/data/switchboardutt_processed'],
                     # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
                     # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
                     unlabelled=[],
@@ -57,7 +57,7 @@ def main(cfg : DictConfig) -> None:
                     no_space_label=model.dm.no_space_label,
                     pad_start=model.dm.pad_start,
                     )
-    model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
+    model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     trainer = pl.Trainer(**cfg.trainer)
     # trainer = pl.Trainer(gpus=gpu)
     trainer.test(model,ckpt_path=None)
