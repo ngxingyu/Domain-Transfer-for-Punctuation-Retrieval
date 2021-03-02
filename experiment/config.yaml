@@ -74,7 +74,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.2
+    punct_class_weight_factor: 0
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -131,7 +131,7 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 2
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false

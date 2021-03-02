@@ -4,7 +4,7 @@ trainer:
   num_nodes: 1
   max_epochs: 8
   max_steps: null
-  accumulate_grad_batches: 4
+  accumulate_grad_batches: 8
   gradient_clip_val: 0
   amp_level: O1
   precision: 16
@@ -21,14 +21,14 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu/data
 tmp_path: /home/nxingyu/data/tmp
-log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-01_16-57-32
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-02_10-33-17
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
   unfrozen: 0
   maximum_unfrozen: 2
   unfreeze_step: 1
-  test_every_layer: true
+  test_every_layer: false
   punct_label_ids:
   - ''
   - ','
@@ -43,7 +43,8 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
-  punct_class_weights: 0.1
+  punct_class_weight_factor: 0.1
+  punct_class_weights: null
   dataset:
     data_dir: /home/nxingyu/data
     labelled:
@@ -65,12 +66,12 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
       manual_len: 20000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -96,33 +97,33 @@ model:
     activation: relu
     log_softmax: false
     use_transformer_init: true
-    loss: cel
+    loss: focal
     gamma: 1
-    pooling: mean
+    pooling: token
     idx_conditioned_on: 0
     weight:
     - 0.5
     - 0.5
   dice_loss:
     epsilon: 0.01
-    alpha: 3
+    alpha: 6
     macro_average: true
   focal_loss:
     gamma: 2
   frozen_lr:
   - 0.01
+  - 0.005
   - 0.001
-  - 0.0001
   - 0.0001
   - 1.0e-05
   - 1.0e-07
   - 1.0e-08
   gamma:
-  - 1
-  - 1
-  - 1
-  - 1
-  - 1
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
   optim:
     name: adamw
     lr: 0.01

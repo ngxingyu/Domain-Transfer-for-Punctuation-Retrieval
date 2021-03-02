@@ -11,7 +11,7 @@ Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 0.01
+    lr: 0.05
     weight_decay: 0.0
 )
 [INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f92ca312ee0>" 
