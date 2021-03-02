@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 16 # accumulates grads every k batches
+    accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -44,7 +44,7 @@ model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
-    maximum_unfrozen: 3
+    maximum_unfrozen: 2
     unfreeze_step: 1
     test_every_layer: false
     punct_label_ids:
@@ -72,7 +72,8 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weights: 0.1 #0 if don't weight
+    punct_class_weight_factor: 0.2
+    punct_class_weights:  #0 if don't weight
     
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
@@ -103,7 +104,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 16
+            batch_size: 32
             manual_len: 20000 #default 0 84074
 
         validation_ds:
@@ -112,7 +113,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 16 #4
+            batch_size: 32 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -128,12 +129,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 0
+        punct_num_fc_layers: 2
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
         bilstm: false
 
     domain_head:
@@ -145,7 +146,7 @@ model:
         use_transformer_init: true
         loss: 'focal'
         gamma: 1 #0.1 # coefficient of gradient reversal
-        pooling: 'token1' # 'mean' # 'mean_max' # 'token'
+        pooling: 'token' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
             - 0.5
@@ -154,16 +155,16 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 3
+        alpha: 8
         macro_average: true
 
     focal_loss: 
         gamma: 2
 
     frozen_lr:
+        - 5e-2
         - 1e-2
-        - 1e-3
-        - 1e-4
+        - 5e-3
         - 1e-4
         - 1e-5
         - 1e-7
