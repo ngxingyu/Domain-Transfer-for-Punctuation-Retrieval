@@ -26,7 +26,7 @@ model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
   unfrozen: 0
-  maximum_unfrozen: 2
+  maximum_unfrozen: 3
   unfreeze_step: 1
   test_every_layer: true
   punct_label_ids:
