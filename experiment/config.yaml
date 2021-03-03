@@ -44,7 +44,7 @@ model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
-    maximum_unfrozen: 2
+    maximum_unfrozen: 0
     unfreeze_step: 1
     test_every_layer: false
     punct_label_ids:
@@ -82,8 +82,8 @@ model:
         labelled:
             # - ${base_path}/ted2010 #
             - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed #
+            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -147,7 +147,8 @@ model:
         log_softmax: false
         use_transformer_init: true
         loss: 'focal'
-        gamma: 1 #0.1 # coefficient of gradient reversal
+        gamma: 
+        gamma_factor: 1 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight:
@@ -173,11 +174,11 @@ model:
         - 1e-8
 
     gamma:
-        - 0.8
-        - 0.8
-        - 0.8
-        - 0.8
-        - 0.8
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
         # - 1e-0
         # - 5e-1
         # - 4e-1

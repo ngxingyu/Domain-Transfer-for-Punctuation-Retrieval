@@ -153,7 +153,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         )
 
         self.grad_reverse = GradientReverse
-        self.grad_reverse.scale = 0 #self.hparams.model.domain_head.gamma
+        self.grad_reverse.scale = self.hparams.model.domain_head.gamma_factor
         self.freeze()
 
     def forward(self, input_ids, attention_mask, subtoken_mask=None, domain_ids=None):
@@ -190,7 +190,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punctuation_loss = self.punctuation_loss(
             logits=punct_logits[subtoken_mask[:,0]>0], labels=punct_labels[subtoken_mask[:,0]>0], loss_mask=subtoken_mask[subtoken_mask[:,0]>0])
         
-        self.hparams.model.domain_head.gamma=punctuation_loss.item()
+        self.hparams.model.domain_head.gamma=self.hparams.model.domain_head.gamma_factor*punctuation_loss.item()
         domain_loss = self.domain_loss(
             logits=domain_logits, labels=domain_labels)
         loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
@@ -202,9 +202,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         passed in as `batch`.
         """
         p=(self.current_epoch*self.train_size+batch_idx)/(self.train_size*self.hparams.trainer.max_epochs)
-        if (batch_idx%1000==0):
-            print('gamma:',p)
         self.grad_reverse.scale=(2/(1+math.exp(-10*p))-1)*self.hparams.model.domain_head.gamma
+        if (batch_idx%1000==0):
+            print('gamma:',grad_reverse.scale)
         loss, _, _ = self._make_step(batch)
         lr = self._optimizer.param_groups[0]['lr']
 
