@@ -22,7 +22,7 @@ import atexit
 from copy import deepcopy
 import snoop
 snoop.install()
-exp='2021-03-02_11-08-13'
+exp='2021-03-04_10-23-11'
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 def main(cfg : DictConfig) -> None:
     torch.set_printoptions(sci_mode=False)
