@@ -49,3 +49,13 @@ Global seed set to 42
 108 M     Total params
 Epoch 0, global step 305: val_loss reached 56.73872 (best 56.73872), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=0.ckpt" as top 3
 Epoch 1, global step 339: val_loss reached 56.73840 (best 56.73840), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=1.ckpt" as top 3
+Epoch 2, global step 373: val_loss reached 56.73801 (best 56.73801), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=2.ckpt" as top 3
+Epoch 3, global step 407: val_loss reached 56.73756 (best 56.73756), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=3.ckpt" as top 3
+Epoch 4, global step 441: val_loss reached 56.73721 (best 56.73721), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=4.ckpt" as top 3
+Epoch 5, global step 475: val_loss reached 56.73685 (best 56.73685), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=5.ckpt" as top 3
+Epoch 6, global step 509: val_loss reached 56.73643 (best 56.73643), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=6.ckpt" as top 3
+Epoch 7, global step 543: val_loss reached 56.73610 (best 56.73610), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=7.ckpt" as top 3
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]

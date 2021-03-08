@@ -1,0 +1,33 @@
+[NeMo I 2021-03-05 14:45:13 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-05_14-45-13
+[NeMo I 2021-03-05 14:45:13 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-03-05 14:45:13 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-03-05 14:45:40 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-05 14:45:40 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-05 14:45:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-05 14:45:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-05 14:45:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:68: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-05 14:45:45 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-05 14:48:53 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f17fdb013a0> was reported to be 99 (when accessing len(dataloader)), but 100 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-05 14:49:13 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7f17fdb01700> was reported to be 12 (when accessing len(dataloader)), but 13 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-05 15:14:21 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/optim/lr_scheduler.py:131: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+      warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+    
+[NeMo W 2021-03-05 15:28:21 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Detected KeyboardInterrupt, attempting graceful shutdown...
+      warnings.warn(*args, **kwargs)
+    

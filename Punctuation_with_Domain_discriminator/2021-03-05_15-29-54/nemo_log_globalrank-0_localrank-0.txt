@@ -1,0 +1,3 @@
+[NeMo I 2021-03-05 15:29:54 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-05_15-29-54
+[NeMo I 2021-03-05 15:29:54 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-03-05 15:29:54 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.

@@ -1,7 +1,7 @@
 [INFO] - Global seed set to 42
 [INFO] - GPU available: True, used: True
 [INFO] - TPU available: None, using: 0 TPU cores
-[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
 [INFO] - Using native 16bit precision.
 [INFO] - shuffling train set
 [INFO] - Global seed set to 42
@@ -14,482 +14,66 @@ Parameter Group 0
     lr: 0.01
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fccccfce310>" 
-will be used during training (effective maximum steps = 272) - 
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f3bba563310>" 
+will be used during training (effective maximum steps = 2664) - 
 Parameters : 
 (warmup_steps: null
 warmup_ratio: 0.1
 min_lr: 1.0e-08
 last_epoch: -1
-max_steps: 272
+max_steps: 2664
 )
 [INFO] - 
   | Name                       | Type                 | Params
 --------------------------------------------------------------------
 0 | transformer                | ElectraModel         | 108 M 
-1 | punct_classifier           | TokenClassifier      | 3.8 K 
-2 | domain_classifier          | SequenceClassifier   | 1.5 K 
-3 | punctuation_loss           | LinearChainCRF       | 35    
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 4.6 K 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
 4 | domain_loss                | CrossEntropyLoss     | 0     
 5 | agg_loss                   | AggregatorLoss       | 0     
 6 | punct_class_report         | ClassificationReport | 0     
 7 | chunked_punct_class_report | ClassificationReport | 0     
 8 | domain_class_report        | ClassificationReport | 0     
 --------------------------------------------------------------------
-5.4 K     Trainable params
+1.2 M     Trainable params
 108 M     Non-trainable params
-108 M     Total params
+110 M     Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          90.00       0.14       0.29      24834
-# (label_id: 1)                                          4.11       1.27       1.94       2210
-, (label_id: 2)                                          2.14      15.66       3.77       1814
-. (label_id: 3)                                          0.00       0.00       0.00       1470
-? (label_id: 4)                                          0.61      87.72       1.21        114
+ (label_id: 0)                                          62.64       3.80       7.16      35883
+# (label_id: 1)                                          2.78       2.17       2.44       2997
+, (label_id: 2)                                          3.43      24.87       6.03       1737
+. (label_id: 3)                                         10.78      26.98      15.41       2528
+? (label_id: 4)                                          0.59      35.21       1.17        338
 -------------------
-micro avg                                                1.47       1.47       1.47      30442
-macro avg                                               19.37      20.96       1.44      30442
-weighted avg                                            73.85       1.47       0.61      30442
+micro avg                                                6.12       6.12       6.12      43483
+macro avg                                               16.05      18.60       6.44      43483
+weighted avg                                            52.65       6.12       7.22      43483
 
 -------------------
                        #           ,           .           ?
-       36.00         0.00         2.00         2.00         0.00
-      542.00        28.00        50.00        56.00         6.00
-    11794.00      1038.00       284.00       138.00         8.00
-        0.00         0.00         0.00         0.00         0.00
-    12462.00      1144.00      1478.00      1274.00       100.00
+     1363.00       130.00       239.00       367.00        77.00
+     2027.00        65.00        78.00       143.00        22.00
+    11282.00       411.00       432.00       409.00        46.00
+     5001.00       213.00       356.00       682.00        74.00
+    16210.00      2178.00       632.00       927.00       119.00
 -------------------
 
 [INFO] - Domain report: 
 label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        264
+0 (label_id: 0)                                          0.00       0.00       0.00        125
+1 (label_id: 1)                                          0.00       0.00       0.00        125
+2 (label_id: 2)                                         33.33     100.00      50.00        125
 -------------------
-micro avg                                              100.00     100.00     100.00        264
-macro avg                                              100.00     100.00     100.00        264
-weighted avg                                           100.00     100.00     100.00        264
+micro avg                                               33.33      33.33      33.33        375
+macro avg                                               11.11      33.33      16.67        375
+weighted avg                                            11.11      33.33      16.67        375
 
 -------------------
-           0
-      264.00
+           0           1           2
+        0.00         0.00         0.00
+        0.00         0.00         0.00
+      125.00       125.00       125.00
 -------------------
 
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          84.32      99.48      91.27     214520
-# (label_id: 1)                                         92.89      69.80      79.71      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                          0.00       0.00       0.00      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               84.83      84.83      84.83     269408
-macro avg                                               35.44      33.86      34.20     269408
-weighted avg                                            74.62      84.83      79.10     269408
-
--------------------
-                       #           ,           .           ?
-   213408.00      6552.00     18072.00     13968.00      1104.00
-     1112.00     15144.00        48.00         0.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 0, global step 33: val_loss reached 102.09998 (best 102.09998), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=102.10-epoch=0.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.61      99.83      89.20     214520
-# (label_id: 1)                                         89.00      13.42      23.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         42.37       1.43       2.77      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.65      80.65      80.65     269408
-macro avg                                               42.40      22.94      23.06     269408
-weighted avg                                            73.55      80.65      73.05     269408
-
--------------------
-                       #           ,           .           ?
-   214160.00     18744.00     17968.00     13728.00      1064.00
-      264.00      2912.00        56.00        40.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       96.00        40.00        96.00       200.00        40.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 1, global step 67: val_loss reached 69.23959 (best 69.23959), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=69.24-epoch=1.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          79.93      99.97      88.83     214520
-# (label_id: 1)                                         86.67       4.31       8.22      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          97.96      95.49      96.71   11110340
-# (label_id: 1)                                         84.42      95.26      89.51     902098
-, (label_id: 2)                                         35.34      48.88      41.02     399192
-. (label_id: 3)                                         63.76      57.42      60.42     875535
-? (label_id: 4)                                         38.16      58.25      46.11     187061
--------------------
-micro avg                                               91.10      91.10      91.10   13474226
-macro avg                                               63.93      71.06      66.76   13474226
-weighted avg                                            92.15      91.10      91.52   13474226
-
--------------------
-                       #           ,           .           ?
- 10609028.00     37698.00     81336.00     87859.00     14052.00
-   155226.00    859321.00      1327.00      1813.00       222.00
-   140552.00      1186.00    195140.00    194086.00     21266.00
-   149504.00      2830.00     90928.00    502770.00     42560.00
-    56030.00      1063.00     30461.00     89007.00    108961.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                          0.00       0.00       0.00      57254
-1 (label_id: 1)                                         50.00     100.00      66.67      57254
--------------------
-micro avg                                               50.00      50.00      50.00     114508
-macro avg                                               25.00      50.00      33.33     114508
-weighted avg                                            25.00      50.00      33.33     114508
-
--------------------
-           0           1
-        0.00         0.00
-    57254.00     57254.00
--------------------
-
-[INFO] - Epoch 2, global step 125: val_loss reached 1.35887 (best 1.35887), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-29-41/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.36-epoch=2.ckpt" as top 3
-00       0.00       0.00       1104
--------------------
-micro avg                                               80.14      80.14      80.14     269408
-macro avg                                               46.60      21.52      20.70     269408
-weighted avg                                            74.18      80.14      71.88     269408
-
--------------------
-                       #           ,           .           ?
-   214384.00     20448.00     18008.00     13640.00      1072.00
-       96.00      1232.00        64.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       40.00        16.00        48.00       280.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 3, global step 135: val_loss reached 57.38884 (best 57.38884), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=57.39-epoch=3.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.95      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         72.55       2.12       4.12      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.14      80.14      80.14     269408
-macro avg                                               47.86      21.51      20.68     269408
-weighted avg                                            74.53      80.14      71.86     269408
-
--------------------
-                       #           ,           .           ?
-   214408.00     20488.00     18024.00     13624.00      1080.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       32.00        16.00        40.00       296.00        24.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 4, global step 169: val_loss reached 56.97188 (best 56.97188), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.97-epoch=4.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.94      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         66.67       2.18       4.22      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.13      80.13      80.13     269408
-macro avg                                               46.68      21.52      20.70     269408
-weighted avg                                            74.23      80.13      71.87     269408
-
--------------------
-                       #           ,           .           ?
-   214392.00     20480.00     18016.00     13616.00      1072.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       48.00        24.00        48.00       304.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 5, global step 203: val_loss reached 56.80875 (best 56.80875), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.81-epoch=5.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.94      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         66.67       2.18       4.22      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.13      80.13      80.13     269408
-macro avg                                               46.68      21.52      20.70     269408
-weighted avg                                            74.23      80.13      71.87     269408
-
--------------------
-                       #           ,           .           ?
-   214392.00     20480.00     18016.00     13616.00      1072.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       48.00        24.00        48.00       304.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 6, global step 237: val_loss reached 56.74905 (best 56.74905), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.75-epoch=6.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.94      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         66.67       2.18       4.22      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.13      80.13      80.13     269408
-macro avg                                               46.68      21.52      20.70     269408
-weighted avg                                            74.23      80.13      71.87     269408
-
--------------------
-                       #           ,           .           ?
-   214392.00     20480.00     18016.00     13616.00      1072.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       48.00        24.00        48.00       304.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 7, global step 271: val_loss reached 56.73913 (best 56.73913), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=7.ckpt" as top 3
-[INFO] - Saving latest checkpoint...
-[INFO] - Global seed set to 42
-[INFO] - Optimizer config = AdamW (
-Parameter Group 0
-    amsgrad: False
-    betas: (0.9, 0.999)
-    eps: 1e-08
-    lr: 0.001
-    weight_decay: 0.0
-)
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fccd582afa0>" 
-will be used during training (effective maximum steps = 272) - 
-Parameters : 
-(warmup_steps: null
-warmup_ratio: 0.1
-min_lr: 1.0e-08
-last_epoch: -1
-max_steps: 272
-)
-[INFO] - 
-  | Name                       | Type                 | Params
---------------------------------------------------------------------
-0 | transformer                | ElectraModel         | 108 M 
-1 | punct_classifier           | TokenClassifier      | 3.8 K 
-2 | domain_classifier          | SequenceClassifier   | 1.5 K 
-3 | punctuation_loss           | LinearChainCRF       | 35    
-4 | domain_loss                | CrossEntropyLoss     | 0     
-5 | agg_loss                   | AggregatorLoss       | 0     
-6 | punct_class_report         | ClassificationReport | 0     
-7 | chunked_punct_class_report | ClassificationReport | 0     
-8 | domain_class_report        | ClassificationReport | 0     
---------------------------------------------------------------------
-7.1 M     Trainable params
-101 M     Non-trainable params
-108 M     Total params
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          82.09      99.94      90.14      24834
-# (label_id: 1)                                         85.90       6.06      11.33       2210
-, (label_id: 2)                                          0.00       0.00       0.00       1814
-. (label_id: 3)                                         66.67       2.45       4.72       1470
-? (label_id: 4)                                          0.00       0.00       0.00        114
--------------------
-micro avg                                               82.08      82.08      82.08      30442
-macro avg                                               46.93      21.69      21.24      30442
-weighted avg                                            76.42      82.08      74.58      30442
-
--------------------
-                       #           ,           .           ?
-    24818.00      2074.00      1802.00      1428.00       110.00
-       10.00       134.00         6.00         6.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-        6.00         2.00         6.00        36.00         4.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        264
--------------------
-micro avg                                              100.00     100.00     100.00        264
-macro avg                                              100.00     100.00     100.00        264
-weighted avg                                           100.00     100.00     100.00        264
-
--------------------
-           0
-      264.00
--------------------
-
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.94      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         66.67       2.18       4.22      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.13      80.13      80.13     269408
-macro avg                                               46.68      21.52      20.70     269408
-weighted avg                                            74.23      80.13      71.87     269408
-
--------------------
-                       #           ,           .           ?
-   214392.00     20480.00     18016.00     13616.00      1072.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       48.00        24.00        48.00       304.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 0, global step 305: val_loss reached 56.73872 (best 56.73872), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=0.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          80.12      99.94      88.94     214520
-# (label_id: 1)                                         86.63       5.49      10.33      21696
-, (label_id: 2)                                          0.00       0.00       0.00      18120
-. (label_id: 3)                                         66.67       2.18       4.22      13968
-? (label_id: 4)                                          0.00       0.00       0.00       1104
--------------------
-micro avg                                               80.13      80.13      80.13     269408
-macro avg                                               46.68      21.52      20.70     269408
-weighted avg                                            74.23      80.13      71.87     269408
-
--------------------
-                       #           ,           .           ?
-   214392.00     20480.00     18016.00     13616.00      1072.00
-       80.00      1192.00        56.00        48.00         0.00
-        0.00         0.00         0.00         0.00         0.00
-       48.00        24.00        48.00       304.00        32.00
-        0.00         0.00         0.00         0.00         0.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00       2288
--------------------
-micro avg                                              100.00     100.00     100.00       2288
-macro avg                                              100.00     100.00     100.00       2288
-weighted avg                                           100.00     100.00     100.00       2288
-
--------------------
-           0
-     2288.00
--------------------
-
-[INFO] - Epoch 1, global step 339: val_loss reached 56.73840 (best 56.73840), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_16-48-53/checkpoints/Punctuation_with_Domain_discriminator---val_loss=56.74-epoch=1.ckpt" as top 3
