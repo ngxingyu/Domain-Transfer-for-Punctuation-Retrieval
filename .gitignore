@@ -14,3 +14,4 @@ checkpoints/Punctuation_with_Domain_discriminator-last.ckpt
 */*/*.nemo
 *.pack
 */*/*tfevents*
+Miniconda*
