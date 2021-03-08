@@ -29,30 +29,35 @@ if __name__ == "__main__":
                         help="input file", metavar="FILE")
     parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output csv filepath", metavar="FILE")
-    parser.add_argument("-l","--length", type=int, required=False, default=300,help="split charlen")
+    parser.add_argument("-l","--length", type=int, required=False, default=2500,help="split charlen")
     parser.add_argument('-c',"--chunksize", dest='chunksize', type=int, required=False, default=2000)
     parser.add_argument('-s',"--header", dest='header', type=int, required=False, default=1)
     args = parser.parse_args()
     
-    
-    nb_samples=int(subprocess.Popen(['wc', '-l', args.filename], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
-    total = int((nb_samples+args.chunksize) / args.chunksize)
-    print(total,nb_samples,args.chunksize)
-    o=pd.read_csv(args.filename,
-                  dtype='str',
-                  # columns=['talk_id','transcript']
-                  skiprows=range(0,args.header),
-                  header=None,
-                  chunksize=args.chunksize)
-    open(args.output, 'w').close()
-    with open(args.output, 'a') as f:
-      for i in tqdm(o,total=total):
-          i = i.iloc[:,[0,-1]]
-          i.columns=['id','transcript']
-          i.transcript=i.transcript.str.findall(f'\\w.{{{args.length},}}?[.!?… ]*[.!?…]|\\w.+?[.!?… ]*[.!?…]')
-          i=i.explode('transcript')
-          i=i.loc[~i.transcript.isnull()]
-          i.to_csv(f, mode='a', index=False, header=False)
+    filename, file_extension = os.path.splitext(args.filename)
+    output, output_extension = os.path.splitext(args.output)
+    for split in ['train','dev','test']:
+        filenamesplit=f'{filename}.{split}{file_extension}'
+        outputsplit=f'{output}.{split}{output_extension}'
+        print(filenamesplit,outputsplit)
+        nb_samples=int(subprocess.Popen(['wc', '-l', filenamesplit], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        total = int((nb_samples+args.chunksize) / args.chunksize)
+        print(total,nb_samples,args.chunksize)
+        o=pd.read_csv(filenamesplit,
+                    dtype='str',
+                    # columns=['talk_id','transcript']
+                    skiprows=range(0,args.header),
+                    header=None,
+                    chunksize=args.chunksize)
+        open(outputsplit, 'w').close()
+        with open(outputsplit, 'a') as f:
+            for i in tqdm(o,total=total):
+                i = i.iloc[:,[0,-1]]
+                i.columns=['id','transcript']
+                i.transcript=i.transcript.str.findall(f'\\w.{{{args.length},}}?[.!?… ]*[.!?…]|\\w.+?[.!?… ]*[.!?…]')
+                i=i.explode('transcript')
+                i=i.loc[~i.transcript.isnull()]
+                i.to_csv(f, mode='a', index=False, header=False)
 
 
 
