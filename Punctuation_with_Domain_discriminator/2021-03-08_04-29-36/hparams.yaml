@@ -4,8 +4,8 @@ trainer:
   num_nodes: 1
   max_epochs: 8
   max_steps: null
-  accumulate_grad_batches: 2
-  gradient_clip_val: 10
+  accumulate_grad_batches: 1
+  gradient_clip_val: 0
   amp_level: O1
   precision: 16
   accelerator: ddp
@@ -21,7 +21,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /root/data
 tmp_path: /tmp
-log_dir: /root/project/Punctuation_with_Domain_discriminator/2021-03-08_03-14-58
+log_dir: /root/project/Punctuation_with_Domain_discriminator/2021-03-08_04-29-36
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -43,7 +43,7 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: 0.5
-  punct_class_weight_factor: 0.6
+  punct_class_weight_factor: 0.0
   punct_class_weights: null
   dataset:
     data_dir: /root/data
@@ -66,12 +66,12 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
       manual_len: 8000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 12
+      batch_size: 32
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -88,7 +88,7 @@ model:
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: dice
+    loss: focal
     bilstm: false
   domain_head:
     predict_labelled: false
@@ -108,7 +108,7 @@ model:
     - 1
   dice_loss:
     epsilon: 0.01
-    alpha: 1
+    alpha: 3
     macro_average: true
   focal_loss:
     gamma: 2
