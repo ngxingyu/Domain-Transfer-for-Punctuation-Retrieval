@@ -4,8 +4,8 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 2 # accumulates grads every k batches
-    gradient_clip_val: 10
+    accumulate_grad_batches: 1 # accumulates grads every k batches
+    gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
@@ -73,7 +73,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.6
+    punct_class_weight_factor: 0.0
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -105,7 +105,7 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 16
+            batch_size: 32
             manual_len: 8000 #default 0 84074
 
         validation_ds:
@@ -114,7 +114,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 12 #4
+            batch_size: 32 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -135,7 +135,7 @@ model:
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'focal'
         bilstm: false
 
     domain_head:
@@ -161,7 +161,7 @@ model:
 
     dice_loss:
         epsilon: 0.01
-        alpha: 1
+        alpha: 3
         macro_average: true
 
     focal_loss: 
