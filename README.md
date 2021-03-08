@@ -97,6 +97,13 @@ bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
 bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
 sed -i 1i"id,transcript" switchboard*
 
+python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -s 0
+python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -s 0
+python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -s 0
+bash ~/project/bin/processandsplit.sh ./switchboardutt_explode.csv 8 1 1
+bash ~/project/bin/processandsplit.sh ./open_subtitles_explode.csv 8 1 1
+bash ~/project/bin/processandsplit.sh ./ted_talks_explode.csv 8 1 1
+
 python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
 
