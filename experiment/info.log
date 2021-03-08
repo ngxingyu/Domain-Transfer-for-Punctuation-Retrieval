@@ -1,0 +1,79 @@
+[INFO] - Global seed set to 42
+[INFO] - GPU available: True, used: True
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+[INFO] - Using native 16bit precision.
+[INFO] - shuffling train set
+[INFO] - Global seed set to 42
+[INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.01
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f3bba563310>" 
+will be used during training (effective maximum steps = 2664) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+min_lr: 1.0e-08
+last_epoch: -1
+max_steps: 2664
+)
+[INFO] - 
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 4.6 K 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | domain_loss                | CrossEntropyLoss     | 0     
+5 | agg_loss                   | AggregatorLoss       | 0     
+6 | punct_class_report         | ClassificationReport | 0     
+7 | chunked_punct_class_report | ClassificationReport | 0     
+8 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+1.2 M     Trainable params
+108 M     Non-trainable params
+110 M     Total params
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          62.64       3.80       7.16      35883
+# (label_id: 1)                                          2.78       2.17       2.44       2997
+, (label_id: 2)                                          3.43      24.87       6.03       1737
+. (label_id: 3)                                         10.78      26.98      15.41       2528
+? (label_id: 4)                                          0.59      35.21       1.17        338
+-------------------
+micro avg                                                6.12       6.12       6.12      43483
+macro avg                                               16.05      18.60       6.44      43483
+weighted avg                                            52.65       6.12       7.22      43483
+
+-------------------
+                       #           ,           .           ?
+     1363.00       130.00       239.00       367.00        77.00
+     2027.00        65.00        78.00       143.00        22.00
+    11282.00       411.00       432.00       409.00        46.00
+     5001.00       213.00       356.00       682.00        74.00
+    16210.00      2178.00       632.00       927.00       119.00
+-------------------
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                          0.00       0.00       0.00        125
+1 (label_id: 1)                                          0.00       0.00       0.00        125
+2 (label_id: 2)                                         33.33     100.00      50.00        125
+-------------------
+micro avg                                               33.33      33.33      33.33        375
+macro avg                                               11.11      33.33      16.67        375
+weighted avg                                            11.11      33.33      16.67        375
+
+-------------------
+           0           1           2
+        0.00         0.00         0.00
+        0.00         0.00         0.00
+      125.00       125.00       125.00
+-------------------
+

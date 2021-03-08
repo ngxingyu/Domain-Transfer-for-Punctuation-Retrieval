@@ -10,6 +10,6 @@ experiment/lightning_logs/*/checkpoints/
 experiment/.hydra/
 Punctuation_with_Domain_discriminator/*/checkpoints/
 checkpoints/Punctuation_with_Domain_discriminator-last.ckpt
-*.log
-*.nemo
+*/*/*.log
+*/*/*.nemo
 *.pack
