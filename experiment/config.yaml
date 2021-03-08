@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 4 # accumulates grads every k batches
+    accumulate_grad_batches: 2 # accumulates grads every k batches
     gradient_clip_val: 10
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -74,7 +74,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.4
+    punct_class_weight_factor: 0.6
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -82,12 +82,12 @@ model:
         labelled:
             # - ${base_path}/ted2010 #
             - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed
+            - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         max_seq_length: 128
         pad_label: ''
@@ -106,8 +106,8 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 24
-            manual_len: 4000 #default 0 84074
+            batch_size: 12
+            manual_len: 8000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -115,7 +115,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 24 #4
+            batch_size: 12 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -131,12 +131,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 1
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
         bilstm: false
 
     domain_head:
@@ -146,14 +146,15 @@ model:
         activation: 'relu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'focal'
+        loss: 'cel'
         gamma: 
-        gamma_factor: 1 #0.1 # coefficient of gradient reversal
+        gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
         pooling: 'mean_max' # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
-            - 0.4
-            - 0.6
+            - 1
+            - 1
+            - 1
             # - 0.3
             # - 0.3
             # - 0.4
@@ -165,7 +166,7 @@ model:
         macro_average: true
 
     focal_loss: 
-        gamma: 0.5
+        gamma: 2
 
     frozen_lr:
         - 1e-2
