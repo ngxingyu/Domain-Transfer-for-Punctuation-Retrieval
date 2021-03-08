@@ -1,0 +1,61 @@
+Global seed set to 42
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+Using native 16bit precision.
+Global seed set to 42
+initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | domain_loss                | CrossEntropyLoss     | 0     
+5 | agg_loss                   | AggregatorLoss       | 0     
+6 | punct_class_report         | ClassificationReport | 0     
+7 | chunked_punct_class_report | ClassificationReport | 0     
+8 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+1.2 M     Trainable params
+108 M     Non-trainable params
+110 M     Total params
+Epoch 0, global step 49: val_loss reached 0.26757 (best 0.26757), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.27-epoch=0.ckpt" as top 3
+Epoch 1, global step 99: val_loss reached 0.27194 (best 0.26757), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.27-epoch=1.ckpt" as top 3
+Epoch 2, global step 149: val_loss reached 0.27027 (best 0.26757), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.27-epoch=2.ckpt" as top 3
+Epoch 3, step 199: val_loss was not in top 3
+Epoch 4, global step 249: val_loss reached 0.26040 (best 0.26040), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.26-epoch=4.ckpt" as top 3
+Epoch 5, global step 299: val_loss reached 0.26130 (best 0.26040), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.26-epoch=5.ckpt" as top 3
+Epoch 6, global step 349: val_loss reached 0.26191 (best 0.26040), saving model to "/home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-04_13-07-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.26-epoch=6.ckpt" as top 3
+Epoch 7, step 399: val_loss was not in top 3
+Saving latest checkpoint...
+Global seed set to 42
+
+  | Name                       | Type                 | Params
+--------------------------------------------------------------------
+0 | transformer                | ElectraModel         | 108 M 
+1 | punct_classifier           | TokenClassifier      | 1.2 M 
+2 | domain_classifier          | SequenceClassifier   | 1.5 K 
+3 | punctuation_loss           | FocalDiceLoss        | 0     
+4 | domain_loss                | CrossEntropyLoss     | 0     
+5 | agg_loss                   | AggregatorLoss       | 0     
+6 | punct_class_report         | ClassificationReport | 0     
+7 | chunked_punct_class_report | ClassificationReport | 0     
+8 | domain_class_report        | ClassificationReport | 0     
+--------------------------------------------------------------------
+8.3 M     Trainable params
+101 M     Non-trainable params
+110 M     Total params
+Epoch 0, step 449: val_loss was not in top 3
+Epoch 1, step 499: val_loss was not in top 3
+Epoch 2, step 549: val_loss was not in top 3
+Epoch 3, step 599: val_loss was not in top 3
+Epoch 4, step 649: val_loss was not in top 3
+Epoch 5, step 699: val_loss was not in top 3
+Epoch 6, step 749: val_loss was not in top 3
+Epoch 7, step 799: val_loss was not in top 3
+GPU available: True, used: True
+TPU available: None, using: 0 TPU cores
+Using environment variable NODE_RANK for node rank (0).
+LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
