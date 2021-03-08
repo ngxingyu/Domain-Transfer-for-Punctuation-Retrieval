@@ -4,28 +4,28 @@
 
 The chosen datasources for this project are:
 
-1. [TED \- Ultimate Dataset \| Kaggle](https://www.kaggle.com/miguelcorraljr/ted-ultimate-dataset)-A collection of 4005 TED talks.
+1. [TED \- Ultimate Dataset \| Kaggle](https://www.kaggle.com/miguelcorraljr/ted-ultimate-dataset) \- A collection of 4005 TED talks.
 2. [Untokenised Corpus files for Opensubtitles](http://opus.nlpl.eu/OpenSubtitles-v2018.php) \- Select the rightmost column language ID\, in my case en\.
-3. BookCorpusOpen from Huggingface Datasets, a precompiled collection of 17868 books.
+3. [Switchboard corpus](https://catalog.ldc.upenn.edu/docs/LDC97S62/swb1_dialogact_annot.tar.gz) \- Concatenate all telephone conversations
 
 ## Preprocessing
 
 The following steps are taken for preprocessing the data to a useable form.
 
-1. (Important in the case of TED dataset) Remove speaker tags i.e. Narrator: ... which will not be spoken.
-2. Remove tags that are added for better readability, i.e. sound effects (Applause) etc.
-3. Identify spoken text that are within square or round brackets and remove the brackets.
-4. Remove music lyrics i.e. `♫ Lyrics ♫`
-as a large portion of these do not contain appropriate punctuation information, and removing all of this only reduced the Ted talk corpus from 7156353 to 7140657 words.
-5. Remove empty matching tags- square brackets, parentheses, single/double quotes. For single/double quotes, it may be used when training for retrieval of the quotes but I'll look into it again when I'm working on that.
-6. Convert ellipsis to the unicode version.
-7. Removing Non-sentence punctuation (All punctuation that are non-readable (@$#%&^+•=€²£¥) and not (.?!,;:-–—)).
-8. Replace en-dash with hyphen (Since it can easily be recovered with a regex and much of it is used wrongly.)
-9. Combining repeated patterns of punctuation, i.e. [. .] to [.], [!!!!] to [!].
-10. Replace (no.).(no.) with (no.) point (no.), the common pronounciation of the decimal point.
-11. Remove excess whitespaces
-12. Remove examples with length < 10 words
-13. Perform train dev test split of 0.9 0.1 0.1.
+1. Remove speaker tags or tags that are added for better readability, such as sound effects e.g.  (Narrator:  )or (Applause).
+2. Identify spoken text that are within square or round brackets and remove the brackets.
+3. Remove music lyrics bounded by music note symbols i.e. `♫ Lyrics ♫` as they contain minimal punctuation information.
+4. Remove empty matching tags - square brackets, parentheses, single/double quotes. Remove empty matching tags: square brackets, parentheses, single or double quotes as they are not covered under the scope of this research.
+5. Convert ellipsis to the unicode version.
+6. Removing Non-sentence punctuation (All punctuation that are non-readable (@$#%&^+=€²£¥)).
+7. Replace en-dash with hyphen
+8. Combining repeated patterns of punctuation, i.e. [. .] to [.], [!!!!] to [!].
+9. Pronounce common symbols such as * to times, or 5.0 to 5 point 0
+10. Remove excess white-spaces
+11. Sort the entire corpus by chronological order
+12. Remove duplicates
+13. Perform train dev test split of 0.8 0.1 0.1.
+
 
 ### Punctuation proportion
 
@@ -97,12 +97,14 @@ bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
 bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
 sed -i 1i"id,transcript" switchboard*
 
-python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -s 0
-python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -s 0
-python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -s 0
+python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
+python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
+python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
 bash ~/project/bin/processandsplit.sh ./switchboardutt_explode.csv 8 1 1
 bash ~/project/bin/processandsplit.sh ./open_subtitles_explode.csv 8 1 1
 bash ~/project/bin/processandsplit.sh ./ted_talks_explode.csv 8 1 1
+rm *explode.csv
+find . -name '*' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
 
 python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
