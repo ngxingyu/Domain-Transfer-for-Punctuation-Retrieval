@@ -88,44 +88,38 @@ The process of converting continuous text is as follows:
 ``` console
 bash ~/project/get-data.sh
 
-
+#Switchboard to csv
 bash ~/project/experiment/data/disfl2csv.sh /home/nxingyu/data/LDC99T42/treebank_3/dysfl/dff/swbd /home/nxingyu/data/switchboard_processed.csv
 bash ~/project/experiment/data/utt2csv.sh /home/nxingyu/data/utt /home/nxingyu/data/switchboardutt_processed.csv
+
+
+#Preprocess csv
 python ~/project/processcsv.py -i ~/data/switchboardutt_processed.csv -o ~/data/switchboardutt_processed.csv -c 2000
 python ~/project/processcsv.py -i ~/data/switchboard_processed.csv -o ~/data/switchboard_processed.csv -c 2000
+python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
+python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
+
+#Split train dev test
 bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
 bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
-sed -i 1i"id,transcript" switchboard*
-
-python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
-python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
-python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
-bash ~/project/bin/processandsplit.sh ./switchboardutt_explode.csv 8 1 1
-bash ~/project/bin/processandsplit.sh ./open_subtitles_explode.csv 8 1 1
-bash ~/project/bin/processandsplit.sh ./ted_talks_explode.csv 8 1 1
-rm *explode.csv
-find . -name '*' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
-
-python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
-
-#python ~/project/text2aligned.py -i ./ted_talks_processed -d 0 -c 2000 
-
-python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
 bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
 
-# python ~/project/text2aligned.py -i ./open_subtitles-processed -d 0 -c 2000
+#Explode to reduce length
+python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
+python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
+python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
 
-sed -i 1i"id,transcript" ted*
-sed -i 1i"id,transcript" open*
-kaggle
+find . -name '*.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
+sed -i 1i"id,transcript" *processed*
+
+<!-- kaggle datasets version -m 'message' -->
 ```
 
 ## Log for 26/1/2020
 
 Found a bug in regex pattern: A-z also includes punctuation characters, use A-Za-z instead.
 Worked on creating the model in python instead of ipynb.
-`python -m pip install git+https://github.com/gruns/icecream.git`
 
 ## Log for 27/1/2020
 
