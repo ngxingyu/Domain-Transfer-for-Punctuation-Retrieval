@@ -13,3 +13,4 @@ checkpoints/Punctuation_with_Domain_discriminator-last.ckpt
 */*/*.log
 */*/*.nemo
 *.pack
+*/*/*tfevents*
