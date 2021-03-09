@@ -25,7 +25,7 @@ def str2bool(v):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Enter csv file location. Extracts the "talk_id" and "transcript" column from csv and explodes the transcript by char length')
-    parser.add_argument("-i", "--input", dest="filename", required=True, type=validate_file,
+    parser.add_argument("-i", "--input", dest="filename", required=True,
                         help="input file", metavar="FILE")
     parser.add_argument("-o", "--output", dest="output", required=True,
                         help="output csv filepath", metavar="FILE")
@@ -54,7 +54,7 @@ if __name__ == "__main__":
             for i in tqdm(o,total=total):
                 i = i.iloc[:,[0,-1]]
                 i.columns=['id','transcript']
-                i.transcript=i.transcript.str.findall(f'\\w.{{{args.length},}}?[.!?… ]*[.!?…]|\\w.+?[.!?… ]*[.!?…]')
+                i.transcript=i.transcript.str.findall(f'\\w.{{{args.length},}}?[.!?… ]*[.!?…]|\\w.+[.!?… ]*[.!?…]$')
                 i=i.explode('transcript')
                 i=i.loc[~i.transcript.isnull()]
                 i.to_csv(f, mode='a', index=False, header=False)
