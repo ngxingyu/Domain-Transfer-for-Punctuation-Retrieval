@@ -1,4 +1,4 @@
-# ASR
+# Transfer Learning for punctuation retrieval
 
 ## Datasources
 
@@ -27,7 +27,7 @@ The following steps are taken for preprocessing the data to a useable form.
 13. Perform train dev test split of 0.8 0.1 0.1.
 
 
-### Punctuation proportion
+<!-- ### Punctuation proportion
 
 For TED corpus
 
@@ -57,7 +57,7 @@ For subtitles corpus
 | - | 10479724 0.09805945244798349 | 1321067 0.09882862227992877 | 1324557 0.09893127451608667 |
 | — | 9564 8.949096399986432e-05 | 591 4.421253105818092e-05 | 1210 9.037500248344532e-05 |
 | … | 4185605 0.03916497557221373 | 523225 0.03914230382896229 | 520479 0.03887462059304226 |
-| words 419201886 | 52422785 | 52341671 |  |
+| words 419201886 | 52422785 | 52341671 |  | -->
 
 ## Processing part-2
 
@@ -70,53 +70,103 @@ There are occurences of consecutive punctuation. This includes:
 2. `?,` or `!—` etc. where the first punctuation applies to a local scope and the 2nd applies to a larger context.
 3. anomalies i.e. ?! or !! or even a hyphen leading the next sentence
 
-In most cases, it makes more sense to classify the punctuations from right to left, so I will append punctuations to the previous word and predict the punctuation at the top of the stack.:
+In most cases, it makes more sense to classify the punctuations from right to left, so for this project I'll just consider the punctuation at the right:
 
-The process of converting continuous text is as follows:
+The process of converting continuous text to a form to be input into the model is as follows (text2mask function):
 
-1. Taking the text and degree, split the text into 2 lists - the first being a list of words, and the second being a list of previously classified punctuations or spaces dividing the text. (i.e. when degree is 0, the 2nd list contains all empty strings.)
+1. Taking the text and degree (0 being the punctuation at the right), convert the text into 2 lists - the first being a list of words, and the second being a list of previously classified punctuations or spaces dividing the text. (i.e. when degree is 0, the 2nd list contains all empty strings.)
 2. Intialize 2 new lists, a and b. Process both lists alternately beginning with the words list, identifying the trailing punctuation and stripping all punctuations from the tail. The word will be appended to a and the id of the punctuation identified will be appended to b.
+
+For a better idea of the entire preprocessing pipeline, refer to the file ```./experiment/data/punctuation_datamodule.py``` and all modules that it references. 
 
 ### Environment setup
 
 ``` console
-. ./setup.sh
+# After changing the cudatoolkit version based on your GPU
+$ . ./setup.sh
 ```
 
 ### Preprocessing commands
 
+You can either manually process the raw data files or obtain the preprocessed version from kaggle. 
+
+From scratch:
 ``` console
-bash ~/project/get-data.sh
+$ bash ~/project/get-data.sh
 
-#Switchboard to csv
-bash ~/project/experiment/data/disfl2csv.sh /home/nxingyu/data/LDC99T42/treebank_3/dysfl/dff/swbd /home/nxingyu/data/switchboard_processed.csv
-bash ~/project/experiment/data/utt2csv.sh /home/nxingyu/data/utt /home/nxingyu/data/switchboardutt_processed.csv
+# Switchboard to csv
+$ bash ~/project/experiment/data/disfl2csv.sh /home/nxingyu/data/LDC99T42/treebank_3/dysfl/dff/swbd /home/nxingyu/data/switchboard_processed.csv
+$ bash ~/project/experiment/data/utt2csv.sh /home/nxingyu/data/utt /home/nxingyu/data/switchboardutt_processed.csv
 
 
-#Preprocess csv
-python ~/project/processcsv.py -i ~/data/switchboardutt_processed.csv -o ~/data/switchboardutt_processed.csv -c 2000
-python ~/project/processcsv.py -i ~/data/switchboard_processed.csv -o ~/data/switchboard_processed.csv -c 2000
-python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
-python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
+# Preprocess csv
+$ python ~/project/processcsv.py -i ~/data/switchboardutt_processed.csv -o ~/data/switchboardutt_processed.csv -c 2000
+$ python ~/project/processcsv.py -i ~/data/switchboard_processed.csv -o ~/data/switchboard_processed.csv -c 2000
+$ python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
+$ python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
 
-#Split train dev test
-bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
-bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
-bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
-bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+# Split train dev test
+$ bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
+$ bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
+$ bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
+$ bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
 
-#Explode to reduce length
-python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
-python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
-python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
+# Explode to reduce length (splits every 2500+ characters at a sentence punctuation mark. the final chunk < 2500 characters will just be taken as it is.)
+$ python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
+$ python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
+$ python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
 
-find . -name '*.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
-sed -i 1i"id,transcript" *processed*
+# Rename splits and add header to all files
+$ find . -name '*.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
+$ sed -i 1i"id,transcript" *processed*
 
 <!-- kaggle datasets version -m 'message' -->
 ```
 
-## Log for 26/1/2020
+From kaggle:
+```bash
+$ kaggle datasets download -d ngxingyu/preprocessed-english-spoken-transcripts
+$ unzip preprocessed-english-spoken-transcripts.zip
+$ mv *.csv ~/data/
+```
+
+### Running Experiments
+
+#### To train:
+From the experiment directory,
+Update the config.yaml file
+Run ```python main.py```, specifying any specific GPU if needed.
+
+#### To view logs:
+Run ```tensorboard serve --logdir diroflogs```
+
+#### To evaluate experiment:
+Update the experiment folder name in experiment/testing.py
+Run ```python testing.py```
+
+
+### Extra comments
+Focal Loss
+
+
+## Observations
+
+Experiments on Switchboard corpus, performing hparams tuning on the following: (CEL, FL, DL with MLP or CRF).
+Result: 
+- Dice Loss performs the best. 
+- CRF seems hard to train on this dataset, performing poorly on rarer classes. This might be due to the small training size
+- Unfreezing of the bert layer does not affect the overall accuracy much.
+
+
+
+Methods to combat data imbalance:
+
+Focal component:
+
+
+
+
+<!-- ## Log for 26/1/2020
 
 Found a bug in regex pattern: A-z also includes punctuation characters, use A-Za-z instead.
 Worked on creating the model in python instead of ipynb.
@@ -151,17 +201,17 @@ To implement:
 
 * Random shuffling of csv dataset each batch.
 * Look at effectiveness of Dice Loss and possible hyperparameters which can improve its F score.
-* Evaluate the effectiveness of smaller models
+* Evaluate the effectiveness of smaller models -->
 
-Git issues:
+<!-- Git issues:
 
 ``` console
 git filter-branch -f --index-filter 'git rm -rf --cached --ignore-unmatch ./experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*' --tag-name-filter cat -- --all
 git rev-list --objects --all |   git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' |   sed -n 's/^blob //p' |   sort --numeric-sort --key=2 |   cut -c 1-12,41- |   $(command -v gnumfmt || echo numfmt) --field=2 --to=iec-i --suffix=B --padding=7 --round=nearest
 git gc --prune=now
-```
+``` -->
 
-## Log for 4/2/2020
+<!-- ## Log for 4/2/2020
 
 Iterable dataset isn't really suited for multiprocessing.
 The examples with subword mask beginning with 0 are filtered out for all punctuation tasks before anything rather than as a factor for the loss.
@@ -618,4 +668,4 @@ Open subtitles Start
 
 ### Log 25 Feb 2021
 
-- Just realised the classification report returns the macro f1 based on labels with positive support which isn't what we want, so have to check this properly.
+- Just realised the classification report returns the macro f1 based on labels with positive support which isn't what we want, so have to check this properly. -->
