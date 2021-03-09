@@ -5,7 +5,7 @@ from typing import Callable, Optional
 
 __all__ = ['FocalLoss']
 
-class FocalLoss(torch.nn.NLLLoss):
+class FocalLoss(torch.nn.CrossEntropyLoss):
 
     __constants__ = ['gamma', 'reduction']
     gamma: int
@@ -15,6 +15,7 @@ class FocalLoss(torch.nn.NLLLoss):
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
         super(FocalLoss, self).__init__(weight, size_average, ignore_index, reduce, reduction)
+        self.reduction = reduction
         self.gamma = gamma
 
     def forward(self, logits: Tensor, labels: Tensor, loss_mask=None) -> Tensor:
@@ -40,11 +41,9 @@ class FocalLoss(torch.nn.NLLLoss):
 
         # compute focal term: (1 - pt)^gamma
         pt = log_pt.exp()
-        focal_term = self.gamma*(1 - pt)**self.gamma
+        focal_term = torch.pow(1 - pt,self.gamma)
 
         loss = focal_term * ce
-        if self.reduction == 'mean':
-            return loss.mean()
-        elif self.reduction == 'sum':
-            return loss.sum()
-        return loss
+        return loss.mean() if self.reduction == 'mean'\
+            else loss.sum() if self.reduction == 'sum'\
+            else loss
