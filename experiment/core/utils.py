@@ -38,13 +38,27 @@ def align_labels_to_mask(mask,labels):
     return m1.tolist()
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
-        return [re.sub(r'( ?\[((PAD)|(CLS)|(SEP))\] ?)',' ',
-        re.sub('# ','',re.sub(' +##','',' '.join( #[.?!,;:\-—… ]+
-            [_[0]+_[1] for _ in list(
-                zip(tokenizer.convert_ids_to_tokens(_[0]),
-                    [labels_to_ids[id] for id in _[1].tolist()])
-            )]
-        )))) for _ in zip(texts,tags)]
+    output=[re.sub(r'( ?\[((CLS))\] ?)',' ',
+    re.sub('# +','',re.sub('#? +##','',' '.join( #[.?!,;:\-—… ]+
+        [_[0]+_[1] for _ in list(
+            zip(tokenizer.convert_ids_to_tokens(_[0]),
+                [labels_to_ids[id] for id in _[1].tolist()])
+        )]
+    )))) for _ in zip(texts,tags)]
+    newoutput=[]
+    prevappend=False
+    for value in output:
+        if value[-5:]!='[PAD]':
+            append=True
+        else:
+            append=False
+        value=re.sub(r'( ?\[((SEP)|(PAD))\] ?)',' ',value).strip()
+        if prevappend:
+            newoutput[-1]=newoutput[-1]+' '+value
+        else:
+            newoutput.append(value)
+        prevappend=append
+    return newoutput
 
 def text2masks(n, labels_to_ids,label_map):
     def text2masks(text):

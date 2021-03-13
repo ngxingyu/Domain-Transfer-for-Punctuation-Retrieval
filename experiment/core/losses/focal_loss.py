@@ -18,7 +18,7 @@ class FocalLoss(torch.nn.CrossEntropyLoss):
         self.reduction = reduction
         self.gamma = gamma
 
-    def forward(self, logits: Tensor, labels: Tensor, loss_mask=None) -> Tensor:
+    def forward(self, logits: Tensor, labels: Tensor, loss_mask=None, token_weight=None) -> Tensor:
         logits_flatten = torch.flatten(logits, start_dim=0, end_dim=-2) #try change from -2 to 1
         labels_flatten = torch.flatten(labels, start_dim=0, end_dim=-1) #try change from -1 to 1
         self.num_classes=logits_flatten.shape[-1]
@@ -44,6 +44,9 @@ class FocalLoss(torch.nn.CrossEntropyLoss):
         focal_term = torch.pow(1 - pt,self.gamma)
 
         loss = focal_term * ce
+
+        if token_weight is not None:
+            loss=loss*token_weight
         return loss.mean() if self.reduction == 'mean'\
             else loss.sum() if self.reduction == 'sum'\
             else loss

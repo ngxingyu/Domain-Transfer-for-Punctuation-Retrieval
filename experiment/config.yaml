@@ -73,7 +73,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.6
+    punct_class_weight_factor: 0.2
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -83,7 +83,7 @@ model:
             # - ${base_path}/ted2010_explode
             - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed #
+            - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -143,17 +143,18 @@ model:
         predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
         domain_num_fc_layers: 1
         fc_dropout: 0.1
-        activation: 'relu'
+        activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
         loss: 'cel'
         gamma: 
         gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
-        pooling: 'mean_max' # 'mean' # 'mean_max' # 'token'
+        pooling:  # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
+        weight_tokens: true
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
-            - 1
-            - 1
+            - 0.5
+            - 0.5
 
             # - 0.3
             # - 0.3
