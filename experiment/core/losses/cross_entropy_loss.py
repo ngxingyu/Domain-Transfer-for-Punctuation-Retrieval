@@ -1,5 +1,4 @@
 import torch
-# from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType
 
 __all__ = ['CrossEntropyLoss']
 
@@ -33,10 +32,11 @@ class CrossEntropyLoss(torch.nn.CrossEntropyLoss):
         """
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
-        super().__init__(weight=weight, reduction=reduction)
+        super().__init__(weight=weight, reduction='none')
         self._logits_dim = logits_ndim
+        self.reduction=reduction
 
-    def forward(self, logits, labels, loss_mask=None):
+    def forward(self, logits, labels, loss_mask=None, token_weight=None):
         """
         Args:
             logits (float): output of the classifier
@@ -57,4 +57,9 @@ class CrossEntropyLoss(torch.nn.CrossEntropyLoss):
             return super().forward(logits, torch.argmax(logits, dim=-1))
 
         loss = super().forward(logits_flatten, labels_flatten)
-        return loss
+
+        if token_weight is not None:
+            loss=loss*token_weight
+        return loss.mean() if self.reduction == 'mean'\
+            else loss.sum() if self.reduction == 'sum'\
+            else loss
