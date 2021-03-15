@@ -7,9 +7,14 @@ experiment/nemo_experiments
 experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
 experiment/lightning_logs/*/checkpoints/
 **/__pycache__/*
-experiment/.hydra/
-Punctuation_with_Domain_discriminator/*/checkpoints/
-checkpoints/Punctuation_with_Domain_discriminator-last.ckpt
+experiment/outputs/
+Punctuation_with_Domain_discriminator/*2021*/*
+!Punctuation_with_Domain_discriminator/*2021*/test*.txt
+!Punctuation_with_Domain_discriminator/*2021*/hparams.yaml
+!Punctuation_with_Domain_discriminator/*/20*/
+Punctuation_with_Domain_discriminator/*/20*/*
+!Punctuation_with_Domain_discriminator/*/20*/test*.txt
+!Punctuation_with_Domain_discriminator/*/20*/hparams.yaml
 */*/*.log
 */*/*.nemo
 *.pack

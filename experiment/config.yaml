@@ -4,7 +4,7 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 2 # accumulates grads every k batches
+    accumulate_grad_batches: 8 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -67,6 +67,7 @@ model:
         "-": ","
         ":": ","
         "…": "."
+
         "—": ","
         ";": "."
 
@@ -82,8 +83,8 @@ model:
             # - ${base_path}/ted2010 #
             # - ${base_path}/ted2010_explode
             - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed #
+            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -99,7 +100,7 @@ model:
         pin_memory: false
         drop_last: true
         num_labels: 9
-        num_domains: 2
+        num_domains: 1
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
         pad_start: 0
@@ -131,12 +132,12 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 3
+        punct_num_fc_layers: 1
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'dice'
+        loss: 'crf'
         bilstm: false
 
     domain_head:
@@ -148,7 +149,7 @@ model:
         use_transformer_init: true
         loss: 'cel'
         gamma: 
-        gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
+        gamma_factor: 0.8 #0.1 # coefficient of gradient reversal
         pooling:  # 'mean' # 'mean_max' # 'token'
         idx_conditioned_on: 0
         weight_tokens: true
