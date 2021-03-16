@@ -113,28 +113,30 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self._cfg.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
-            self.punctuation_loss = FocalDiceLoss(**self._cfg.model.dice_loss, weight=self._cfg.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
+            self.punctuation_loss = FocalDiceLoss(**self._cfg.model.punct_head.dice_loss, weight=self._cfg.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'crf':
             self.punctuation_loss = LinearChainCRF(self._cfg.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'focal':
-            self.punctuation_loss = FocalLoss(**self._cfg.model.focal_loss, weight=self._cfg.model.punct_class_weights)
+            self.punctuation_loss = FocalLoss(**self._cfg.model.punct_head.focal_loss, weight=self._cfg.model.punct_class_weights)
         else: 
             self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self._cfg.model.punct_class_weights)
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
-        if not self.hparams.model.domain_head.loss in ['cel','focal']:
+        if not self.hparams.model.domain_head.loss in ['cel','focal','dice']:
             if not (self.hparams.model.domain_head.pooling is None and self.hparams.model.domain_head.loss == 'dice'):
                 self.log('domain_head loss not found, fallback to cross entropy loss')
                 self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
         domain_weight=None if self.hparams.model.domain_head.weight is None else list(self.hparams.model.domain_head.weight)
-        if (len(self.hparams.model.dataset.labelled)==0)or(len(self.hparams.model.dataset.unlabelled)==0):
+        if (len(self.hparams.model.dataset.labelled)==0) or (len(self.hparams.model.dataset.unlabelled)==0):
             domain_weight=None
+        
         if self.hparams.model.domain_head.loss == 'focal':
-            self.domain_loss = FocalLoss(**self._cfg.model.focal_loss, weight=domain_weight)
+            self.domain_loss = FocalLoss(**self._cfg.model.domain_head.focal_loss, weight=domain_weight)
         elif self.hparams.model.domain_head.loss == 'dice':
-            self.domain_loss = FocalDiceLoss(**self._cfg.model.dice_loss, weight=domain_weight)
+            self.domain_loss = FocalDiceLoss(**self._cfg.model.domain_head.dice_loss, weight=domain_weight, num_labels=2 if self.hparams.model.domain_head.predict_labelled else\
+                self.hparams.model.dataset.num_domains)
         else:
             self.domain_loss = CrossEntropyLoss(logits_ndim=2, weight=domain_weight)
 
@@ -547,10 +549,18 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if lr is not None:
             optimizer_args['lr'] = lr
 
+        def is_backbone(n): return 'encoder' in n
+        params = list(self.named_parameters())
+        print(params)
+        grouped_parameters = [
+            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/100},
+            {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
+        ]
+
         # Actually instantiate the optimizer
         if optimizer_cls is not None:
             if inspect.isclass(optimizer_cls):
-                optimizer = optimizer_cls(self.parameters(), **optimizer_args)
+                optimizer = optimizer_cls(grouped_parameters, **optimizer_args)
                 logging.info("Optimizer config = %s", str(optimizer))
 
                 self._optimizer = optimizer
@@ -567,7 +577,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                     optimizer_config.update(optimizer_args)
 
                     optimizer_instance = hydra.utils.instantiate(
-                        optimizer_cls, self.parameters(), **optimizer_config
+                        optimizer_cls, grouped_parameters, **optimizer_config
                     )  # type: DictConfig
 
                     logging.info("Optimizer config = %s",
@@ -585,7 +595,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         else:
             optimizer = get_optimizer(optimizer_name)
-            optimizer = optimizer(self.parameters(), **optimizer_args)
+            optimizer = optimizer(grouped_parameters, **optimizer_args)
 
             logging.info("Optimizer config = %s", str(optimizer))
 

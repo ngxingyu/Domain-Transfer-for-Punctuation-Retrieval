@@ -7,16 +7,16 @@ __all__ = ['FocalLoss']
 
 class FocalLoss(torch.nn.CrossEntropyLoss):
 
-    __constants__ = ['gamma', 'reduction']
-    gamma: int
+    __constants__ = ['alpha', 'reduction']
+    alpha: int
 
-    def __init__(self, weight = None, gamma=2, size_average=None, 
+    def __init__(self, weight = None, alpha=2, size_average=None, 
                 ignore_index: int = -100, reduce=None, reduction: str = 'mean') -> None:         
         if weight is not None and not torch.is_tensor(weight):
             weight = torch.FloatTensor(weight)
         super(FocalLoss, self).__init__(weight, size_average, ignore_index, reduce, reduction)
         self.reduction = reduction
-        self.gamma = gamma
+        self.alpha = alpha
 
     def forward(self, logits: Tensor, labels: Tensor, loss_mask=None, token_weight=None) -> Tensor:
         logits_flatten = torch.flatten(logits, start_dim=0, end_dim=-2) #try change from -2 to 1
@@ -39,9 +39,9 @@ class FocalLoss(torch.nn.CrossEntropyLoss):
         all_rows = torch.arange(len(logits_flatten))
         log_pt = logits_flatten_soft[all_rows, labels_flatten]
 
-        # compute focal term: (1 - pt)^gamma
+        # compute focal term: (1 - pt)^alpha
         pt = log_pt.exp()
-        focal_term = torch.pow(1 - pt,self.gamma)
+        focal_term = torch.pow(1 - pt,self.alpha)
 
         loss = focal_term * ce
 
