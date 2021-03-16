@@ -67,7 +67,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.data_id=data_id
         assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
         self.setup_datamodule()
-
+        pp('setup complete')
         if self._cfg.model.punct_class_weights==None:
             if (self.hparams.model.punct_class_weight_factor>0 and self.hparams.model.punct_head.loss!='crf'):
                 self._cfg.model.punct_class_weights=OmegaConf.create([
@@ -170,6 +170,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma_factor
         self.freeze()
+        pp('init complete')
 
     def forward(self, input_ids, attention_mask, subtoken_mask=None, domain_ids=None):
         hidden_states = self.transformer(
@@ -558,7 +559,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         params = list(self.named_parameters())
         print(params)
         grouped_parameters = [
-            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/100},
+            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/50},
             {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
         ]
 
@@ -657,22 +658,25 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             pad_start=data_config.pad_start
         )
         self.dm.setup()
-        self._train_dl=self.dm.train_dataloader()
+        self._train_dl=self.dm.train_dataloader
         self.train_size = len(self.dm.train_dataset)
-        self._validation_dl=self.dm.val_dataloader()
-        self._test_dl=self.dm.test_dataloader()
+        self._validation_dl=self.dm.val_dataloader
+        self._test_dl=self.dm.test_dataloader
+        
     
     def train_dataloader(self):
+        pp('call traindl')
         if self._train_dl is not None:
-            return self._train_dl
+            return self._train_dl()
 
     def val_dataloader(self):
+        pp('call valdl')
         if self._validation_dl is not None:
-            return self._validation_dl
+            return self._validation_dl()
 
     def test_dataloader(self):
         if self._test_dl is not None:
-            return self._test_dl
+            return self._test_dl()
 
     @staticmethod
     def __make_nemo_file_from_folder(filename, source_dir):

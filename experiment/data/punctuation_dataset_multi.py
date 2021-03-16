@@ -83,13 +83,10 @@ class PunctuationDomainDataset(IterableDataset):
                 dtype=str,
                 chunksize=self.num_samples,
                 ))
-        self.id=0
         return self
         
 
     def __next__(self):
-        self.id+=1
-        pp(self.id)
         batch = next(self.dataset)[1]
 
         # l=batch.str.split().map(len).values
@@ -136,12 +133,11 @@ class PunctuationDomainDataset(IterableDataset):
                 dtype=str,
                 chunksize=self.num_samples,
                 ))
-        self.id=0
     
     def determine_class_weights(self):
         it=iter(self)
         ct=torch.zeros(len(self.punct_label_ids))
-        for _ in range(20):
+        for _ in range(min(20,self.len)):
             print('.',end='')
             ni=next(it)
             ct+=torch.bincount(ni['labels'].view(-1),minlength=len(self.punct_label_ids))
@@ -187,7 +183,7 @@ class PunctuationDomainDatasets(IterableDataset):
         pp(self.ds_lengths)
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
-        self.len=int(self.per_worker/num_samples) 
+        self.len=int(self.per_worker/num_samples)
         self.class_weights=None
 
 
@@ -232,15 +228,13 @@ class PunctuationDomainDatasets(IterableDataset):
     #     ds=[d[i] for d in self.datasets]
 
     def __iter__(self):
-        pp('iteriteriter')
         worker_info = get_worker_info()
         worker_id = 0 if worker_info is None else worker_info.id
         self.iterables=[]
         for ds_length, dataset in zip(self.ds_lengths,self.datasets):
             start = (worker_id*self.per_worker)%ds_length
-            pp(ds_length,start)
             self.iterables.append(cycle(chain(islice(iter(dataset),start,None),islice(iter(dataset),start))))
-        return islice(self,self.len)
+        return self
 
     def __next__(self):
         ds=[next(d) for d in self.iterables]
@@ -264,6 +258,7 @@ class PunctuationDomainDatasets(IterableDataset):
     def shuffle(self, randomize=True, seed=42):
         worker_info = get_worker_info()
         worker_id = 0 if worker_info is None else worker_info.id
+        pp('shuffleworkerid',worker_id)
         if worker_id==0:
             for _ in self.datasets:
                 print(f"shuffling {_}")

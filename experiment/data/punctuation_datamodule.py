@@ -68,9 +68,9 @@ class PunctuationDataModule(LightningDataModule):
     
     def reset(self):
         # self.setup('fit')
-        self.train_dataset=self.train_dataset
-        self.val_dataset=self.val_dataset
-        self.test_dataset=self.test_dataset
+        self.train_dataset=iter(self.train_dataset)
+        self.val_dataset=iter(self.val_dataset)
+        self.test_dataset=iter(self.test_dataset)
 
     def setup(self, stage=None):
         if stage=='fit' or stage is None:
@@ -145,13 +145,13 @@ class PunctuationDataModule(LightningDataModule):
         pp('finished setup')
         
     def train_dataloader(self):
-        pp(self.num_workers)
+        pp('train',self.num_workers)
         return DataLoader(self.train_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def val_dataloader(self):
-        pp(self.num_workers)
+        pp('val',self.num_workers)
         return DataLoader(self.val_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def test_dataloader(self):
-        pp(self.num_workers)
+        pp('test',self.num_workers)
         return DataLoader(self.test_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
