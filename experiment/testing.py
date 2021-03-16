@@ -23,7 +23,7 @@ from copy import deepcopy
 import snoop
 snoop.install()
 # /2021-03-15_15-27-36/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.05-epoch=5.ckpt
-exp='2021-03-15_15-27-36/'
+exp='2021-03-16_14-26-10'
 # exp='ted+open/2021-03-09_14-38-42'
 # exp='2021-03-11_09-51-38'
 # exp='ted/2021-03-10_15-25-29'
@@ -42,7 +42,7 @@ def main(cfg : DictConfig) -> None:
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
-    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.05-epoch=5.ckpt")
+    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
     # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.28-epoch=10.ckpt")
     
     model.dm.test_dataset=PunctuationDomainDatasets(split='test',
