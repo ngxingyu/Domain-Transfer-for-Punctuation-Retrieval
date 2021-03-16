@@ -228,7 +228,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         else:
             domain_loss = self.domain_loss(
             logits=domain_logits, labels=domain_labels.repeat(1,punct_labels.shape[-1]) if self.hparams.model.domain_head.pooling is None else domain_labels)
-        loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
+        if torch.isnan(domain_loss).any():
+            pp(domain_loss)
+            logging.error('domain_loss nan')
+            loss=punctuation_loss
+        else:
+            loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
         return loss, punct_logits, domain_logits
 
     def training_step(self, batch, batch_idx):
@@ -652,22 +657,22 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             pad_start=data_config.pad_start
         )
         self.dm.setup()
-        self._train_dl=self.dm.train_dataloader
+        self._train_dl=self.dm.train_dataloader()
         self.train_size = len(self.dm.train_dataset)
-        self._validation_dl=self.dm.val_dataloader
-        self._test_dl=self.dm.test_dataloader
+        self._validation_dl=self.dm.val_dataloader()
+        self._test_dl=self.dm.test_dataloader()
     
     def train_dataloader(self):
         if self._train_dl is not None:
-            return self._train_dl()
+            return self._train_dl
 
     def val_dataloader(self):
         if self._validation_dl is not None:
-            return self._validation_dl()
+            return self._validation_dl
 
     def test_dataloader(self):
         if self._test_dl is not None:
-            return self._test_dl()
+            return self._test_dl
 
     @staticmethod
     def __make_nemo_file_from_folder(filename, source_dir):

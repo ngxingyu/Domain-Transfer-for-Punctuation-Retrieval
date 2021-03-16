@@ -32,7 +32,7 @@ class SelfAttention(nn.Module):
                             .repeat(batch_size, 1, 1)
                             # (batch_size, hidden_size, 1)
                             )
-        attentions = F.softmax(F.tanh(weights.squeeze()))
+        attentions = F.softmax(torch.tanh(weights.squeeze()),dim=-1)
         # create mask based on the sentence lengths
         # mask = torch.ones_like(attentions)
         # for i, l in enumerate(lengths):  # skip the first sentence

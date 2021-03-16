@@ -4,8 +4,8 @@ trainer:
     num_nodes: 1
     max_epochs: 8
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 8 # accumulates grads every k batches
-    gradient_clip_val: 0
+    accumulate_grad_batches: 2 # accumulates grads every k batches
+    gradient_clip_val: 20
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
@@ -44,7 +44,7 @@ model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 0
-    maximum_unfrozen: 1
+    maximum_unfrozen: 2
     unfreeze_step: 1
     test_every_layer: false
     punct_label_ids:
@@ -74,7 +74,7 @@ model:
         
     no_space_label: '#'
     test_chunk_percent: 0.5
-    punct_class_weight_factor: 0.2
+    punct_class_weight_factor: 0.4
     punct_class_weights:  #0 if don't weight
     
     dataset:
@@ -82,9 +82,9 @@ model:
         labelled:
             # - ${base_path}/ted2010 #
             # - ${base_path}/ted2010_explode
-            - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed #
+            # - ${base_path}/ted_talks_processed #
+            # - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/switchboardutt_processed #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -96,7 +96,7 @@ model:
         ignore_start_end: false
         use_cache: false
         # shared among dataloaders
-        num_workers:  8
+        num_workers:  4
         pin_memory: false
         drop_last: true
         num_labels: 9
@@ -107,8 +107,8 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
-            manual_len: 8000 #default 0 84074
+            batch_size: 8
+            manual_len: 000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -116,7 +116,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 8 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -132,13 +132,21 @@ model:
         # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 1
+        punct_num_fc_layers: 3
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'crf'
+        loss: 'dice'
         bilstm: false
+
+        dice_loss:
+            epsilon: 0.01
+            alpha: 1
+            macro_average: true
+
+        focal_loss: 
+            alpha: 4
 
     domain_head:
         predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
@@ -147,33 +155,31 @@ model:
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'dice'
         gamma: 
-        gamma_factor: 0.8 #0.1 # coefficient of gradient reversal
-        pooling:  # 'mean' # 'mean_max' # 'token'
+        gamma_factor: 0 #0.1 # coefficient of gradient reversal
+        pooling: 'attention' # 'mean' # 'mean_max' # 'token' # 'attention'
         idx_conditioned_on: 0
         weight_tokens: true
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
-            - 0.5
-            - 0.5
-
+            - 1
+            - 1
             # - 0.3
             # - 0.3
             # - 0.4
 
+        dice_loss:
+            epsilon: 0.01
+            alpha: 4
+            macro_average: true
 
-    dice_loss:
-        epsilon: 0.01
-        alpha: 1
-        macro_average: true
-
-    focal_loss: 
-        gamma: 4
+        focal_loss: 
+            alpha: 4
 
     frozen_lr:
         - 1e-2
+        - 5e-3
         - 1e-3
-        - 1e-4
         - 1e-5
         - 1e-5
         - 1e-7
