@@ -22,7 +22,8 @@ import atexit
 from copy import deepcopy
 import snoop
 snoop.install()
-exp='ted+open/2021-03-10_10-07-39'
+# /2021-03-15_15-27-36/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.05-epoch=5.ckpt
+exp='2021-03-15_15-27-36/'
 # exp='ted+open/2021-03-09_14-38-42'
 # exp='2021-03-11_09-51-38'
 # exp='ted/2021-03-10_15-25-29'
@@ -41,7 +42,7 @@ def main(cfg : DictConfig) -> None:
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
-    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=1.05-epoch=5.ckpt")
     # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.28-epoch=10.ckpt")
     
     model.dm.test_dataset=PunctuationDomainDatasets(split='test',
@@ -50,8 +51,8 @@ def main(cfg : DictConfig) -> None:
                     max_seq_length=model.dm.max_seq_length,
                     punct_label_ids=model.dm.punct_label_ids,
                     label_map=model.dm.label_map,
-                    labelled=['/home/nxingyu2/data/ted2010'],
-                    # labelled=['/home/nxingyu2/data/switchboardutt_processed'],
+                    # labelled=['/home/nxingyu2/data/ted2010'],
+                    labelled=['/home/nxingyu2/data/switchboardutt_processed'],
                     # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
                     # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
                     unlabelled=[],
@@ -66,7 +67,7 @@ def main(cfg : DictConfig) -> None:
     model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     trainer = pl.Trainer(**cfg.trainer)
     ####### trainer = pl.Trainer(gpus=gpu)
-    # trainer.test(model,ckpt_path=None)
+    trainer.test(model,ckpt_path=None)
     queries = [
     'we bought four shirts one pen and a mug from the nvidia gear store in santa clara',
     'what can i do for you today',
@@ -85,11 +86,11 @@ def main(cfg : DictConfig) -> None:
     # "Yeah. don't know if you ever happened to see some of the like, Twenty Twenty and what not about Rumania and East Germany when they first got pictures out of there … Uh-huh. … about how some of their systems had been running for twenty and thirty years … Uh-huh. … and, uh, you know, they had absolutely no regulations, no controls whatsoever, and they had destroyed entire forests and what not, just because the air was so polluted. That's, that's the kind of things that, uh, you don't see in this country, and that's, that's why think that, you know, it's, don't know if you can ever do enough, but, uh, think it's all relative to the, to the time and place, and think right now it's, it's pretty much under control. Yeah, okay, well. All righty. Uh-huh. It's been nice talking to you. Well, you bet. Okay, bye-bye. Bye.",
     "firstly development policy in africa in any case in the acp countries employment policy in madeira the canaries guadeloupe martinique and crete regional policy in the ultra-peripheral areas human rights which mr barthet-mayer mentioned earlier since dollar bananas are after all slavery bananas the product of human exploitation by three multinationals payments of ecu 50 per month instead of ecu 50 per day in guadeloupe or martinique it also brings into question budgetary policy because the european union is after all making a present of ecu 1.9 billion to three multinationals where are the financial interests of the european union",
 ]
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inference_results = model.to(device).add_punctuation(queries)
-    for query, result in zip(queries, inference_results):
-        print(f'Query : {query}')
-        print(f'Result: {result.strip()}\n\n')
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # inference_results = model.to(device).add_punctuation(queries)
+    # for query, result in zip(queries, inference_results):
+    #     print(f'Query : {query}')
+    #     print(f'Result: {result.strip()}\n\n')
 
 if __name__ == "__main__":
     main()
