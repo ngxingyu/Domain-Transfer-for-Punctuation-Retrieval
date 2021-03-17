@@ -30,6 +30,7 @@ class PunctuationDataModule(LightningDataModule):
             manual_len:int = 0,
             no_space_label: str = None,
             pad_start:int = 0,
+            low_resource_labelled_count: int = 0,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -65,6 +66,7 @@ class PunctuationDataModule(LightningDataModule):
             self.no_space_label=self.punct_label_ids[no_space_label]
         except:
             self.no_space_label=None
+        self.low_resource_labelled_count = low_resource_labelled_count
     
     def reset(self):
         # self.setup('fit')
@@ -89,6 +91,7 @@ class PunctuationDataModule(LightningDataModule):
                     manual_len=self.manual_len,
                     no_space_label=self.no_space_label,
                     pad_start=self.pad_start,
+                    low_resource_labelled_count=0,
                     )
             self.val_dataset = PunctuationDomainDatasets(split='dev',
                     num_samples=self.val_batch_size,

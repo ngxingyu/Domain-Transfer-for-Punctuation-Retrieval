@@ -14,7 +14,6 @@ from models import PunctuationDomainModel
 # from nemo.utils import logging
 from nemo.utils.exp_manager import exp_manager
 from time import time
-from pytorch_lightning.callbacks import ModelCheckpoint
 
 import atexit
 from copy import deepcopy
