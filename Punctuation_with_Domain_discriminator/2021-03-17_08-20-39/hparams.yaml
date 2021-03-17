@@ -28,7 +28,6 @@ model:
   unfrozen: 0
   maximum_unfrozen: 2
   unfreeze_step: 1
-  test_every_layer: false
   punct_label_ids:
   - ''
   - ','
@@ -45,6 +44,7 @@ model:
   test_chunk_percent: null
   punct_class_weight_factor: 0.2
   punct_class_weights: null
+  cat_domain_and_states: false
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:

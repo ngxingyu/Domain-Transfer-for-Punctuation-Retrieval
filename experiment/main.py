@@ -38,24 +38,6 @@ def main(cfg: DictConfig)->None:
     trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
     log_dir=exp_manager(trainer, cfg.exp_manager).__str__()
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id,log_dir=log_dir)
-    
-    # lr_finder_dm=PunctuationDataModule(
-    #         tokenizer= cfg.model.transformer_path,
-    #         labelled= list(cfg.model.dataset.labelled),
-    #         unlabelled= list(cfg.model.dataset.unlabelled),
-    #         punct_label_ids= {_[1]:_[0] for _ in enumerate(cfg.model.punct_label_ids)},
-    #         train_batch_size= cfg.model.dataset.train_ds.batch_size,
-    #         max_seq_length= cfg.model.dataset.max_seq_length,
-    #         val_batch_size= cfg.model.dataset.validation_ds.batch_size,
-    #         num_workers= 1,
-    #         pin_memory= False,
-    #         train_shuffle= True,
-    #         val_shuffle= False,
-    #         seed=cfg.seed,
-    #         data_id=data_id+'lr',
-    #         tmp_path=cfg.tmp_path,
-    #         test_unlabelled=False,
-    #     )
 
     lrs=[1e-2,1e-5] if cfg.model.frozen_lr is None else list(cfg.model.frozen_lr)
     # gamma=[1e-1,1e-2] if cfg.model.gamma is None else list(cfg.model.gamma)

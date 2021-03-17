@@ -28,7 +28,6 @@ model:
   unfrozen: 1
   maximum_unfrozen: 2
   unfreeze_step: 1
-  test_every_layer: false
   punct_label_ids:
   - ''
   - ','
