@@ -118,7 +118,6 @@ class PunctuationDomainDataset(IterableDataset):
         
 
     def __len__(self):
-        pp('dataset')
         return pp(self.len)
     
     def shuffle(self, randomize=True, seed=42):
@@ -295,13 +294,11 @@ class PunctuationDomainDatasets(IterableDataset):
             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
-        pp('datasets',self.len)
         return self.len
 
     def shuffle(self, randomize=True, seed=42):
         worker_info = get_worker_info()
         worker_id = 0 if worker_info is None else worker_info.id
-        pp('shuffleworkerid',worker_id)
         if worker_id==0:
             for _ in self.datasets:
                 print(f"shuffling {_}")
