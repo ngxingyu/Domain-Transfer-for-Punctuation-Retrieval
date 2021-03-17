@@ -107,6 +107,7 @@ model:
         drop_last: true
         num_labels: 5
         num_domains: 2
+        val_unlabelled: true
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
         pad_start: 0
