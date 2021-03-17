@@ -86,7 +86,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self._cfg.model.punct_class_weights=None
 
         self.punct_classifier = TokenClassifier(
-            hidden_size=self.transformer.config.hidden_size,
+            hidden_size=self.transformer.config.hidden_size if \
+                (self.hparams.model.cat_domain_and_states!=True or self.hparams.model.domain_head.pooling is None)\
+                else self.transformer.config.hidden_size*3 if self.hparams.model.domain_head.pooling=='mean_max' else\
+                    self.transformer.config.hidden_size*2,
             num_classes=len(self.labels_to_ids),
             activation=self.hparams.model.punct_head.activation,
             log_softmax=self.hparams.model.punct_head.log_softmax,
@@ -187,17 +190,28 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         )[0]
         if self.hparams.model.punct_head.bilstm:
             hidden_states,_=self.bilstm(hidden_states)
-        punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
         assert not torch.isnan(attention_mask).any(), ('amask',attention_mask)
         if torch.isnan(hidden_states).any():
             logging.error(hidden_states,attention_mask.sum(1),'hiddenstate')
-        domain_logits = self.domain_classifier(
-            hidden_states=reverse_grad_hidden_states,
-            ) if self.hparams.model.domain_head.pooling is None else self.domain_classifier(
-            hidden_states=reverse_grad_hidden_states,
-            attention_mask=attention_mask)
+        
+        if self.hparams.model.domain_head.pooling is None:
+            domain_logits = self.domain_classifier(
+                hidden_states=reverse_grad_hidden_states,
+                )
+            punct_logits = self.punct_classifier(hidden_states=hidden_states)
+        else: 
+            domain_logits,pooled = self.domain_classifier(
+                hidden_states=reverse_grad_hidden_states,
+                attention_mask=attention_mask)
+            punct_hidden_states=torch.cat((hidden_states,pooled.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)\
+                if self.hparams.model.cat_domain_and_states else hidden_states
+            punct_logits = self.punct_classifier(hidden_states=punct_hidden_states)
+
+
+        
+        
         # if self.hparams.model.domain_head.predict_labelled:
         #     domain_logits=domain_logits.flatten()
         # print(attention_mask.sum(axis=1),domain_logits)
@@ -210,7 +224,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punct_labels = batch['labels']
         # domain_labels = batch['domain']
         domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
-        
         punct_logits, domain_logits = self(
             input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )

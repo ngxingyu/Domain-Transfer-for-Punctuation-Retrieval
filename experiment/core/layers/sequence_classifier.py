@@ -70,4 +70,4 @@ class SequenceClassifier(nn.Module):
                 pooled_max if self.pooling=='max' else \
                     torch.cat([pooled_mean,pooled_max],axis=-1)
         logits = self.mlp(pooled)
-        return logits
+        return logits,pooled
