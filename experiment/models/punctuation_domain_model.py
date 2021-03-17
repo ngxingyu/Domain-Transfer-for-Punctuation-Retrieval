@@ -84,12 +84,14 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                         self.dm.train_dataset.determine_class_weights().tolist()])
             else:
                 self._cfg.model.punct_class_weights=None
-
+        extra_hidden_size=2 if self.hparams.model.domain_head.predict_labelled else self.hparams.model.dataset.num_domains\
+             if (self.hparams.model.cat_domain_logits and not self.hparams.model.domain_head.pooling=='mean_max') else self.transformer.config.hidden_size
+            
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size if \
                 (self.hparams.model.cat_domain_and_states!=True or self.hparams.model.domain_head.pooling is None)\
-                else self.transformer.config.hidden_size*3 if self.hparams.model.domain_head.pooling=='mean_max' else\
-                    self.transformer.config.hidden_size*2,
+                else self.transformer.config.hidden_size+extra_hidden_size*2 if self.hparams.model.domain_head.pooling=='mean_max' else\
+                    self.transformer.config.hidden_size+extra_hidden_size,
             num_classes=len(self.labels_to_ids),
             activation=self.hparams.model.punct_head.activation,
             log_softmax=self.hparams.model.punct_head.log_softmax,
@@ -205,7 +207,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             domain_logits,pooled = self.domain_classifier(
                 hidden_states=reverse_grad_hidden_states,
                 attention_mask=attention_mask)
-            punct_hidden_states=torch.cat((hidden_states,pooled.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)\
+            
+            punct_hidden_states=(
+                torch.cat((hidden_states,domain_logits.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)
+                if self.hparams.model.cat_domain_logits\
+                else torch.cat((hidden_states,pooled.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)                
+                )\
                 if self.hparams.model.cat_domain_and_states else hidden_states
             punct_logits = self.punct_classifier(hidden_states=punct_hidden_states)
 
@@ -589,7 +596,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         def is_backbone(n): return 'encoder' in n
         params = list(self.named_parameters())
         grouped_parameters = [
-            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/50},
+            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/10},
             {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
         ]
 
