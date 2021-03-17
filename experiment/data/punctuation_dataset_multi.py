@@ -10,6 +10,7 @@ import torch
 import subprocess
 from time import time
 from itertools import cycle, chain, islice, repeat
+from collections import Counter
 
 class PunctuationDomainDataset(IterableDataset):
 
@@ -113,7 +114,6 @@ class PunctuationDomainDataset(IterableDataset):
             self.total_samples=min(manual_len,self.total_samples)
         self.num_samples=min(self.num_samples,self.total_samples)
         self.len = max(1,int(self.total_samples / self.num_samples))
-        pp(self.num_samples,self.len,self.total_samples)
 
         
 
@@ -125,7 +125,6 @@ class PunctuationDomainDataset(IterableDataset):
         int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
         os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path))
         int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
-        self.len,self.num_samples
         self.dataset=iter(pd.read_csv(
                 self.target_file,
                 skiprows=(0 % self.len)*self.num_samples,
@@ -226,7 +225,7 @@ class PunctuationDomainDatasets(IterableDataset):
             if split=='train' and low_resource_labelled_count>0:
                 dataset=PunctuationDomainDataset(
                         csv_file=f'{path}.unlabelled.{split}.csv', tokenizer=tokenizer,
-                        num_samples=max(min(self.ds_lengths[len(labelled)+2*i+1]/2,num_samples),1),max_seq_length=max_seq_length,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
                         punct_label_ids=punct_label_ids,
                         label_map=label_map,domain=len(labelled)+i,labelled=False,
                         randomize=randomize,
@@ -240,7 +239,7 @@ class PunctuationDomainDatasets(IterableDataset):
                 self.iterables.append(cycle(dataset))
                 dataset=PunctuationDomainDataset(
                         csv_file=f'{path}.labelled.{split}.csv', tokenizer=tokenizer,
-                        num_samples=max(min(self.ds_lengths[len(labelled)+2*i]/2,num_samples),1),max_seq_length=max_seq_length,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
                         punct_label_ids=punct_label_ids,
                         label_map=label_map,domain=len(labelled)+i,labelled=True,
                         randomize=randomize,
@@ -289,7 +288,7 @@ class PunctuationDomainDatasets(IterableDataset):
                 if size<min_batch:
                     min_batch=size
             #Ensure all domains are evenly represented
-            b={k:torch.cat([d[k][:min_batch] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+            b={k:torch.cat([torch.repeat_interleave(d[k],max(1,min_batch/d[k].shape[0]),dim=0)[:min_batch] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
             rand=torch.randperm(b['labels'].shape[0])
             return {k:v[rand] for k,v in b.items()}
         else:
