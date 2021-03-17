@@ -1,13 +1,15 @@
 
 
-seed: 42
+seed: 42 # pytorch lightning seed_everything
 trainer:
+
+    # For GPU
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 8
+    max_epochs: 8 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 2 # accumulates grads every k batches
-    gradient_clip_val: 10
+    gradient_clip_val: 10 
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
     accelerator: ddp
@@ -17,6 +19,7 @@ trainer:
     val_check_interval: 1.0 #0.2  # Set to 0.25 to check 4 times per epoch, 1.0 for normal, or an int for number of iterations
     resume_from_checkpoint: null
 
+    ## For CPU
     # gpus: 0 # the number of gpus, 0 for CPU
     # num_nodes: 1
     # max_epochs: 1
@@ -38,17 +41,16 @@ exp_manager:
     name: Punctuation_with_Domain_discriminator  # The name of your model
     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
     create_checkpoint_callback: true 
-base_path: /home/${env:USER}/data # /root/data # 
-tmp_path: /home/${env:USER}/data/tmp # /tmp # 
+base_path: /home/${env:USER}/data # /root/data # location of data source files
+tmp_path: /home/${env:USER}/data/tmp # /tmp # location of tmp directory to store the tmp training files (in case /tmp out of space)
 log_dir: null
 
 model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 0
-    maximum_unfrozen: 2
-    unfreeze_step: 1
-    test_every_layer: false
+    unfrozen: 0                 # Initial number of layers unfrozen
+    maximum_unfrozen: 1         # Maximum number of layers unfrozen.
+    unfreeze_step: 1            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
         - ","
@@ -63,7 +65,7 @@ model:
         # - "—"
         # - ";"
 
-    label_map:
+    label_map: # Dict containing ( original punctuation: replacement punctuation. )
 
         "!": "."
         "-": ","
@@ -74,17 +76,18 @@ model:
         ";": "."
 
         
-    no_space_label: '#'
-    test_chunk_percent: 
-    punct_class_weight_factor: 0.2
-    punct_class_weights:  #0 if don't weight
+    no_space_label: '#' # default to #, will be appended to punct_label_ids
+    test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
+    punct_class_weight_factor: 0.3 # 0 if don't weight
+    punct_class_weights:  # Leave blank.
+    cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            # - ${base_path}/ted2010_explode
-            - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted2010_explode
+            # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processedlow #
         unlabelled:
@@ -103,15 +106,15 @@ model:
         pin_memory: false
         drop_last: true
         num_labels: 5
-        num_domains: 1
+        num_domains: 2
         test_unlabelled: true
         attach_label_to_end: #None # false if attach to start none if dont mask
         pad_start: 0
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
-            manual_len: 0 #default 0 84074
+            batch_size: 16
+            manual_len: 8000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -119,7 +122,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: true
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -149,24 +152,25 @@ model:
             macro_average: true
 
         focal_loss: 
-            alpha: 6
+            alpha: 3
 
     domain_head:
         predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
-        domain_num_fc_layers: 1
+        domain_num_fc_layers: 1 # Number of fully_connected layers. minimum 1. (no. fcl = max(1,domain_num_fc_layers))
         fc_dropout: 0.1
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
         loss: 'dice'
-        gamma: 
+        gamma: # Leave blank. auto fill per step
         gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
-        pooling: 'attention' # 'mean' # 'mean_max' # 'token' # 'attention'
-        idx_conditioned_on: 0
-        weight_tokens: true
+        pooling: 'attention' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
+        idx_conditioned_on: 0 # 0 = use first (CLS) token, only considered when pooling = token
+        weight_tokens: true # Assign weight to each domain label
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
             - 1
             - 1
+            # - 1
             # - 0.3
             # - 0.3
             # - 0.4
@@ -177,7 +181,7 @@ model:
             macro_average: true
 
         focal_loss: 
-            alpha: 6
+            alpha: 2
 
     frozen_lr:
         - 5e-3
