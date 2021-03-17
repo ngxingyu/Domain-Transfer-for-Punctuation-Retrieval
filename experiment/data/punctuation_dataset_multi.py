@@ -122,10 +122,10 @@ class PunctuationDomainDataset(IterableDataset):
         return pp(self.len)
     
     def shuffle(self, randomize=True, seed=42):
-        pp(int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
-        pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
-        pp(int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
-        pp(self.len,self.num_samples)
+        int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path))
+        int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        self.len,self.num_samples
         self.dataset=iter(pd.read_csv(
                 self.target_file,
                 skiprows=(0 % self.len)*self.num_samples,
@@ -164,6 +164,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  manual_len:int=0,
                  no_space_label:int=None,
                  pad_start:int=0,
+                 low_resource_labelled_count:int = 0,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -175,11 +176,24 @@ class PunctuationDomainDatasets(IterableDataset):
         self.label_map=label_map
         self.ds_lengths=[]
         self.labelled=labelled
-        for path in labelled+unlabelled:
+        for path in labelled:
             if manual_len>0:
                 self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
             else:
                 self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+        for path in unlabelled:
+            if split=='train' and low_resource_labelled_count>0:
+                if manual_len>0:
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.labelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.unlabelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                else:
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.labelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.unlabelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+            else:
+                if manual_len>0:
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                else:
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
         pp(self.ds_lengths)
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
@@ -209,20 +223,50 @@ class PunctuationDomainDatasets(IterableDataset):
         for i,path in enumerate(unlabelled):
             pp(min(num_samples,self.ds_lengths[i]))
             target=os.path.join(tmp_path,os.path.split(path)[1])
-            dataset=PunctuationDomainDataset(
-                    csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
-                    num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,
-                    label_map=label_map,domain=len(labelled)+i,labelled=False,
-                    randomize=randomize,
-                    target_file=f'{target}.{split}.{data_id}.csv',
-                    tmp_path=tmp_path,
-                    attach_label_to_end=attach_label_to_end,
-                    no_space_label=no_space_label,
-                    manual_len=manual_len,
-                    pad_start=pad_start,)
-            self.datasets.append(dataset)
-            self.iterables.append(cycle(dataset))
+            if split=='train' and low_resource_labelled_count>0:
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.unlabelled.{split}.csv', tokenizer=tokenizer,
+                        num_samples=max(min(self.ds_lengths[len(labelled)+2*i+1]/2,num_samples),1),max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=False,
+                        randomize=randomize,
+                        target_file=f'{target}.unlabelled.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.labelled.{split}.csv', tokenizer=tokenizer,
+                        num_samples=max(min(self.ds_lengths[len(labelled)+2*i]/2,num_samples),1),max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=True,
+                        randomize=randomize,
+                        target_file=f'{target}.labelled.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
+            else:
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=False,
+                        randomize=randomize,
+                        target_file=f'{target}.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
         
     # def __getitem__(self, i):
     #     ds=[d[i] for d in self.datasets]
