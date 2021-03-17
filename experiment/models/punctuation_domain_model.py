@@ -681,6 +681,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             seed=self._cfg.seed,
             data_id=self.data_id,
             tmp_path=self.hparams.tmp_path,
+            val_unlabelled=data_config.val_unlabelled,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
             manual_len=data_config.train_ds.manual_len,
