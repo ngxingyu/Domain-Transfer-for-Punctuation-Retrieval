@@ -54,7 +54,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
             append=False
         value=re.sub(r'( ?\[((SEP)|(PAD))\] ?)',' ',value).strip()
         if prevappend:
-            newoutput[-1]=newoutput[-1]+' '+value
+            newoutput[-1]=newoutput[-1]+'// '+value
         else:
             newoutput.append(value)
         prevappend=append
