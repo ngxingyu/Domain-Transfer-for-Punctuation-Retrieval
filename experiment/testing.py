@@ -1,5 +1,5 @@
- 
-#%%
+# Copyright (c) 2021 <Ng Xing Yu> 
+
 import hydra
 import numpy as np
 import pytorch_lightning as pl
@@ -11,8 +11,6 @@ from data import PunctuationDataModule, PunctuationInferenceDataset, Punctuation
 import os
 from models import PunctuationDomainModel
 
-# from nemo.core.config import hydra_runner
-# from nemo.utils import logging
 from nemo.utils.exp_manager import exp_manager
 from time import time
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -25,7 +23,7 @@ snoop.install()
 # exp='2021-03-17_15-42-41'
 # exp='2021-03-17_15-44-24'
 # exp='2021-03-17_15-54-07'
-exp='2021-03-17_15-56-07'
+exp='2021-03-18_09-18-35'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 def main(cfg : DictConfig) -> None:

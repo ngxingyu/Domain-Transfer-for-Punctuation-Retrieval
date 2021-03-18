@@ -121,6 +121,23 @@ adv dice4 1fc w0.3 dm1 a4   cth 2021-03-17_22-35-21     90.55   89.70   62.23   
 adv dice4 2fc do.1 w0.3 dm1 ctd 2021-03-17_22-59-18     81.07   30.14   16.66   12.79   11.25   30.38   overfit
 
 attention 1fc
-adv d4 w.2 dd4 dm1 ddo.5 dw.4   2021-03-18_07-35-02     
-adv d4 w.2 dd4 dm1 ddo.5dw.4 ph 2021-03-18_07-35-02     
+adv d4 w.2 dd4 dm1 ddo.5dw.4 ph 2021-03-18_07-41-00     90.77   89.87   63.61   55.91   34.13   66.86   
+adv d4 w.2 dd4 dm1 ddo.5dw.4 pd 2021-03-18_07-37-05     92.45   93.82   68.72   58.85   31.29   69.03   no early stopping
+
+bs32 4 worker
+adv d4 w.2 dd4dm.1 ddo.5dw.4 pd 2021-03-18_10-17-26     88.12   62.88   58.14   38.37   16.89   52.88   
+adv d4 w.2 dd4 dm1 ddo.5dw.4 p- 2021-03-18_07-54-41     88.12   63.46   57.20   39.59   17.07   53.09   
+adv d2 w.2 dd4dm.1 ddo.4dw.4 pd 2021-03-18_09-07-34     88.20   63.38   57.33   38.94   19.54   53.48   
+adv d2 w.2 dd4 dm1 ddo.5dw.4 pd 2021-03-18_09-42-43     88.19   63.45   57.29   38.69   20.25   53.57   
+
+adv d4 w.2 dd4 dm1 ddo.5dw.4 pd 2021-03-18_10-51-54     88.12   62.88   58.14   38.37   16.89   52.88   
+
+bs16 2 worker
+adv d4 w.2 dd4 dm1 ddo.5dw.4 pd 2021-03-18_10-51-54 disk space limit
+
+adv3d4 w.2 dd4dm.5 ddo.5dw.3 pd 2021-03-18_09-18-35     92.60   93.81   69.20   57.57   32.22   69.08   premature stopping
+
+adv w.3 dd4dm1 ddo.2 dw.2 pd    2021-03-18_12-33-55 disk space limit
+
+adv w.3 dd4dm1 ddo.2 dw.2 p-d   2021-03-18_13-53-21
 
