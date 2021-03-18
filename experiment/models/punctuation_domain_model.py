@@ -84,13 +84,16 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             else:
                 self._cfg.model.punct_class_weights=None
         extra_hidden_size=2 if self.hparams.model.domain_head.predict_labelled else self.hparams.model.dataset.num_domains\
-             if (self.hparams.model.cat_domain_logits and not self.hparams.model.domain_head.pooling=='mean_max') else self.transformer.config.hidden_size
+             if (self.hparams.model.cat_domain_logits) else self.transformer.config.hidden_size*2\
+                 if self.hparams.model.domain_head.pooling=='mean_max'\
+                 else self.transformer.config.hidden_size
             
         self.punct_classifier = TokenClassifier(
-            hidden_size=self.transformer.config.hidden_size if \
-                (self.hparams.model.cat_domain_and_states!=True)\
-                else self.transformer.config.hidden_size+extra_hidden_size*2 if self.hparams.model.domain_head.pooling=='mean_max' else\
-                    self.transformer.config.hidden_size+extra_hidden_size,
+            hidden_size= self.transformer.config.hidden_size+extra_hidden_size \
+                if (self.hparams.model.cat_domain_and_states==True)\
+                    else self.transformer.config.hidden_size*2 if self.hparams.model.domain_head.pooling=='mean_max' else\
+                    self.transformer.config.hidden_size
+                ,
             num_classes=len(self.labels_to_ids),
             activation=self.hparams.model.punct_head.activation,
             log_softmax=self.hparams.model.punct_head.log_softmax,
@@ -650,9 +653,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # Try to instantiate scheduler for optimizer
         self._scheduler = prepare_lr_scheduler(
             optimizer=self._optimizer, scheduler_config=scheduler_config,
-            train_dataloader=pp({'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
+            train_dataloader={'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
             'batch_size': self.hparams.model.dataset.train_ds.batch_size,
-            'drop_last' : self.hparams.model.dataset.drop_last})
+            'drop_last' : self.hparams.model.dataset.drop_last}
             )
 
         # Return the optimizer with/without scheduler
