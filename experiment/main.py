@@ -34,8 +34,14 @@ def main(cfg: DictConfig)->None:
 
     pp(cfg)
     pl.seed_everything(cfg.seed)
-    
-    trainer = pl.Trainer(**cfg.trainer) #,track_grad_norm=2
+    early_stop_callback = pl.callbacks.early_stopping.EarlyStopping(
+        monitor='val_loss',
+        min_delta=0.00,
+        patience=2,
+        verbose=False,
+        mode='max'
+    )
+    trainer = pl.Trainer(callbacks=[early_stop_callback],**cfg.trainer) #,track_grad_norm=2
     log_dir=exp_manager(trainer, cfg.exp_manager).__str__()
     model = PunctuationDomainModel(cfg=cfg, trainer=trainer, data_id = data_id,log_dir=log_dir)
 

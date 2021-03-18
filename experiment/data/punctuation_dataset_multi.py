@@ -10,6 +10,7 @@ import torch
 import subprocess
 from time import time
 from itertools import cycle, chain, islice, repeat
+from math import ceil
 from collections import Counter
 
 class PunctuationDomainDataset(IterableDataset):
@@ -195,7 +196,7 @@ class PunctuationDomainDatasets(IterableDataset):
         pp(self.ds_lengths)
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
-        self.len=int(self.per_worker/num_samples)
+        self.len=max(1,ceil(self.per_worker/num_samples))
         self.class_weights=None
 
 
