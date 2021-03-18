@@ -1,4 +1,3 @@
-# %%
 import copy
 import math
 import logging
@@ -89,7 +88,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             
         self.punct_classifier = TokenClassifier(
             hidden_size=self.transformer.config.hidden_size if \
-                (self.hparams.model.cat_domain_and_states!=True or self.hparams.model.domain_head.pooling is None)\
+                (self.hparams.model.cat_domain_and_states!=True)\
                 else self.transformer.config.hidden_size+extra_hidden_size*2 if self.hparams.model.domain_head.pooling=='mean_max' else\
                     self.transformer.config.hidden_size+extra_hidden_size,
             num_classes=len(self.labels_to_ids),
@@ -202,7 +201,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             domain_logits = self.domain_classifier(
                 hidden_states=reverse_grad_hidden_states,
                 )
-            punct_logits = self.punct_classifier(hidden_states=hidden_states)
+            punct_hidden_states= torch.cat((hidden_states,domain_logits),dim=-1) \
+                if (self.hparams.model.cat_domain_logits and self.hparams.model.cat_domain_and_states) \
+                else hidden_states
+            punct_logits = self.punct_classifier(hidden_states=punct_hidden_states)
+            
         else: 
             domain_logits,pooled = self.domain_classifier(
                 hidden_states=reverse_grad_hidden_states,
