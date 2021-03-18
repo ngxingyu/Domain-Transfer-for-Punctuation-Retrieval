@@ -42,10 +42,10 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.2
+  punct_class_weight_factor: 0.3
   punct_class_weights: null
   cat_domain_and_states: true
-  cat_domain_logits: false
+  cat_domain_logits: true
   dataset:
     data_dir: /home/${env:USER}/data
     labelled:
@@ -58,7 +58,7 @@ model:
     ignore_extra_tokens: false
     ignore_start_end: false
     use_cache: false
-    num_workers: 3
+    num_workers: 2
     pin_memory: false
     drop_last: true
     num_labels: 5
@@ -70,12 +70,12 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 32
+      batch_size: 16
       manual_len: 8000
     validation_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 32
+      batch_size: 16
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
@@ -103,19 +103,19 @@ model:
   domain_head:
     predict_labelled: false
     domain_num_fc_layers: 1
-    fc_dropout: 0.5
+    fc_dropout: 0.1
     activation: gelu
     log_softmax: false
     use_transformer_init: true
     loss: dice
     gamma: null
     gamma_factor: 1.0
-    pooling: attention
+    pooling: null
     idx_conditioned_on: 0
     weight_tokens: true
     weight:
-    - 0.4
-    - 0.6
+    - 0.2
+    - 0.8
     dice_loss:
       epsilon: 0.01
       alpha: 4
