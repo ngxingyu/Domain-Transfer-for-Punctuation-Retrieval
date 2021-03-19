@@ -430,7 +430,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             outputs: list of individual outputs of each validation step.
         """
         chunk=self.hparams.model.test_chunk_percent is not None
-
+        pp(chunk,self.hparams.model.test_chunk_percent)
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
 
         # calculate metrics and log classification report for Punctuation task
