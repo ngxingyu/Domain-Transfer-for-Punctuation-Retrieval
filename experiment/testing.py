@@ -20,7 +20,7 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-exp='2021-03-19_13-16-51'
+exp='2021-03-19_08-18-39'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
@@ -69,7 +69,7 @@ def main(cfg : DictConfig) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     inference_results = model.to(device).add_punctuation(queries)
     for query, result in zip(queries, inference_results):
-        print(f'Query : {query}')
+        print(f'Query : {query}\n')
         print(f'Result: {result.strip()}\n\n')
 
     while 1:
@@ -77,7 +77,7 @@ def main(cfg : DictConfig) -> None:
         texts=[text]
         inference_results = model.to(device).add_punctuation(texts)
         for text, result in zip(texts, inference_results):
-            print(f'Query : {text}')
+            print(f'\n\nQuery : {text}\n')
             print(f'Result: {result.strip()}\n\n')
 
 
