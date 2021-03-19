@@ -22,15 +22,16 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-18_18-53-11
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-19_23-45-42
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
   unfrozen: 0
-  maximum_unfrozen: 1
+  maximum_unfrozen: 2
   unfreeze_step: 1
   punct_label_ids:
   - ''
+  - '#'
   - ','
   - .
   - '?'
@@ -43,27 +44,28 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.3
+  punct_class_weight_factor: 0.6
   punct_class_weights: null
-  cat_domain_and_states: false
+  cat_domain_and_states: true
   cat_domain_logits: true
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
+    - /home/nxingyu2/data/open_subtitles_processed
+    unlabelled:
     - /home/nxingyu2/data/switchboardutt_processed
-    unlabelled: null
     low_resource_labelled_count: 4
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
     ignore_start_end: false
     use_cache: false
-    num_workers: 2
+    num_workers: 4
     pin_memory: false
     drop_last: true
     num_labels: 5
-    num_domains: 2
+    num_domains: 3
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: null
@@ -71,12 +73,12 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
-      manual_len: 2000
+      batch_size: 32
+      manual_len: 0
     validation_ds:
-      shuffle: true
+      shuffle: false
       num_samples: -1
-      batch_size: 16
+      batch_size: 32
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -97,10 +99,8 @@ model:
     bilstm: false
     dice_loss:
       epsilon: 0.01
-      alpha: 4
+      alpha: 6
       macro_average: true
-    focal_loss:
-      alpha: 3
   domain_head:
     predict_labelled: false
     domain_num_fc_layers: 1
@@ -115,22 +115,17 @@ model:
     idx_conditioned_on: 0
     weight_tokens: true
     weight:
-    - 1
-    - 1
+    - 0.01
+    - 0.01
+    - 0.98
     dice_loss:
       epsilon: 0.01
       alpha: 4
       macro_average: true
-    focal_loss:
-      alpha: 2
   frozen_lr:
   - 0.01
   - 0.001
   - 0.0001
-  - 1.0e-05
-  - 1.0e-05
-  - 1.0e-07
-  - 1.0e-08
   optim:
     name: adamw
     lr: 0.01
