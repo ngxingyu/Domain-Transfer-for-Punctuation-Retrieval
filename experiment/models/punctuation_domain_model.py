@@ -62,22 +62,25 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                               for _ in enumerate(self._cfg.model.punct_label_ids)}
         self.labels_to_ids = {v:k
                               for k,v in self.ids_to_labels.items()}
-        self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
+        self.label_map=None if self._cfg.model.label_map is None else {k:v for k,v in self._cfg.model.label_map.items()}
         self.data_id=data_id
-        self._cfg.model.dataset.labelled = OmegaConf.create([] if self._cfg.model.dataset.labelled==None else self._cfg.model.dataset.labelled)
-        self._cfg.model.dataset.unlabelled = OmegaConf.create([] if self._cfg.model.dataset.unlabelled==None else self._cfg.model.dataset.unlabelled)
-        assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
-        if self._cfg.model.dataset.low_resource_labelled_count>0:
-            for d in self._cfg.model.dataset.unlabelled:
-                dl=d+'.labelled.train.csv'
-                du=d+'.unlabelled.train.csv'
-                d=d+'.train.csv'
-                os.system(f"awk 'NR==1 || NR<={self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {dl}")
-                os.system(f"awk 'NR==1 || NR>{self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {du}")
-        
+
+        if self._cfg.inference==False:
+            self._cfg.model.dataset.labelled = OmegaConf.create([] if self._cfg.model.dataset.labelled==None else self._cfg.model.dataset.labelled)
+            self._cfg.model.dataset.unlabelled = OmegaConf.create([] if self._cfg.model.dataset.unlabelled==None else self._cfg.model.dataset.unlabelled)
+            assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+            if self._cfg.model.dataset.low_resource_labelled_count>0:
+                for d in self._cfg.model.dataset.unlabelled:
+                    dl=d+'.labelled.train.csv'
+                    du=d+'.unlabelled.train.csv'
+                    d=d+'.train.csv'
+                    os.system(f"awk 'NR==1 || NR<={self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {dl}")
+                    os.system(f"awk 'NR==1 || NR>{self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {du}")
+            self._cfg.inference=True
+            self.setup_datamodule()
+            pp('setup complete')
         self.save_hyperparameters(self._cfg)
-        self.setup_datamodule()
-        pp('setup complete')
+        pp(self._cfg)
         if self._cfg.model.punct_class_weights==None:
             if (self.hparams.model.punct_class_weight_factor>0 and self.hparams.model.punct_head.loss!='crf'):
                 self._cfg.model.punct_class_weights=OmegaConf.create([
@@ -692,7 +695,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             val_shuffle= data_config.validation_ds.shuffle,
             seed=self._cfg.seed,
             data_id=self.data_id,
-            tmp_path=self.hparams.tmp_path,
+            tmp_path=self._cfg.tmp_path,
             val_unlabelled=data_config.val_unlabelled,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
@@ -803,6 +806,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         map_location: Optional[Union[Dict[str, str], str, torch.device, int, Callable]] = None,
         hparams_file: Optional[str] = None,
         strict: bool = True,
+        inference:bool = True,
         **kwargs,
     ):
         """
@@ -812,18 +816,18 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         checkpoint = None
         try:
             cls._set_model_restore_state(is_being_restored=True)
-
             checkpoint = super().load_from_checkpoint(
                 checkpoint_path=checkpoint_path,
                 *args,
                 map_location=map_location,
                 hparams_file=hparams_file,
-                strict=strict,
+                # strict=strict,
                 **kwargs,
             )
 
         finally:
             cls._set_model_restore_state(is_being_restored=False)
+        
         return checkpoint
 
     @staticmethod

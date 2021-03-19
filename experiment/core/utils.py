@@ -69,9 +69,10 @@ def text2masks(n, labels_to_ids,label_map):
             refilter=f"[{labels}]{{1,{n}}}(?= *[^{labels}]+|$)|(?<=[^{labels}]) +(?=[^{labels}])"
         # text=re.sub(f'…[\w {labels}]{0,15}…','…',text)
         text=re.sub(r'^[_\W]*','',text)
-        for k,v in label_map.items():
-            text=re.sub(f"(?<=[{labels} ]){k}+","",text)
-            text=re.sub(f"(?<=[A-Za-z0-9 ]){k}+",v,text)
+        if label_map is not None:
+            for k,v in label_map.items():
+                text=re.sub(f"(?<=[{labels} ]){k}+","",text)
+                text=re.sub(f"(?<=[A-Za-z0-9 ]){k}+",v,text)
         word=re.split(refilter,text, flags=re.V1)
         punct=re.findall(refilter,text, flags=re.V1)
         wordlist,punctlist=([] for _ in range(2))
