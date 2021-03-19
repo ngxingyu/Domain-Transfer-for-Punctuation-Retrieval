@@ -42,17 +42,16 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.3
+  punct_class_weight_factor: 0.8
   punct_class_weights: null
-  cat_domain_and_states: true
+  cat_domain_and_states: false
   cat_domain_logits: true
   dataset:
     data_dir: /home/${env:USER}/data
     labelled:
-    - ${base_path}/ted_talks_processed
-    unlabelled:
-    - ${base_path}/switchboardutt_processed
-    low_resource_labelled_count: 16
+    - ${base_path}/ted2010_explode
+    unlabelled: null
+    low_resource_labelled_count: 4
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -62,10 +61,10 @@ model:
     pin_memory: false
     drop_last: true
     num_labels: 5
-    num_domains: 2
+    num_domains: 3
     val_unlabelled: true
     test_unlabelled: true
-    attach_label_to_end: null
+    attach_label_to_end: false
     pad_start: 0
     train_ds:
       shuffle: true
@@ -87,8 +86,8 @@ model:
     config_file: null
     config: null
   punct_head:
-    punct_num_fc_layers: 1
-    fc_dropout: 0.1
+    punct_num_fc_layers: 2
+    fc_dropout: 0.3
     activation: gelu
     log_softmax: false
     use_transformer_init: true
@@ -96,10 +95,8 @@ model:
     bilstm: false
     dice_loss:
       epsilon: 0.01
-      alpha: 4
+      alpha: 6
       macro_average: true
-    focal_loss:
-      alpha: 3
   domain_head:
     predict_labelled: false
     domain_num_fc_layers: 1
@@ -110,26 +107,17 @@ model:
     loss: dice
     gamma: null
     gamma_factor: 1.0
-    pooling: null
+    pooling: attention
     idx_conditioned_on: 0
     weight_tokens: true
-    weight:
-    - 0.2
-    - 0.8
+    weight: null
     dice_loss:
       epsilon: 0.01
       alpha: 4
       macro_average: true
-    focal_loss:
-      alpha: 2
   frozen_lr:
   - 0.01
   - 0.001
-  - 0.0001
-  - 1.0e-05
-  - 1.0e-05
-  - 1.0e-07
-  - 1.0e-08
   optim:
     name: adamw
     lr: 0.01
