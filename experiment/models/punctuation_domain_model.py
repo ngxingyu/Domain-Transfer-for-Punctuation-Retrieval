@@ -47,19 +47,19 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         super().__init__()
         self._cfg = cfg
         self._cfg.log_dir=log_dir
-        self.save_hyperparameters(cfg)
+        
         self._optimizer = None
         self._scheduler = None
         self._trainer = trainer
 
-        self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
+        self.transformer = AutoModel.from_pretrained(self._cfg.model.transformer_path)
         self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
         if self._cfg.model.no_space_label is not None and self._cfg.model.dataset.attach_label_to_end is None:
-            s=set(self.hparams.model.punct_label_ids)
+            s=set(self._cfg.model.punct_label_ids)
             s.add(self._cfg.model.no_space_label)
             self._cfg.model.punct_label_ids=sorted(list(s))
         self.ids_to_labels = {_[0]: _[1]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(self._cfg.model.punct_label_ids)}
         self.labels_to_ids = {v:k
                               for k,v in self.ids_to_labels.items()}
         self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
@@ -67,13 +67,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self._cfg.model.dataset.labelled = OmegaConf.create([] if self._cfg.model.dataset.labelled==None else self._cfg.model.dataset.labelled)
         self._cfg.model.dataset.unlabelled = OmegaConf.create([] if self._cfg.model.dataset.unlabelled==None else self._cfg.model.dataset.unlabelled)
         assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
-        if self.hparams.model.dataset.low_resource_labelled_count>0:
-            for d in self.hparams.model.dataset.unlabelled:
+        if self._cfg.model.dataset.low_resource_labelled_count>0:
+            for d in self._cfg.model.dataset.unlabelled:
                 dl=d+'.labelled.train.csv'
                 du=d+'.unlabelled.train.csv'
                 d=d+'.train.csv'
-                os.system(f"awk 'NR==1 || NR<={self.hparams.model.dataset.low_resource_labelled_count+1}' {d} > {dl}")
-                os.system(f"awk 'NR==1 || NR>{self.hparams.model.dataset.low_resource_labelled_count+1}' {d} > {du}")
+                os.system(f"awk 'NR==1 || NR<={self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {dl}")
+                os.system(f"awk 'NR==1 || NR>{self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {du}")
+        
+        self.save_hyperparameters(self._cfg)
         self.setup_datamodule()
         pp('setup complete')
         if self._cfg.model.punct_class_weights==None:
@@ -87,7 +89,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
              if (self.hparams.model.cat_domain_logits) else self.transformer.config.hidden_size*2\
                  if self.hparams.model.domain_head.pooling=='mean_max'\
                  else self.transformer.config.hidden_size
-            
         self.punct_classifier = TokenClassifier(
             hidden_size= self.transformer.config.hidden_size+extra_hidden_size \
                 if (self.hparams.model.cat_domain_and_states==True)\
@@ -245,7 +246,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if not torch.isnan(punctuation_loss).any():
             self.hparams.model.domain_head.gamma=self.hparams.model.domain_head.gamma_factor*punctuation_loss.item()
         else:
-            pp('punctuation_loss nan')
             logging.error('punctuation_loss nan')
             self.hparams.model.domain_head.gamma=0
             punctuation_loss=torch.zeros_like(punctuation_loss)
@@ -268,7 +268,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             domain_loss = self.domain_loss(
             logits=domain_logits, labels=domain_labels.repeat(1,punct_labels.shape[-1]) if self.hparams.model.domain_head.pooling is None else domain_labels)
         if torch.isnan(domain_loss).any():
-            pp(domain_loss)
             logging.error('domain_loss nan')
             loss=punctuation_loss
         else:
