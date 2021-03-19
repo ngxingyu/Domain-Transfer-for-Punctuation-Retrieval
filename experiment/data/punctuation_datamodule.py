@@ -38,7 +38,7 @@ class PunctuationDataModule(LightningDataModule):
         self.labelled=labelled
         self.unlabelled=unlabelled
         self.tokenizer=AutoTokenizer.from_pretrained(tokenizer)
-        self.punct_label_ids=pp(punct_label_ids)
+        self.punct_label_ids=punct_label_ids
         self.label_map=label_map
         self.num_domains=len(labelled)+len(unlabelled)
         self.train_batch_size=train_batch_size
@@ -167,13 +167,10 @@ class PunctuationDataModule(LightningDataModule):
         pp('finished setup')
         
     def train_dataloader(self):
-        pp('train',self.num_workers)
         return DataLoader(self.train_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def val_dataloader(self):
-        pp('val',self.num_workers)
         return DataLoader(self.val_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 
     def test_dataloader(self):
-        pp('test',self.num_workers)
         return DataLoader(self.test_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)

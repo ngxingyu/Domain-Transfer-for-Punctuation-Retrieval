@@ -28,8 +28,6 @@ def main(cfg: DictConfig)->None:
     atexit.register(savecounter)
 
     cfg.model.maximum_unfrozen=max(cfg.model.maximum_unfrozen,cfg.model.unfrozen)
-
-    pp(cfg)
     pl.seed_everything(cfg.seed)
     early_stop_callback = pl.callbacks.early_stopping.EarlyStopping(
         monitor='val_loss',

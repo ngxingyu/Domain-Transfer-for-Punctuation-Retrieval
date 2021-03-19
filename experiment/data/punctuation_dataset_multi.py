@@ -193,7 +193,6 @@ class PunctuationDomainDatasets(IterableDataset):
                     self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
                 else:
                     self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
-        pp(self.ds_lengths)
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
         self.len=max(1,ceil(self.per_worker/num_samples))
@@ -201,7 +200,6 @@ class PunctuationDomainDatasets(IterableDataset):
 
 
         for i,path in enumerate(labelled):
-            pp(min(num_samples,self.ds_lengths[i]))
             target=os.path.join(tmp_path,os.path.split(path)[1])
             dataset=PunctuationDomainDataset(
                     csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
@@ -220,7 +218,6 @@ class PunctuationDomainDatasets(IterableDataset):
             self.iterables.append(cycle(dataset))
             
         for i,path in enumerate(unlabelled):
-            pp(min(num_samples,self.ds_lengths[i]))
             target=os.path.join(tmp_path,os.path.split(path)[1])
             if split=='train' and low_resource_labelled_count>0:
                 dataset=PunctuationDomainDataset(
