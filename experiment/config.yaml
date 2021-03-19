@@ -76,24 +76,25 @@ model:
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.3 # 0 if don't weight
+    punct_class_weight_factor: 0.8 # 0 if don't weight
     punct_class_weights:  # Leave blank.
-    cat_domain_and_states: true # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
+    cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
             # - ${base_path}/ted2010 #
-            # - ${base_path}/ted2010_explode
-            - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted2010_explode
+            # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/switchboardutt_processed
             # - ${base_path}/switchboardutt_processedlow #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed
+            # - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
-        low_resource_labelled_count: 16
+        low_resource_labelled_count: 4
         max_seq_length: 128
         pad_label: ''
         ignore_extra_tokens: false
@@ -104,10 +105,10 @@ model:
         pin_memory: false
         drop_last: true
         num_labels: 5
-        num_domains: 2
-        val_unlabelled: true    # validation check unlabelled
-        test_unlabelled: true   # test check unlabelled
-        attach_label_to_end: #None # false if attach to start none if dont mask
+        num_domains: 3          
+        val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
+        test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
+        attach_label_to_end: false #None # false if attach to start none if dont mask
         pad_start: 0
         train_ds:
             shuffle: true
@@ -134,11 +135,10 @@ model:
         lm_checkpoint: null
         config_file: null # json file, precedence over config
         config: null
-        # unfrozen_layers: 1
     
     punct_head:
-        punct_num_fc_layers: 1  # Ideally 1. more would overfit.
-        fc_dropout: 0.1
+        punct_num_fc_layers: 2  # 2fcl seems to work well, but ensure it doesn't overfit
+        fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
@@ -147,11 +147,11 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 4
+            alpha: 6
             macro_average: true
 
-        focal_loss: 
-            alpha: 3
+        # focal_loss: 
+        #     alpha: 1
 
     domain_head:
         predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
@@ -163,34 +163,36 @@ model:
         loss: 'dice'
         gamma: # Leave blank. auto fill per step
         gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
-        pooling:  # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
+        pooling:  'attention' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
         idx_conditioned_on: 0 # 0 = use first (CLS) token, only considered when pooling = token
         weight_tokens: true # Assign weight to each domain label
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
-            - 0.2
-            # - 0.3
-            - 0.8
+            # - 0.01
+            # - 0.01
+            # - 0.98
+
+            # - 0.2
+            # - 0.8
+
             # - 1
-            # - 0.3
-            # - 0.3
-            # - 0.4
+            # - 1
 
         dice_loss:
             epsilon: 0.01
             alpha: 4
             macro_average: true
 
-        focal_loss: 
-            alpha: 2
+        # focal_loss: 
+        #     alpha: 2
 
     frozen_lr:
         - 1e-2
         - 1e-3
-        - 1e-4
-        - 1e-5
-        - 1e-5
-        - 1e-7
-        - 1e-8
+        # - 1e-4
+        # - 1e-5
+        # - 1e-5
+        # - 1e-7
+        # - 1e-8
 
     # gamma:
     #     - 1
