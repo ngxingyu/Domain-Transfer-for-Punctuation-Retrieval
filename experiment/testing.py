@@ -41,26 +41,25 @@ def main(cfg : DictConfig) -> None:
     checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
     # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.34-epoch=7.ckpt")
     # model.hparams.model.test_chunk_percent=0.5
-    # model.dm.test_dataset=PunctuationDomainDatasets(split='test',
-    #                 # num_samples=model.dm.val_batch_size,
-    #                 num_samples=32,
-    #                 max_seq_length=model.dm.max_seq_length,
-    #                 punct_label_ids=model.dm.punct_label_ids,
-    #                 label_map=model.dm.label_map,
-    #                 # labelled=['/home/nxingyu2/data/ted2010_explode'],
-    #                 # labelled=['/home/nxingyu2/data/switchboardutt_processed'],
-    #                 # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
-    #                 # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
-
-    #                 unlabelled=[],
-    #                 tokenizer=model.dm.tokenizer,
-    #                 randomize=model.dm.val_shuffle,
-    #                 data_id=model.dm.data_id,
-    #                 tmp_path=model.dm.tmp_path,
-    #                 attach_label_to_end=model.dm.attach_label_to_end,
-    #                 no_space_label=model.dm.no_space_label,
-    #                 pad_start=model.dm.pad_start,
-    #                 )
+    model.dm.test_dataset=PunctuationDomainDatasets(split='test',
+                    # num_samples=model.dm.val_batch_size,
+                    num_samples=32,
+                    max_seq_length=model.dm.max_seq_length,
+                    punct_label_ids=model.dm.punct_label_ids,
+                    label_map=model.dm.label_map,
+                    # labelled=['/home/nxingyu2/data/ted2010_explode'],
+                    # labelled=['/home/nxingyu2/data/switchboardutt_processed'],
+                    # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
+                    # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
+                    unlabelled=[],
+                    tokenizer=model.dm.tokenizer,
+                    randomize=model.dm.val_shuffle,
+                    data_id=model.dm.data_id,
+                    tmp_path=model.dm.tmp_path,
+                    attach_label_to_end=model.dm.attach_label_to_end,
+                    no_space_label=model.dm.no_space_label,
+                    pad_start=model.dm.pad_start,
+                    )
     
     # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     # trainer = pl.Trainer(**cfg.trainer)
