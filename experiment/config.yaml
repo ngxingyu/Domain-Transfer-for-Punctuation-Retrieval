@@ -55,28 +55,28 @@ model:
         - "."
         - "?"
 
-        - "!"
+        # - "!"
         - "-"
         - "…"
-        - ":"
+        # - ":"
 
-        - "—"
-        - ";"
+        # - "—"
+        # - ";"
 
     label_map: # Dict containing ( original punctuation: replacement punctuation. )
 
-        # "!": "."
+        "!": "."
         # "-": ","
-        # ":": ","
+        ":": ","
         # "…": "."
 
-        # "—": ","
-        # ";": "."
+        "—": ","
+        ";": "."
 
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.8 # 0 if don't weight
+    punct_class_weight_factor: 0.1 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: true # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -92,9 +92,9 @@ model:
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed
+            - ${base_path}/switchboardutt_processed #
         # parameters for dataset preprocessing
-        low_resource_labelled_count: 4
+        low_resource_labelled_count: 16
         max_seq_length: 128
         pad_label: ''
         ignore_extra_tokens: false
@@ -104,8 +104,8 @@ model:
         num_workers:  4
         pin_memory: false
         drop_last: true
-        num_labels: 5
-        num_domains: 3          
+        num_labels: 6
+        num_domains: 3        
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: #None # false if attach to start none if dont mask
@@ -113,8 +113,8 @@ model:
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 32
-            manual_len: 0 #default 0 84074
+            batch_size: 16
+            manual_len: 6000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -122,7 +122,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: false
             num_samples: -1
-            batch_size: 32 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -147,7 +147,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 6
+            alpha: 8
             macro_average: true
 
         # focal_loss: 
@@ -162,17 +162,20 @@ model:
         use_transformer_init: true
         loss: 'dice'
         gamma: # Leave blank. auto fill per step
-        gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
-        pooling:  'attention' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
+        gamma_factor: 1.5 #0.1 # coefficient of gradient reversal
+        pooling:  'token' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
         idx_conditioned_on: 0 # 0 = use first (CLS) token, only considered when pooling = token
         weight_tokens: true # Assign weight to each domain label
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
-            - 0.01
-            - 0.01
-            - 0.98
+            # - 0.01
+            # - 0.01
+            # - 0.98
+            - 1
+            - 1
+            - 1
 
-            # - 0.2
-            # - 0.8
+            # - 0.1
+            # - 0.9
 
             # - 1
             # - 1

@@ -22,7 +22,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-20_00-02-28
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-20_23-06-48
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -36,15 +36,15 @@ model:
   - ','
   - '-'
   - .
-  - ':'
-  - ;
   - '?'
-  - —
   - …
-  label_map: null
+  label_map:
+    ':': ','
+    —: ','
+    ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.8
+  punct_class_weight_factor: 0.2
   punct_class_weights: null
   cat_domain_and_states: true
   cat_domain_logits: true
@@ -52,7 +52,6 @@ model:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
-    - /home/nxingyu2/data/open_subtitles_processed
     unlabelled:
     - /home/nxingyu2/data/switchboardutt_processed
     low_resource_labelled_count: 4
@@ -64,8 +63,8 @@ model:
     num_workers: 4
     pin_memory: false
     drop_last: true
-    num_labels: 11
-    num_domains: 3
+    num_labels: 8
+    num_domains: 2
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: null
@@ -74,7 +73,7 @@ model:
       shuffle: true
       num_samples: -1
       batch_size: 32
-      manual_len: 0
+      manual_len: 8000
     validation_ds:
       shuffle: false
       num_samples: -1
@@ -91,7 +90,7 @@ model:
     config: null
   punct_head:
     punct_num_fc_layers: 2
-    fc_dropout: 0.3
+    fc_dropout: 0.4
     activation: gelu
     log_softmax: false
     use_transformer_init: true
@@ -103,7 +102,7 @@ model:
       macro_average: true
   domain_head:
     predict_labelled: false
-    domain_num_fc_layers: 1
+    domain_num_fc_layers: 2
     fc_dropout: 0.1
     activation: gelu
     log_softmax: false
@@ -115,9 +114,8 @@ model:
     idx_conditioned_on: 0
     weight_tokens: true
     weight:
-    - 0.01
-    - 0.01
-    - 0.98
+    - 0.1
+    - 0.9
     dice_loss:
       epsilon: 0.01
       alpha: 4
