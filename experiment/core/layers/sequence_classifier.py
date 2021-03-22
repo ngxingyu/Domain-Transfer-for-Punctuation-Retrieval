@@ -1,17 +1,27 @@
+# Copyright (c) 2020, NVIDIA CORPORATION.  All rights reserved.
+# Modifications Copyright (c) 2021 <Ng Xing Yu>
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import torch
 from torch import nn
 from core.layers.multi_layer_perceptron import MultiLayerPerceptron
+from core.layers.attention import SelfAttention
 from core.utils import transformer_weights_init
-# from nemo.core.neural_types import LabelsType, LogitsType, LossType, MaskType, NeuralType, LogprobsType
 from typing import Optional, Dict
 
 class SequenceClassifier(nn.Module):
-    # def output_types(self) -> Optional[Dict[str, NeuralType]]:
-    #     if not self.log_softmax:
-    #         return {"logits": NeuralType(('B', 'D'), LogitsType())}
-    #     else:
-    #         return {"log_probs": NeuralType(('B', 'D'), LogprobsType())}
-
+    
     def __init__(
         self,
         hidden_size: int,
@@ -50,11 +60,15 @@ class SequenceClassifier(nn.Module):
         self.dropout=nn.Dropout(dropout)
         if use_transformer_init:
             self.apply(lambda module: transformer_weights_init(module, xavier=False))
+        if pooling=='attention':
+            self.attention=SelfAttention(hidden_size)
 
     def forward(self, hidden_states, attention_mask=None):
         hidden_states = self.dropout(hidden_states)
         if self.pooling=='token':
             pooled = hidden_states[:, self._idx_conditioned_on]
+        elif self.pooling=='attention':
+            pooled, att = self.attention(hidden_states, attention_mask)
         else:
             if attention_mask is None:
                 ct=hidden_states.shape[1] # Seq len
@@ -71,4 +85,4 @@ class SequenceClassifier(nn.Module):
                 pooled_max if self.pooling=='max' else \
                     torch.cat([pooled_mean,pooled_max],axis=-1)
         logits = self.mlp(pooled)
-        return logits
+        return logits,pooled

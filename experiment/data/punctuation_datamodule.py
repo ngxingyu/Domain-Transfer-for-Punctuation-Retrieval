@@ -25,18 +25,20 @@ class PunctuationDataModule(LightningDataModule):
             seed: int = 42,
             data_id: str = '',
             tmp_path:str = '~/data/tmp',
+            val_unlabelled:bool = True,
             test_unlabelled:bool = True,
             attach_label_to_end:bool = None,
             manual_len:int = 0,
             no_space_label: str = None,
             pad_start:int = 0,
+            low_resource_labelled_count: int = 0,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
         self.labelled=labelled
         self.unlabelled=unlabelled
         self.tokenizer=AutoTokenizer.from_pretrained(tokenizer)
-        self.punct_label_ids=pp(punct_label_ids)
+        self.punct_label_ids=punct_label_ids
         self.label_map=label_map
         self.num_domains=len(labelled)+len(unlabelled)
         self.train_batch_size=train_batch_size
@@ -57,6 +59,7 @@ class PunctuationDataModule(LightningDataModule):
         self.seed=seed
         self.data_id=data_id
         self.tmp_path=tmp_path
+        self.val_unlabelled=val_unlabelled
         self.test_unlabelled=test_unlabelled
         self.attach_label_to_end=attach_label_to_end
         self.manual_len=manual_len
@@ -65,6 +68,7 @@ class PunctuationDataModule(LightningDataModule):
             self.no_space_label=self.punct_label_ids[no_space_label]
         except:
             self.no_space_label=None
+        self.low_resource_labelled_count = low_resource_labelled_count
     
     def reset(self):
         # self.setup('fit')
@@ -89,22 +93,40 @@ class PunctuationDataModule(LightningDataModule):
                     manual_len=self.manual_len,
                     no_space_label=self.no_space_label,
                     pad_start=self.pad_start,
+                    low_resource_labelled_count=self.low_resource_labelled_count,
                     )
-            self.val_dataset = PunctuationDomainDatasets(split='dev',
-                    num_samples=self.val_batch_size,
-                    max_seq_length=self.max_seq_length,
-                    punct_label_ids=self.punct_label_ids,
-                    label_map=self.label_map,
-                    labelled=self.labelled,
-                    unlabelled=self.unlabelled,
-                    tokenizer=self.tokenizer,
-                    randomize=self.val_shuffle,
-                    data_id=self.data_id,
-                    tmp_path=self.tmp_path,
-                    attach_label_to_end=self.attach_label_to_end,
-                    no_space_label=self.no_space_label,
-                    pad_start=self.pad_start,
-                    )
+            if (len(self.unlabelled)>0) and self.val_unlabelled:
+                self.val_dataset = PunctuationDomainDatasets(split='dev',
+                        num_samples=self.val_batch_size,
+                        max_seq_length=self.max_seq_length,
+                        punct_label_ids=self.punct_label_ids,
+                        label_map=self.label_map,
+                        labelled=self.unlabelled,
+                        unlabelled=[],#self.labelled
+                        tokenizer=self.tokenizer,
+                        randomize=self.val_shuffle,
+                        data_id=self.data_id,
+                        tmp_path=self.tmp_path,
+                        attach_label_to_end=self.attach_label_to_end,
+                        no_space_label=self.no_space_label,
+                        pad_start=self.pad_start,
+                        )
+            else:
+                self.val_dataset = PunctuationDomainDatasets(split='dev',
+                        num_samples=self.val_batch_size,
+                        max_seq_length=self.max_seq_length,
+                        punct_label_ids=self.punct_label_ids,
+                        label_map=self.label_map,
+                        labelled=self.labelled,
+                        unlabelled=[],#self.unlabelled
+                        tokenizer=self.tokenizer,
+                        randomize=self.val_shuffle,
+                        data_id=self.data_id,
+                        tmp_path=self.tmp_path,
+                        attach_label_to_end=self.attach_label_to_end,
+                        no_space_label=self.no_space_label,
+                        pad_start=self.pad_start,
+                        )
         if stage=='test' or stage is None:
             if (len(self.unlabelled)>0) and self.test_unlabelled:
                 self.test_dataset = PunctuationDomainDatasets(split='test',
@@ -113,7 +135,7 @@ class PunctuationDataModule(LightningDataModule):
                     punct_label_ids=self.punct_label_ids,
                     label_map=self.label_map,
                     labelled=self.unlabelled,
-                    unlabelled=[],
+                    unlabelled=[], #self.labelled
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
@@ -128,7 +150,7 @@ class PunctuationDataModule(LightningDataModule):
                     punct_label_ids=self.punct_label_ids,
                     label_map=self.label_map,
                     labelled=self.labelled,
-                    unlabelled=self.unlabelled,
+                    unlabelled=[], #self.unlabelled
                     tokenizer=self.tokenizer,
                     randomize=self.val_shuffle,
                     data_id=self.data_id,
@@ -142,7 +164,8 @@ class PunctuationDataModule(LightningDataModule):
         # self.train_dataset.shuffle(randomize=False)
         if (self.train_shuffle):
             self.train_dataset.shuffle(randomize=True, seed=self.seed)
-
+        pp('finished setup')
+        
     def train_dataloader(self):
         return DataLoader(self.train_dataset,batch_size=None,num_workers=self.num_workers,pin_memory=self.pin_memory,drop_last=self.drop_last)
 

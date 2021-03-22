@@ -80,8 +80,6 @@ class LinearChainCRF(torch.nn.Module):
                     'the first two dimensions of h and mask must match, '
                     f'got {tuple(logits.shape[:2])} and {tuple(mask.shape)}')
             if not mask[:, 0].all():
-                pp(labels[:,0])
-                pp(mask[:,0])
                 raise ValueError('mask of the first timestep must all be on')
     
     @jit.export
