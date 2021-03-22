@@ -1,4 +1,5 @@
 seed: 42
+inference: true
 trainer:
   gpus: 1
   num_nodes: 1

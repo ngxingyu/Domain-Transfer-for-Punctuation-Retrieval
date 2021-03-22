@@ -20,7 +20,8 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-exp='2021-03-18_18-53-11'
+#exp='2021-03-20_13-04-39'
+exp='2021-03-21_07-48-57'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
@@ -60,16 +61,25 @@ def main(cfg : DictConfig) -> None:
                     pad_start=model.dm.pad_start,
                     )
     
-    model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
-    trainer = pl.Trainer(**cfg.trainer)
-    trainer.test(model,ckpt_path=None)
+    # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
+    # trainer = pl.Trainer(**cfg.trainer)
+    # trainer.test(model,ckpt_path=None)
 
     
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # inference_results = model.to(device).add_punctuation(queries)
-    # for query, result in zip(queries, inference_results):
-    #     print(f'Query : {query}')
-    #     print(f'Result: {result.strip()}\n\n')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    inference_results = model.to(device).add_punctuation(queries)
+    for query, result in zip(queries, inference_results):
+        print(f'Query : {query}\n')
+        print(f'Result: {result.strip()}\n\n')
+
+    while 1:
+        text=input('Enter text to punctuate:\n')
+        texts=[text]
+        inference_results = model.to(device).add_punctuation(texts)
+        for text, result in zip(texts, inference_results):
+            print(f'\n\nQuery : {text}\n')
+            print(f'Result: {result.strip()}\n\n')
+
 
 queries = [
         "Okay, Ellen what kind of a car do you think you're going to buy?. Well, as a matter of fact, was thinking about that the other day, and, uh, really don't know the answer, uh, would sort of like to, uh, think about something in the way of, uh, uh, sort of a sporty car but not any, not, you know, a luxury type sporty one. Yeah. But, um, something that still has a lots of amenities and, you know, gadgets and things. Oh, you do want a lot of that stuff? Yeah, well, yeah like, like some of those things. They come in really handy . What kind of, uh, things are you going to consider, you know, what, uh, you said something about the, about the, well, what do you call them, you said amenities, Amenities. that they have, but what about, um, their reputation of the company or the price. Yeah, well, of course, guess, uh, price is always the big consideration, but, It is for me, other people, yeah. don't seem to have the same problem . Well, that's, that's a big one in my book, ",

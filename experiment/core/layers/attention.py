@@ -36,6 +36,8 @@ class SelfAttention(nn.Module):
 
         # apply mask and renormalize attention scores (weights)
         masked = attentions * attention_mask
+        if len(attentions.shape)==1:
+            attentions=attentions.unsqueeze(0)
         _sums = masked.sum(-1,keepdim=True).expand(attentions.shape)  # sums per row
         attentions = masked.div(_sums)
 
@@ -43,6 +45,5 @@ class SelfAttention(nn.Module):
         weighted = torch.mul(hidden_states, attentions.unsqueeze(-1).expand_as(hidden_states))
 
         # get the final fixed vector representations of the sentences
-        
-        representations = weighted.sum(1).squeeze()
+        representations = weighted.sum(1).squeeze(dim=1)
         return representations, attentions
