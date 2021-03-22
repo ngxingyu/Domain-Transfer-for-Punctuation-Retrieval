@@ -20,8 +20,8 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-#exp='2021-03-20_13-04-39'
-exp='2021-03-21_07-48-57'
+exp='2021-03-22_13-20-22'
+# exp='2021-03-21_07-48-57'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
@@ -38,47 +38,29 @@ def main(cfg : DictConfig) -> None:
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
-    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
-    # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.34-epoch=7.ckpt")
-    # model.hparams.model.test_chunk_percent=0.5
-    model.dm.test_dataset=PunctuationDomainDatasets(split='test',
-                    # num_samples=model.dm.val_batch_size,
-                    num_samples=32,
-                    max_seq_length=model.dm.max_seq_length,
-                    punct_label_ids=model.dm.punct_label_ids,
-                    label_map=model.dm.label_map,
-                    # labelled=['/home/nxingyu2/data/ted2010_explode'],
-                    # labelled=['/home/nxingyu2/data/switchboardutt_processed'],
-                    # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
-                    # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
-                    unlabelled=[],
-                    tokenizer=model.dm.tokenizer,
-                    randomize=model.dm.val_shuffle,
-                    data_id=model.dm.data_id,
-                    tmp_path=model.dm.tmp_path,
-                    attach_label_to_end=model.dm.attach_label_to_end,
-                    no_space_label=model.dm.no_space_label,
-                    pad_start=model.dm.pad_start,
-                    )
-    
-    # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
-    # trainer = pl.Trainer(**cfg.trainer)
-    # trainer.test(model,ckpt_path=None)
+    checkpoint_path=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
+    model._cfg.model.dataset.labelled=['/home/nxingyu/data/switchboardutt_processed']
+    model._cfg.model.dataset.unlabelled=[]
+    model.setup_datamodule()
+
+    model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
+    trainer = pl.Trainer(**cfg.trainer)
+    trainer.test(model,ckpt_path=None)
 
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inference_results = model.to(device).add_punctuation(queries)
-    for query, result in zip(queries, inference_results):
-        print(f'Query : {query}\n')
-        print(f'Result: {result.strip()}\n\n')
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # inference_results = model.to(device).add_punctuation(queries)
+    # for query, result in zip(queries, inference_results):
+    #     print(f'Query : {query}\n')
+    #     print(f'Result: {result.strip()}\n\n')
 
-    while 1:
-        text=input('Enter text to punctuate:\n')
-        texts=[text]
-        inference_results = model.to(device).add_punctuation(texts)
-        for text, result in zip(texts, inference_results):
-            print(f'\n\nQuery : {text}\n')
-            print(f'Result: {result.strip()}\n\n')
+    # while 1:
+    #     text=input('Enter text to punctuate:\n')
+    #     texts=[text]
+    #     inference_results = model.to(device).add_punctuation(texts)
+    #     for text, result in zip(texts, inference_results):
+    #         print(f'\n\nQuery : {text}\n')
+    #         print(f'Result: {result.strip()}\n\n')
 
 
 queries = [
