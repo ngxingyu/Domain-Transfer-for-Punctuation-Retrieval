@@ -1,0 +1,132 @@
+seed: 42
+trainer:
+  gpus: 1
+  num_nodes: 1
+  max_epochs: 8
+  max_steps: null
+  accumulate_grad_batches: 2
+  gradient_clip_val: 0
+  amp_level: O1
+  precision: 16
+  accelerator: ddp
+  checkpoint_callback: false
+  logger: false
+  log_every_n_steps: 1
+  val_check_interval: 1.0
+  resume_from_checkpoint: null
+exp_manager:
+  exp_dir: /home/nxingyu2/project/
+  name: Punctuation_with_Domain_discriminator
+  create_tensorboard_logger: true
+  create_checkpoint_callback: true
+base_path: /home/nxingyu2/data
+tmp_path: /home/nxingyu2/data/tmp
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-10_15-25-29
+model:
+  nemo_path: null
+  transformer_path: google/electra-base-discriminator
+  unfrozen: 0
+  maximum_unfrozen: 1
+  unfreeze_step: 1
+  punct_label_ids:
+  - ''
+  - ','
+  - .
+  - '?'
+  label_map:
+    '!': .
+    '-': ','
+    ':': ','
+    …: .
+    —: ','
+    ;: .
+  no_space_label: '#'
+  test_chunk_percent: 0.5
+  punct_class_weight_factor: 0.1
+  punct_class_weights: null
+  dataset:
+    data_dir: /home/nxingyu2/data
+    labelled:
+    - /home/nxingyu2/data/ted_talks_processed
+    unlabelled: null
+    max_seq_length: 128
+    pad_label: ''
+    ignore_extra_tokens: false
+    ignore_start_end: false
+    use_cache: false
+    num_workers: 8
+    pin_memory: false
+    drop_last: true
+    num_labels: 9
+    num_domains: 2
+    test_unlabelled: true
+    attach_label_to_end: null
+    pad_start: 0
+    train_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 16
+      manual_len: 8000
+    validation_ds:
+      shuffle: true
+      num_samples: -1
+      batch_size: 16
+  tokenizer:
+    tokenizer_name: google/electra-base-discriminator
+    vocab_file: null
+    tokenizer_model: null
+    special_tokens: null
+  language_model:
+    pretrained_model_name: google/electra-base-discriminator
+    lm_checkpoint: null
+    config_file: null
+    config: null
+  punct_head:
+    punct_num_fc_layers: 3
+    fc_dropout: 0.1
+    activation: gelu
+    log_softmax: false
+    use_transformer_init: true
+    loss: dice
+    bilstm: false
+  domain_head:
+    predict_labelled: false
+    domain_num_fc_layers: 1
+    fc_dropout: 0.1
+    activation: relu
+    log_softmax: false
+    use_transformer_init: true
+    loss: cel
+    gamma: null
+    gamma_factor: 0.005
+    pooling: mean
+    idx_conditioned_on: 0
+    weight:
+    - 0.5
+    - 0.5
+  dice_loss:
+    epsilon: 0.01
+    alpha: 1
+    macro_average: true
+  focal_loss:
+    gamma: 4
+  frozen_lr:
+  - 0.01
+  - 0.001
+  - 0.0001
+  - 1.0e-05
+  - 1.0e-05
+  - 1.0e-07
+  - 1.0e-08
+  optim:
+    name: adamw
+    lr: 0.01
+    weight_decay: 0.0
+    sched:
+      name: CosineAnnealing
+      warmup_steps: null
+      warmup_ratio: 0.1
+      min_lr: 1.0e-08
+      last_epoch: -1
+      monitor: val_loss
+      reduce_on_plateau: false

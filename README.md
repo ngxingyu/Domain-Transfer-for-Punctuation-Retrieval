@@ -120,6 +120,11 @@ $ python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o
 $ find . -name '*.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
 $ sed -i 1i"id,transcript" *processed*
 
+# Create low resource switchboard dataset (set NR<= 1+number of lines)
+$ awk 'NR==1 || NR<=5' switchboardutt_processed.train.csv > switchboardutt_processedlow.train.csv
+$ cp switchboardutt_processed.dev.csv switchboardutt_processedlow.dev.csv
+$ cp switchboardutt_processed.test.csv switchboardutt_processedlow.test.csv
+
 <!-- kaggle datasets version -m 'message' -->
 ```
 

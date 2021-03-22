@@ -1,4 +1,3 @@
-# %%
 import copy
 import math
 import logging
@@ -34,7 +33,7 @@ _MODEL_CONFIG_YAML = "model_config.yaml"
 _MODEL_WEIGHTS = "model_weights.ckpt"
 
 class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
-
+    '''Pytorch Lightning Module for Punctuation Domain Transfer.'''
     def __init__(self,
                  cfg: DictConfig,
                  trainer: pl.Trainer = None,
@@ -48,26 +47,37 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         super().__init__()
         self._cfg = cfg
         self._cfg.log_dir=log_dir
-        self.save_hyperparameters(cfg)
+        
         self._optimizer = None
         self._scheduler = None
         self._trainer = trainer
 
-        self.transformer = AutoModel.from_pretrained(self.hparams.model.transformer_path)
+        self.transformer = AutoModel.from_pretrained(self._cfg.model.transformer_path)
         self.tokenizer=AutoTokenizer.from_pretrained(self._cfg.model.transformer_path)
-        if self._cfg.model.no_space_label is not None:
-            s=set(self.hparams.model.punct_label_ids)
+        if self._cfg.model.no_space_label is not None and self._cfg.model.dataset.attach_label_to_end is None:
+            s=set(self._cfg.model.punct_label_ids)
             s.add(self._cfg.model.no_space_label)
             self._cfg.model.punct_label_ids=sorted(list(s))
         self.ids_to_labels = {_[0]: _[1]
-                              for _ in enumerate(self.hparams.model.punct_label_ids)}
+                              for _ in enumerate(self._cfg.model.punct_label_ids)}
         self.labels_to_ids = {v:k
                               for k,v in self.ids_to_labels.items()}
         self.label_map={k:v for k,v in self._cfg.model.label_map.items()}
         self.data_id=data_id
+        self._cfg.model.dataset.labelled = OmegaConf.create([] if self._cfg.model.dataset.labelled==None else self._cfg.model.dataset.labelled)
+        self._cfg.model.dataset.unlabelled = OmegaConf.create([] if self._cfg.model.dataset.unlabelled==None else self._cfg.model.dataset.unlabelled)
         assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+        if self._cfg.model.dataset.low_resource_labelled_count>0:
+            for d in self._cfg.model.dataset.unlabelled:
+                dl=d+'.labelled.train.csv'
+                du=d+'.unlabelled.train.csv'
+                d=d+'.train.csv'
+                os.system(f"awk 'NR==1 || NR<={self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {dl}")
+                os.system(f"awk 'NR==1 || NR>{self._cfg.model.dataset.low_resource_labelled_count+1}' {d} > {du}")
+        
+        self.save_hyperparameters(self._cfg)
         self.setup_datamodule()
-
+        pp('setup complete')
         if self._cfg.model.punct_class_weights==None:
             if (self.hparams.model.punct_class_weight_factor>0 and self.hparams.model.punct_head.loss!='crf'):
                 self._cfg.model.punct_class_weights=OmegaConf.create([
@@ -75,9 +85,16 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                         self.dm.train_dataset.determine_class_weights().tolist()])
             else:
                 self._cfg.model.punct_class_weights=None
-
+        extra_hidden_size=2 if self.hparams.model.domain_head.predict_labelled else self.hparams.model.dataset.num_domains\
+             if (self.hparams.model.cat_domain_logits) else self.transformer.config.hidden_size*2\
+                 if self.hparams.model.domain_head.pooling=='mean_max'\
+                 else self.transformer.config.hidden_size
         self.punct_classifier = TokenClassifier(
-            hidden_size=self.transformer.config.hidden_size,
+            hidden_size= self.transformer.config.hidden_size+extra_hidden_size \
+                if (self.hparams.model.cat_domain_and_states==True)\
+                    else self.transformer.config.hidden_size*2 if self.hparams.model.domain_head.pooling=='mean_max' else\
+                    self.transformer.config.hidden_size
+                ,
             num_classes=len(self.labels_to_ids),
             activation=self.hparams.model.punct_head.activation,
             log_softmax=self.hparams.model.punct_head.log_softmax,
@@ -86,7 +103,17 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             use_transformer_init=self.hparams.model.punct_head.use_transformer_init,
         )
 
-        self.domain_classifier = SequenceClassifier(
+        self.domain_classifier = TokenClassifier(
+            hidden_size=self.transformer.config.hidden_size,
+            num_classes=2 if self.hparams.model.domain_head.predict_labelled else\
+                self.hparams.model.dataset.num_domains,
+            activation=self.hparams.model.domain_head.activation,
+            log_softmax=self.hparams.model.domain_head.log_softmax,
+            dropout=self.hparams.model.domain_head.fc_dropout,
+            num_layers=self.hparams.model.domain_head.domain_num_fc_layers,
+            use_transformer_init=self.hparams.model.domain_head.use_transformer_init
+            ) if self.hparams.model.domain_head.pooling is None else \
+        SequenceClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=2 if self.hparams.model.domain_head.predict_labelled else\
                 self.hparams.model.dataset.num_domains,
@@ -103,25 +130,30 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             self.log('punct_head loss not found, fallback to cross entropy loss')
             self._cfg.model.punct_head.loss = 'cel'
         if self.hparams.model.punct_head.loss == 'dice':
-            self.punctuation_loss = FocalDiceLoss(**self._cfg.model.dice_loss, weight=self._cfg.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
+            self.punctuation_loss = FocalDiceLoss(**self._cfg.model.punct_head.dice_loss, weight=self._cfg.model.punct_class_weights, num_labels=self.hparams.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'crf':
             self.punctuation_loss = LinearChainCRF(self._cfg.model.dataset.num_labels)
         elif self.hparams.model.punct_head.loss == 'focal':
-            self.punctuation_loss = FocalLoss(**self._cfg.model.focal_loss, weight=self._cfg.model.punct_class_weights)
+            self.punctuation_loss = FocalLoss(**self._cfg.model.punct_head.focal_loss, weight=self._cfg.model.punct_class_weights)
         else: 
             self.punctuation_loss = CrossEntropyLoss(logits_ndim=3, weight=self._cfg.model.punct_class_weights)
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
-        if not self.hparams.model.domain_head.loss in ['cel','focal']:
-            self.log('domain_head loss not found, fallback to cross entropy loss')
-            self.hparams.model.domain_head.loss = 'cel'
+        if not self.hparams.model.domain_head.loss in ['cel','focal','dice']:
+            if not (self.hparams.model.domain_head.pooling is None and self.hparams.model.domain_head.loss == 'dice'):
+                self.log('domain_head loss not found, fallback to cross entropy loss')
+                self.hparams.model.domain_head.loss = 'cel'
         # self.hparams.model.domain_head.loss
         domain_weight=None if self.hparams.model.domain_head.weight is None else list(self.hparams.model.domain_head.weight)
-        if (len(self.hparams.model.dataset.labelled)==0)or(len(self.hparams.model.dataset.unlabelled)==0):
+        if (len(self.hparams.model.dataset.labelled)==0) or (len(self.hparams.model.dataset.unlabelled)==0):
             domain_weight=None
-        if self.hparams.model.punct_head.loss == 'focal':
-            self.domain_loss = FocalLoss(weight=domain_weight)
+        
+        if self.hparams.model.domain_head.loss == 'focal':
+            self.domain_loss = FocalLoss(**self._cfg.model.domain_head.focal_loss, weight=domain_weight)
+        elif self.hparams.model.domain_head.loss == 'dice':
+            self.domain_loss = FocalDiceLoss(**self._cfg.model.domain_head.dice_loss, weight=domain_weight, num_labels=2 if self.hparams.model.domain_head.predict_labelled else\
+                self.hparams.model.dataset.num_domains)
         else:
             self.domain_loss = CrossEntropyLoss(logits_ndim=2, weight=domain_weight)
 
@@ -155,6 +187,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.grad_reverse = GradientReverse
         self.grad_reverse.scale = self.hparams.model.domain_head.gamma_factor
         self.freeze()
+        pp('init complete')
 
     def forward(self, input_ids, attention_mask, subtoken_mask=None, domain_ids=None):
         hidden_states = self.transformer(
@@ -162,15 +195,37 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         )[0]
         if self.hparams.model.punct_head.bilstm:
             hidden_states,_=self.bilstm(hidden_states)
-        punct_logits = self.punct_classifier(hidden_states=hidden_states)
         reverse_grad_hidden_states = self.grad_reverse.apply(hidden_states)
         assert not torch.isnan(input_ids).any(), (input_ids,'inputid')
         assert not torch.isnan(attention_mask).any(), ('amask',attention_mask)
         if torch.isnan(hidden_states).any():
             logging.error(hidden_states,attention_mask.sum(1),'hiddenstate')
-        domain_logits = self.domain_classifier(
-            hidden_states=reverse_grad_hidden_states,
-            attention_mask=attention_mask)
+        
+        if self.hparams.model.domain_head.pooling is None:
+            domain_logits = self.domain_classifier(
+                hidden_states=reverse_grad_hidden_states,
+                )
+            punct_hidden_states= torch.cat((hidden_states,domain_logits),dim=-1) \
+                if (self.hparams.model.cat_domain_logits and self.hparams.model.cat_domain_and_states) \
+                else hidden_states
+            punct_logits = self.punct_classifier(hidden_states=punct_hidden_states)
+            
+        else: 
+            domain_logits,pooled = self.domain_classifier(
+                hidden_states=reverse_grad_hidden_states,
+                attention_mask=attention_mask)
+            
+            punct_hidden_states=(
+                torch.cat((hidden_states,domain_logits.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)
+                if self.hparams.model.cat_domain_logits\
+                else torch.cat((hidden_states,pooled.unsqueeze(1).repeat_interleave(hidden_states.shape[1],dim=1)),dim=-1)                
+                )\
+                if self.hparams.model.cat_domain_and_states else hidden_states
+            punct_logits = self.punct_classifier(hidden_states=punct_hidden_states)
+
+
+        
+        
         # if self.hparams.model.domain_head.predict_labelled:
         #     domain_logits=domain_logits.flatten()
         # print(attention_mask.sum(axis=1),domain_logits)
@@ -183,18 +238,40 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         punct_labels = batch['labels']
         # domain_labels = batch['domain']
         domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
-        
         punct_logits, domain_logits = self(
             input_ids=input_ids, attention_mask=attention_mask, subtoken_mask=subtoken_mask,
         )
         punctuation_loss = self.punctuation_loss(
             logits=punct_logits[subtoken_mask[:,0]>0], labels=punct_labels[subtoken_mask[:,0]>0], loss_mask=subtoken_mask[subtoken_mask[:,0]>0])
-        
         if not torch.isnan(punctuation_loss).any():
             self.hparams.model.domain_head.gamma=self.hparams.model.domain_head.gamma_factor*punctuation_loss.item()
-        domain_loss = self.domain_loss(
-            logits=domain_logits, labels=domain_labels)
-        loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
+        else:
+            logging.error('punctuation_loss nan')
+            self.hparams.model.domain_head.gamma=0
+            punctuation_loss=torch.zeros_like(punctuation_loss)
+
+
+        #Domain consider each punct label separate, then punct class weight.
+        punct_logits_pred=punct_logits.argmax(axis=-1)
+        token_weight=F.one_hot(punct_logits_pred,num_classes=punct_logits.shape[-1])#*punct_logits
+        if self._cfg.model.punct_class_weights is not None:
+            token_weight=token_weight*torch.tensor(self._cfg.model.punct_class_weights).type_as(punct_logits)
+        idx = punct_logits_pred.unsqueeze(2)
+        token_weight = token_weight.gather(2, idx)
+        token_weight = token_weight.squeeze(2)
+            
+        if (self.hparams.model.domain_head.loss in ['focal','cel']) and (self.hparams.model.domain_head.weight_tokens==True)\
+            and (self.hparams.model.domain_head.pooling is None):
+            domain_loss = self.domain_loss(
+            logits=domain_logits, labels=domain_labels.repeat(1,punct_labels.shape[-1]), token_weight=token_weight)
+        else:
+            domain_loss = self.domain_loss(
+            logits=domain_logits, labels=domain_labels.repeat(1,punct_labels.shape[-1]) if self.hparams.model.domain_head.pooling is None else domain_labels)
+        if torch.isnan(domain_loss).any():
+            logging.error('domain_loss nan')
+            loss=punctuation_loss
+        else:
+            loss = self.agg_loss(loss_1=punctuation_loss, loss_2=domain_loss)
         return loss, punct_logits, domain_logits
 
     def training_step(self, batch, batch_idx):
@@ -235,8 +312,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
-        domain_preds = torch.argmax(domain_logits, axis=1)
-        domain_labels = domain_labels.view(-1)
+        domain_preds = torch.argmax(domain_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]] if self.hparams.model.domain_head.pooling is None else torch.argmax(domain_logits, axis=1)
+        domain_labels = domain_labels.repeat(1,self.hparams.model.dataset.max_seq_length)[labelled_mask][subtoken_mask[labelled_mask]] if self.hparams.model.domain_head.pooling is None else domain_labels.view(-1)
         self.domain_class_report.update(domain_preds, domain_labels)
         return {
             'val_loss': val_loss,
@@ -259,43 +336,43 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # domain_labels = batch['domain']
         domain_labels = torch.eq(subtoken_mask[:,0],1).long() if self.hparams.model.domain_head.predict_labelled else batch['domain']
         labelled_mask=subtoken_mask[:,0]>0
-        if self.hparams.model.test_chunk_percent:
-            chunk=self.hparams.model.test_chunk_percent
-        else:
-            chunk=0.5
-        chunk_mask=torch.zeros_like(subtoken_mask)
-        chunk_mask[:,torch.arange(int((0.5-chunk/2)*subtoken_mask.shape[-1]),int((0.5+chunk/2)*subtoken_mask.shape[-1]))]=1
-        chunk_mask=chunk_mask[labelled_mask][subtoken_mask[labelled_mask]]
+        chunk=self.hparams.model.test_chunk_percent
+        if chunk is not None:
+            chunk_mask=torch.zeros_like(subtoken_mask)
+            chunk_mask[:,torch.arange(int((0.5-chunk/2)*subtoken_mask.shape[-1]),int((0.5+chunk/2)*subtoken_mask.shape[-1]))]=1
+            chunk_mask=chunk_mask[labelled_mask][subtoken_mask[labelled_mask]]
 
         test_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
-        chunked_punct_preds = punct_preds[chunk_mask]
+        if chunk is not None: chunked_punct_preds = punct_preds[chunk_mask]
 
         
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
-        chunked_punct_labels = punct_labels[chunk_mask]
+        if chunk is not None: chunked_punct_labels = punct_labels[chunk_mask]
 
 
         self.punct_class_report.update(punct_preds, punct_labels)
-        self.chunked_punct_class_report.update(chunked_punct_preds, chunked_punct_labels)
-        domain_preds = torch.argmax(domain_logits, axis=1)
-        domain_labels = domain_labels.view(-1)
+        if chunk is not None: self.chunked_punct_class_report.update(chunked_punct_preds, chunked_punct_labels)
+        domain_preds = torch.argmax(domain_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]] if self.hparams.model.domain_head.pooling is None else torch.argmax(domain_logits, axis=1)
+        domain_labels = domain_labels.repeat(1,self.hparams.model.dataset.max_seq_length)[labelled_mask][subtoken_mask[labelled_mask]] if self.hparams.model.domain_head.pooling is None else domain_labels.view(-1)
         self.domain_class_report.update(domain_preds, domain_labels)
 
-        return {
+        out={
             'test_loss': test_loss,
             'punct_tp': self.punct_class_report.tp,
             'punct_fn': self.punct_class_report.fn,
             'punct_fp': self.punct_class_report.fp,
-            'chunked_punct_tp': self.chunked_punct_class_report.tp,
-            'chunked_punct_fn': self.chunked_punct_class_report.fn,
-            'chunked_punct_fp': self.chunked_punct_class_report.fp,
-            'domain_tp': self.domain_class_report.tp,
-            'domain_fn': self.domain_class_report.fn,
-            'domain_fp': self.domain_class_report.fp,
         }
+        if chunk is not None: 
+            out['chunked_punct_tp']=self.chunked_punct_class_report.tp
+            out['chunked_punct_fn']=self.chunked_punct_class_report.fn
+            out['chunked_punct_fp']=self.chunked_punct_class_report.fp
+        out['domain_tp']=self.domain_class_report.tp,
+        out['domain_fn']=self.domain_class_report.fn,
+        out['domain_fp']=self.domain_class_report.fp,
+        return out
 
     def validation_epoch_end(self, outputs):
         
@@ -352,14 +429,17 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             Called at the end of test to aggregate outputs.
             outputs: list of individual outputs of each validation step.
         """
+        chunk=self.hparams.model.test_chunk_percent is not None
+        pp(chunk,self.hparams.model.test_chunk_percent)
         avg_loss = torch.stack([x['test_loss'] for x in outputs]).mean()
 
         # calculate metrics and log classification report for Punctuation task
         punct_precision, punct_recall, punct_f1, punct_report, punct_cm = self.punct_class_report.compute()
         logging.info(f'Punctuation report: {punct_report}')
 
-        chunked_punct_precision, chunked_punct_recall, chunked_punct_f1, chunked_punct_report, chunked_punct_cm = self.chunked_punct_class_report.compute()
-        logging.info(f'Chunked Punctuation report: {chunked_punct_report}')
+        if chunk:
+            chunked_punct_precision, chunked_punct_recall, chunked_punct_f1, chunked_punct_report, chunked_punct_cm = self.chunked_punct_class_report.compute()
+            logging.info(f'Chunked Punctuation report: {chunked_punct_report}')
 
         # calculate metrics and log classification report for domainalization task
         domain_precision, domain_recall, domain_f1, domain_report, domain_cm = self.domain_class_report.compute()
@@ -370,8 +450,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         with open(path,'w') as f:
             f.write("Punct report\n")
             f.write(punct_report)
-            f.write("\nChunked Punct report\n")
-            f.write(chunked_punct_report)
+            if chunk:
+                f.write("\nChunked Punct report\n")
+                f.write(chunked_punct_report)
             f.write("\nDomain report\n")
             f.write(domain_report)
             f.write('\n\n')
@@ -379,9 +460,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             f.write(f'punct_precision: {punct_precision}\n')
             f.write(f'punct_f1: {punct_f1}\n')
             f.write(f'punct_recall: {punct_recall}\n')
-            f.write(f'chunked_punct_precision: {chunked_punct_precision}\n')
-            f.write(f'chunked_punct_f1: {chunked_punct_f1}\n')
-            f.write(f'chunked_punct_recall: {chunked_punct_recall}\n')
+            if chunk:
+                f.write(f'chunked_punct_precision: {chunked_punct_precision}\n')
+                f.write(f'chunked_punct_f1: {chunked_punct_f1}\n')
+                f.write(f'chunked_punct_recall: {chunked_punct_recall}\n')
             f.write(f'domain_precision: {domain_precision}\n')
             f.write(f'domain_f1: {domain_f1}\n')
             f.write(f'domain_recall: {domain_recall}\n')
@@ -390,9 +472,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self.log('punct_precision', punct_precision)
         self.log('punct_f1', punct_f1)
         self.log('punct_recall', punct_recall)
-        self.log('chunked_punct_precision', chunked_punct_precision)
-        self.log('chunked_punct_f1', chunked_punct_f1)
-        self.log('chunked_punct_recall', chunked_punct_recall)
+        if chunk:
+            self.log('chunked_punct_precision', chunked_punct_precision)
+            self.log('chunked_punct_f1', chunked_punct_f1)
+            self.log('chunked_punct_recall', chunked_punct_recall)
         self.log('domain_precision', domain_precision)
         self.log('domain_f1', domain_f1)
         self.log('domain_recall', domain_recall)
@@ -515,10 +598,17 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         if lr is not None:
             optimizer_args['lr'] = lr
 
+        def is_backbone(n): return 'encoder' in n
+        params = list(self.named_parameters())
+        grouped_parameters = [
+            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/10},
+            {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
+        ]
+
         # Actually instantiate the optimizer
         if optimizer_cls is not None:
             if inspect.isclass(optimizer_cls):
-                optimizer = optimizer_cls(self.parameters(), **optimizer_args)
+                optimizer = optimizer_cls(grouped_parameters, **optimizer_args)
                 logging.info("Optimizer config = %s", str(optimizer))
 
                 self._optimizer = optimizer
@@ -535,7 +625,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                     optimizer_config.update(optimizer_args)
 
                     optimizer_instance = hydra.utils.instantiate(
-                        optimizer_cls, self.parameters(), **optimizer_config
+                        optimizer_cls, grouped_parameters, **optimizer_config
                     )  # type: DictConfig
 
                     logging.info("Optimizer config = %s",
@@ -553,7 +643,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         else:
             optimizer = get_optimizer(optimizer_name)
-            optimizer = optimizer(self.parameters(), **optimizer_args)
+            optimizer = optimizer(grouped_parameters, **optimizer_args)
 
             logging.info("Optimizer config = %s", str(optimizer))
 
@@ -562,9 +652,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # Try to instantiate scheduler for optimizer
         self._scheduler = prepare_lr_scheduler(
             optimizer=self._optimizer, scheduler_config=scheduler_config,
-            train_dataloader=pp({'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
+            train_dataloader={'num_samples' : self.train_size*self.hparams.model.dataset.train_ds.batch_size, 
             'batch_size': self.hparams.model.dataset.train_ds.batch_size,
-            'drop_last' : self.hparams.model.dataset.drop_last})
+            'drop_last' : self.hparams.model.dataset.drop_last}
             )
 
         # Return the optimizer with/without scheduler
@@ -584,8 +674,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         self._cfg.model.punct_label_ids=OmegaConf.create(sorted(self._cfg.model.punct_label_ids))
         labels_to_ids = {_[1]:_[0] for _ in enumerate(self._cfg.model.punct_label_ids)}
         data_config.num_labels=len(self._cfg.model.punct_label_ids)
-        data_config.labelled = OmegaConf.create([] if data_config.labelled==None else data_config.labelled)
-        data_config.unlabelled = OmegaConf.create([] if data_config.unlabelled==None else data_config.unlabelled)
+        # data_config.labelled = OmegaConf.create([] if data_config.labelled==None else data_config.labelled)
+        # data_config.unlabelled = OmegaConf.create([] if data_config.unlabelled==None else data_config.unlabelled)
         data_config.num_domains = len(data_config.labelled)+len(data_config.unlabelled)
         self.dm=PunctuationDataModule(
             tokenizer= self._cfg.model.transformer_path,
@@ -603,17 +693,20 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             seed=self._cfg.seed,
             data_id=self.data_id,
             tmp_path=self.hparams.tmp_path,
+            val_unlabelled=data_config.val_unlabelled,
             test_unlabelled=data_config.test_unlabelled,
             attach_label_to_end=data_config.attach_label_to_end,
             manual_len=data_config.train_ds.manual_len,
             no_space_label=self._cfg.model.no_space_label,
-            pad_start=data_config.pad_start
+            pad_start=data_config.pad_start,
+            low_resource_labelled_count=data_config.low_resource_labelled_count,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader
         self.train_size = len(self.dm.train_dataset)
         self._validation_dl=self.dm.val_dataloader
         self._test_dl=self.dm.test_dataloader
+        
     
     def train_dataloader(self):
         if self._train_dl is not None:
@@ -826,12 +919,13 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             punct_label_ids=self.labels_to_ids,
             label_map=self.label_map,
             attach_label_to_end=self._cfg.model.dataset.attach_label_to_end)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         batch=ds[0]
-        attention_mask = batch['attention_mask']
-        subtoken_mask = batch['subtoken_mask']
+        attention_mask = batch['attention_mask'].to(device)
+        subtoken_mask = batch['subtoken_mask'].to(device)
         # punct_labels = batch['labels']
         # domain_labels = subtoken_mask[:,0]>0 if self.hparams.model.domain_head.predict_labelled else batch['domain']
-        input_ids = batch['input_ids']
+        input_ids = batch['input_ids'].to(device)
 
         labelled_mask=(subtoken_mask[:,0]>0)
         # test_loss, punct_logits, domain_logits = self._make_step(batch)

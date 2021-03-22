@@ -26,7 +26,6 @@ def position_to_mask(max_seq_length:int,indices:list):
     try:
         o[np.array(indices)%(max_seq_length-2)+1]=1
     except:
-        # pp('empty array')
         o[(np.array(indices)%(max_seq_length-2)+1).astype(int)]=1
     return o
 
@@ -38,13 +37,27 @@ def align_labels_to_mask(mask,labels):
     return m1.tolist()
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
-        return [re.sub(r'( ?\[((PAD)|(CLS)|(SEP))\] ?)',' ',
-        re.sub('# ','',re.sub(' +##','',' '.join( #[.?!,;:\-—… ]+
-            [_[0]+_[1] for _ in list(
-                zip(tokenizer.convert_ids_to_tokens(_[0]),
-                    [labels_to_ids[id] for id in _[1].tolist()])
-            )]
-        )))) for _ in zip(texts,tags)]
+    output=[re.sub(r'( ?\[((CLS))\] ?)',' ',
+    re.sub('# +','',re.sub('#? +##','',' '.join( #[.?!,;:\-—… ]+
+        [_[0]+_[1] for _ in list(
+            zip(tokenizer.convert_ids_to_tokens(_[0]),
+                [labels_to_ids[id] for id in _[1].tolist()])
+        )]
+    )))) for _ in zip(texts,tags)]
+    newoutput=[]
+    prevappend=False
+    for value in output:
+        if value[-5:]!='[PAD]':
+            append=True
+        else:
+            append=False
+        value=re.sub(r'( ?\[((SEP)|(PAD))\] ?)',' ',value).strip()
+        if prevappend:
+            newoutput[-1]=newoutput[-1]+'// '+value
+        else:
+            newoutput.append(value)
+        prevappend=append
+    return newoutput
 
 def text2masks(n, labels_to_ids,label_map):
     def text2masks(text):
@@ -116,6 +129,7 @@ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,toke
     if labels!=None:
         split_labels=np.array_split(labels,breakpoints)
         padded_labels=[pad_to_len(max_seq_length,align_labels_to_mask(*_)) for _ in zip(masks,split_labels)]
+    
     return ids,masks,padded_labels
     
 def chunk_to_len_batch(max_seq_length,
@@ -136,8 +150,9 @@ def chunk_to_len_batch(max_seq_length,
     batch_labels=[]
     for i,_ in enumerate(zip(tokens,tokens) if labels==None else zip(tokens,labels)):
         a,b,c=chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start,*_) if labels else chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start,_[0])
-        batch_ids.extend(a)
-        batch_masks.extend(b)
+        
+        batch_ids.extend(a[:min(len(a),len(b))])
+        batch_masks.extend(b[:min(len(a),len(b))])
         if labelled==True:
             batch_labels.extend(c)
     output = {'input_ids': torch.as_tensor(batch_ids, dtype=torch.long),

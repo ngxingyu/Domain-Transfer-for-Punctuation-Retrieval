@@ -9,7 +9,9 @@ import os
 import torch
 import subprocess
 from time import time
-from itertools import cycle, chain, islice
+from itertools import cycle, chain, islice, repeat
+from math import ceil
+from collections import Counter
 
 class PunctuationDomainDataset(IterableDataset):
 
@@ -60,7 +62,6 @@ class PunctuationDomainDataset(IterableDataset):
         self.csv_file =   csv_file
         self.max_seq_length =   max_seq_length
         self.manual_len=manual_len
-        self.set_num_samples(csv_file, num_samples, manual_len)
         self.domain=  domain
         self.punct_label_ids=punct_label_ids
         self.label_map=label_map
@@ -75,10 +76,10 @@ class PunctuationDomainDataset(IterableDataset):
         self.pad_start=pad_start
         if not (os.path.exists(self.target_file)):
             os.system(f"sed '1d' {self.csv_file} > {self.target_file}")
-
+        self.set_num_samples(self.target_file, num_samples, manual_len)
     def __iter__(self):
         self.dataset=iter(pd.read_csv(
-                self.csv_file,
+                self.target_file,
                 skiprows=(0 % self.len)*self.num_samples,
                 header=None,
                 dtype=str,
@@ -112,15 +113,18 @@ class PunctuationDomainDataset(IterableDataset):
         self.total_samples=int(subprocess.Popen(['wc', '-l', csv_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
         if manual_len>0:
             self.total_samples=min(manual_len,self.total_samples)
-        self.len = int(self.total_samples / self.num_samples)
+        self.num_samples=min(self.num_samples,self.total_samples)
+        self.len = max(1,int(self.total_samples / self.num_samples))
+
         
 
     def __len__(self):
-        pp('dataset')
         return pp(self.len)
     
     def shuffle(self, randomize=True, seed=42):
-        pp(os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path)))
+        int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
+        os.system('bash data/shuffle.sh -i {} -o {} -a {} -s {} -m {} -t {}'.format(self.target_file, self.target_file, ['true','false'][randomize], seed, '100M',self.tmp_path))
+        int(subprocess.Popen(['wc', '-l', self.target_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])
         self.dataset=iter(pd.read_csv(
                 self.target_file,
                 skiprows=(0 % self.len)*self.num_samples,
@@ -132,7 +136,7 @@ class PunctuationDomainDataset(IterableDataset):
     def determine_class_weights(self):
         it=iter(self)
         ct=torch.zeros(len(self.punct_label_ids))
-        for _ in range(20):
+        for _ in range(min(20,self.len)):
             print('.',end='')
             ni=next(it)
             ct+=torch.bincount(ni['labels'].view(-1),minlength=len(self.punct_label_ids))
@@ -142,17 +146,6 @@ class PunctuationDomainDataset(IterableDataset):
 
 
 class PunctuationDomainDatasets(IterableDataset):
-    
-    @property
-    def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        """Returns definitions of module output ports. """
-        return {
-            "input_ids": NeuralType(('B', 'T'), ChannelType()),
-            "attention_mask": NeuralType(('B', 'T'), ChannelType()),
-            "subtoken_mask": NeuralType(('B', 'T'), ChannelType()),
-            "labels": NeuralType(('B', 'T'), ChannelType()),
-            "domain": NeuralType(('B'), ChannelType()),
-        }
 
     def __init__(self, 
                  split:str,
@@ -170,6 +163,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  manual_len:int=0,
                  no_space_label:int=None,
                  pad_start:int=0,
+                 low_resource_labelled_count:int = 0,
                  ):
         worker_info = get_worker_info()
         self.num_workers=1 if worker_info is None else worker_info.num_workers
@@ -181,14 +175,27 @@ class PunctuationDomainDatasets(IterableDataset):
         self.label_map=label_map
         self.ds_lengths=[]
         self.labelled=labelled
-        for path in labelled+unlabelled:
+        for path in labelled:
             if manual_len>0:
                 self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
             else:
                 self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+        for path in unlabelled:
+            if split=='train' and low_resource_labelled_count>0:
+                if manual_len>0:
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.labelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.unlabelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                else:
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.labelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.unlabelled.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
+            else:
+                if manual_len>0:
+                    self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
+                else:
+                    self.ds_lengths.append(int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0]))
         self.max_length=max(self.ds_lengths) 
         self.per_worker=int(self.max_length/self.num_workers)
-        self.len=int(self.per_worker/num_samples) 
+        self.len=max(1,ceil(self.per_worker/num_samples))
         self.class_weights=None
 
 
@@ -212,21 +219,51 @@ class PunctuationDomainDatasets(IterableDataset):
             
         for i,path in enumerate(unlabelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
-            dataset=PunctuationDomainDataset(
-                    csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
-                    num_samples=num_samples,max_seq_length=max_seq_length,
-                    punct_label_ids=punct_label_ids,
-                    label_map=label_map,domain=len(labelled)+i,labelled=False,
-                    randomize=randomize,
-                    target_file=f'{target}.{split}.{data_id}.csv',
-                    tmp_path=tmp_path,
-                    attach_label_to_end=attach_label_to_end,
-                    no_space_label=no_space_label,
-                    manual_len=manual_len,
-                    pad_start=pad_start,)
-            self.datasets.append(dataset)
-            self.iterables.append(cycle(dataset))
-
+            if split=='train' and low_resource_labelled_count>0:
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.unlabelled.{split}.csv', tokenizer=tokenizer,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=False,
+                        randomize=randomize,
+                        target_file=f'{target}.unlabelled.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.labelled.{split}.csv', tokenizer=tokenizer,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=True,
+                        randomize=randomize,
+                        target_file=f'{target}.labelled.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
+            else:
+                dataset=PunctuationDomainDataset(
+                        csv_file=f'{path}.{split}.csv', tokenizer=tokenizer,
+                        num_samples=num_samples,max_seq_length=max_seq_length,
+                        punct_label_ids=punct_label_ids,
+                        label_map=label_map,domain=len(labelled)+i,labelled=False,
+                        randomize=randomize,
+                        target_file=f'{target}.{split}.{data_id}.csv',
+                        tmp_path=tmp_path,
+                        attach_label_to_end=attach_label_to_end,
+                        no_space_label=no_space_label,
+                        manual_len=manual_len,
+                        pad_start=pad_start,)
+                self.datasets.append(dataset)
+                self.iterables.append(cycle(dataset))
+        
     # def __getitem__(self, i):
     #     ds=[d[i] for d in self.datasets]
 
@@ -248,14 +285,14 @@ class PunctuationDomainDatasets(IterableDataset):
                 if size<min_batch:
                     min_batch=size
             #Ensure all domains are evenly represented
-            b={k:torch.cat([d[k][:min_batch] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
+            b={k:torch.cat([torch.repeat_interleave(d[k],max(1,min_batch/d[k].shape[0]),dim=0)[:min_batch] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
             rand=torch.randperm(b['labels'].shape[0])
             return {k:v[rand] for k,v in b.items()}
         else:
             return {k:torch.cat([d[k] for d in ds], dim=0) for k in ['input_ids','attention_mask','subtoken_mask','labels','domain']}
 
     def __len__(self):
-        return pp(self.len)
+        return self.len
 
     def shuffle(self, randomize=True, seed=42):
         worker_info = get_worker_info()
