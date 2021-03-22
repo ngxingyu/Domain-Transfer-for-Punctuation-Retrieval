@@ -4,6 +4,66 @@ hydra:
   sweep:
     dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
     subdir: ${hydra.job.num}
+  launcher:
+    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
+  sweeper:
+    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
+    max_batch_size: null
+  help:
+    app_name: ${hydra.job.name}
+    header: '${hydra.help.app_name} is powered by Hydra.
+
+      '
+    footer: 'Powered by Hydra (https://hydra.cc)
+
+      Use --hydra-help to view Hydra specific help
+
+      '
+    template: '${hydra.help.header}
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (group=option)
+
+
+      $APP_CONFIG_GROUPS
+
+
+      == Config ==
+
+      Override anything in the config (foo.bar=value)
+
+
+      $CONFIG
+
+
+      ${hydra.help.footer}
+
+      '
+  hydra_help:
+    template: 'Hydra (${hydra.runtime.version})
+
+      See https://hydra.cc for more info.
+
+
+      == Flags ==
+
+      $FLAGS_HELP
+
+
+      == Configuration groups ==
+
+      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
+      to command line)
+
+
+      $HYDRA_CONFIG_GROUPS
+
+
+      Use ''--cfg hydra'' to Show the Hydra config.
+
+      '
+    hydra_help: ???
   hydra_logging:
     version: 1
     formatters:
@@ -45,66 +105,6 @@ hydra:
       - console
       - file
     disable_existing_loggers: false
-  sweeper:
-    _target_: hydra._internal.core_plugins.basic_sweeper.BasicSweeper
-    max_batch_size: null
-  launcher:
-    _target_: hydra._internal.core_plugins.basic_launcher.BasicLauncher
-  help:
-    app_name: ${hydra.job.name}
-    header: '${hydra.help.app_name} is powered by Hydra.
-
-      '
-    footer: 'Powered by Hydra (https://hydra.cc)
-
-      Use --hydra-help to view Hydra specific help
-
-      '
-    template: '${hydra.help.header}
-
-      == Configuration groups ==
-
-      Compose your configuration from those groups (group=option)
-
-
-      $APP_CONFIG_GROUPS
-
-
-      == Config ==
-
-      Override anything in the config (foo.bar=value)
-
-
-      $CONFIG
-
-
-      ${hydra.help.footer}
-
-      '
-  hydra_help:
-    hydra_help: ???
-    template: 'Hydra (${hydra.runtime.version})
-
-      See https://hydra.cc for more info.
-
-
-      == Flags ==
-
-      $FLAGS_HELP
-
-
-      == Configuration groups ==
-
-      Compose your configuration from those groups (For example, append hydra/job_logging=disabled
-      to command line)
-
-
-      $HYDRA_CONFIG_GROUPS
-
-
-      Use ''--cfg hydra'' to Show the Hydra config.
-
-      '
   output_subdir: .hydra
   overrides:
     hydra: []
@@ -123,6 +123,14 @@ hydra:
         item_sep: ','
         exclude_keys: []
   runtime:
-    version: 1.0.5
-    cwd: /home/nxingyu2/project/experiment
+    version: 1.1.0dev3
+    cwd: /home/nxingyu/project/experiment
   verbose: false
+  choices:
+    hydra/job_logging: default
+    hydra/hydra_logging: default
+    hydra/hydra_help: default
+    hydra/help: default
+    hydra/sweeper: basic
+    hydra/launcher: basic
+    hydra/output: default

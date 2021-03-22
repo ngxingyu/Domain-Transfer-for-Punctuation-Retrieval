@@ -47,7 +47,7 @@ model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 0                 # Initial number of layers unfrozen
-    maximum_unfrozen: 2         # Maximum number of layers unfrozen.
+    maximum_unfrozen: 3         # Maximum number of layers unfrozen.
     unfreeze_step: 1            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
@@ -55,19 +55,19 @@ model:
         - "."
         - "?"
 
-        # - "!"
+        - "!"
         - "-"
         - "…"
-        # - ":"
+        - ":"
 
         # - "—"
         # - ";"
 
     label_map: # Dict containing ( original punctuation: replacement punctuation. )
 
-        "!": "."
+        # "!": "."
         # "-": ","
-        ":": ","
+        # ":": ","
         # "…": "."
 
         "—": ","
@@ -76,7 +76,7 @@ model:
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.1 # 0 if don't weight
+    punct_class_weight_factor: 0.2 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: true # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -86,13 +86,13 @@ model:
             # - ${base_path}/ted2010 #
             # - ${base_path}/ted2010_explode
             - ${base_path}/ted_talks_processed #
-            - ${base_path}/open_subtitles_processed #  
+            # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
             # - ${base_path}/switchboardutt_processedlow #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
-            - ${base_path}/switchboardutt_processed #
+            - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         low_resource_labelled_count: 16
         max_seq_length: 128
@@ -155,15 +155,15 @@ model:
 
     domain_head:
         predict_labelled: false # if false: treats every domain separately, if true: splits into labelled and unlabelled
-        domain_num_fc_layers: 1 # Number of fully_connected layers. minimum 1. (no. fcl = max(1,domain_num_fc_layers))
-        fc_dropout: 0.1
+        domain_num_fc_layers: 2 # Number of fully_connected layers. minimum 1. (no. fcl = max(1,domain_num_fc_layers))
+        fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
         loss: 'dice'
         gamma: # Leave blank. auto fill per step
-        gamma_factor: 1.5 #0.1 # coefficient of gradient reversal
-        pooling:  'token' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
+        gamma_factor: 1.0 #0.1 # coefficient of gradient reversal
+        pooling:   # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
         idx_conditioned_on: 0 # 0 = use first (CLS) token, only considered when pooling = token
         weight_tokens: true # Assign weight to each domain label
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
@@ -175,7 +175,11 @@ model:
             - 1
 
             # - 0.1
-            # - 0.9
+            # - 0.45
+            # - 0.45
+
+            - 0.2
+            - 0.8
 
             # - 1
             # - 1
@@ -192,8 +196,8 @@ model:
         - 1e-2
         - 1e-3
         - 1e-4
-        # - 1e-5
-        # - 1e-5
+        - 1e-5
+        - 1e-5
         # - 1e-7
         # - 1e-8
 
