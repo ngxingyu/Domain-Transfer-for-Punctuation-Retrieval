@@ -15,13 +15,13 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/${env:USER}/project/
+  exp_dir: /home/nxingyu/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/${env:USER}/data
-tmp_path: /home/${env:USER}/data/tmp
-log_dir: null
+base_path: /home/nxingyu/data
+tmp_path: /home/nxingyu/data/tmp
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-22_10-02-47
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -47,11 +47,11 @@ model:
   cat_domain_and_states: true
   cat_domain_logits: true
   dataset:
-    data_dir: /home/${env:USER}/data
+    data_dir: /home/nxingyu/data
     labelled:
-    - ${base_path}/ted_talks_processed
+    - /home/nxingyu/data/ted_talks_processed
     unlabelled:
-    - ${base_path}/switchboardutt_processed
+    - /home/nxingyu/data/switchboardutt_processed
     low_resource_labelled_count: 4
     max_seq_length: 128
     pad_label: ''
@@ -77,12 +77,12 @@ model:
       num_samples: -1
       batch_size: 16
   tokenizer:
-    tokenizer_name: ${model.language_model.pretrained_model_name}
+    tokenizer_name: google/electra-base-discriminator
     vocab_file: null
     tokenizer_model: null
     special_tokens: null
   language_model:
-    pretrained_model_name: ${model.transformer_path}
+    pretrained_model_name: google/electra-base-discriminator
     lm_checkpoint: null
     config_file: null
     config: null

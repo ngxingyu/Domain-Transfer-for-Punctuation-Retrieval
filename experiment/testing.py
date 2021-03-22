@@ -47,7 +47,7 @@ def main(cfg : DictConfig) -> None:
                     punct_label_ids=model.dm.punct_label_ids,
                     label_map=model.dm.label_map,
                     # labelled=['/home/nxingyu2/data/ted2010_explode'],
-                    labelled=['/home/nxingyu2/data/switchboardutt_processed'],
+                    # labelled=['/home/nxingyu2/data/switchboardutt_processed'],
                     # labelled=['/home/nxingyu2/data/open_subtitles_processed'],
                     # labelled=['/home/nxingyu2/data/ted_talks_processed'], #jointteduttdice32acc4bs16
                     unlabelled=[],
