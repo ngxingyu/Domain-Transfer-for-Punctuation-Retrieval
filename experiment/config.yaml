@@ -76,7 +76,7 @@ model:
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.2 # 0 if don't weight
+    punct_class_weight_factor: 0.5 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -96,7 +96,7 @@ model:
             # - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         low_resource_labelled_count: 4
-        max_seq_length: 256
+        max_seq_length: 128
         pad_label: ''
         ignore_extra_tokens: false
         ignore_start_end: false
@@ -111,14 +111,15 @@ model:
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
         pad_start: 0
-        alpha_sub: 0.2
+        alpha_sub: 0.3
         alpha_del: 0.3
-        alpha_ins: 0.2
+        alpha_ins: 0.3
         alpha_swp: 0
+        stride: 32
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 4
+            batch_size: 8
             manual_len: 0 #default 0 84074
 
         validation_ds:
@@ -127,7 +128,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: false
             num_samples: -1
-            batch_size: 4 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -143,7 +144,7 @@ model:
     
     punct_head:
         punct_num_fc_layers: 2  # 2fcl seems to work well, but ensure it doesn't overfit
-        fc_dropout: 0.2
+        fc_dropout: 0.4
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
@@ -152,7 +153,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 4
+            alpha: 6
             macro_average: true
 
         focal_loss: 
@@ -199,15 +200,14 @@ model:
         #     alpha: 2
 
     frozen_lr:
-        - 1e-4
         # - 5e-3
         # - 1e-3
-        # - 5e-4
+        - 5e-4
         - 1e-4
-        # - 5e-5
-        # - 5e-6
-        # - 1e-7
-        # - 1e-8
+        - 5e-5
+        - 5e-6
+        - 1e-7
+        - 1e-8
 
     # gamma:
     #     - 1

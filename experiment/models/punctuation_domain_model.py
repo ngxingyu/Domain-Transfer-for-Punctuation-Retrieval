@@ -712,6 +712,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             alpha_del=data_config.alpha_del,
             alpha_ins=data_config.alpha_ins,
             alpha_swp=data_config.alpha_swp,
+            stride=data_config.stride,
         )
         self.dm.setup()
         self._train_dl=self.dm.train_dataloader

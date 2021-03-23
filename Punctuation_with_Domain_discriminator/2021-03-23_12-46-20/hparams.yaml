@@ -1,5 +1,5 @@
 seed: 42
-inference: false
+inference: true
 trainer:
   gpus: 1
   num_nodes: 1
@@ -16,17 +16,17 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/${env:USER}/project/
+  exp_dir: /home/nxingyu2/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/${env:USER}/data
-tmp_path: /home/${env:USER}/data/tmp
-log_dir: null
+base_path: /home/nxingyu2/data
+tmp_path: /home/nxingyu2/data/tmp
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-23_12-46-20
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 10
+  unfrozen: 2
   maximum_unfrozen: 10
   unfreeze_step: 2
   punct_label_ids:
@@ -43,15 +43,15 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.5
+  punct_class_weight_factor: 0.2
   punct_class_weights: null
   cat_domain_and_states: false
   cat_domain_logits: true
   dataset:
-    data_dir: /home/${env:USER}/data
+    data_dir: /home/nxingyu2/data
     labelled:
-    - ${base_path}/lrec_processed
-    unlabelled: null
+    - /home/nxingyu2/data/lrec_processed
+    unlabelled: []
     low_resource_labelled_count: 4
     max_seq_length: 256
     pad_label: ''
@@ -61,8 +61,8 @@ model:
     num_workers: 2
     pin_memory: false
     drop_last: true
-    num_labels: 7
-    num_domains: 3
+    num_labels: 4
+    num_domains: 1
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: true
@@ -74,25 +74,25 @@ model:
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 8
+      batch_size: 2
       manual_len: 0
     validation_ds:
       shuffle: false
       num_samples: -1
-      batch_size: 16
+      batch_size: 2
   tokenizer:
-    tokenizer_name: ${model.language_model.pretrained_model_name}
+    tokenizer_name: google/electra-base-discriminator
     vocab_file: null
     tokenizer_model: null
     special_tokens: null
   language_model:
-    pretrained_model_name: ${model.transformer_path}
+    pretrained_model_name: google/electra-base-discriminator
     lm_checkpoint: null
     config_file: null
     config: null
   punct_head:
     punct_num_fc_layers: 2
-    fc_dropout: 0.4
+    fc_dropout: 0.2
     activation: gelu
     log_softmax: false
     use_transformer_init: true
@@ -100,7 +100,7 @@ model:
     bilstm: false
     dice_loss:
       epsilon: 0.01
-      alpha: 6
+      alpha: 4
       macro_average: true
     focal_loss:
       alpha: 2
@@ -123,6 +123,7 @@ model:
       alpha: 4
       macro_average: true
   frozen_lr:
+  - 0.001
   - 0.0005
   - 0.0001
   - 5.0e-05
