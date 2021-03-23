@@ -374,4 +374,13 @@ lrec 12 crf diff1                       2021-03-23_08-13-56
 
 lrec 12 cel same                        2021-03-23_08-16-24
 
+lrec 12 d4w.3o.2 diff.01 lr5e-5         2021-03-23_08-19-32
+
+change diff mech
+lrec 12 d4w.3o.2 0.1diff                2021-03-23_08-42-46
+
+
+
+
+
 
