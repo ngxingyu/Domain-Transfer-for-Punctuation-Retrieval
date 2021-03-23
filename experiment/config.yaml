@@ -6,7 +6,7 @@ trainer:
     num_nodes: 1
     max_epochs: 10 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 2 # accumulates grads every k batches
+    accumulate_grad_batches: 8 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -111,6 +111,10 @@ model:
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
         pad_start: 0
+        alpha_sub: 0.2
+        alpha_del: 0.3
+        alpha_ins: 0.2
+        alpha_swp: 0
         train_ds:
             shuffle: true
             num_samples: -1
@@ -139,7 +143,7 @@ model:
     
     punct_head:
         punct_num_fc_layers: 2  # 2fcl seems to work well, but ensure it doesn't overfit
-        fc_dropout: 0.3
+        fc_dropout: 0.2
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
@@ -148,7 +152,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 8
+            alpha: 2
             macro_average: true
 
         focal_loss: 
@@ -195,11 +199,11 @@ model:
         #     alpha: 2
 
     frozen_lr:
-        - 1e-2
+        # - 1e-2
         # - 5e-3
         # - 1e-3
         # - 5e-4
-        # - 1e-4
+        - 1e-4
         # - 5e-5
         # - 5e-6
         # - 1e-7
@@ -216,7 +220,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.5 # base layers multiplied by this
+    differential_lr: 0.9 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
