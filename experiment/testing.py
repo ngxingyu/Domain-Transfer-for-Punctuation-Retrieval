@@ -43,16 +43,16 @@ def main(cfg : DictConfig) -> None:
     model._cfg.model.dataset.unlabelled=[]
     model.setup_datamodule()
 
-    model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
-    trainer = pl.Trainer(**cfg.trainer)
-    trainer.test(model,ckpt_path=None)
+    # model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
+    # trainer = pl.Trainer(**cfg.trainer)
+    # trainer.test(model,ckpt_path=None)
 
     
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # inference_results = model.to(device).add_punctuation(queries)
-    # for query, result in zip(queries, inference_results):
-    #     print(f'Query : {query}\n')
-    #     print(f'Result: {result.strip()}\n\n')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    inference_results = model.to(device).add_punctuation(queries)
+    for query, result in zip(queries, inference_results):
+        print(f'Query : {query}\n')
+        print(f'Result: {result.strip()}\n\n')
 
     # while 1:
     #     text=input('Enter text to punctuate:\n')
@@ -73,6 +73,7 @@ queries = [
     '''Plans for this weekend include turning wine into water. The small white buoys marked the location of hundreds of crab pots. He said he was not there yesterday; however, many people saw him there. Today arrived with a crash of my car through the garage door. The lyrics of the song sounded like fingernails on a chalkboard. The Guinea fowl flies through the air with all the grace of a turtle. They ran around the corner to find that they had traveled back in time.''',
     "Yeah. don't know if you ever happened to see some of the like, Twenty Twenty and what not about Rumania and East Germany when they first got pictures out of there … Uh-huh. … about how some of their systems had been running for twenty and thirty years … Uh-huh. … and, uh, you know, they had absolutely no regulations, no controls whatsoever, and they had destroyed entire forests and what not, just because the air was so polluted. That's, that's the kind of things that, uh, you don't see in this country, and that's, that's why think that, you know, it's, don't know if you can ever do enough, but, uh, think it's all relative to the, to the time and place, and think right now it's, it's pretty much under control. Yeah, okay, well. All righty. Uh-huh. It's been nice talking to you. Well, you bet. Okay, bye-bye. Bye.",
     "firstly development policy in africa in any case in the acp countries employment policy in madeira the canaries guadeloupe martinique and crete regional policy in the ultra-peripheral areas human rights which mr barthet-mayer mentioned earlier since dollar bananas are after all slavery bananas the product of human exploitation by three multinationals payments of ecu 50 per month instead of ecu 50 per day in guadeloupe or martinique it also brings into question budgetary policy because the european union is after all making a present of ecu 1 point 9 billion to three multinationals where are the financial interests of the european union",
+    "Tolkien drew on a wide array of influences including language, Christianity, mythology including the Norse Völsunga saga, archaeology, especially at the Temple of Nodens, ancient and modern literature, and personal experience. He was inspired primarily by his profession, philology; his work centred on the study of Old English literature, especially Beowulf, and he acknowledged its importance to his writings.",
 ]
 
 if __name__ == "__main__":
