@@ -20,7 +20,7 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-exp='2021-03-22_13-20-22'
+exp='2021-03-23_15-41-10'
 # exp='2021-03-21_07-48-57'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
@@ -37,22 +37,23 @@ def main(cfg : DictConfig) -> None:
     #         model.save_to(cfg.model.nemo_path)
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
+
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
     checkpoint_path=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
     model._cfg.model.dataset.labelled=['/home/nxingyu/data/switchboardutt_processed']
     model._cfg.model.dataset.unlabelled=[]
     model.setup_datamodule()
 
-    # model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
-    # trainer = pl.Trainer(**cfg.trainer)
-    # trainer.test(model,ckpt_path=None)
+    model.hparams.log_dir=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/"
+    trainer = pl.Trainer(**cfg.trainer)
+    trainer.test(model,ckpt_path=None)
 
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inference_results = model.to(device).add_punctuation(queries)
-    for query, result in zip(queries, inference_results):
-        print(f'Query : {query}\n')
-        print(f'Result: {result.strip()}\n\n')
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # inference_results = model.to(device).add_punctuation(queries)
+    # for query, result in zip(queries, inference_results):
+    #     print(f'Query : {query}\n')
+    #     print(f'Result: {result.strip()}\n\n')
 
     # while 1:
     #     text=input('Enter text to punctuate:\n')

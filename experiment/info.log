@@ -4492,3 +4492,77 @@ weighted avg                                            96.00      95.62      95
         0.00        68.00
 -------------------
 
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          97.27      91.21      94.14    1103277
+, (label_id: 1)                                         57.57      66.30      61.62     179106
+. (label_id: 2)                                         55.75      70.91      62.42     100450
+? (label_id: 3)                                         16.78      52.56      25.44       6668
+-------------------
+micro avg                                               86.35      86.35      86.35    1389501
+macro avg                                               56.84      70.24      60.91    1389501
+weighted avg                                            88.76      86.35      87.33    1389501
+
+-------------------
+                       ,           .           ?
+  1006292.00     22614.00      5316.00       364.00
+    73639.00    118742.00     13223.00       666.00
+    20355.00     34039.00     71226.00      2133.00
+     2991.00      3711.00     10685.00      3505.00
+-------------------
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                         94.38      99.72      96.97       6748
+1 (label_id: 1)                                         99.72      94.40      96.99       7159
+-------------------
+micro avg                                               96.98      96.98      96.98      13907
+macro avg                                               97.05      97.06      96.98      13907
+weighted avg                                            97.13      96.98      96.98      13907
+
+-------------------
+           0           1
+     6729.00       401.00
+       19.00      6758.00
+-------------------
+
+[INFO] - GPU available: True, used: True
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - Using environment variable NODE_RANK for node rank (0).
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
+[INFO] - Punctuation report: 
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          97.26      91.05      94.05    1348890
+, (label_id: 1)                                         57.37      66.55      61.62     220399
+. (label_id: 2)                                         55.53      70.43      62.10     124644
+? (label_id: 3)                                         18.03      54.52      27.10       8606
+-------------------
+micro avg                                               86.18      86.18      86.18    1702539
+macro avg                                               57.05      70.64      61.22    1702539
+weighted avg                                            88.64      86.18      87.17    1702539
+
+-------------------
+                       ,           .           ?
+  1228124.00     27448.00      6749.00       437.00
+    90981.00    146672.00     17125.00       884.00
+    25995.00     41723.00     87784.00      2593.00
+     3790.00      4556.00     12986.00      4692.00
+-------------------
+
+[INFO] - Domain report: 
+label                                                precision    recall       f1           support   
+0 (label_id: 0)                                         95.20      99.81      97.45       8452
+1 (label_id: 1)                                         99.80      95.04      97.37       8577
+-------------------
+micro avg                                               97.41      97.41      97.41      17029
+macro avg                                               97.50      97.43      97.41      17029
+weighted avg                                            97.52      97.41      97.41      17029
+
+-------------------
+           0           1
+     8436.00       425.00
+       16.00      8152.00
+-------------------
+
+[INFO] - saving to /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-23_15-41-10/test-tedswi-6.txt
+[INFO] - Internal process exited
