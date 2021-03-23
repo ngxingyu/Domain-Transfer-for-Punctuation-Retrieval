@@ -6,7 +6,7 @@ import torch
 from omegaconf import DictConfig, OmegaConf
 from transformers import AutoTokenizer
 
-from data import PunctuationDataModule, PunctuationInferenceDataset
+from data import PunctuationInferenceDataset
 import os
 from models import PunctuationDomainModel
 
