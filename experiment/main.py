@@ -32,7 +32,7 @@ def main(cfg: DictConfig)->None:
     early_stop_callback = pl.callbacks.early_stopping.EarlyStopping(
         monitor='val_loss',
         min_delta=0.00,
-        patience=3,
+        patience=6,
         verbose=False,
         mode='max'
     )
