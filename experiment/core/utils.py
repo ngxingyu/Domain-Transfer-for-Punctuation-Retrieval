@@ -92,13 +92,15 @@ def text2masks(n, labels_to_ids,label_map):
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids,label_map):
+def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
         output['texts']=[]
         output['tags']=[]
         for sentence in examples:
+            if tokenizer is not None:
+                sentence=all_transform(sentence,tokenizer)
             text,tag=text2masks(n, labels_to_ids, label_map)(sentence)
             output['texts'].append(text)
             output['tags'].append(tag)
@@ -198,3 +200,118 @@ def transformer_weights_init(module, std_init_range=0.02, xavier=True):
     elif isinstance(module, nn.LayerNorm):
         nn.init.constant_(module.weight, 1.0)
         nn.init.constant_(module.bias, 0.0)
+#%%
+import regex as re
+import random
+
+def sent_tokenize(text):
+    return re.findall(r"\w.{20,}?[.!?… ]*[.!?…] |\w.+[.!?… ]*[.!?…]$",text)
+
+
+def shuffle_sentence_transform(data, always_apply=False, p=0.5):
+    text = data
+    sentences = sent_tokenize(text)
+    random.shuffle(sentences)
+    return ' '.join(sentences)
+
+def swap_transform(data, distance=1, probability=0.1, always_apply=False, p=0.5):
+    swap_range_list = list(range(1, distance+1))
+    text = data
+    words = text.split()
+    words_count = len(words)
+    if words_count <= 1:
+        return text
+
+    new_words = {}
+    for i in range(words_count):
+        if random.random() > probability:
+            new_words[i] = words[i]
+            continue
+
+        if i < distance:
+            new_words[i] = words[i]
+            continue
+
+        swap_idx = i - random.choice(swap_range_list)
+        new_words[i] = new_words[swap_idx]
+        new_words[swap_idx] = words[i]
+
+    return ' '.join([v for k, v in sorted(new_words.items(), key=lambda x: x[0])])
+
+def delete_transform(data, probability=0.05, always_apply=False, p=0.5):
+    text = data
+    words = text.split()
+    words_count = len(words)
+    if words_count <= 1:
+        return text
+    
+    new_words = []
+    for i in range(words_count):
+        if (random.random() < probability and words[i].isalpha()):
+            continue
+        new_words.append(words[i])
+
+    if len(new_words) == 0:
+        return words[random.randint(0, words_count-1)]
+
+    return ' '.join(new_words)
+
+def substitute_transform(data, tokenizer,probability=0.05, always_apply=False, p=0.5):
+    text = data
+    words = text.split()
+    words_count = len(words)
+    if words_count <= 1:
+        return text
+    
+    new_words = []
+    for i in range(words_count):
+        if (random.random() < probability and words[i].isalpha()):
+            randtoken=tokenizer.convert_ids_to_tokens(random.randint(0,tokenizer.vocab_size))
+            if randtoken[0].isalpha():
+                new_words.append(randtoken)
+            else:
+                new_words.append('[UNK]')
+            continue
+        new_words.append(words[i])
+
+    if len(new_words) == 0:
+        return words[random.randint(0, words_count-1)]
+
+    return ' '.join(new_words)
+
+def insert_transform(data, tokenizer, probability=0.1, always_apply=False, p=0.5):
+    text = data
+    words = text.split()
+    words_count = len(words)
+    if words_count <= 1:
+        return text
+    
+    new_words = []
+    for i in range(words_count):
+        if (random.random() < probability and words[i].isalpha()):
+            randtoken=tokenizer.convert_ids_to_tokens(random.randint(0,tokenizer.vocab_size))
+            if randtoken is None:
+                new_words.append('[UNK]')
+            elif randtoken[0].isalpha():
+                new_words.append(randtoken)
+            else:
+                new_words.append('[UNK]')
+        new_words.append(words[i])
+
+    if len(new_words) == 0:
+        return words[random.randint(0, words_count-1)]
+
+    return ' '.join(new_words)
+
+def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0):    
+    r=np.random.rand(4)
+    text=shuffle_sentence_transform(text)
+    if r[0] < alpha_sub:
+        substitute_transform(text,tokenizer)
+    if r[1] < alpha_del:
+        text=delete_transform(text)
+    if r[2] < alpha_ins:
+        text=insert_transform(text,tokenizer)
+    if r[3] < alpha_swp:
+        text=swp_transform(text)
+    return text
