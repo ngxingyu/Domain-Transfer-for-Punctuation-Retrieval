@@ -604,7 +604,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         def is_backbone(n): return 'encoder' in n
         params = list(self.named_parameters())
         grouped_parameters = [
-            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr/10},
+            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr*self.hparams.model.differential_lr},
             {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
         ]
 
