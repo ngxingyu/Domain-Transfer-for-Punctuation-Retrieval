@@ -5,7 +5,7 @@ trainer:
   num_nodes: 1
   max_epochs: 8
   max_steps: null
-  accumulate_grad_batches: 4
+  accumulate_grad_batches: 1
   gradient_clip_val: 0
   amp_level: O1
   precision: 16
@@ -26,9 +26,9 @@ log_dir: null
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 0
-  maximum_unfrozen: 4
-  unfreeze_step: 2
+  unfrozen: 12
+  maximum_unfrozen: 12
+  unfreeze_step: 1
   punct_label_ids:
   - ''
   - ','
@@ -43,7 +43,7 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.4
+  punct_class_weight_factor: 0.2
   punct_class_weights: null
   cat_domain_and_states: false
   cat_domain_logits: true
@@ -60,27 +60,27 @@ model:
     use_cache: false
     num_workers: 2
     pin_memory: false
-    drop_last: false
+    drop_last: true
     num_labels: 7
     num_domains: 3
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: true
     pad_start: 0
-    alpha_sub: 0.1
-    alpha_del: 0.1
-    alpha_ins: 0.1
+    alpha_sub: 0.3
+    alpha_del: 0.3
+    alpha_ins: 0.3
     alpha_swp: 0
-    stride: 16
+    stride: 32
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 8
+      batch_size: 2
       manual_len: 0
     validation_ds:
       shuffle: false
       num_samples: -1
-      batch_size: 8
+      batch_size: 4
   tokenizer:
     tokenizer_name: ${model.language_model.pretrained_model_name}
     vocab_file: null
@@ -92,13 +92,13 @@ model:
     config_file: null
     config: null
   punct_head:
-    punct_num_fc_layers: 2
-    fc_dropout: 0.4
+    punct_num_fc_layers: 0
+    fc_dropout: 0.2
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: dice
-    bilstm: false
+    loss: crf
+    bilstm: true
     dice_loss:
       epsilon: 0.01
       alpha: 6
@@ -118,18 +118,19 @@ model:
     pooling: attention
     idx_conditioned_on: 0
     weight_tokens: true
-    weight: null
+    weight:
+    - 0.2
+    - 0.8
     dice_loss:
       epsilon: 0.01
       alpha: 4
       macro_average: true
   frozen_lr:
-  - 0.01
-  - 0.001
-  - 0.0001
-  - 1.0e-05
-  - 1.0e-06
-  differential_lr: 0.8
+  - 2.0e-05
+  - 5.0e-06
+  - 1.0e-07
+  - 1.0e-08
+  differential_lr: 1
   optim:
     name: adamw
     lr: 0.01
