@@ -50,7 +50,7 @@ class PunctuationDomainDataset(IterableDataset):
         alpha_del=0.4,
         alpha_ins=0.4,
         alpha_swp=0,
-        stride=0
+        stride=0,
     ):
         if not (os.path.exists(csv_file)):
             raise FileNotFoundError(
@@ -106,15 +106,14 @@ class PunctuationDomainDataset(IterableDataset):
         # a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
         # b=np.minimum(l,a+self.max_seq_length*n)
         # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
+        complete=batch
         if self.stride>0:
-            combined=batch
             for i in range(1,self.max_seq_length//self.stride):
                 l=batch.str.split().map(len).values
                 a=self.stride*i*np.ones_like(l)
-                combined.append(pd.DataFrame({'t':batch,'a':a,'b':l}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
-            batch=combined
-
-
+                b=l
+                complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
+        batch=complete
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, pad_start=self.pad_start)
         num_samples=batched['labels'].shape[0]
@@ -226,7 +225,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
         self.alpha_swp=alpha_swp
-
+        self.stride=stride
 
         for i,path in enumerate(labelled):
             target=os.path.join(tmp_path,os.path.split(path)[1])
