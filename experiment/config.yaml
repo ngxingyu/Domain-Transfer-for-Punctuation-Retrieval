@@ -111,6 +111,10 @@ model:
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
         pad_start: 0
+        alpha_sub: 0.2
+        alpha_del: 0.3
+        alpha_ins: 0.2
+        alpha_swp: 0
         train_ds:
             shuffle: true
             num_samples: -1
@@ -199,7 +203,7 @@ model:
         # - 5e-3
         # - 1e-3
         # - 5e-4
-        # - 1e-4
+        - 1e-4
         # - 5e-5
         # - 5e-6
         # - 1e-7
