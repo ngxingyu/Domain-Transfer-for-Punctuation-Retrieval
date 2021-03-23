@@ -36,6 +36,7 @@ class PunctuationDataModule(LightningDataModule):
             alpha_del:float=0.4,
             alpha_ins:float=0.4,
             alpha_swp:float=0,
+            stride:int=32,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -72,6 +73,7 @@ class PunctuationDataModule(LightningDataModule):
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
         self.alpha_swp=alpha_swp
+        self.stride=stride
         try:
             self.no_space_label=self.punct_label_ids[no_space_label]
         except:
@@ -106,6 +108,7 @@ class PunctuationDataModule(LightningDataModule):
                     alpha_del=self.alpha_del,
                     alpha_ins=self.alpha_ins,
                     alpha_swp=self.alpha_swp,
+                    stride=self.stride,
                     )
             if (len(self.unlabelled)>0) and self.val_unlabelled:
                 self.val_dataset = PunctuationDomainDatasets(split='dev',
