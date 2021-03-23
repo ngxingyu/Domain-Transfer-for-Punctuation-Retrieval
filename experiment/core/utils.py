@@ -267,7 +267,9 @@ def substitute_transform(data, tokenizer,probability=0.05, always_apply=False, p
     for i in range(words_count):
         if (random.random() < probability and words[i].isalpha()):
             randtoken=tokenizer.convert_ids_to_tokens(random.randint(0,tokenizer.vocab_size))
-            if randtoken[0].isalpha():
+            if randtoken is None:
+                new_words.append('[UNK]')
+            elif randtoken[0].isalpha():
                 new_words.append(randtoken)
             else:
                 new_words.append('[UNK]')
