@@ -603,10 +603,15 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         def is_backbone(n): return 'encoder' in n
         params = list(self.named_parameters())
-        grouped_parameters = [
-            {'params': [p for n, p in params if is_backbone(n)], 'lr': lr*self.hparams.model.differential_lr},
-            {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
-        ]
+        backbone=[p for n, p in params if is_backbone(n)]
+        backbonelr=[lr*self.hparams.model.differential_lr**(x//16) for x in list(range(len(backbone)))[::-1]]
+        backbone_params=[{'params':p,'lr':l} for p,l in zip(backbone,backbonelr)]
+        grouped_parameters=backbone_params+[{'params': [p for n, p in params if not is_backbone(n)], 'lr': lr}]
+        # grouped_parameters = [
+        #     # {'params': backbone, 'lr': lr*self.hparams.model.differential_lr},
+        #     {'params':backbone,'lr':backbonelr},
+        #     {'params': [p for n, p in params if not is_backbone(n)], 'lr': lr},
+        # ]
 
         # Actually instantiate the optimizer
         if optimizer_cls is not None:
