@@ -22,13 +22,13 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu/data
 tmp_path: /home/nxingyu/data/tmp
-log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-23_08-42-46
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-23_16-22-27
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 12
-  maximum_unfrozen: 12
-  unfreeze_step: 2
+  unfrozen: 1
+  maximum_unfrozen: 2
+  unfreeze_step: 1
   punct_label_ids:
   - ''
   - ','
@@ -43,14 +43,15 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.6
+  punct_class_weight_factor: 0.1
   punct_class_weights: null
   cat_domain_and_states: false
   cat_domain_logits: true
   dataset:
     data_dir: /home/nxingyu/data
     labelled:
-    - /home/nxingyu/data/lrec_processed
+    - /home/nxingyu/data/ted_talks_processed
+    - /home/nxingyu/data/switchboardutt_processedlow
     unlabelled: []
     low_resource_labelled_count: 4
     max_seq_length: 256
@@ -60,22 +61,27 @@ model:
     use_cache: false
     num_workers: 4
     pin_memory: false
-    drop_last: true
+    drop_last: false
     num_labels: 4
-    num_domains: 1
+    num_domains: 2
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: true
     pad_start: 0
+    alpha_sub: 0.2
+    alpha_del: 0.2
+    alpha_ins: 0.2
+    alpha_swp: 0
+    stride: 16
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 4
+      batch_size: 16
       manual_len: 0
     validation_ds:
       shuffle: false
       num_samples: -1
-      batch_size: 4
+      batch_size: 16
   tokenizer:
     tokenizer_name: google/electra-base-discriminator
     vocab_file: null
@@ -96,7 +102,7 @@ model:
     bilstm: false
     dice_loss:
       epsilon: 0.01
-      alpha: 8
+      alpha: 4
       macro_average: true
     focal_loss:
       alpha: 2
@@ -120,7 +126,11 @@ model:
       macro_average: true
   frozen_lr:
   - 0.01
-  differential_lr: 0.1
+  - 0.001
+  - 0.0001
+  - 1.0e-05
+  - 1.0e-06
+  differential_lr: 0.8
   optim:
     name: adamw
     lr: 0.01
