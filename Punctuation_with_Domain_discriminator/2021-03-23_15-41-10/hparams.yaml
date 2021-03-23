@@ -1,9 +1,9 @@
 seed: 42
-inference: false
+inference: true
 trainer:
   gpus: 1
   num_nodes: 1
-  max_epochs: 10
+  max_epochs: 8
   max_steps: null
   accumulate_grad_batches: 2
   gradient_clip_val: 0
@@ -16,19 +16,19 @@ trainer:
   val_check_interval: 1.0
   resume_from_checkpoint: null
 exp_manager:
-  exp_dir: /home/${env:USER}/project/
+  exp_dir: /home/nxingyu/project/
   name: Punctuation_with_Domain_discriminator
   create_tensorboard_logger: true
   create_checkpoint_callback: true
-base_path: /home/${env:USER}/data
-tmp_path: /home/${env:USER}/data/tmp
-log_dir: null
+base_path: /home/nxingyu/data
+tmp_path: /home/nxingyu/data/tmp
+log_dir: /home/nxingyu/project/Punctuation_with_Domain_discriminator/2021-03-23_15-41-10
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
-  unfrozen: 1
-  maximum_unfrozen: 2
-  unfreeze_step: 1
+  unfrozen: 0
+  maximum_unfrozen: 4
+  unfreeze_step: 2
   punct_label_ids:
   - ''
   - ','
@@ -43,18 +43,18 @@ model:
     ;: .
   no_space_label: '#'
   test_chunk_percent: null
-  punct_class_weight_factor: 0.1
+  punct_class_weight_factor: 0.4
   punct_class_weights: null
   cat_domain_and_states: false
   cat_domain_logits: true
   dataset:
-    data_dir: /home/${env:USER}/data
+    data_dir: /home/nxingyu/data
     labelled:
-    - ${base_path}/ted_talks_processed
-    - ${base_path}/switchboardutt_processedlow
-    unlabelled: null
+    - /home/nxingyu/data/ted_talks_processed
+    - /home/nxingyu/data/switchboardutt_processedlow
+    unlabelled: []
     low_resource_labelled_count: 4
-    max_seq_length: 256
+    max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
     ignore_start_end: false
@@ -62,33 +62,33 @@ model:
     num_workers: 4
     pin_memory: false
     drop_last: false
-    num_labels: 7
-    num_domains: 3
+    num_labels: 4
+    num_domains: 2
     val_unlabelled: true
     test_unlabelled: true
     attach_label_to_end: true
     pad_start: 0
-    alpha_sub: 0.2
-    alpha_del: 0.2
-    alpha_ins: 0.2
+    alpha_sub: 0.1
+    alpha_del: 0.1
+    alpha_ins: 0.1
     alpha_swp: 0
     stride: 16
     train_ds:
       shuffle: true
       num_samples: -1
-      batch_size: 16
+      batch_size: 8
       manual_len: 0
     validation_ds:
       shuffle: false
       num_samples: -1
-      batch_size: 16
+      batch_size: 8
   tokenizer:
-    tokenizer_name: ${model.language_model.pretrained_model_name}
+    tokenizer_name: google/electra-base-discriminator
     vocab_file: null
     tokenizer_model: null
     special_tokens: null
   language_model:
-    pretrained_model_name: ${model.transformer_path}
+    pretrained_model_name: google/electra-base-discriminator
     lm_checkpoint: null
     config_file: null
     config: null
@@ -102,7 +102,7 @@ model:
     bilstm: false
     dice_loss:
       epsilon: 0.01
-      alpha: 4
+      alpha: 6
       macro_average: true
     focal_loss:
       alpha: 2

@@ -6,7 +6,7 @@ trainer:
     num_nodes: 1
     max_epochs: 10 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
-    accumulate_grad_batches: 8 # accumulates grads every k batches
+    accumulate_grad_batches: 2 # accumulates grads every k batches
     gradient_clip_val: 0
     amp_level: O1 # O1/O2 for mixed precision
     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
@@ -46,9 +46,9 @@ log_dir: null
 model:
     nemo_path: null
     transformer_path: google/electra-base-discriminator # roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 12                 # Initial number of layers unfrozen
-    maximum_unfrozen: 12         # Maximum number of layers unfrozen.
-    unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
+    unfrozen: 1                 # Initial number of layers unfrozen
+    maximum_unfrozen: 2         # Maximum number of layers unfrozen.
+    unfreeze_step: 1            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
         - ","
@@ -76,7 +76,7 @@ model:
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.6 # 0 if don't weight
+    punct_class_weight_factor: 0.1 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -85,11 +85,11 @@ model:
         labelled:
             # - ${base_path}/ted2010 #
             # - ${base_path}/ted2010_explode
-            - ${base_path}/lrec_processed
-            # - ${base_path}/ted_talks_processed #
+            # - ${base_path}/lrec_processed
+            - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
-            # - ${base_path}/switchboardutt_processedlow #
+            - ${base_path}/switchboardutt_processedlow #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
@@ -104,21 +104,23 @@ model:
         # shared among dataloaders
         num_workers:  4
         pin_memory: false
-        drop_last: true
+        drop_last: false
         num_labels: 7
         num_domains: 3        
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
         pad_start: 0
+
         alpha_sub: 0.2
-        alpha_del: 0.3
+        alpha_del: 0.2
         alpha_ins: 0.2
         alpha_swp: 0
+        stride: 16
         train_ds:
             shuffle: true
             num_samples: -1
-            batch_size: 4
+            batch_size: 16
             manual_len: 0 #default 0 84074
 
         validation_ds:
@@ -127,7 +129,7 @@ model:
             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
             shuffle: false
             num_samples: -1
-            batch_size: 4 #4
+            batch_size: 16 #4
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -143,7 +145,7 @@ model:
     
     punct_head:
         punct_num_fc_layers: 2  # 2fcl seems to work well, but ensure it doesn't overfit
-        fc_dropout: 0.2
+        fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
@@ -152,7 +154,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 2
+            alpha: 4
             macro_average: true
 
         focal_loss: 
@@ -199,13 +201,15 @@ model:
         #     alpha: 2
 
     frozen_lr:
-        # - 1e-2
+        - 1e-2
         # - 5e-3
-        # - 1e-3
+        - 1e-3
         # - 5e-4
         - 1e-4
         # - 5e-5
+        - 1e-5
         # - 5e-6
+        - 1e-6
         # - 1e-7
         # - 1e-8
 
@@ -220,7 +224,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.9 # base layers multiplied by this
+    differential_lr: 0.8 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
