@@ -76,7 +76,7 @@ model:
         
     no_space_label: '#' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.8 # 0 if don't weight
+    punct_class_weight_factor: 0.6 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -139,16 +139,16 @@ model:
     
     punct_head:
         punct_num_fc_layers: 2  # 2fcl seems to work well, but ensure it doesn't overfit
-        fc_dropout: 0.2
+        fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
-        loss: 'cel'
+        loss: 'dice'
         bilstm: false
 
         dice_loss:
             epsilon: 0.01
-            alpha: 4
+            alpha: 8
             macro_average: true
 
         focal_loss: 
@@ -195,13 +195,13 @@ model:
         #     alpha: 2
 
     frozen_lr:
-        # - 1e-2
+        - 1e-2
         # - 5e-3
         # - 1e-3
         # - 5e-4
         # - 1e-4
         # - 5e-5
-        - 5e-6
+        # - 5e-6
         # - 1e-7
         # - 1e-8
 
@@ -216,7 +216,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 1 # base layers multiplied by this
+    differential_lr: 0.5 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
