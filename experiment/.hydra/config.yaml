@@ -25,9 +25,9 @@ tmp_path: /home/${env:USER}/data/tmp
 log_dir: null
 model:
   nemo_path: null
-  transformer_path: google/electra-large-discriminator
-  unfrozen: 6
-  maximum_unfrozen: 6
+  transformer_path: google/electra-small-discriminator
+  unfrozen: 3
+  maximum_unfrozen: 3
   unfreeze_step: 2
   punct_label_ids:
   - ''
