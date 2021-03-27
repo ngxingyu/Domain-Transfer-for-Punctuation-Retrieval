@@ -20,7 +20,7 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-exp='2021-03-27_18-00-46'
+exp='results/2021-03-27_18-00-46'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
@@ -57,19 +57,29 @@ def main(cfg : DictConfig) -> None:
     # trainer.test(model,ckpt_path=None)
 
     
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    inference_results = model.to(device).add_punctuation(queries)
-    for query, result in zip(queries, inference_results):
-        print(f'Query : {query}\n')
-        print(f'Result: {result.strip()}\n\n')
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # inference_results = model.to(device).add_punctuation(queries)
+    # for query, result in zip(queries, inference_results):
+    #     print(f'Query : {query}\n')
+    #     print(f'Result: {result.strip()}\n\n')
 
+    import pandas as pd
+    sample=pd.read_csv('/home/nxingyu2/data/switchboardutt_processed.test.csv').itertuples()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     while 1:
-        text=input('Enter text to punctuate:\n')
-        texts=[text]
-        inference_results = model.to(device).add_punctuation(texts)
-        for text, result in zip(texts, inference_results):
-            print(f'\n\nQuery : {text}\n')
-            print(f'Result: {result.strip()}\n\n')
+        x=input('Press Enter to loop through samples or insert your own texts\n--[ ')
+        if x=='':
+            texts=[next(sample)[2]]
+            inference_results = model.to(device).add_punctuation(texts)
+            for text, result in zip(texts, inference_results):
+                print(f'\n\nQuery : {text}\n')
+                print(f'Result: {result.strip()}\n\n')
+        else:
+            texts=[x]
+            inference_results = model.to(device).add_punctuation(texts)
+            for text, result in zip(texts, inference_results):
+                print(f'\n\nQuery : {text}\n')
+                print(f'Result: {result.strip()}\n\n')
 
 
 queries = [
