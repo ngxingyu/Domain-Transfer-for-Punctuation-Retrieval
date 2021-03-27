@@ -1,6 +1,10 @@
 data/**
 *.ckpt
 *.nemo
+.unotes
+.vscode
+.ipynb_checkpoints
+.hydra
 archive
 !Punctuation_with_Domain_discriminator/results/
 Punctuation_with_Domain_discriminator/results/*/*.log
