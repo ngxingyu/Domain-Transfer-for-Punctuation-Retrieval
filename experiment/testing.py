@@ -20,12 +20,13 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-exp='2021-03-23_15-41-10'
-# exp='2021-03-21_07-48-57'
+# exp='use/2021-03-26_23-28-33'
+exp='2021-03-27_14-09-56'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
 def main(cfg : DictConfig) -> None:
+    pl.seed_everything(cfg.seed)
     torch.set_printoptions(sci_mode=False)
     # trainer=pl.Trainer(**cfg.trainer)
     # exp_manager(trainer, cfg.get("exp_manager", None))
@@ -40,10 +41,18 @@ def main(cfg : DictConfig) -> None:
 
     model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
     checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
-    model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
-    model._cfg.model.dataset.unlabelled=[]
-    model.setup_datamodule()
+    # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.46-epoch=0.ckpt")
+    
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
+    model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/open_subtitles_processed']
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/lrec_processed']
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted2010_processed']
 
+    model._cfg.model.dataset.unlabelled=[]
+    # model._cfg.model.test_chunk_percent=0.5
+
+    model.setup_datamodule()
     model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     trainer = pl.Trainer(**cfg.trainer)
     trainer.test(model,ckpt_path=None)

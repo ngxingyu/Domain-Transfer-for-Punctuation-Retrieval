@@ -23,10 +23,6 @@ from core.common import Serialization, FileIO
 from time import time
 from core.utils import view_aligned
 
-# from nemo.core.neural_types import LogitsType, NeuralType
-# from nemo.collections.common.losses import AggregatorLoss, CrossEntropyLoss
-# from nemo.collections.nlp.parts.utils_funcs import tensor2list
-
 __all__ = ['PunctuationDomainModel']
 
 _MODEL_CONFIG_YAML = "model_config.yaml"
@@ -114,9 +110,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             log_softmax=self.hparams.model.domain_head.log_softmax,
             dropout=self.hparams.model.domain_head.fc_dropout,
             num_layers=self.hparams.model.domain_head.domain_num_fc_layers,
-            use_transformer_init=self.hparams.model.domain_head.use_transformer_init
-            ) if self.hparams.model.domain_head.pooling is None else \
-        SequenceClassifier(
+            use_transformer_init=self.hparams.model.domain_head.use_transformer_init,
+            ) \
+                if self.hparams.model.domain_head.pooling is None else SequenceClassifier(
             hidden_size=self.transformer.config.hidden_size,
             num_classes=2 if self.hparams.model.domain_head.predict_labelled else\
                 self.hparams.model.dataset.num_domains,
@@ -143,6 +139,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
+        
         if not self.hparams.model.domain_head.loss in ['cel','focal','dice']:
             if not (self.hparams.model.domain_head.pooling is None and self.hparams.model.domain_head.loss == 'dice'):
                 self.log('domain_head loss not found, fallback to cross entropy loss')
@@ -167,6 +164,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             label_ids=self.labels_to_ids,
             mode='macro',
             dist_sync_on_step=True,
+            ignore=[0],
         )
 
         self.chunked_punct_class_report = ClassificationReport(
@@ -175,7 +173,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             mode='macro',
             dist_sync_on_step=True,
         )
-
 
         self.domain_class_report = ClassificationReport(
             num_classes=2 if self.hparams.model.domain_head.predict_labelled else\
@@ -389,9 +386,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
                 self.log_dict(output_dict.pop('log'), on_epoch=True)
 
             return output_dict
-        
-
-    
 
     def multi_validation_epoch_end(self, outputs):
         avg_loss = torch.stack([x['val_loss'] for x in outputs]).mean()
@@ -604,7 +598,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         def is_backbone(n): return 'encoder' in n
         params = list(self.named_parameters())
         backbone=[p for n, p in params if is_backbone(n)]
-        backbonelr=[lr*self.hparams.model.differential_lr**(x//16) for x in list(range(len(backbone)))[::-1]]
+        backbonelr=[max(self.hparams.model.optim.sched.min_lr,lr*self.hparams.model.differential_lr**(x//16)) for x in list(range(len(backbone)))[::-1]]
         backbone_params=[{'params':p,'lr':l} for p,l in zip(backbone,backbonelr)]
         grouped_parameters=backbone_params+[{'params': [p for n, p in params if not is_backbone(n)], 'lr': lr}]
         # grouped_parameters = [
@@ -883,7 +877,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             if param.requires_grad:
                 print(name)
 
-
     def freeze(self) -> None:
         try:
             encoder = self.transformer.encoder
@@ -894,9 +887,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         self.frozen = len(encoder.layer)-self.hparams.model.unfrozen
         self.freeze_transformer_to(self.frozen)
-        for name, param in encoder.named_parameters(): 
-            if param.requires_grad: 
-                print(name)
 
     def unfreeze(self, i: int = 1):
         self.frozen -= i
@@ -907,7 +897,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         #     self.hparams.model.unfrozen=self.hparams.model.maximum_unfrozen
         self.freeze_transformer_to(max(0, self.frozen))
         
-
     def teardown(self, stage: str):
         """
         Called at the end of fit and test.

@@ -62,7 +62,6 @@ class PunctuationDomainDataset(IterableDataset):
 
         if not filename.endswith('.csv'):
             raise ValueError("{text_file} should have extension .csv")
-        # filename = filename[:-4]
         
         self.csv_file =   csv_file
         self.max_seq_length =   max_seq_length
@@ -100,19 +99,14 @@ class PunctuationDomainDataset(IterableDataset):
 
     def __next__(self):
         batch = next(self.dataset)[1]
-
-        # l=batch.str.split().map(len).values
-        # n=16
-        # a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
-        # b=np.minimum(l,a+self.max_seq_length*n)
-        # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
         complete=batch
         if self.stride>0:
             for i in range(1,self.max_seq_length//self.stride):
                 l=batch.str.split().map(len).values
                 a=self.stride*i*np.ones_like(l)
                 b=l
-                complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
+                complete=complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
+            # pp(batch.shape,complete.shape)
         batch=complete
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, pad_start=self.pad_start)
@@ -312,9 +306,6 @@ class PunctuationDomainDatasets(IterableDataset):
                         )
                 self.datasets.append(dataset)
                 self.iterables.append(cycle(dataset))
-        
-    # def __getitem__(self, i):
-    #     ds=[d[i] for d in self.datasets]
 
     def __iter__(self):
         worker_info = get_worker_info()
@@ -382,16 +373,16 @@ class PunctuationInferenceDataset(Dataset):
         }
 
     def __init__(self, 
-    tokenizer, 
-    queries: List[str], 
-    max_seq_length: int, 
-    punct_label_ids:Dict[str,int], 
-    label_map:Dict[str,str], 
-    num_samples:int=256, 
-    degree:int = 0, 
-    attach_label_to_end:bool=None,
-    no_space_label=None,
-    pad_start:int=0,
+        tokenizer, 
+        queries: List[str], 
+        max_seq_length: int, 
+        punct_label_ids:Dict[str,int], 
+        label_map:Dict[str,str], 
+        num_samples:int=256, 
+        degree:int = 0, 
+        attach_label_to_end:bool=None,
+        no_space_label=None,
+        pad_start:int=0,
     ):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
@@ -400,17 +391,10 @@ class PunctuationInferenceDataset(Dataset):
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map,)(queries)
         self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,pad_start=pad_start)
         self.attach_label_to_end=attach_label_to_end
-        # self.all_input_ids = features['input_ids']
-        # self.all_attention_mask = features['attention_mask']
-        # self.all_subtoken_mask = features['subtoken_mask']
         self.num_samples=num_samples
 
     def __len__(self):
         return math.ceil(len(self.all_input_ids)/self.num_samples)
 
     def __getitem__(self, idx):
-        # lower=idx*self.num_samples
-        # print(idx)
-        # (int(idx)+1)*self.num_samples+1)
-        # upper=min(len(self.all_input_ids),(int(idx)+1)*self.num_samples+1)
         return {k:v for k,v in self.features.items()}
