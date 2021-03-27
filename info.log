@@ -1,0 +1,5 @@
+[INFO] - Global seed set to 42
+[INFO] - GPU available: True, used: True
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0,1]
+[INFO] - Using native 16bit precision.

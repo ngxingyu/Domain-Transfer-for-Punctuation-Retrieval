@@ -1,0 +1,61 @@
+
+nvidia-smi --list-gpus # list gpus
+
+
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+
+cat <<EOF >>~/.bashrc
+#
+# added Minicoda3 path
+export PATH=~/miniconda3/bin:$PATH
+EOF
+source ~/.bashrc
+which conda
+conda update conda
+
+conda create --yes --name NLP python=3.8
+conda env create --file ./NLP.yml -n NLP
+conda env export > NLP.yml
+
+lsblk # list block device info
+
+nxingyu@35.209.97.224:1235 #jupyter notebook --port=1357
+
+htop #list top processes
+psaux #show all processes
+df -h #list readable disk usage
+
+screen -S nameofscreen # make prepend username to nameofscreen
+ctrl-A ctrl-x
+screen -X -S name quit
+
+conda install pandas conda lxml
+"/home/data-disk-1/data/nxingyu/OpenSubtitles/raw/en/1952/44357/3183515.xml"
+
+screens: 876.nxingyujupyter
+
+dataset=load_dataset('csv',data_files="/home/nxingyu/data/ted_talks_processed.csv")
+~# python processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv
+
+python text2aligned.py -i ./data/ted_talks_processed #without any split or filetype
+python -m src.train
+
+wget --quiet https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage --output-document nvim
+chmod u+x nvim
+git clone git@github.com:ngxingyu/dotfiles.git
+
+echo 'alias nv="~/nvim.appimage"' >> ~/.bashrc
+source ~/.profile
+
+ls -b | head -30 | xargs ls -d
+
+
+conda install script
+apt install screen
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+conda create --name NLP python=3.8
+pip install snoop nemo_toolkit[all]==1.0.0b2 transformers datasets hydra-core
+conda install -c conda-forge pytorch-lightning
+conda install pytorch cudatoolkit=10.1 -c pytorch
