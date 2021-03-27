@@ -1,16 +1,15 @@
 data/**
 *.ckpt
 *.nemo
-Punctuation_with_domain_discriminator/archive/
-Punctuation_with_domain_discriminator/
-!Punctuation_with_Domain_discriminator/results/*
-Punctuation_with_domain_discriminator/results/*/*.log
-Punctuation_with_domain_discriminator/results/*/checkpoints/*
+archive
+!Punctuation_with_Domain_discriminator/results/
+Punctuation_with_Domain_discriminator/results/*/*.log
+Punctuation_with_Domain_discriminator/results/*/checkpoints/*
 experiment/lightning_logs
 experiment/nemo_experiments
 experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
 experiment/lightning_logs/*/checkpoints/
-**/__pycache__/*
+**/__pycache__/
 experiment/outputs/
 
 */*/*.log

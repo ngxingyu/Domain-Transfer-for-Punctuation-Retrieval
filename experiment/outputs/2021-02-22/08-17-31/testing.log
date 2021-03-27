@@ -1,7 +1,0 @@
-[2021-02-22 08:17:36,612][root][INFO] - shuffling train set
-[2021-02-22 08:17:39,209][lightning][INFO] - GPU available: True, used: True
-[2021-02-22 08:17:39,209][lightning][INFO] - TPU available: None, using: 0 TPU cores
-[2021-02-22 08:17:39,209][lightning][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [1]
-[2021-02-22 08:17:39,210][lightning][INFO] - Using native 16bit precision.
-[2021-02-22 08:17:39,214][lightning][INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
-[2021-02-22 08:17:43,145][wandb.sdk.internal.internal][INFO] - Internal process exited
