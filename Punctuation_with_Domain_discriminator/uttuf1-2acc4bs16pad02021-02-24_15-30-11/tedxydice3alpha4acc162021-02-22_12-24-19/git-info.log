@@ -1,0 +1,206 @@
+commit hash: 95da66863f1cdd30a20022bd1a61c5c301b6630d
+diff --git a/experiment/config.yaml b/experiment/config.yaml
+index 22d932d..f4e36d4 100644
+--- a/experiment/config.yaml
++++ b/experiment/config.yaml
+@@ -2,9 +2,9 @@ seed: 42
+ trainer:
+     gpus: 1 # the number of gpus, 0 for CPU
+     num_nodes: 1
+-    max_epochs: 6
++    max_epochs: 8
+     max_steps: null # precedence over max_epochs
+-    accumulate_grad_batches: 4 # accumulates grads every k batches
++    accumulate_grad_batches: 16 # accumulates grads every k batches
+     gradient_clip_val: 0
+     amp_level: O1 # O1/O2 for mixed precision
+     precision: 16 # Should be set to 16 for O1 and O2, default is 16 as PT ignores it when am_level is O0
+@@ -32,12 +32,12 @@ trainer:
+     # resume_from_checkpoint: null
+ 
+ exp_manager:
+-    exp_dir: /home/nxingyu/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
++    exp_dir: /home/nxingyu2/project/ # /root/project # exp_dir for your experiment, if None, defaults to "./nemo_experiments"
+     name: Punctuation_with_Domain_discriminator  # The name of your model
+     create_tensorboard_logger: true  # Whether you want exp_manger to create a tb logger
+     create_checkpoint_callback: true 
+-base_path: /home/nxingyu/data # /root/data # 
+-tmp_path: /home/nxingyu/data/tmp # /tmp # 
++base_path: /home/nxingyu2/data # /root/data # 
++tmp_path: /home/nxingyu2/data/tmp # /tmp # 
+ log_dir: null
+ 
+ model:
+@@ -71,11 +71,11 @@ model:
+         
+     no_space_label: '#'
+     test_chunk_percent: 0.5
+-
++    pad_start_and_end: 0
+     punct_class_weights: false #false
+     
+     dataset:
+-        data_dir: /home/nxingyu/data # /root/data # 
++        data_dir: /home/nxingyu2/data # /root/data # 
+         labelled:
+             # - ${base_path}/ted2010 #
+             - ${base_path}/ted_talks_processed #
+@@ -110,7 +110,7 @@ model:
+             # ds_item: null # expected format: [PATH_TO_DEV1,PATH_TO_DEV2] (Note no space between the paths and square brackets)
+             shuffle: true
+             num_samples: -1
+-            batch_size: 8 #4
++            batch_size: 16 #4
+ 
+     tokenizer:
+         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
+@@ -147,7 +147,7 @@ model:
+     
+     dice_loss:
+         epsilon: 0.01
+-        alpha: 3
++        alpha: 4
+         macro_average: true
+ 
+     focal_loss: 
+diff --git a/experiment/core/utils.py b/experiment/core/utils.py
+index 60bbcd1..2d3c063 100644
+--- a/experiment/core/utils.py
++++ b/experiment/core/utils.py
+@@ -74,8 +74,6 @@ def text2masks(n, labels_to_ids,label_map):
+             if p!='':
+                 wordlist.append(p)
+                 punctlist.append(0)
+-        wordlist=['']*pad_start_and_end+wordlist+['']*pad_start_and_end
+-        punctlist=['']*pad_start_and_end+wordlist+[0]*pad_start_and_end
+         return(wordlist,punctlist)
+     return text2masks
+ 
+diff --git a/experiment/info.log b/experiment/info.log
+index 2b93cdb..104c5dd 100644
+--- a/experiment/info.log
++++ b/experiment/info.log
+@@ -2,123 +2,3 @@
+ [INFO] - TPU available: None, using: 0 TPU cores
+ [INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+ [INFO] - Using native 16bit precision.
+-[INFO] - shuffling train set
+-[INFO] - Optimizer config = AdamW (
+-Parameter Group 0
+-    amsgrad: False
+-    betas: (0.9, 0.999)
+-    eps: 1e-08
+-    lr: 0.02
+-    weight_decay: 0.0
+-)
+-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f467661b6d0>" 
+-will be used during training (effective maximum steps = 3750) - 
+-Parameters : 
+-(warmup_steps: null
+-warmup_ratio: 0.1
+-min_lr: 1.0e-08
+-last_epoch: -1
+-max_steps: 3750
+-)
+-[INFO] - 
+-  | Name                       | Type                 | Params
+---------------------------------------------------------------------
+-0 | transformer                | ElectraModel         | 108 M 
+-1 | punct_classifier           | TokenClassifier      | 6.9 K 
+-2 | domain_classifier          | SequenceClassifier   | 4.7 M 
+-3 | punctuation_loss           | LinearChainCRF       | 99    
+-4 | domain_loss                | CrossEntropyLoss     | 0     
+-5 | agg_loss                   | AggregatorLoss       | 0     
+-6 | punct_class_report         | ClassificationReport | 0     
+-7 | chunked_punct_class_report | ClassificationReport | 0     
+-8 | domain_class_report        | ClassificationReport | 0     
+---------------------------------------------------------------------
+-18.9 M    Trainable params
+-94.7 M    Non-trainable params
+-113 M     Total params
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          72.95      38.21      50.15      57792
+-! (label_id: 1)                                          0.11       1.28       0.21        312
+-# (label_id: 2)                                         11.34      26.52      15.89      11236
+-, (label_id: 3)                                          1.87       0.26       0.46       4572
+-- (label_id: 4)                                          0.46       7.51       0.86        346
+-. (label_id: 5)                                         17.53       4.09       6.63       8946
+-: (label_id: 6)                                          0.00       0.00       0.00          2
+-? (label_id: 7)                                          0.00       0.00       0.00       1582
+-… (label_id: 8)                                          0.35       2.60       0.61        616
+--------------------
+-micro avg                                               29.84      29.84      29.84      85404
+-macro avg                                               11.62       8.94       8.31      85404
+-weighted avg                                            52.79      29.84      36.75      85404
+-
+--------------------
+-                       !           #           ,           -           .           :           ?           …
+-    22082.00        50.00      3852.00      1200.00       118.00      2504.00         0.00       354.00       112.00
+-     2528.00         4.00       444.00       144.00         8.00       306.00         0.00       116.00        30.00
+-    16040.00       166.00      2980.00      2036.00       112.00      3906.00         2.00       698.00       332.00
+-      516.00         0.00        92.00        12.00         0.00        22.00         0.00         0.00         0.00
+-     3568.00        22.00      1608.00       152.00        26.00       234.00         0.00        50.00        16.00
+-     1380.00        16.00        86.00       136.00        14.00       366.00         0.00        78.00        12.00
+-     7732.00        50.00      1106.00       802.00        36.00      1464.00         0.00       270.00        94.00
+-      638.00         0.00        54.00         4.00         2.00         0.00         0.00         0.00         4.00
+-     3308.00         4.00      1014.00        86.00        30.00       144.00         0.00        16.00        16.00
+--------------------
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00        684
+--------------------
+-micro avg                                              100.00     100.00     100.00        684
+-macro avg                                              100.00     100.00     100.00        684
+-weighted avg                                           100.00     100.00     100.00        684
+-
+--------------------
+-           0
+-      684.00
+--------------------
+-
+-[INFO] - Punctuation report: 
+-label                                                precision    recall       f1           support   
+- (label_id: 0)                                          97.34      92.50      94.86   32706272
+-! (label_id: 1)                                         19.06      47.94      27.27     593839
+-# (label_id: 2)                                         91.67      95.00      93.30    6536760
+-, (label_id: 3)                                         48.09      47.29      47.69    2690401
+-- (label_id: 4)                                         46.12      44.96      45.53     260726
+-. (label_id: 5)                                         64.75      66.27      65.50    4897272
+-: (label_id: 6)                                         41.45      56.67      47.88      14055
+-? (label_id: 7)                                         68.00      47.52      55.95    1307202
+-… (label_id: 8)                                          9.42      28.71      14.19     396834
+--------------------
+-micro avg                                               85.27      85.27      85.27   49403360
+-macro avg                                               53.99      58.54      54.69   49403360
+-weighted avg                                            87.97      85.27      86.41   49403360
+-
+--------------------
+-                       !           #           ,           -           .           :           ?           …
+- 30254648.00     15160.00    314617.00    182162.00     30256.00    153734.00       864.00     55738.00     74527.00
+-   136137.00    284703.00      1649.00    313008.00     16991.00    592909.00       616.00    106949.00     40959.00
+-   542520.00       296.00   6209611.00      6706.00      7163.00      5250.00        16.00       728.00      1392.00
+-   534901.00     67722.00      2049.00   1272323.00     14151.00    583890.00      1097.00    104145.00     65575.00
+-   115275.00      1697.00      1032.00      6042.00    117219.00      8938.00        40.00      1673.00      2233.00
+-   534368.00    188730.00      4128.00    545198.00     28653.00   3245473.00      2545.00    377232.00     85956.00
+-     5005.00        48.00       496.00      2648.00      1600.00      1344.00      7965.00        32.00        80.00
+-    94649.00     20039.00       456.00     62950.00      3709.00     98264.00        80.00    621234.00     12197.00
+-   488844.00     15444.00      2722.00    299364.00     40984.00    207470.00       832.00     39471.00    113915.00
+--------------------
+-
+-[INFO] - Domain report: 
+-label                                                precision    recall       f1           support   
+-0 (label_id: 0)                                        100.00     100.00     100.00     394112
+--------------------
+-micro avg                                              100.00     100.00     100.00     394112
+-macro avg                                              100.00     100.00     100.00     394112
+-weighted avg                                           100.00     100.00     100.00     394112
+-
+--------------------
+-           0
+-   394112.00
+--------------------
+-
+-[INFO] - Epoch 0, step 8124: val_loss was not in top 3
+-[INFO] - Internal process exited
