@@ -20,14 +20,14 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-# exp='use/2021-03-26_23-28-33'
-exp='2021-03-27_16-18-02'
+exp='2021-03-27_18-00-46'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
 def main(cfg : DictConfig) -> None:
     pl.seed_everything(cfg.seed)
     torch.set_printoptions(sci_mode=False)
+    
     # trainer=pl.Trainer(**cfg.trainer)
     # exp_manager(trainer, cfg.get("exp_manager", None))
     # do_training = False
@@ -39,12 +39,11 @@ def main(cfg : DictConfig) -> None:
     # gpu = 1 if cfg.trainer.gpus != 0 else 0
     # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
 
-    model = PunctuationDomainModel.load_from_checkpoint( #TEDend2021-02-11_07-57-33  # TEDstart2021-02-11_07-55-58
+    model = PunctuationDomainModel.load_from_checkpoint(
     checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
-    # checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.46-epoch=0.ckpt")
     
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
-    model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/open_subtitles_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/lrec_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted2010_processed']
@@ -52,25 +51,25 @@ def main(cfg : DictConfig) -> None:
     model._cfg.model.dataset.unlabelled=[]
     # model._cfg.model.test_chunk_percent=0.5
 
-    model.setup_datamodule()
-    model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
-    trainer = pl.Trainer(**cfg.trainer)
-    trainer.test(model,ckpt_path=None)
+    # model.setup_datamodule()
+    # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
+    # trainer = pl.Trainer(**cfg.trainer)
+    # trainer.test(model,ckpt_path=None)
 
     
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # inference_results = model.to(device).add_punctuation(queries)
-    # for query, result in zip(queries, inference_results):
-    #     print(f'Query : {query}\n')
-    #     print(f'Result: {result.strip()}\n\n')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    inference_results = model.to(device).add_punctuation(queries)
+    for query, result in zip(queries, inference_results):
+        print(f'Query : {query}\n')
+        print(f'Result: {result.strip()}\n\n')
 
-    # while 1:
-    #     text=input('Enter text to punctuate:\n')
-    #     texts=[text]
-    #     inference_results = model.to(device).add_punctuation(texts)
-    #     for text, result in zip(texts, inference_results):
-    #         print(f'\n\nQuery : {text}\n')
-    #         print(f'Result: {result.strip()}\n\n')
+    while 1:
+        text=input('Enter text to punctuate:\n')
+        texts=[text]
+        inference_results = model.to(device).add_punctuation(texts)
+        for text, result in zip(texts, inference_results):
+            print(f'\n\nQuery : {text}\n')
+            print(f'Result: {result.strip()}\n\n')
 
 
 queries = [
