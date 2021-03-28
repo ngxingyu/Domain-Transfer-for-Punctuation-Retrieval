@@ -92,7 +92,7 @@ def text2masks(n, labels_to_ids,label_map):
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0):
+def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0,alpha_spl=0):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
@@ -100,7 +100,7 @@ def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_s
         output['tags']=[]
         for sentence in examples:
             if tokenizer is not None:
-                sentence=all_transform(sentence,tokenizer,alpha_sub, alpha_del, alpha_ins,alpha_swp)
+                sentence=all_transform(sentence,tokenizer,alpha_sub, alpha_del, alpha_ins,alpha_swp,alpha_spl)
             text,tag=text2masks(n, labels_to_ids, label_map)(sentence)
             output['texts'].append(text)
             output['tags'].append(tag)
@@ -305,8 +305,30 @@ def insert_transform(data, tokenizer, probability=0.1, always_apply=False, p=0.5
 
     return ' '.join(new_words)
 
-def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0):    
-    r=np.random.rand(4)
+def split_transform(data, probability=0.05, always_apply=False, p=0.5):
+    text = data
+    words = text.split()
+    words_count = len(words)
+    if words_count <= 1:
+        return text
+    
+    new_words = []
+    for i in range(words_count):
+        if (random.random() < probability and words[i].isalpha() and len(words[i])>3):
+            x=random.randint(1,len(words[i])-1)
+            new_words.append(words[i][:x])
+            new_words.append(words[i][x:])
+        else:
+            new_words.append(words[i])
+
+    if len(new_words) == 0:
+        return words[random.randint(0, words_count-1)]
+
+    return ' '.join(new_words)
+
+
+def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0, alpha_split=0.1):    
+    r=np.random.rand(5)
     text=shuffle_sentence_transform(text)
     if r[0] < alpha_sub:
         substitute_transform(text,tokenizer)
@@ -315,5 +337,7 @@ def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alp
     if r[2] < alpha_ins:
         text=insert_transform(text,tokenizer)
     if r[3] < alpha_swp:
-        text=swp_transform(text)
+        text=swap_transform(text)
+    if r[4] < alpha_split:
+        text=split_transform(text)
     return text

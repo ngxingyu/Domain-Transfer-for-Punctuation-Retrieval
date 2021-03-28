@@ -6,6 +6,8 @@ data/**
 .ipynb_checkpoints
 .hydra
 archive
+nemo*
+lightning_logs.txt
 !Punctuation_with_Domain_discriminator/results/
 Punctuation_with_Domain_discriminator/results/*/*.log
 Punctuation_with_Domain_discriminator/results/*/checkpoints/*

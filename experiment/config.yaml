@@ -45,9 +45,9 @@ log_dir: null
 
 model:
     nemo_path: null
-    transformer_path: google/electra-small-discriminator #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 3                 # Initial number of layers unfrozen
-    maximum_unfrozen: 3         # Maximum number of layers unfrozen.
+    transformer_path: google/electra-base-discriminator #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+    unfrozen: 6                 # Initial number of layers unfrozen
+    maximum_unfrozen: 6         # Maximum number of layers unfrozen.
     unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
@@ -55,20 +55,20 @@ model:
         - "."
         - "?"
 
-        # - "!"
-        # - "-"
-        # - "…"
-        # - ":"
+        - "!"
+        - "-"
+        - "…"
+        - ":"
 
         # - "—"
         # - ";"
 
     label_map: # Dict containing ( original punctuation: replacement punctuation. )
 
-        "-": ","
-        "…": "."
-        "!": "."
-        ":": ","
+        # "-": ","
+        # "…": "."
+        # "!": "."
+        # ":": ","
 
         "—": ","
         ";": "."
@@ -76,9 +76,9 @@ model:
         
     no_space_label: '' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0 # 0 if don't weight
+    punct_class_weight_factor: 0.2 # 0 if don't weight
     punct_class_weights:  # Leave blank.
-    cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
+    cat_domain_and_states: true # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
@@ -87,8 +87,8 @@ model:
             # - ${base_path}/ted2010_processed
             # - ${base_path}/lrec_processed
             - ${base_path}/ted_talks_processed #
-            # - ${base_path}/open_subtitles_processed #  
-            # - ${base_path}/switchboardutt_processed
+            - ${base_path}/open_subtitles_processed #  
+            - ${base_path}/switchboardutt_processed
             # - ${base_path}/switchboardutt_processedlow #
         unlabelled:
             # - ${base_path}/ted_talks_processed #
@@ -109,13 +109,14 @@ model:
         num_domains: 3        
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
-        attach_label_to_end: true #None # false if attach to start none if dont mask
+        attach_label_to_end: #None # false if attach to start none if dont mask
         pad_start: 0
 
-        alpha_sub: 0.0
-        alpha_del: 0.0
-        alpha_ins: 0.0
+        alpha_sub: 0.1
+        alpha_del: 0.1
+        alpha_ins: 0.1
         alpha_swp: 0
+        alpha_spl: 0.2
         stride: 32 # 0 if no stride. stride length e.g. 32 if stride 
         train_ds:
             shuffle: true
@@ -159,7 +160,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 1
+            alpha: 4
             macro_average: true
 
         focal_loss: 
@@ -174,8 +175,8 @@ model:
         use_transformer_init: true
         loss: 'dice'
         gamma: # Leave blank. auto fill per step
-        gamma_factor: 0.000 #0.1 # coefficient of gradient reversal
-        pooling: 'mean' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
+        gamma_factor: 0.005 #0.1 # coefficient of gradient reversal
+        pooling: 'attention' # 'mean' # 'mean_max' # 'token' # 'attention' # #blank# (per token) 
         idx_conditioned_on: 0 # 0 = use first (CLS) token, only considered when pooling = token
         weight_tokens: true # Assign weight to each domain label
         weight: # ensure length is equal to number of domains if predict_labelled is false. 
@@ -183,15 +184,16 @@ model:
             # - 0.05
             # - 0.9
 
-            # - 1
-            # - 1
+            - 2
+            - 1
+            - 4
 
             # - 0.1
             # - 0.45
             # - 0.45
 
-            - 0.1
-            - 0.9
+            # - 0.1
+            # - 0.9
 
             # - 1
             # - 1

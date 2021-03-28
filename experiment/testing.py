@@ -21,6 +21,8 @@ import snoop
 snoop.install()
 
 exp='results/2021-03-27_18-00-46'
+exp='2021-03-28_09-09-50'
+exp='2021-03-28_11-56-37'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
