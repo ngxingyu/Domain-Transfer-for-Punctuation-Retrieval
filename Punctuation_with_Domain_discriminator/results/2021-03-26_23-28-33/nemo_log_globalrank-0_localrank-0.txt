@@ -1,0 +1,63 @@
+[NeMo I 2021-03-26 23:28:33 exp_manager:183] Experiments will be logged at /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-26_23-28-33
+[NeMo I 2021-03-26 23:28:33 exp_manager:519] TensorboardLogger has been set up
+[NeMo W 2021-03-26 23:28:33 exp_manager:562] trainer had a weights_save_path of cwd(). This was ignored.
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:44 nemo_logging:349] /home/nxingyu2/project/experiment/models/punctuation_domain_model.py:67: SyntaxWarning: assertion is always true, perhaps remove parentheses?
+      assert(len(self._cfg.model.dataset.labelled)>0,'Please include at least 1 labelled dataset')
+    
+[NeMo W 2021-03-26 23:28:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-26 23:28:56 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: The dataloader, val dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 16 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-26 23:30:14 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-26 23:30:14 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: The dataloader, train dataloader, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 16 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-26 23:43:51 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d3595fa0> was reported to be 1500 (when accessing len(dataloader)), but 1501 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-26 23:53:21 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d33f1a30> was reported to be 496 (when accessing len(dataloader)), but 497 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-27 00:09:26 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d3595fa0> was reported to be 1500 (when accessing len(dataloader)), but 1501 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-27 00:19:45 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d33f1a30> was reported to be 496 (when accessing len(dataloader)), but 497 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-27 00:32:54 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d3595fa0> was reported to be 1500 (when accessing len(dataloader)), but 1501 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-27 00:41:15 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/torch/utils/data/dataloader.py:447: UserWarning: Length of IterableDataset <data.punctuation_dataset_multi.PunctuationDomainDatasets object at 0x7fb7d33f1a30> was reported to be 496 (when accessing len(dataloader)), but 497 samples have been fetched. For multiprocessing data-loading, this could be caused by not properly configuring the IterableDataset replica at each worker. Please see https://pytorch.org/docs/stable/data.html#torch.utils.data.IterableDataset for examples.
+      warnings.warn(warn_msg)
+    
+[NeMo W 2021-03-27 00:42:05 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: Your `IterableDataset` has `__len__` defined. In combination with multi-processing data loading (e.g. batch size > 1), this can lead to unintended side effects since the samples will be duplicated.
+      warnings.warn(*args, **kwargs)
+    
+[NeMo W 2021-03-27 00:42:05 nemo_logging:349] /home/nxingyu2/miniconda3/envs/NLP/lib/python3.8/site-packages/pytorch_lightning/utilities/distributed.py:49: UserWarning: The dataloader, test dataloader 0, does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` (try 16 which is the number of cpus on this machine) in the `DataLoader` init to improve performance.
+      warnings.warn(*args, **kwargs)
+    

@@ -70,6 +70,7 @@ class ClassificationReport(Metric):
         mode: str = 'macro',
         dist_sync_on_step: bool = False,
         process_group: Optional[Any] = None,
+        ignore=None,
     ):
         super().__init__(dist_sync_on_step=dist_sync_on_step, process_group=process_group)
         self.num_classes = num_classes
@@ -86,6 +87,7 @@ class ClassificationReport(Metric):
             "num_examples_per_class", default=torch.zeros(num_classes), dist_reduce_fx='sum', persistent=False
         )
         self.add_state("cm", default=torch.zeros((num_classes,num_classes)), dist_reduce_fx="sum", persistent=False)
+        self.ignore=[] if ignore is None else ignore
 
     def update(self, predictions: torch.Tensor, labels: torch.Tensor):
         TP = []
@@ -141,10 +143,12 @@ class ClassificationReport(Metric):
         micro_precision = torch.true_divide(torch.sum(self.tp) * 100, torch.sum(self.tp + self.fp) + METRIC_EPS)
         micro_recall = torch.true_divide(torch.sum(self.tp) * 100, torch.sum(self.tp + self.fn) + METRIC_EPS)
         micro_f1 = torch.true_divide(2 * micro_precision * micro_recall, (micro_precision + micro_recall + METRIC_EPS))
-
-        macro_precision = torch.sum(precision) / num_non_empty_classes
-        macro_recall = torch.sum(recall) / num_non_empty_classes
-        macro_f1 = torch.sum(f1) / num_non_empty_classes
+        #torch.sum(precision) 
+        macro_precision = sum([0 if i in self.ignore else precision[i] for i in range(num_non_empty_classes)])/ (num_non_empty_classes-len(self.ignore))
+        #torch.sum(recall)
+        macro_recall = sum([0 if i in self.ignore else recall[i] for i in range(num_non_empty_classes)]) / (num_non_empty_classes-len(self.ignore))
+        #torch.sum(f1)
+        macro_f1 = sum([0 if i in self.ignore else f1[i] for i in range(num_non_empty_classes)])  / (num_non_empty_classes-len(self.ignore))
         weighted_precision = torch.sum(precision * self.num_examples_per_class) / total_examples
         weighted_recall = torch.sum(recall * self.num_examples_per_class) / total_examples
         weighted_f1 = torch.sum(f1 * self.num_examples_per_class) / total_examples

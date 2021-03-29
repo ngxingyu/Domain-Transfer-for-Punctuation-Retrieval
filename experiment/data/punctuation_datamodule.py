@@ -36,6 +36,10 @@ class PunctuationDataModule(LightningDataModule):
             alpha_del:float=0.4,
             alpha_ins:float=0.4,
             alpha_swp:float=0,
+<<<<<<< HEAD
+=======
+            alpha_spl:float=0.4,
+>>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
             stride:int=32,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
@@ -73,6 +77,10 @@ class PunctuationDataModule(LightningDataModule):
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
         self.alpha_swp=alpha_swp
+<<<<<<< HEAD
+=======
+        self.alpha_spl=alpha_spl
+>>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         self.stride=stride
         try:
             self.no_space_label=self.punct_label_ids[no_space_label]
@@ -108,6 +116,10 @@ class PunctuationDataModule(LightningDataModule):
                     alpha_del=self.alpha_del,
                     alpha_ins=self.alpha_ins,
                     alpha_swp=self.alpha_swp,
+<<<<<<< HEAD
+=======
+                    alpha_spl=self.alpha_spl,
+>>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                     stride=self.stride,
                     )
             if (len(self.unlabelled)>0) and self.val_unlabelled:
