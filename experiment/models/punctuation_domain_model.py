@@ -54,6 +54,8 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             s=set(self._cfg.model.punct_label_ids)
             s.add(self._cfg.model.no_space_label)
             self._cfg.model.punct_label_ids=sorted(list(s))
+        else:
+            self._cfg.model.punct_label_ids=sorted(list(self._cfg.model.punct_label_ids))
         self.ids_to_labels = {_[0]: _[1]
                               for _ in enumerate(self._cfg.model.punct_label_ids)}
         self.labels_to_ids = {v:k
@@ -874,9 +876,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # for last in last_iter:
         #     continue
         # set_requires_grad_for_module(last, True)
-        for name, param in self.transformer.named_parameters():                
-            if param.requires_grad:
-                print(name)
+        
+        # for name, param in self.transformer.named_parameters():                
+        #     if param.requires_grad:
+        #         print(name)
 
     def freeze(self) -> None:
         try:

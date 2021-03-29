@@ -8,6 +8,7 @@ data/**
 archive
 nemo*
 lightning_logs.txt
+2021-03-28_09-09-50
 !Punctuation_with_Domain_discriminator/results/
 Punctuation_with_Domain_discriminator/results/*/*.log
 Punctuation_with_Domain_discriminator/results/*/checkpoints/*
