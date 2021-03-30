@@ -5,7 +5,9 @@ data/**
 .vscode
 .ipynb_checkpoints
 .hydra
+*.ipynb
 archive
+configs/
 nemo*
 lightning_logs.txt
 2021-03-28_09-09-50
@@ -16,30 +18,11 @@ experiment/lightning_logs
 experiment/nemo_experiments
 experiment/nemo_experiments/Punctuation_with_Domain_discriminator/*/checkpoints/
 experiment/lightning_logs/*/checkpoints/
-<<<<<<< HEAD
-**/__pycache__/*
-experiment/outputs/
-Punctuation_with_Domain_discriminator/*2021*/*
-!Punctuation_with_Domain_discriminator/*2021*/test*.txt
-!Punctuation_with_Domain_discriminator/*2021*/hparams.yaml
-Punctuation_with_Domain_discriminator/old/*2021*/*
-!Punctuation_with_Domain_discriminator/old/*2021*/test*.txt
-!Punctuation_with_Domain_discriminator/old/*2021*/hparams.yaml
-!Punctuation_with_Domain_discriminator/*/20*/
-Punctuation_with_Domain_discriminator/*/20*/*
-!Punctuation_with_Domain_discriminator/*/20*/test*.txt
-!Punctuation_with_Domain_discriminator/*/20*/hparams.yaml
-=======
 **/__pycache__/
 experiment/outputs/
 
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
 */*/*.log
 */*/*.nemo
 *.pack
 */*/*tfevents*
-<<<<<<< HEAD
 Miniconda*
-=======
-Miniconda*
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
