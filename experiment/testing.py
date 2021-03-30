@@ -20,14 +20,9 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
-<<<<<<< HEAD
-exp='2021-03-23_15-41-10'
-# exp='2021-03-21_07-48-57'
-=======
 exp='results/2021-03-27_18-00-46'
 exp='2021-03-28_09-09-50'
 exp='2021-03-28_11-56-37'
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
