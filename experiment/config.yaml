@@ -83,14 +83,14 @@ model:
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
-            # - ${base_path}/ted2010 #
-            # - ${base_path}/ted2010_processed
-            # - ${base_path}/lrec_processed
+            # - ${base_path}/ted2010_processed  #### IWSLT dataset
             - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
-            # - ${base_path}/switchboardutt_processedlow #
-        unlabelled:
+            # - ${base_path}/switchboardutt_processedlow #### Switchboard with just (2 or userdefined) examples in train set.
+        unlabelled: ## the first ${low_resource_labelled_count} examples will be labelled, rest will be used as unlabelled.
+            ########## If low_resource_labelled_count is 0, all examples will be unlabelled.
+            ########## To just simulate low resource without unlabelled, refer to Create low resource switchboard dataset in README.md
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed

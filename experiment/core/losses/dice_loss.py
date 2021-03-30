@@ -127,10 +127,6 @@ class FocalDiceLoss(_WeightedLoss):
             logits_flatten=logits
             labels_flatten = torch.argmax(logits, dim=-1)
 
-        # return F.cross_entropy(input, target, weight=self.weight,
-        #                        ignore_index=self.ignore_index, reduction=self.reduction)
-
-
         logits_flatten_soft = F.log_softmax(logits_flatten,-1) if self.log_softmax else F.softmax(logits_flatten,-1) #(batch_size,seq_len,num_labels)->(batch_size,seq_len,num_labels), sum along num_labels to 1
         target_one_hot=F.one_hot(labels_flatten,num_classes=logits_flatten_soft.shape[-1]) #(b_s, s_l) -> (b_s, s_l, n_l)
         intersection = torch.sum(logits_flatten_soft * target_one_hot, 0) # (b_s*s_l,n_l)->(n_l)

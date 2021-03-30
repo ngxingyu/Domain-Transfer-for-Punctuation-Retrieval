@@ -1,6 +1,9 @@
 # Domain Transfer for punctuation retrieval
 
-## Navigating this repository
+## Credits
+My research adapted code from [Nvidia NeMo](https://github.com/NVIDIA/NeMo), [PyTorch Lightning](https://www.pytorchlightning.ai/) and [Hugging Face](https://huggingface.co/).
+
+## Navigating this repository (Other files not listed other than those in the experiment/core folder can be ignored)
 
 ```bash
 project
@@ -74,7 +77,7 @@ The following steps are taken for preprocessing the data to a useable form.
 ## Processing part-2
 
 **The punctuation to be classified are as follows**:
-{0: '', 1: '!', 2: ',', 3: '-', 4: '.', 5: ':', 6: ';', 7: '?', 8: '—', 9: '…'} with 8 being the emdash.
+{0: '', 1: '!', 2: ',', 3: '-', 4: '.', 5: ':', 6: ';', 7: '?', 8: '—', 9: '…'} with 8 being the emdash. Certain mapping of labels such as replacing all '!' with periods were performed when training the model, and this mapping can be defined in the configuration file.
 
 There are occurences of consecutive punctuation. This includes:
 
@@ -116,36 +119,41 @@ $ python ~/project/processcsv.py -i ~/data/switchboardutt_processed.csv -o ~/dat
 $ python ~/project/processcsv.py -i ~/data/switchboard_processed.csv -o ~/data/switchboard_processed.csv -c 2000
 $ python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_processed.csv -c 2000
 $ python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
+```
 
+Get preprocessed dataset from kaggle (Using kaggle api or downloading from [here](https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts):
+```bash
+$ kaggle datasets download -d ngxingyu/preprocessed-english-spoken-transcripts
+$ unzip preprocessed-english-spoken-transcripts.zip
+$ mv *.csv ~/data/
+```
+
+Further processing to setup dataset to be fed into model. (Split, explode, generate low-resource dataset.)
+* The difference between switchboardutt_processed.train.csv and switchboardutt_processedlow.train.csv is the switchboardutt_processedlow only contains the 2 labelled examples for training, while switchboardutt_processed.train.csv contains all 80% of labelled examples for training, and is meant for training using unlabelled train examples. 
+
+``` console
+# Remove header
 # Split train dev test
-$ bash ~/project/bin/processandsplit.sh ./switchboard_processed.csv 8 1 1
-$ bash ~/project/bin/processandsplit.sh ./switchboardutt_processed.csv 8 1 1
-$ bash ~/project/bin/processandsplit.sh ./ted_talks_processed.csv 8 1 1
-$ bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+# Explode to reduce length (splits every 1500+ characters at a sentence punctuation mark. the final chunk < 2500 characters will just be taken as it is.)
+# Rename explode dataset with original name
+# Insert header for preprocessed dataset
+# Adapt filenames to the different datasets
 
-# Explode to reduce length (splits every 2500+ characters at a sentence punctuation mark. the final chunk < 2500 characters will just be taken as it is.)
-$ python ~/project/experiment/data/explode.py -i switchboardutt_processed.csv -o switchboardutt_explode.csv -l 2500 -s 0
-$ python ~/project/experiment/data/explode.py -i ted_talks_processed.csv -o  ted_talks_explode.csv -l 2500 -s 0
-$ python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 2500 -s 0
+sed -i 1d open_subtitles_processed.csv
+bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 1500 -s 0
+find . -name 'open_subtitles_explode.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
+sed -i 1i"id,transcript" open_subtitles_processed*
 
-# Rename splits and add header to all files
-$ find . -name '*.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
-$ sed -i 1i"id,transcript" *processed*
 
-# Create low resource switchboard dataset (set NR<= 1+number of lines)
-$ awk 'NR==1 || NR<=5' switchboardutt_processed.train.csv > switchboardutt_processedlow.train.csv
+# Create low resource switchboard dataset (set NR<= 1+number of lines) for training with low resource labelled without low resource unlabelled examples (i.e. when the gradient reversal gamma factor is 0)
+$ awk 'NR==1 || NR<=3' switchboardutt_processed.train.csv > switchboardutt_processedlow.train.csv
 $ cp switchboardutt_processed.dev.csv switchboardutt_processedlow.dev.csv
 $ cp switchboardutt_processed.test.csv switchboardutt_processedlow.test.csv
 
 <!-- kaggle datasets version -m 'message' -->
 ```
 
-From kaggle (Using kaggle api or downloading from [here](https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts):
-```bash
-$ kaggle datasets download -d ngxingyu/preprocessed-english-spoken-transcripts
-$ unzip preprocessed-english-spoken-transcripts.zip
-$ mv *.csv ~/data/
-```
 
 ### Running Experiments
 
@@ -158,19 +166,22 @@ Run ```python main.py```, specifying any specific GPU if needed.
 Run ```tensorboard serve --logdir diroflogs```
 
 #### To evaluate experiment:
+** Edit the testing.py code **
 Update the experiment folder name containing the .ckpt file in experiment/testing.py
 Uncomment the relavant section of code based on the intended task: evaluating the test set, performing inference on the list of test, and performing inference based on input from commandline.
 Run ```python testing.py```
 
 
+## Model presented in research
+
+![Domain Transfer Model](DomainTransferModel.png "Domain Transfer Model")
 
 ## Observations
 
 Experiments on Switchboard corpus, performing hparams tuning on the following: (CEL, FL, DL with MLP or CRF).
 Result: 
-- Dice Loss performs the best. 
-- CRF seems hard to train on this dataset, performing poorly on rarer classes. This might be due to the small training size
-- Unfreezing of the bert layer does not affect the overall accuracy much.
+- Dice Loss performed decently, was robust to punctuation class imbalance.
+- Domain adversarial method was effective for domain transfer to low-resource domain (Switchboard), and slightly effective for zero-resource domain.
 
 
 
