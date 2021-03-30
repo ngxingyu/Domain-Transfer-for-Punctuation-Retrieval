@@ -22,7 +22,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-28_09-09-50
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-29_10-18-31
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -31,28 +31,26 @@ model:
   unfreeze_step: 2
   punct_label_ids:
   - ''
-  - '!'
   - ','
-  - '-'
   - .
-  - ':'
   - '?'
-  - …
   label_map:
+    '-': ','
+    …: .
+    '!': .
+    ':': ','
     —: ','
     ;: .
   no_space_label: ''
   test_chunk_percent: null
-  punct_class_weight_factor: 0
+  punct_class_weight_factor: 0.2
   punct_class_weights: null
-  cat_domain_and_states: true
+  cat_domain_and_states: false
   cat_domain_logits: true
   dataset:
     data_dir: /home/nxingyu2/data
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
-    - /home/nxingyu2/data/open_subtitles_processed
-    - /home/nxingyu2/data/switchboardutt_processed
     unlabelled: []
     low_resource_labelled_count: 2
     max_seq_length: 128
@@ -63,16 +61,17 @@ model:
     num_workers: 2
     pin_memory: false
     drop_last: false
-    num_labels: 8
-    num_domains: 3
+    num_labels: 4
+    num_domains: 1
     val_unlabelled: true
     test_unlabelled: true
-    attach_label_to_end: true
+    attach_label_to_end: null
     pad_start: 0
     alpha_sub: 0.0
     alpha_del: 0.0
     alpha_ins: 0.0
     alpha_swp: 0
+    alpha_spl: 0.2
     stride: 32
     train_ds:
       shuffle: true
@@ -116,14 +115,11 @@ model:
     use_transformer_init: true
     loss: dice
     gamma: null
-    gamma_factor: 0.005
+    gamma_factor: 0.0
     pooling: attention
     idx_conditioned_on: 0
     weight_tokens: true
-    weight:
-    - 1
-    - 1
-    - 1
+    weight: null
     dice_loss:
       epsilon: 0.01
       alpha: 4

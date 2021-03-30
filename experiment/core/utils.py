@@ -38,12 +38,12 @@ def align_labels_to_mask(mask,labels):
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
     output=[re.sub(r'( ?\[((CLS))\] ?)',' ',
-    re.sub('# +','',re.sub('#? +##','',' '.join( #[.?!,;:\-—… ]+
+    re.sub(" \' ","\'",re.sub('# +','',re.sub('#? +##','',' '.join( #[.?!,;:\-—… ]+
         [_[0]+_[1] for _ in list(
             zip(tokenizer.convert_ids_to_tokens(_[0]),
                 [labels_to_ids[id] for id in _[1].tolist()])
         )]
-    )))) for _ in zip(texts,tags)]
+    ))))) for _ in zip(texts,tags)]
     newoutput=[]
     prevappend=False
     for value in output:

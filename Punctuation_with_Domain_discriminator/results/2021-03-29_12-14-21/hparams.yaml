@@ -22,7 +22,7 @@ exp_manager:
   create_checkpoint_callback: true
 base_path: /home/nxingyu2/data
 tmp_path: /home/nxingyu2/data/tmp
-log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-26_15-32-09
+log_dir: /home/nxingyu2/project/Punctuation_with_Domain_discriminator/2021-03-29_12-14-21
 model:
   nemo_path: null
   transformer_path: google/electra-base-discriminator
@@ -43,7 +43,7 @@ model:
     ;: .
   no_space_label: ''
   test_chunk_percent: null
-  punct_class_weight_factor: 0
+  punct_class_weight_factor: 1.0
   punct_class_weights: null
   cat_domain_and_states: false
   cat_domain_logits: true
@@ -52,7 +52,7 @@ model:
     labelled:
     - /home/nxingyu2/data/ted_talks_processed
     unlabelled: []
-    low_resource_labelled_count: 0
+    low_resource_labelled_count: 2
     max_seq_length: 128
     pad_label: ''
     ignore_extra_tokens: false
@@ -65,12 +65,13 @@ model:
     num_domains: 1
     val_unlabelled: true
     test_unlabelled: true
-    attach_label_to_end: true
+    attach_label_to_end: null
     pad_start: 0
-    alpha_sub: 0.2
-    alpha_del: 0.2
-    alpha_ins: 0.2
+    alpha_sub: 0.0
+    alpha_del: 0.0
+    alpha_ins: 0.0
     alpha_swp: 0
+    alpha_spl: 0.2
     stride: 32
     train_ds:
       shuffle: true
@@ -97,23 +98,25 @@ model:
     activation: gelu
     log_softmax: false
     use_transformer_init: true
-    loss: dice
+    loss: cel
     bilstm: false
     dice_loss:
       epsilon: 0.01
       alpha: 1
       macro_average: true
+    focal_loss:
+      alpha: 2
   domain_head:
     predict_labelled: false
     domain_num_fc_layers: 2
-    fc_dropout: 0.8
+    fc_dropout: 0.6
     activation: gelu
     log_softmax: false
     use_transformer_init: true
     loss: dice
     gamma: null
     gamma_factor: 0.0
-    pooling: token
+    pooling: attention
     idx_conditioned_on: 0
     weight_tokens: true
     weight: null
@@ -123,6 +126,11 @@ model:
       macro_average: true
   frozen_lr:
   - 4.0e-05
+  - 1.0e-05
+  - 5.0e-06
+  - 1.0e-06
+  - 5.0e-07
+  - 1.0e-07
   differential_lr: 0.8
   optim:
     name: adamw

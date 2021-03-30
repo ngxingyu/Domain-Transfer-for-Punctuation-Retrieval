@@ -76,9 +76,9 @@ model:
         
     no_space_label: '' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0 # 0 if don't weight
+    punct_class_weight_factor: 1.0 # 0 if don't weight
     punct_class_weights:  # Leave blank.
-    cat_domain_and_states: true # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
+    cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
