@@ -1,5 +1,29 @@
 # Transfer Learning for punctuation retrieval
 
+## Navigating this repository
+
+```bash
+project
+│   README.md      : This file
+│   processcsv.py  : preprocess raw csv $ python ~/project/processcsv.py -i sourcepath.csv -o sourcepath_processed.csv -c 2000 (process in chunks of 2000)
+│   processxml.py  : helper script for bin/xml2csv.sh
+│   setup.sh       : sample script for setting up project environment
+│   .gitignore
+│   NLP.yml        : conda environment. (I use setup.sh instead)
+│
+└───bin
+│   │   get-data.sh     : Script for getting initial dataset before preprocessing. Get from kaggle instead
+│   │   percsplit.sh    : helper for processandsplit.sh
+│   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/bin/processandsplit.sh csvfilepath 8 1 1 (train dev test)
+│   │   processpipeline.sh  : Outdated. Get dataset from kaggle instead
+│   │   shuffle.sh  : helper script to sort or shuffle csv file with seed
+│   │   xml2csv.sh  : Crawl opensubtitles folders and extract text from xml to a single csv file.
+│   
+└───experiment
+    │   file021.txt
+    │   file022.txt
+```
+
 ## Datasources
 
 The chosen datasources for this project are:

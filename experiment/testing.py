@@ -45,7 +45,7 @@ def main(cfg : DictConfig) -> None:
     model = PunctuationDomainModel.load_from_checkpoint(
     checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
     
-    model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
+    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/open_subtitles_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/lrec_processed']

@@ -18,6 +18,26 @@ weighted avg                                            94.94      94.67      94
       575.00       516.00       534.00      3965.00
 -------------------
 
+Chunked Punct report
+
+label                                                precision    recall       f1           support   
+ (label_id: 0)                                          98.52      97.24      97.88     366424
+, (label_id: 1)                                         70.13      75.99      72.94      34142
+. (label_id: 2)                                         83.70      87.79      85.70      28545
+? (label_id: 3)                                         71.70      86.29      78.32       2472
+-------------------
+micro avg                                               94.87      94.87      94.87     431583
+macro avg                                               75.18      83.36      78.99     431583
+weighted avg                                            95.14      94.87      94.99     431583
+
+-------------------
+                       ,           .           ?
+   356319.00      4900.00       424.00        29.00
+     8172.00     25945.00      2754.00       124.00
+     1659.00      3036.00     25060.00       186.00
+      274.00       261.00       307.00      2133.00
+-------------------
+
 Domain report
 
 label                                                precision    recall       f1           support   
@@ -41,6 +61,9 @@ test_loss: 1.1827880144119263
 punct_precision: 73.93285369873047
 punct_f1: 77.39472198486328
 punct_recall: 81.26066589355469
+chunked_punct_precision: 81.01161193847656
+chunked_punct_f1: 83.70869445800781
+chunked_punct_recall: 86.82782745361328
 domain_precision: 33.333335876464844
 domain_f1: 32.144805908203125
 domain_recall: 31.038108825683594
