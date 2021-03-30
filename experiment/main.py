@@ -25,7 +25,7 @@ def main(cfg: DictConfig)->None:
     data_id = str(int(time()))
     def savecounter():
         pp(os.system(f'rm -r {cfg.tmp_path}/*.{data_id}*'))
-    atexit.register(savecounter)
+    atexit.register(savecounter) # Remove tmp dataset generated after training concludes
 
     cfg.model.maximum_unfrozen=max(cfg.model.maximum_unfrozen,cfg.model.unfrozen)
     pl.seed_everything(cfg.seed)
