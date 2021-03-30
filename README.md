@@ -128,6 +128,18 @@ $ unzip preprocessed-english-spoken-transcripts.zip
 $ mv *.csv ~/data/
 ```
 
+Get *sample pretrained model* to try (extract to Punctuation_with_Domain_discriminator folder and set exp='pretrained' in testing.py and uncomment the relavant part to try)
+Pre-trained with domain method. **** Edit the hparams.yaml file in the pretrained folder, changing all mentions of nxingyu2 to your username.
+
+[4 punctuation](https://drive.google.com/uc?id=1e93ZnWChouoy4kC5CZ9gihZ4UPOAiUfY)
+[8 punctuation (not very good)](https://drive.google.com/uc?id=1sN-arbazKzauHSMtCcO3SdN1yiS_GU3Y)
+
+```bash
+$ cd ???/Punctuation_with_Domain_discriminator
+$ gdown <insert URL here>
+$ tar -xf punctuation.tar.xz
+```
+
 Further processing to setup dataset to be fed into model. (Split, explode, generate low-resource dataset.)
 * The difference between switchboardutt_processed.train.csv and switchboardutt_processedlow.train.csv is the switchboardutt_processedlow only contains the 2 labelled examples for training, while switchboardutt_processed.train.csv contains all 80% of labelled examples for training, and is meant for training using unlabelled train examples. 
 
