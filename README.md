@@ -121,7 +121,7 @@ $ python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_
 $ python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
 ```
 
-Get preprocessed dataset from kaggle (Using kaggle api or downloading from [here](https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts):
+Get preprocessed dataset from kaggle (Using kaggle api or downloading from [here](https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts))
 ```bash
 $ kaggle datasets download -d ngxingyu/preprocessed-english-spoken-transcripts
 $ unzip preprocessed-english-spoken-transcripts.zip
