@@ -112,15 +112,9 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             log_softmax=self.hparams.model.domain_head.log_softmax,
             dropout=self.hparams.model.domain_head.fc_dropout,
             num_layers=self.hparams.model.domain_head.domain_num_fc_layers,
-<<<<<<< HEAD
-            use_transformer_init=self.hparams.model.domain_head.use_transformer_init
-            ) if self.hparams.model.domain_head.pooling is None else \
-        SequenceClassifier(
-=======
             use_transformer_init=self.hparams.model.domain_head.use_transformer_init,
             ) \
                 if self.hparams.model.domain_head.pooling is None else SequenceClassifier(
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
             hidden_size=self.transformer.config.hidden_size,
             num_classes=2 if self.hparams.model.domain_head.predict_labelled else\
                 self.hparams.model.dataset.num_domains,
@@ -147,10 +141,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         if self.hparams.model.punct_head.bilstm:
             self.bilstm = torch.nn.LSTM(bidirectional=True, num_layers=2, input_size=self.transformer.config.hidden_size, hidden_size=self.transformer.config.hidden_size//2, batch_first=True)             
-<<<<<<< HEAD
-=======
         
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         if not self.hparams.model.domain_head.loss in ['cel','focal','dice']:
             if not (self.hparams.model.domain_head.pooling is None and self.hparams.model.domain_head.loss == 'dice'):
                 self.log('domain_head loss not found, fallback to cross entropy loss')
@@ -609,11 +600,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         def is_backbone(n): return 'encoder' in n
         params = list(self.named_parameters())
         backbone=[p for n, p in params if is_backbone(n)]
-<<<<<<< HEAD
-        backbonelr=[lr*self.hparams.model.differential_lr**(x//16) for x in list(range(len(backbone)))[::-1]]
-=======
         backbonelr=[max(self.hparams.model.optim.sched.min_lr,lr*self.hparams.model.differential_lr**(x//16)) for x in list(range(len(backbone)))[::-1]]
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         backbone_params=[{'params':p,'lr':l} for p,l in zip(backbone,backbonelr)]
         grouped_parameters=backbone_params+[{'params': [p for n, p in params if not is_backbone(n)], 'lr': lr}]
         # grouped_parameters = [
@@ -721,10 +708,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             alpha_del=data_config.alpha_del,
             alpha_ins=data_config.alpha_ins,
             alpha_swp=data_config.alpha_swp,
-<<<<<<< HEAD
-=======
             alpha_spl=data_config.alpha_spl,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
             stride=data_config.stride,
         )
         self.dm.setup()

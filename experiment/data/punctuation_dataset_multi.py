@@ -50,10 +50,7 @@ class PunctuationDomainDataset(IterableDataset):
         alpha_del=0.4,
         alpha_ins=0.4,
         alpha_swp=0,
-<<<<<<< HEAD
-=======
         alpha_spl=0.4,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         stride=0,
     ):
         if not (os.path.exists(csv_file)):
@@ -86,10 +83,7 @@ class PunctuationDomainDataset(IterableDataset):
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
         self.alpha_swp=alpha_swp
-<<<<<<< HEAD
-=======
         self.alpha_spl=alpha_spl
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         self.stride=stride
         if not (os.path.exists(self.target_file)):
             os.system(f"sed '1d' {self.csv_file} > {self.target_file}")
@@ -107,31 +101,16 @@ class PunctuationDomainDataset(IterableDataset):
 
     def __next__(self):
         batch = next(self.dataset)[1]
-<<<<<<< HEAD
-
-        # l=batch.str.split().map(len).values
-        # n=16
-        # a=np.maximum((l-self.max_seq_length*n).clip(min=0),(l*np.random.random(l.__len__())).astype(int))
-        # b=np.minimum(l,a+self.max_seq_length*n)
-        # batch=pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1)
-=======
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         complete=batch
         if self.stride>0:
             for i in range(1,self.max_seq_length//self.stride):
                 l=batch.str.split().map(len).values
                 a=self.stride*i*np.ones_like(l)
                 b=l
-<<<<<<< HEAD
-                complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
-        batch=complete
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp)(batch)
-=======
                 complete=complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
             # pp(batch.shape,complete.shape)
         batch=complete
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp,self.alpha_spl)(batch)
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, pad_start=self.pad_start)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
@@ -202,10 +181,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  alpha_del=0,
                  alpha_ins=0,
                  alpha_swp=0,
-<<<<<<< HEAD
-=======
                  alpha_spl=0,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                  stride=0,
                  ):
         worker_info = get_worker_info()
@@ -218,10 +194,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.label_map=label_map
         self.ds_lengths=[]
         self.labelled=labelled
-<<<<<<< HEAD
-=======
         self.stride=stride
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         for path in labelled:
             if manual_len>0:
                 self.ds_lengths.append(min(manual_len,int(subprocess.Popen(['wc', '-l', f'{path}.{split}.csv'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT).communicate()[0].split()[0])))
@@ -249,10 +222,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
         self.alpha_swp=alpha_swp
-<<<<<<< HEAD
-=======
         self.alpha_spl=alpha_spl
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         self.stride=stride
 
         for i,path in enumerate(labelled):
@@ -274,10 +244,7 @@ class PunctuationDomainDatasets(IterableDataset):
                     alpha_del=self.alpha_del,
                     alpha_ins=self.alpha_ins,
                     alpha_swp=self.alpha_swp,
-<<<<<<< HEAD
-=======
                     alpha_spl=self.alpha_spl,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                     stride=self.stride,)
             self.datasets.append(dataset)
             self.iterables.append(cycle(dataset))
@@ -301,10 +268,7 @@ class PunctuationDomainDatasets(IterableDataset):
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
                         alpha_swp=self.alpha_swp,
-<<<<<<< HEAD
-=======
                         alpha_spl=self.alpha_spl,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                         stride=self.stride,)
                 self.datasets.append(dataset)
                 self.iterables.append(cycle(dataset))
@@ -324,10 +288,7 @@ class PunctuationDomainDatasets(IterableDataset):
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
                         alpha_swp=self.alpha_swp,
-<<<<<<< HEAD
-=======
                         alpha_spl=self.alpha_spl,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                         stride=self.stride,)
                 self.datasets.append(dataset)
                 self.iterables.append(cycle(dataset))
@@ -348,20 +309,11 @@ class PunctuationDomainDatasets(IterableDataset):
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
                         alpha_swp=self.alpha_swp,
-<<<<<<< HEAD
-=======
                         alpha_spl=self.alpha_spl,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
                         stride=self.stride,
                         )
                 self.datasets.append(dataset)
                 self.iterables.append(cycle(dataset))
-<<<<<<< HEAD
-        
-    # def __getitem__(self, i):
-    #     ds=[d[i] for d in self.datasets]
-=======
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
 
     def __iter__(self):
         worker_info = get_worker_info()
@@ -429,18 +381,6 @@ class PunctuationInferenceDataset(Dataset):
         }
 
     def __init__(self, 
-<<<<<<< HEAD
-    tokenizer, 
-    queries: List[str], 
-    max_seq_length: int, 
-    punct_label_ids:Dict[str,int], 
-    label_map:Dict[str,str], 
-    num_samples:int=256, 
-    degree:int = 0, 
-    attach_label_to_end:bool=None,
-    no_space_label=None,
-    pad_start:int=0,
-=======
         tokenizer, 
         queries: List[str], 
         max_seq_length: int, 
@@ -451,7 +391,6 @@ class PunctuationInferenceDataset(Dataset):
         attach_label_to_end:bool=None,
         no_space_label=None,
         pad_start:int=0,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
     ):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree

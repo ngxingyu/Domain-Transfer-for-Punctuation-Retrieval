@@ -32,11 +32,7 @@ def main(cfg: DictConfig)->None:
     early_stop_callback = pl.callbacks.early_stopping.EarlyStopping(
         monitor='val_loss',
         min_delta=0.00,
-<<<<<<< HEAD
-        patience=6,
-=======
         patience=2,
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         verbose=False,
         mode='max'
     )
@@ -47,10 +43,6 @@ def main(cfg: DictConfig)->None:
     lrs=[1e-2,1e-5] if cfg.model.frozen_lr is None else list(cfg.model.frozen_lr)
     while(model.hparams.model.unfrozen<=cfg.model.maximum_unfrozen and model.hparams.model.unfrozen>=0):
         model.hparams.model.optim.lr = lrs.pop(0)
-<<<<<<< HEAD
-        # model.hparams.model.domain_head.gamma=gamma.pop(0)
-=======
->>>>>>> 685fc40118c0a5b1039c9fc2926f4bd42aa03d13
         trainer.current_epoch=0
         trainer.fit(model)
         try:
