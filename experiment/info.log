@@ -1,0 +1,1370 @@
+[INFO] - Global seed set to 42
+[INFO] - GPU available: True, used: True
+[INFO] - TPU available: None, using: 0 TPU cores
+[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[INFO] - Using native 16bit precision.
+[INFO] - shuffling train set
+[INFO] - Global seed set to 42
+[INFO] - initializing ddp: GLOBAL_RANK: 0, MEMBER: 1/1
+[INFO] - Optimizer config = AdamW (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 1
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 2
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 3
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 4
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 5
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 6
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 7
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 8
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 9
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 10
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 11
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 12
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 13
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 14
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 15
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.4359738368000025e-06
+    weight_decay: 0.0
+
+Parameter Group 16
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 17
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 18
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 19
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 20
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 21
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 22
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 23
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 24
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 25
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 26
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 27
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 28
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 29
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 30
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 31
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4.294967296000003e-06
+    weight_decay: 0.0
+
+Parameter Group 32
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 33
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 34
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 35
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 36
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 37
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 38
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 39
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 40
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 41
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 42
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 43
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 44
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 45
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 46
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 47
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 5.368709120000003e-06
+    weight_decay: 0.0
+
+Parameter Group 48
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 49
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 50
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 51
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 52
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 53
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 54
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 55
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 56
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 57
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 58
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 59
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 60
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 61
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 62
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 63
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 6.7108864000000044e-06
+    weight_decay: 0.0
+
+Parameter Group 64
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 65
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 66
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 67
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 68
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 69
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 70
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 71
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 72
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 73
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 74
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 75
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 76
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 77
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 78
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 79
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 8.388608000000003e-06
+    weight_decay: 0.0
+
+Parameter Group 80
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 81
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 82
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 83
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 84
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 85
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 86
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 87
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 88
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 89
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 90
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 91
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 92
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 93
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 94
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 95
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.0485760000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 96
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 97
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 98
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 99
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 100
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 101
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 102
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 103
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 104
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 105
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 106
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 107
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 108
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 109
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 110
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 111
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.3107200000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 112
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 113
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 114
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 115
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 116
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 117
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 118
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 119
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 120
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 121
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 122
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 123
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 124
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 125
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 126
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 127
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 1.6384000000000004e-05
+    weight_decay: 0.0
+
+Parameter Group 128
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 129
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 130
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 131
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 132
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 133
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 134
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 135
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 136
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 137
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 138
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 139
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 140
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 141
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 142
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 143
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.0480000000000007e-05
+    weight_decay: 0.0
+
+Parameter Group 144
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 145
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 146
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 147
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 148
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 149
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 150
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 151
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 152
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 153
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 154
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 155
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 156
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 157
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 158
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 159
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 2.5600000000000006e-05
+    weight_decay: 0.0
+
+Parameter Group 160
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 161
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 162
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 163
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 164
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 165
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 166
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 167
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 168
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 169
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 170
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 171
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 172
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 173
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 174
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 175
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 3.2000000000000005e-05
+    weight_decay: 0.0
+
+Parameter Group 176
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 177
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 178
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 179
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 180
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 181
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 182
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 183
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 184
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 185
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 186
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 187
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 188
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 189
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 190
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 191
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+
+Parameter Group 192
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 4e-05
+    weight_decay: 0.0
+)
+[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7fada4f66bb0>" 
+will be used during training (effective maximum steps = 3000) - 
+Parameters : 
+(warmup_steps: null
+warmup_ratio: 0.1
+min_lr: 1.0e-08
+last_epoch: -1
+max_steps: 3000
+)
+[INFO] - Internal process exited
