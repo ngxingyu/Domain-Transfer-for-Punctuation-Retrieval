@@ -37,13 +37,22 @@ def align_labels_to_mask(mask,labels):
     return m1.tolist()
 
 def view_aligned(texts,tags,tokenizer,labels_to_ids):
+    '''Convert tokens ids and labels into readable text'''
     output=[re.sub(r'( ?\[((CLS))\] ?)',' ',
-    re.sub(" \' ","\'",re.sub('# +','',re.sub('#? +##','',' '.join( #[.?!,;:\-—… ]+
-        [_[0]+_[1] for _ in list(
-            zip(tokenizer.convert_ids_to_tokens(_[0]),
-                [labels_to_ids[id] for id in _[1].tolist()])
-        )]
-    ))))) for _ in zip(texts,tags)]
+        re.sub(" \' ","\'",
+            re.sub('# +','',
+                re.sub('#? +##','',
+                    ' '.join( #[.?!,;:\-—… ]+
+                        [_[0]+_[1] for _ in list(
+                            zip(tokenizer.convert_ids_to_tokens(_[0]),
+                                [labels_to_ids[id] for id in _[1].tolist()])
+                            )
+                        ]
+                    )
+                )
+            )
+        )
+    ) for _ in zip(texts,tags)]
     newoutput=[]
     prevappend=False
     for value in output:
@@ -60,6 +69,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
     return newoutput
 
 def text2masks(n, labels_to_ids,label_map):
+    '''closure for text2masks specifying degree (degree 1 refers to the last punct., 2 - the 2nd last etc.)'''
     def text2masks(text):
         '''Converts single paragraph of text into a list of words and corresponding punctuation based on the degree requested.'''
         labels=''.join(labels_to_ids.keys())
@@ -111,6 +121,7 @@ def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_s
 assert(chunk_examples_with_degree(0,{'': 0, '!': 1, ',': 2, '-': 3, '.': 4, ':': 5, '?': 6, '—': 7},{'…':'.',';':'.'})(['Hello!Bye…'])=={'texts': [['Hello', 'Bye']], 'tags': [[1, 4]]})
 
 def subword_tokenize(tokenizer,tokens, pad_start):
+    '''convert word list into list of subword ids'''
     subwords = list(map(tokenizer.tokenize, tokens))
     subword_lengths = list(map(len, subwords))
     subwords = list(flatten(subwords))
@@ -205,16 +216,19 @@ import regex as re
 import random
 
 def sent_tokenize(text):
+    '''Split at sentence boundaries (using my own set of sentence boundary punctuation)'''
     return re.findall(r"\w.{20,}?[.!?… ]*[.!?…] |\w.+[.!?… ]*[.!?…]$",text)
 
 
 def shuffle_sentence_transform(data, always_apply=False, p=0.5):
+    '''swap sentences within example'''
     text = data
     sentences = sent_tokenize(text)
     random.shuffle(sentences)
     return ' '.join(sentences)
 
 def swap_transform(data, distance=1, probability=0.1, always_apply=False, p=0.5):
+    '''swap adjacent words'''
     swap_range_list = list(range(1, distance+1))
     text = data
     words = text.split()
@@ -239,6 +253,7 @@ def swap_transform(data, distance=1, probability=0.1, always_apply=False, p=0.5)
     return ' '.join([v for k, v in sorted(new_words.items(), key=lambda x: x[0])])
 
 def delete_transform(data, probability=0.05, always_apply=False, p=0.5):
+    '''delete random words'''
     text = data
     words = text.split()
     words_count = len(words)
@@ -257,6 +272,7 @@ def delete_transform(data, probability=0.05, always_apply=False, p=0.5):
     return ' '.join(new_words)
 
 def substitute_transform(data, tokenizer,probability=0.05, always_apply=False, p=0.5):
+    '''substitute random words randomly'''
     text = data
     words = text.split()
     words_count = len(words)
@@ -282,6 +298,7 @@ def substitute_transform(data, tokenizer,probability=0.05, always_apply=False, p
     return ' '.join(new_words)
 
 def insert_transform(data, tokenizer, probability=0.1, always_apply=False, p=0.5):
+    '''insert random words'''
     text = data
     words = text.split()
     words_count = len(words)
@@ -306,6 +323,7 @@ def insert_transform(data, tokenizer, probability=0.1, always_apply=False, p=0.5
     return ' '.join(new_words)
 
 def split_transform(data, probability=0.05, always_apply=False, p=0.5):
+    '''split words randomly'''
     text = data
     words = text.split()
     words_count = len(words)
@@ -327,7 +345,8 @@ def split_transform(data, probability=0.05, always_apply=False, p=0.5):
     return ' '.join(new_words)
 
 
-def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0, alpha_split=0.1):    
+def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0, alpha_split=0.1):
+    '''wrapper for all defined random transformations. Have to reduce and fix the maximum probability of transform.'''  
     r=np.random.rand(5)
     text=shuffle_sentence_transform(text)
     if r[0] < alpha_sub:
