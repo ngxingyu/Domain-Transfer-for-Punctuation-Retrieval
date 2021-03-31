@@ -15,14 +15,6 @@ project
 │   setup.sh       : sample script for setting up project environment. Change the CUDA version before running
 │   .gitignore
 │   NLP.yml        : conda environment. (I use setup.sh instead)
-│
-└───bin
-│   │   get-data.sh     : Script for getting initial dataset before preprocessing. Get from kaggle instead
-│   │   percsplit.sh    : helper for processandsplit.sh
-│   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/bin/processandsplit.sh csvfilepath 8 1 1 (train dev test)
-│   │   processpipeline.sh  : Outdated. Get dataset from kaggle instead
-│   │   shuffle.sh  : helper script to sort or shuffle csv file with seed
-│   │   xml2csv.sh  : Crawl opensubtitles folders and extract text from xml to a single csv file.
 │   
 └───experiment
     │   main.py     : entrypoint for training  $ python main.py    // Set configs in config.yaml
@@ -40,8 +32,13 @@ project
     │   │   punctuation_count.sh  : View punctuation distribution for files
     │   │   punctuation_datamodule.py  : Datamodule for model
     │   │   punctuation_dataset_multi.py  : PyTorch Dataset code for training and inference
-    │   │   percsplit / processandsplit / shuffle / xml2csv same as above
     │   │   explode.py  : Split long examples into shorter lengths at sentence boundaries
+    │   │   get-data.sh     : Script for getting initial dataset before preprocessing. Get from kaggle instead
+    │   │   percsplit.sh    : helper for processandsplit.sh
+    │   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/bin/processandsplit.sh csvfilepath 8 1 1 (train dev test)
+    │   │   processpipeline.sh  : Outdated. Get dataset from kaggle instead
+    │   │   shuffle.sh  : helper script to sort or shuffle csv file with seed
+    │   │   xml2csv.sh  : Crawl opensubtitles folders and extract text from xml to a single csv file.
     │
     └───core    : scripts used by PunctuationDomainModel/Dataset etc.
 
@@ -145,6 +142,7 @@ $ python ~/project/processcsv.py -i ~/data/ted_talks_en.csv -o ~/data/ted_talks_
 $ python ~/project/processcsv.py -i ~/data/open_subtitles.csv -o ~/data/open_subtitles_processed.csv -c 2000
 ```
 
+### Preprocessed data from kaggle
 Get preprocessed dataset from kaggle (Using kaggle api or downloading from [here](https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts))
 ```bash
 $ kaggle datasets download -d ngxingyu/preprocessed-english-spoken-transcripts
@@ -152,6 +150,7 @@ $ unzip preprocessed-english-spoken-transcripts.zip
 $ mv *.csv ~/data/
 ```
 
+### Pretrained Model
 Get *sample pretrained model* to try (extract to Punctuation_with_Domain_discriminator folder and set exp='pretrained' in testing.py and uncomment the relavant part to try)
 Pre-trained with domain method. **** Edit the hparams.yaml file in the pretrained folder, changing all mentions of nxingyu2 to your username.
 
