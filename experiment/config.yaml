@@ -97,7 +97,7 @@ model:
         # parameters for dataset preprocessing
         low_resource_labelled_count: 2
         max_seq_length: 128
-        pad_label: ''   # '#' if no-space, '' if all space.
+        pad_label: ''  # Unused
         ignore_extra_tokens: false
         ignore_start_end: false
         use_cache: false
