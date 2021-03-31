@@ -6,6 +6,7 @@ data/**
 .ipynb_checkpoints
 .hydra
 *.ipynb
+*.swp
 archive
 configs/
 nemo*
