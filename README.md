@@ -35,7 +35,7 @@ project
     │   │   explode.py  : Split long examples into shorter lengths at sentence boundaries
     │   │   get-data.sh     : Script for getting initial dataset before preprocessing. Get from kaggle instead
     │   │   percsplit.sh    : helper for processandsplit.sh
-    │   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/bin/processandsplit.sh csvfilepath 8 1 1 (train dev test)
+    │   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/experiment/data/processandsplit.sh csvfilepath 8 1 1 (train dev test)
     │   │   processpipeline.sh  : Outdated. Get dataset from kaggle instead
     │   │   shuffle.sh  : helper script to sort or shuffle csv file with seed
     │   │   xml2csv.sh  : Crawl opensubtitles folders and extract text from xml to a single csv file.
@@ -58,7 +58,7 @@ project
 └───bin
 │   │   get-data.sh     : Script for getting initial dataset before preprocessing. Get from kaggle instead
 │   │   percsplit.sh    : helper for processandsplit.sh
-│   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/bin/processandsplit.sh csvfilepath 8 1 1 (train dev test)
+│   │   processandsplit.sh  : Split csv into 3 files $ bash ~/project/experiment/data/processandsplit.sh csvfilepath 8 1 1 (train dev test)
 │   │   processpipeline.sh  : Outdated. Get dataset from kaggle instead
 │   │   shuffle.sh  : helper script to sort or shuffle csv file with seed
 │   │   xml2csv.sh  : Crawl opensubtitles folders and extract text from xml to a single csv file.
@@ -176,7 +176,7 @@ Further processing to setup dataset to be fed into model. (Split, explode, gener
 # Adapt filenames to the different datasets
 
 sed -i 1d open_subtitles_processed.csv
-bash ~/project/bin/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
+bash ~/project/experiment/data/processandsplit.sh ./open_subtitles_processed.csv 8 1 1
 python ~/project/experiment/data/explode.py -i open_subtitles_processed.csv -o open_subtitles_explode.csv -l 1500 -s 0
 find . -name 'open_subtitles_explode.*.csv' -exec bash -c ' mv $0 ${0/explode/processed}' {} \;
 sed -i 1i"id,transcript" open_subtitles_processed*

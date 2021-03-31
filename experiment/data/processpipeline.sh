@@ -5,7 +5,7 @@ if [ "$1" == "-h" ] ; then
 fi
 
 python ~/project/processcsv.py -i $1 -o "${1%.csv}_processed.csv" -c $2
-bash ~/project/bin/processandsplit.sh "${1%.csv}_processed.csv" $3 $4 $5
+bash ~/project/experiment/data/processandsplit.sh "${1%.csv}_processed.csv" $3 $4 $5
 python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'test' -m $6 -o 0 -d $7 -t $8
 python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'dev' -m $6 -o 0 -d $7 -t $8
 python ~/project/text2aligned.py -i "${1%.csv}_processed" -s 'train' -m $6 -o 0 -d $7 -t $8
