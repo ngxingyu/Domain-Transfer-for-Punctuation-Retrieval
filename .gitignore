@@ -9,6 +9,7 @@ data/**
 *.swp
 archive
 configs/
+outputs
 nemo*
 lightning_logs.txt
 results.txt
