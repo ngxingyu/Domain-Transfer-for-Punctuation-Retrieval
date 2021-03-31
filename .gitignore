@@ -5,9 +5,13 @@ data/**
 .vscode
 .ipynb_checkpoints
 .hydra
+*.ipynb
 archive
+configs/
 nemo*
 lightning_logs.txt
+results.txt
+test_config.yaml
 2021-03-28_09-09-50
 !Punctuation_with_Domain_discriminator/results/
 Punctuation_with_Domain_discriminator/results/*/*.log

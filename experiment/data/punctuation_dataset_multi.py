@@ -1,5 +1,4 @@
 from torch.utils.data import IterableDataset, Dataset, get_worker_info
-from nemo.core.neural_types import ChannelType, LabelsType, MaskType, NeuralType
 import gc
 import numpy as np
 from typing import List, Optional, Dict
@@ -14,18 +13,6 @@ from math import ceil
 from collections import Counter
 
 class PunctuationDomainDataset(IterableDataset):
-
-    @property
-    def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        """Returns definitions of module output ports."""
-
-        return {
-            "input_ids": NeuralType(('B', 'T'), ChannelType()),
-            "attention_mask": NeuralType(('B', 'T'), ChannelType()),
-            "subtoken_mask": NeuralType(('B', 'T'), ChannelType()),
-            "labels": NeuralType(('B', 'T'), ChannelType()),
-            "domain": NeuralType(('B'), ChannelType()),
-        }
 
     def __init__(self, 
         csv_file:str, 
@@ -368,17 +355,6 @@ class PunctuationInferenceDataset(Dataset):
         max_seq_length: max sequence length minus 2 for [CLS] and [SEP]
         tokenizer: such as AutoTokenizer
     """
-
-    @property
-    def output_types(self) -> Optional[Dict[str, NeuralType]]:
-        """Returns definitions of module output ports.
-               """
-        return {
-            'input_ids': NeuralType(('B', 'T'), ChannelType()),
-            'attention_mask': NeuralType(('B', 'T'), MaskType()),
-            'subtoken_mask': NeuralType(('B', 'T'), MaskType()),
-            "labels": NeuralType(('B', 'T'), ChannelType()),
-        }
 
     def __init__(self, 
         tokenizer, 

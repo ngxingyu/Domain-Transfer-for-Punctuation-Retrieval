@@ -83,14 +83,14 @@ model:
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
-            # - ${base_path}/ted2010 #
-            # - ${base_path}/ted2010_processed
-            # - ${base_path}/lrec_processed
+            # - ${base_path}/ted2010_processed  #### IWSLT dataset
             - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
-            # - ${base_path}/switchboardutt_processedlow #
-        unlabelled:
+            # - ${base_path}/switchboardutt_processedlow #### Switchboard with just (2 or userdefined) examples in train set.
+        unlabelled: ## the first ${low_resource_labelled_count} examples will be labelled, rest will be used as unlabelled.
+            ########## If low_resource_labelled_count is 0, all examples will be unlabelled.
+            ########## To just simulate low resource without unlabelled, refer to Create low resource switchboard dataset in README.md
             # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
@@ -109,14 +109,14 @@ model:
         num_domains: 3        
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
-        attach_label_to_end: #None # false if attach to start none if dont mask
+        attach_label_to_end: true #None # false if attach to start none if dont mask
         pad_start: 0
 
         alpha_sub: 0.0
         alpha_del: 0.0
         alpha_ins: 0.0
         alpha_swp: 0
-        alpha_spl: 0.2
+        alpha_spl: 0.0
         stride: 32 # 0 if no stride. stride length e.g. 32 if stride 
         train_ds:
             shuffle: true

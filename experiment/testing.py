@@ -1,4 +1,4 @@
-# Copyright (c) 2021 <Ng Xing Yu> 
+# Copyright (c) 2021 <Ng Xing Yu>
 
 import hydra
 import numpy as np
@@ -20,74 +20,67 @@ from copy import deepcopy
 import snoop
 snoop.install()
 
+## 1. Set experiment path here
 exp='results/2021-03-27_18-00-46'
-# exp='results/2021-03-29_12-14-21'
-# exp='2021-03-28_11-56-37'
-# exp='2021-03-28_09-09-50'
-# exp='2021-03-29_12-14-21'
+exp='pretrained'
+
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
 def main(cfg : DictConfig) -> None:
     pl.seed_everything(cfg.seed)
     torch.set_printoptions(sci_mode=False)
-    
-    # trainer=pl.Trainer(**cfg.trainer)
-    # exp_manager(trainer, cfg.get("exp_manager", None))
-    # do_training = False
-    # logging.info(f'Config: {OmegaConf.to_yaml(cfg)}')
-    # if do_training:
-    #     trainer.fit(model)
-    #     if cfg.model.nemo_path:
-    #         model.save_to(cfg.model.nemo_path)
-    # gpu = 1 if cfg.trainer.gpus != 0 else 0
-    # model = PunctuationDomainModel.restore_from(restore_path=cfg.exp_manager.restore_path, override_config_path=cfg.exp_manager.override_config_path, )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = PunctuationDomainModel.load_from_checkpoint(
-    checkpoint_path=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt")
-    
-    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/switchboardutt_processed']
+    checkpoint_path=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt",
+    hparams_file=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/hparams.yaml")
+
+    ## 2. Override labelled dataset for testing (If performing testing)
+    # model._cfg.model.dataset.labelled=['/home/nxingyu/data/switchboardutt_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/open_subtitles_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/lrec_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted2010_processed']
+    model._cfg.model.dataset.labelled=[]
 
-    model._cfg.model.dataset.unlabelled=[]
-    # model._cfg.model.test_chunk_percent=0.5
+    model._cfg.model.dataset.unlabelled=[]  # Override unlabelled datasets
+    # model._cfg.model.test_chunk_percent=0.5  ## <- Uncomment to set chunk percentage for testing
 
+    ## Uncomment 4 lines if testing test datasets
     # model.setup_datamodule()
     # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
     # trainer = pl.Trainer(**cfg.trainer)
     # trainer.test(model,ckpt_path=None)
 
-    
+    ## Uncomment 4 lines to perform inference on queries list below
+    inference_results = model.to(device).add_punctuation(queries)
+    for query, result in zip(queries, inference_results):
+        print(f'Query : {query}\n')
+        print(f'Result: {result.strip()}\n\n')
+
+    ## Uncomment 20 lines to perform inference on user input in terminal
+    # import pandas as pd
+    # sample1=pd.read_csv('/home/nxingyu2/data/switchboardutt_processed.test.csv').itertuples()
+    # sample2=pd.read_csv('/home/nxingyu2/data/ted_talks_processed.test.csv').itertuples()
+    # sample3=pd.read_csv('/home/nxingyu2/data/open_subtitles_processed.test.csv').itertuples()
+    # it={'1':sample1,'2':sample2,'3':sample3,'':sample2}
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # inference_results = model.to(device).add_punctuation(queries)
-    # for query, result in zip(queries, inference_results):
-    #     print(f'Query : {query}\n')
-    #     print(f'Result: {result.strip()}\n\n')
+    # while 1:
+    #     x=input('''Insert your own texts, or press one of the following:\n1: switchboard\n2: ted talks\n3: open subtitles\n--[ ''')
+    #     if x in ['','1','2','3']:
+    #         texts=[next(it[x])[2]]
+    #         inference_results = model.to(device).add_punctuation(texts)
+    #         for text, result in zip(texts, inference_results):
+    #             print(f'\n\nQuery : {text}\n')
+    #             print(f'Result: {result.strip()}\n\n')
+    #     else:
+    #         texts=[x]
+    #         inference_results = model.to(device).add_punctuation(texts)
+    #         for text, result in zip(texts, inference_results):
+    #             print(f'\n\nQuery : {text}\n')
+    #             print(f'Result: {result.strip()}\n\n')
 
-    import pandas as pd
-    sample1=pd.read_csv('/home/nxingyu2/data/switchboardutt_processed.test.csv').itertuples()
-    sample2=pd.read_csv('/home/nxingyu2/data/ted_talks_processed.test.csv').itertuples()
-    sample3=pd.read_csv('/home/nxingyu2/data/open_subtitles_processed.test.csv').itertuples()
-    it={'1':sample1,'2':sample2,'3':sample3,'':sample2}
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    while 1:
-        x=input('''Insert your own texts, or press one of the following:\n1: switchboard\n2: ted talks\n3: open subtitles\n--[ ''')
-        if x in ['','1','2','3']:
-            texts=[next(it[x])[2]]
-            inference_results = model.to(device).add_punctuation(texts)
-            for text, result in zip(texts, inference_results):
-                print(f'\n\nQuery : {text}\n')
-                print(f'Result: {result.strip()}\n\n')
-        else:
-            texts=[x]
-            inference_results = model.to(device).add_punctuation(texts)
-            for text, result in zip(texts, inference_results):
-                print(f'\n\nQuery : {text}\n')
-                print(f'Result: {result.strip()}\n\n')
-
-
+## Enter list of queries to be tested
 queries = [
         "Okay, Ellen what kind of a car do you think you're going to buy?. Well, as a matter of fact, was thinking about that the other day, and, uh, really don't know the answer, uh, would sort of like to, uh, think about something in the way of, uh, uh, sort of a sporty car but not any, not, you know, a luxury type sporty one. Yeah. But, um, something that still has a lots of amenities and, you know, gadgets and things. Oh, you do want a lot of that stuff? Yeah, well, yeah like, like some of those things. They come in really handy . What kind of, uh, things are you going to consider, you know, what, uh, you said something about the, about the, well, what do you call them, you said amenities, Amenities. that they have, but what about, um, their reputation of the company or the price. Yeah, well, of course, guess, uh, price is always the big consideration, but, It is for me, other people, yeah. don't seem to have the same problem . Well, that's, that's a big one in my book, ",
         "Yeah. but, uh, um, have preferences for, uh, for some, uh, makers over others, um, and would sort of like to buy American, Yeah. but, you know, I'm not so totally hung up on that, that wouldn't buy something else, how about you? Well, um, the last car we bought was American because of, because of that reason, but have not been entirely happy with, uh, several things about the car, it doesn't seem like the quality is quite as high as expected it to be. Oh, really? Because several things, minor things sort of, but still they cost us money, um, that we didn't feel like we should have had to pay, on a car that, that was that new, Uh-huh. you know, we bought the car new and after, um, well, well, well under two years we had to replace the clutch. Oh. And, they just said, well, you know, clutches are disposable , and said, since when? Yeah. Brake pads are disposable , Yeah. you know, we know that, but never thought a clutch was disposable. Yeah, wouldn't have thought so either. Yeah, so that was, that was kind of a shock . Oh. Yeah, I, guess there's a lot to, to think about when you're trying to make that decision. Yeah, you know, the less actually, the less you spend on a car it seems like luxury cars, they're called luxury cars even though they're much more expensive like, like, uh, uh, a Mercedes Benz, they don't have the history of breaking down or things like that, that would go wrong would definitely not be considered disposable. Right. You would never think of having to replace the clutch in a Mercedes, No but then, especially not after two years.",
