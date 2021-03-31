@@ -45,7 +45,7 @@ log_dir: null
 
 model:
     nemo_path: null
-    transformer_path: roberta-base #google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+    transformer_path: google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 6                 # Initial number of layers unfrozen
     maximum_unfrozen: 6         # Maximum number of layers unfrozen.
     unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
