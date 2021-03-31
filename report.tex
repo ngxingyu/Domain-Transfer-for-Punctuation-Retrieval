@@ -1,11 +1,17 @@
 \documentclass[a4paper]{article}
+
+% \usepackage{xcolor}
+% \pagecolor[rgb]{0,0,0} %black
+% \color[rgb]{0.9,0.9,0.9} %grey
+
 \usepackage{commath}
+\usepackage{graphicx}
 \usepackage[utf8x]{inputenc}
-\usepackage[left=0.8in,right=.8in,top=1in,bottom=1in]{geometry}
+\usepackage[toc,page]{appendix}
+\usepackage[left=0.4in,right=.4in,top=0.8in,bottom=0.8in]{geometry}
 \usepackage{verbatim} %comments
 \usepackage{natbib}
 \bibliographystyle{apalike}
-
 \usepackage{titlesec}
 \setcounter{secnumdepth}{4}
 
@@ -13,176 +19,443 @@
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
-
+\usepackage{multirow}
 
 \usepackage{hyperref}
-\title{Review of research conducted for Punctuation Retrieval.}
-\author{Xing Yu Ng}
-\date{}
+\title{Domain Transfer for Punctuation Retrieval}
+\date{\today{}}
+\author{Ng Xing Yu}
 
 \usepackage{multicol}
 \setlength{\columnsep}{1cm}
 
 \begin{document}
-
 \maketitle
-
-
 \begin{multicols}{2}
+\tableofcontents
+
 \section{Introduction}
-\label{introduction}
-Punctuation Retrieval is an important aspect in any Automatic Speech Recognition (ASR) pipeline for two reasons: to improve readability of auto-generated transcripts for videos or podcast subtitling or voice dictation applications, and to better capture the meaning of speech transcripts to improve the performance of downstream Natural Language Processing (NLP) tasks.
+Punctuation Retrieval is an important aspect in any Automatic Speech Recognition (ASR) pipeline for two reasons: to improve readability of auto-generated transcripts for videos or podcast subtitling or voice dictation applications, and to better capture the meaning of speech transcripts to improve the performance of downstream Natural Language Processing (NLP) tasks. Much research has been conducted for Punctuation Retrieval, often utilising acoustic features or language features like Capitalisation or Named-entity tags to improve the model's performance. However, there has not been much research on ways to improve performance of transfer to low-resource domains for punctuation retrieval.
 
-This review will look into the ideas taken into account by different authors and discuss potential areas of exploration to improve ASR output.
+The objective of my research is to look at methods to improve the performance of a punctuation retrieval model on domains with limited or no data with punctuation labels (zero or low-resource). There are various existing approaches taken to address zero or low-resource sequence labelling for other NLP tasks such as Named-Entity (NER) or Part-of-Speech (POS) tagging, which will be considered in this paper.
 
-\section{Punctuation Features}
-The majority of research into punctuation retrieval on English speech transcripts condense all punctuation into four classes --- (Period .), (Comma ,), (Question Mark ?) and (None), using a custom-defined mapping function to replace other punctuation with the four classes. This is done to combat the issue of an imbalance in punctuation occurrence in most datasets, with less frequent punctuation like semicolons or dashes occurring under 1\% in the entire \href{http://opus.nlpl.eu/OpenSubtitles-v2016.php}{OpenSubtitles v2016 english corpus}. An earlier paper by \cite{dynamiccrf} included the (Exclamation mark !) class, but did not comment on the performance of prediction on the less common classes. 
-The paper by \cite{birnnattention} also used a different mapping scheme for the two languages evaluated --- Estonian and English, with the following differences:
-\begin{center}
-\begin{tabular}{|c|c|c|}
-\hline
- &\multicolumn{2}{|c|}{Mapped to} \\
- \hline
-From & Estonian & English \\
-\hline
-; ! & Period . & Period . \\
-: & Period . & Comma , \\
-- --- & None & Comma ,\\
-\hline
-\end{tabular}
-\end{center}
-While these mappings are logical, with (?) and (!) marking sentence boundaries and the emdash (---) indicating a break in sentence structure, the mapping would result in some meaning and context being lost. Hence, expanding the set of punctuation classes to all punctuation which can be inferred from a speech, for instance \{! , - . : ; ? --- \textellipsis "\} for English, would improve the readibility of the ASR output and allow the text to better represent the meaning within the audio input.
-\section{Data}
-The data sources for training punctuation retrieval tasks can be categorised into purely textual, and aligned audio with text.
-The most common source used for training punctuation retrieval is the IWSLT dataset - many versions of which features transcripts from TED-talks and OpenSubtitles. This textual datasource is used to train a model that only uses lexical features for punctuation retrieval. \cite{jointlearningcorrbirnn} also used transcripts from the Intelligence squared debate show. \cite{medicalasr} used an internal medical speech transcript dataset to demonstrate the ability of their model to transfer to a domain with large vocabulary and data scarcity.
+\section{Punctuation Retrieval}
+\subsection{Punctuation Features}
+The majority of research on punctuation retrieval for English speech transcripts condense all punctuation into four classes --- (Period .) (Comma ,) (Question Mark ?) and (None), using a custom-defined mapping function to replace other punctuation with the four classes. This mapping is used by other researchers to handle the issue of a large imbalance in punctuation labels in most datasets, with less frequent punctuation like semicolons or dashes occurring under 1\% in the entire \href{http://opus.nlpl.eu/OpenSubtitles-v2016.php}{Open Subtitles v2016 English corpus}, resulting in a very low performance on rarer labels. Some of the rare punctuation such as (!) depend heavily on other acoustic cues such as pitch, making it better to replace them with the generic class --- period, but others like the semicolon or hyphen can be considered.
 
-\textbf{Use of non-lexical features} \cite{multimodalsemi} used the audio and text data from the Fisher corpus in training a model using both acoustic and lexical features. \cite{adversarial} also made use of the Penn Treebank-3 dataset to train a POS tagger to improve the performance of the punctuation retrieval class. \cite{birnnattention} made use of Estonian text annotated with pause duration (e.g. $\langle sil=0.030\rangle$ for 30 milliseconds of silence) 
+\subsection{Data}
+The data sources for training punctuation retrieval tasks can be categorised into purely textual, aligned audio with text, and text with other labels such as Capitalisation or Named-Entity tags, or prosodic information.
+The most common source used for evaluating models for punctuation retrieval is the IWSLT dataset with the 2012 version for punctuation retrieval being a pre-processed selection of TED talks before 2012. My project mainly made use of the \hyperlink{https://www.kaggle.com/miguelcorraljr/ted-ultimate-dataset}{TED Talks}, \hyperlink{http://opus.nlpl.eu/OpenSubtitles-v2018.php}{Open Subtitles} and \hyperlink{https://catalog.ldc.upenn.edu/docs/LDC97S62/swb1_dialogact_annot.tar.gz}{Switchboard Telephone} corpus. The preprocessed and split version of the three datasets used in this paper can be found on  \href{https://www.kaggle.com/ngxingyu/preprocessed-english-spoken-transcripts}{kaggle}. Other splits were explored in the paper, but all experiments use data from the same preprocessed csv files.
 
-\textbf{Data Augmentation} In performing ASR, the generated text from speech might contain word errors in the form of insertions, deletions, and substitutions, which would affect the accuracy of the downstream punctuation retrieval task. To make the model more robust to such word errors, \cite{noisy} simulated the three forms of word errors, inserting or substituting existing tokens with the unknown token and randomly deleting tokens. Their RoBERTa-large model obtained higher F1 scores on the test set --- ASR output generated by the Google Cloud Speech API to simulate word errors --- when trained on augmented text, demonstrating the effectiveness of introducing noise into the training data in improving the model's robustness to word errors. 
-
-\cite{speechtranslationrobust} presented four strategies to generate noise for ASR training: Substitution with placeholder, substitution with random token, substitution with more frequent character, and substitution with homophone based character. Being trained and evaluated on a Chinese corpus, many homophonous words have different meaning. The proposed strategies proved effective in improving speech to text translation and can be adapted to the field of punctuation retrieval.
-
-Other possible noise injection techniques include splitting of words into subwords or homophone or random substitution/insertion/deletion at the subword level.
-
-\section{Models}
-There are two categories of models that have been applied to the task of punctuation retrieval: Recurrent Neural Networks and feed-forward networks.
-The current state of the art models as of 2020 features a BERT (variant) base layer with a variety of layer combinations above it. These models take a sequence of text represented as tokens or word embedding as input and output a sequence of corresponding punctuation labels, similar to other sequence tagging tasks like Part-of-speech (POS) or Named-Entity Recognition (NER) tagging.
-\subsection{Tag decoders}
-The final stage of the punctuation retrieval consists of a decoder which generates a sequence of punctuation labels from a sequence of representations.
-\subsubsection{Conditional Random Fields (CRF)}
-CRFs \citep{crf} are discriminative, undirected
-Markov models which represents a conditional probability distribution of a structured output
-variable y given an observation x. These are commonly used as an alternative to the Multi-layer perceptron (MLP) head for models. 
-
-\cite{dynamiccrf} trained the model on punctuation prediction and sentence boundary labelling. They demonstrate the effectiveness of the dynamic CRF in improving performance of punctuation prediction, by learning a sentence boundary tag (e.g. start of question sentence or within declarative sentence) along with the punctuation tags. The introduction of sentence boundary information allows for long-range dependencies to be captured by the model, and helps to relax the strong dependency assumptions associated with linear-chain CRFs.
-
-Likewise, \cite{crfhighorderdependencies} demonstrate that High order CRFs and semi-Markov CRFs outperforms Linear Chain CRFs and first-order semi-Markov CRFs on the punctuation-prediction task. They proposed introducing new tags denoting the start of sequences, similar to the second set of labels introduced by \citet{dynamiccrf}, which allows the model to better capture long-range dependencies.
-
-\cite{hybridsemimarkovcrf} presents a similar model that also features performance gains over the linear chain and Gated Recursive
-Semi-Markov CRFs (grSemi-CRF) \citep{grsemicrf} in the NER task. 
-
-
-
-\subsection{\texorpdfstring{Recurrent Neural Network / \\ Multi-layered RNN}{Recurrent Neural Network / Multi-layered RNN}}
-Prior to the release of the BERT models, BiLSTMs were among the best performing models for NLP, being able to utilise information from both sides to predict the tokens of the output sequence. The introduction of gates within the Long short-term memory (LSTM) or Gated recurrent unit (GRU) cells allows the model to preserve information across time-steps, giving the model the ability to capture long-term dependencies.  
-\cite{birnnattention} demonstrates the effectiveness of bi-directionality in improving the performance of punctuation retrieval, as punctuation relies on cues from words in both directions. They also observed a slight improvement in restoration of question-marks when an attention mechanism is added to determine the relative importance of each BiLSTM output in determining each output label.
-
-\cite{kim_2019} built upon this research, utilising a Deep-RNN model with a multi-head attention mechanism as proposed by \cite{attentionisallyouneed}. It relies on the stacked RNNs to extract sequential context before using the multi-head attention to focus on the context at each time-step. The use of multiple RNN layers would allow the model to learn various representations of the sequence. Based on the results obtained, there is a positive relationship between the number of RNN layers and the F1 score of the model. The paper does not provide any source code or details regarding the training process. Even so, the sequential nature of the model and its depth makes the model harder to tune and takes longer to train as compared to a single BiLSTM layer and possibly even a BERT model. Further research has to be conducted to evaluate the efficiency and performance of utilising the stacked RNN layers as compared to the BERT model.
-
-\subsection{pretrained models}
-\subsubsection{GloVe}
-The use of word embeddings pretrained using a large generic corpus (e.g. wikipedia or common crawl) allows the model to perform better on unseen examples as words with similar meaning would have a closer representation, allowing the model to generalise on unseen examples.
-Both \citet{birnnattention} and \citet{kim_2019} obtained visible F1 score improvements when using pretrained GloVe \citep{glove} embeddings as compared to randomly initialised word embeddings. 
-\subsubsection{BERT}
-The BERT model features is pretrained on two tasks: Masked Language modelling (MLM) and Next Sentence Prediction (NSP), which allows the model to learn bidirectional representations. Being pretrained on a large corpus allows the model to contain a preliminary understanding of the language, reducing training time and increasing performance on the fine-tuned task.
-\paragraph{Self-attention}
-The use of self-attention brings many benefits over RNNs. It reduces the computational complexity of each layer, increase parallelism of the model, and reduces the path lengths of long-range dependencies, allowing the model to better learn these long-range dependencies \citep{attentionisallyouneed}.
-\paragraph{Positional Encodings}
-The attention mechanism captures sequential information using positional encodings. The implementation by \cite{attentionisallyouneed} suggests a possible fixed representation of sine and cosine functions of different frequencies: 
-
-$PE_{(2i)} = \sin{(pos/10000^{2i/d_{\text{model}}})}$
-
-$PE_{(2i+1)} = \cos{(pos/10000^{2i/d_{\text{model}}})}$. 
-
-The paper also claims that using learned positional embedding produces similar levels of performance. \cite{positionembedding} performs an analysis on the ability of transformer models to learn the meaning of positions, and discover that BERT and RoBERTa performs much worse than Generative pretraining (GPT-2) and sinusoid in learning positional information.
-
-\cite{floater} presents an alternative approach --- FLOATER --- to encode positional information for non-recurrent models that can potentially improve on the performance of punctuation retrieval. The paper propose to use a dynamical system to model the position representations, characterised by the function: \[p(t)=p(s)+\int_s^t{ h(\tau,p(\tau);\theta_h)d\tau}, 0\leq s \leq t < \infty\]
-The model appears to perform better on the task of machine translation, and claims to be inductive, performing well on long sentences as well. While the method adds a non-negligible time and memory overhead, the paper proposes several methods to streamline the process, allowing for minimal overhead when applying it to fine-tune BERT models.
-
-\paragraph{BERT variants}
-\cite{medicalasr} and \cite{efficientbertrobust} perform a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pretraining corpus, or the removal of the NSP task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}.
-
-\subsubsection{BERT-(BiLSTM)-CRF}
-A common model used in many papers feature the BERT-BiLSTM-CRF. However, there is little evidence of the effectiveness of adding a BiLSTM layer to increase the performance of the tagger. \cite{bertcrf} performed a comparison between different combinations of BERT with BiLSTM and CRF, and the addition of the BiLSTM layer led to a drop in performance of the model. \cite{chinesebertbilstm} presented the BERT-BiLSTM and BERT-BiLSTM-CRF model but not the BERT-CRF or BERT model, providing no information about the effectiveness of the BiLSTM layer.
-
-Likewise, \citet{rosvall2019comparison} observed a slight performance gain when using the CRF layer over BERT rather than a feedforward network on the task of NER.
-
-\citet{tuneornottotune} demonstrates that the BERT-CRF model can outpeform the BERT-BiLSTM-CRF model when the base layer is unfrozen, and gradual unfreezing (unfreezing single layers and training for 1 epoch, from the last to the first layer) is necessary to match the performance of frozen BERT-BiLSTM-CRF. This paper demonstrates the ability of the BERT model's attention mechanism to act as a substitute for the BiLSTM layer if trained properly.
-
-I hypothesise that the BERT layer with a high-order semi-Markov CRF tag decoder is able to outperform the BERT-BiLSTM-(Linear) CRF model. *** Correction, while a standalone high-order/semi-markov CRF model is able to outperform the linear-chain CRF, the presence of an attention mechanism within the BERT layer might already be able to represent high-level dependencies, reducing the effectiveness of the high-order/semi-markov CRF when compared to the linear-chain CRF. Considering the current and next input might be more effective than just the current input? since the label is also highly dependent on the subsequent word. Is this what 2nd-order CRF does or something else? CRF jointly predicts the sequence of punctuation labels rather than individually, making the sequence more common.
-
-Semi-Markov vs Weak semi markov crf?
-
-Would training on text with inserted punctuation with all labels 0 help? Would it result in the blank label being over represented? soft self-adjusting dice with weight?
-
-\subsection{Multi-task learning}
+\subsection{Other ideas}\label{other ideas}
+Other possible areas that can be considered for punctuation retrieval but were not explored extensively in this research includes:
 \begin{enumerate}
-\item Punctuation with POS-tagger, adversarial learning \citep{adversarial}
-
-\item Capitalization \citep{jointlearningcorrbirnn}, \citep{chunkmerging}
-
-\item Sentence Boundary \cite{dynamiccrf}
-
-\item Use of acoustic features
+    \item \textbf{Use of non-lexical features.} 
+    
+    Training a model using both acoustic and lexical features \citep{multimodalsemi}, or using other lexical information such as POS tags from the Penn Treebank \cite{adversarial} or Capitalisation marks can improve performance of the punctuation retrieval. 
+    
+    \item \textbf{Data Augmentation.} 
+    Simulation of various forms of word errors, such as inserting or substituting existing tokens with the unknown token and randomly deleting tokens would increase robustness to transcription errors from upstream tasks. \citep{noisy} 
+    
+    Other possible noise injection techniques include random splitting of words into subwords or random deletion / insertion / substitution with homonyms or synonyms at the subword level. This would make the model more robust to noise in the inference dataset.
+    
+    \item \textbf{Overlapping chunks.}
+    \citet{chunkmerging} looks into the impact of overlapping successive chunks that are fed into the model for inference, and observed that labels at the ends of the output sequence tend to perform worse than at the labels at the middle. Thus, using a sliding window and merging the classifier outputs for the overlapping tokens in the sequence can contribute to a substantial improvement in inference performance of the punctuation retrieval model. As observed in Table \ref{table:baseline} row 19, the performance of the middle 50\% of tokens for all examples is slightly higher at 79.0 as compared to the performance of 77.4 when looking at all tokens. 
+    An illustration would be this sentence from the switchboard corpus ``what savings and so on. And then how" changing from ``what savings? and// so on. and then, how " to ``what savings and so on, and then how", when the window is shifted to the right by 16 words. (``//" denotes the end of a window of size 128.) This difference in prediction for the word ``savings" is caused its inability to look at the context of words beyond its next word, making (?) the most logical label given its visible context, and the use of a sliding window or overlapping chunks can resolve this issue.
+    
+    \item \textbf{Consideration of consecutive punctuation.}
+    Another idea I had was to allow for the insertion of consecutive punctuation (e.g. The car is the Joneses\textbf{’.}) by iteratively passing text with previously labelled punctuation into the model to predict missing punctuation marks. This can improve readability and allow for the capturing of additional punctuation like (``) which was not considered in this research. An illustration would be converting ``he said hey" to ``he said ``hey"" in the first pass through the model and to ``he said, ``hey!"" in the second pass.
 \end{enumerate}
 
-\section{Training process}
-\subsection{Overlapping chunks}
-\citet{chunkmerging} looks into the impact of overlapping successive chunks that are fed into the model for inference, and observed that labels at the ends of the output sequence tend to perform worse than at the middle. Thus, using a 50\% stride and discarding all overlapped heads or tails of sequences contributed to a substantial improvement in their punctuation retrieval model.
+\section{Models}
+The model for punctuation retrieval is usually made up of a base layer to convert word tokens to hidden states, and a decoder layer to convert the hidden states into a sequence of punctuation labels with greatest likelihood.
+
+\subsection{Base Layer}
+The current state of the art models as of 2020 features a transformer base layer (e.g. BERT variants) with a variety of layer combinations above it. These models take a sequence of text represented as token or word embeddings as input, and output a sequence of corresponding punctuation labels, similar to other sequence tagging tasks (e.g. Part-of-speech (POS) or Named-Entity Recognition (NER) tagging). Due to the presence of the multi-head attention mechanism along with the positional encoding fed into the transformer, the model should be able to perform well without a Recurrent Neural Network, eliminating the need to process the sentence sequentially, thus improving the speed of training and inference. 
+
+\citet{tuneornottotune} demonstrates that the BERT-CRF model can outpeform the BERT-BiLSTM-CRF model on various NLP tasks when the base layer is unfrozen, and gradual unfreezing of 1 layer per epoch (unfreezing single layers and training for 1 epoch, from the last to the first layer) is necessary to match the performance of frozen BERT-BiLSTM-CRF. 
+
+\cite{medicalasr} and \cite{efficientbertrobust} performed a comparison between various variants of BERT. In general, RoBERTa performs better than BERT, either due to its significantly larger pretraining corpus, or the removal of the Next Sentence Prediction task. Distillation of the model is a possible alternative in the case where training or inference efficiency is more critical than accuracy, being 12\% smaller and with a 1.2x inference speed but a 9.1\% lower accuracy \citep{efficientbertrobust}. My experiments observed a similar trend, with RoBERTa base performing the best, followed by Electra-base, and lastly BERT base. I chose to use Electra base for the bulk of my experiments due to its decent performance and its lighter weight than the RoBERTa model.
+
+\subsection{Tag decoders}
+The final stage of punctuation retrieval consists of a decoder which generates a sequence of punctuation labels from a sequence of representations. This is currently done with either a Conditional Random Field (CRF) or a Multi-layer Perceptron (MLP) layer.
+
+\subsubsection{Conditional Random Fields}
+CRFs \citep{crf} are discriminative, undirected Markov models which represents a joint probability distribution of a structured output variable y given an observation x. These are commonly used as an alternative to the MLP head for token labelling tasks, and are shown to perform well in NLP tasks like POS or NER tagging. There have been various examples demonstrating the efficacy of CRF in improving performance on various token classification tasks. \citet{rosvall2019comparison} observed a slight performance gain when using the CRF layer over BERT rather than a feedforward network on the task of NER.
+
+Variations of the Linear-chain CRF have been used as well. For instance, \cite{dynamiccrf} trained the model on punctuation prediction and sentence boundary labelling. They demonstrate the effectiveness of the dynamic CRF in improving performance of punctuation prediction, by learning a sentence boundary tag (e.g. start of question sentence or within declarative sentence) along with the punctuation tags. However, for my project, I kept to the linear-chain CRF to reduce the scope of experimentation.
+
+My experiments were unable to replicate any positive results when using the linear-chain CRF or BiLSTM over the Transformer layer. This might be due to the high degree of imbalance of punctuation labels compared to other sequence tagging tasks such as NER, making the model converge more slowly. \cite{pandababa} and \cite{adversarial} utilised a BERT-BiLSTM-CRF model, but did not perform a comparison with a BERT with an MLP layer. Since using the dice loss with a MLP layer is more efficient and converges in fewer iterations than the CRF, and I was able to find a set of hyperparameters with the Dice Loss which achieved decent performance on the baseline experiment, I decided to use the MLP layer with Dice Loss for the rest of my experiments.
+
 \subsection{Dealing with class imbalance}
-There are various possible approaches to dealing with imbalance across punctuation classes. The bulk of research conducted deals with this class imbalance by absorbing the minority classes into a more generic class like period or comma. This is feasible as most punctuation can be generalised into two classes --- periods for sentence boundaries and commas for separating different parts of a sentence. However, this simply avoids the problem of class imbalance with punctuation like (?) being underrepresented. Dealing with class imbalance can improve the performance on weaker classes like (?) or (!) and can even allow for the training of a system that can retrieve other classes of punctuation like (``") or (---). 
-\subsubsection{Weighted Cross-entropy (W-CEL)}
-The multiplication of the component losses by a weight inversely proportional to the class frequency within the corpus will allow the model to converge faster on the weaker classes. A general formula for this loss function is given by: \[
-J_{wcel}=-\frac{1}{M}\sum_{k=1}^{K}\sum_{m=1}^{M}w_k \times y_m^k \times log(f(x_m))
-\] where $w_k$ represents the class weights \newline
-$M$ represents the number of training examples \newline
-$K$ represents the number of classes. \newline
-This approach was utilised by \cite{adaptivenerunbalanceddata} in his binary classifier to identify weaker classes. \citet{efficientbertrobust} mentions that their implementation of focal loss or class weights did not outperform the generic cross-entropy loss. This might be due to the use of just three punctuation classes with only a slightly weaker (?) class, making any gains less pronounced. The lack of parameter tuning in their experiment may also reduce the performance of the models using focal loss or class weights.
+There are various possible approaches to deal with imbalance across punctuation classes. Most research in punctuation retrieval absorbs the minority classes into a more generic class such as period or comma to improve the problem slightly.
+
+\subsubsection{Class weights}
+The multiplication of the component losses by a weight inversely proportional to the class frequency within the corpus will allow the model to converge faster on the weaker classes in cases of extreme class imbalance. For instance, the weighted CEL is given by: \[
+L_{wcel}=-\frac{1}{M}\sum_{k=1}^{K}\sum_{m=1}^{M}w_k \times y_m^k \times log(p_{mk}))
+\] where $w_k$ represents the class weights
+
+$p_{mk}$ represents the predicted probability of example m being of class k 
+
+$M$ represents the number of training examples
+
+$K$ represents the number of classes.
+
+This approach was utilised by \cite{adaptivenerunbalanceddata} in his binary classifier to identify weaker classes. However, \citet{efficientbertrobust} mentions that their implementation of focal loss or class weights did not outperform the generic cross-entropy loss.
 
 \subsubsection{Focal Loss}
-\citet{focallosspunct} demonstrated the effectiveness of Focal Loss over Cross-entropy loss, obtaining a clear improvement both in their controlled experiments and when compared to the Bert Punct (Base) model \citep{pandababa}.
+\citet{focallosspunct} demonstrated the effectiveness of Focal Loss (FL) over Cross-entropy loss (CEL), obtaining a clear improvement both in their controlled experiments and when compared to the Bert Punct (Base) model \citep{pandababa} which uses Cross Entropy Loss. The FL is represented by the following formula: \[L_{FL}=-\frac{1}{M}\sum_{k=1}^{K}\sum_{m=1}^{M}w_k \times y_m^k \times (1-p_{mk})^\alpha \times log(p_{mk})
+\] where $\alpha$ is a tunable focal parameter.
+They claim that the focal loss is effective in improving the problem of data imbalance by focusing the training on hard examples. Since the model would often perform better on labels with higher representation, the focal loss would indirectly increase the contribution of labels with lower representation to training, thus improving class imbalance.
 
-\subsubsection{Sørensen–Dice coefficient / F1 Score}
-%On the Bayes-Optimality of F-Measure Maximizers
+\subsubsection{Sørensen–Dice coefficient / F1 Score} \label{DL}
+The paper by \citet{li2020dice} featured the idea of directly optimising for the F1 score using the Dice loss  (DL). The Sørensen–Dice coefficient (DSC): $DSC(A,B)=\frac{2 \times\abs{A \cap B}}{\abs{A} + \abs{B}}$ is used to measure the similarity of the 2 sequences. While there are several inaccuracies in the paper, some of the ideas presented by the paper can be further explored when dealing with class imbalance. The use of the soft macro-averaged F1 score as a metric to be optimised (Dice loss) would allow us to weigh the punctuation loss contribution of different labels individually to account for the class imbalance of the dataset. My implementation of the DL is as follows:
+\[L_{DL}=\frac{1}{\sum_k{w_k}}\sum_{i,k}{w_k(1-\frac{2\cdot p_{ik}\cdot y_{ik}+\lambda}{p_{ik}+ y_{ik}+\lambda})^{\alpha}}
+\] where $\alpha$ is the tunable focal parameter
+
+$\lambda$ is a small smoothing term (fixed as 0.01)
+
+$k$ represents a label
+
+$w_k$ is the label class weight
+
+$i$ represents an example (subword level)
+
+$p_{ik}$ represents the predicted probability of label k being assigned to example i
+
+$y_{ik}$ represents the actual label of example i being equal to k.
+
+My hypothesis is that the $\alpha$ term causes the model to focus on harder punctuation classes since it is applied to each punctuation class loss before the losses of the different punctuation classes are averaged. This is compared to a per example weighting for the focal loss. Instead of assigning a fixed weight based on punctuation proportion, the dice loss assigns a weight based on the aggregate performance of the punctuation class per batch, down-weighing better performing classes such as the blank class and focusing on weaker classes instead. This implementation was inspired by \citet{focaltversky}.
+
+\section{Domain transfer}
+Various papers have looked into transfer learning across domains.
+\subsection{Pre-training}
+\citet{medicalasr} looks at the case of transfer learning to the medical domain which has a significant difference in vocabulary from the source domain used to pre-train transformer models. They demonstrated the effectiveness of further pretraining the BERT model with medical-domain data on the task of Masked Language Modelling to improve performance on punctuation retrieval for medical transcripts. However, this is only effective when there is a low overlap in vocabulary between the source and target domain (e.g. the appearance of medical terms which are not found in the source dataset) which severely impacts the performance on downstream fine-tuning tasks. Since none of the datasets I use contain many out of vocabulary terms when compared to the wikipedia or book corpus dataset which the transformer was pretrained on, I believe the use of pre-training is irrelevant for my project.
+
+\subsection{Learning Curriculum}
+\citet{domainAdaptationBERT} presents a method to improve domain adaptation, with just unlabelled training examples from the target domain. The method features a BERT classifier which sorts source domain examples in decreasing order of similarity to the target domain. This sorted source domain data is then fed into the learning algorithm, allowing the model to learn examples of increasing difficulty (decreasing similarity), which they demonstrate to improve the model's performance on the target domain.
+
+\subsection{Domain Adversarial} \label{DA}
+Another common method for domain transfer is to add a domain classifier alongside the task classifier, and to use a gradient-reversal layer to maximise the domain invariance for features shared by the task and domain classifier.
+
+\cite{keung2019adversarial} used such a method for cross-lingual zero-resource transfer learning, feeding the mean-pool of the hidden states into the domain classifier. They observed consistent performance gains on the text classification task, but the approach was less effective on the NER labelling task. 
+
+However, as mentioned by \cite{targetshiftadv}, this approach is effective when domains have similar label distribution, but the model would be unable to capture severe target shifts from the source to unlabelled target domain in the case of zero-resource transfer learning.
+
+\cite{DATnet} looks at the case of low-resource transfer learning. Their approach, termed DATnet, uses a similar idea to the domain adversarial method. For their base layer, they use a concatenation of character and word embeddings fed into a BiLSTM layer. For the domain classifier, they use a self-attention layer instead of a mean or max pooling. Unlike other domain adversarial models, they utilise a distinct punctuation classifier for each domain. They observed that using a shared BiLSTM layer led to higher performance, as compared to a separate BiLSTM layer for each domain, and the use of the self-attention layer along with the idea of adaptive weights, similar to focal loss, also led to an improvement in performance. As compared to the above model which only utilises a single task classifier, the use of two separate task classifiers (in their case, CRFs) would better allow the model to capture a target shift from the source to target domain, but this requires some labelled examples from the target domain to work, i.e. it does not work for zero-resource transfer.
+
+\section{Method}
+There are two key areas that I looked at in my experiments --- improving performance of a model on the task of punctuation retrieval, and improving performance on zero or low-resource transfer learning. I explored the idea of the Dice Loss with a factor $\alpha$ to focus on harder examples (section \ref{DL}) to deal with the punctuation class imbalance. I also looked at the Domain Adversarial model (section \ref{DA}) to deal with zero or low-resource transfer, proposing a modification that led to performance gains in my experiments.
+
+\subsection{Data Processing}
+Table \ref{table:distribution} presents the distribution of punctuation for each of the datasets. There are various factors that influenced my approach in the processing of data. 
+\begin{enumerate}
+    \item The punctuation distribution of the datasets vary slightly across time (e.g. decrease in exclamation for TED, or a slight increase in periods for Open Subtitles) but largely maintains its proportion. 
+    \item There are clear differences in punctuation proportion across all datasets, especially for less common punctuation. For instance, the Open Subtitles corpus feature a substantially larger proportion of (?), (!) and (…) than the TED corpus, and the switchboard corpus contains very few (!) and (:). Thus, there would be some deterioration in performance of punctuation labels with less overlap across domains, and transfer learning techniques would likely be necessary to improve the model's cross-domain performance.
+    \item The Switchboard dataset contains disfluencies and interlocking conversations (e.g. ``things like that get … Yeah. … spread real easy") between two speakers which contributes to the noise of the dataset. 
+\end{enumerate}
+
+In the pre-processing stage, I explored various ways of representing the punctuated text in a form to be read by the model, and eventually settled on storing the data as normal text with punctuation, only converting it to subword tokens and punctuation labels when training the model. This allowed me to reduce disk usage, easily change characteristics of the dataset such as the punctuation label maps, and easily insert new datasets with less time spent on pre-processing. Further details regarding the pre-processing pipeline can be found in annex \ref{preprocessing}.
+
+After performing the pre-processing step on each of the datasets, I performed a 0.8-0.1-0.1 train-dev-test split in chronological order, followed by a simple transformation to split all documents into shorter examples of around 1500 characters at sentence breaks (.!? ...), to allow each batch to have a similar length for more efficient training. During the training of the model, the train dataset of each domain is shuffled every epoch, and equal number of samples are drawn from each domain, repeating the smaller datasets to align the lengths of each dataset. The samples from all domains are then shuffled and fed into the model. Each batch of around 1500 characters consist of approximately 300-400 sub-word tokens.
+
+ Given the huge size of the open subtitles dataset, I used only 4\% and 1\% of the open subtitles data for training and testing respectively in experiments using all three datasets to reduce the difference in dataset sizes across the datasets and to speed up the training process. To simulate a low-resource target domain, I only used 2 labelled examples from the switchboard dataset, and the other unlabelled switchboard training examples are only used for the domain discriminative component of the model.
+
+\subsection{Use of data}
+\subsubsection{Punctuation features}
+My research only looks at pure textual features with punctuation labels. The task of punctuation retrieval is reduced to a sequence labelling task, with the punctuation label being the last punctuation --- in the set of punctuation marks to be predicted --- following each word. I performed several experiments comparing the performance of masking the prefix, suffix or none of the subword tokens of each word in the calculation of the Punctuation loss, attaching the labels to each subword token in the case of no mask. Using no mask performed the best of the three, with the added benefit of being more robust to random splits of words. However, while many of my models were able to achieve a high f1 score of over 90 on the No-space label, assigning labels to all subword tokens without any masks would increase the difficulty of the task, removing pre-existing information about spaces in the source text, and leading to a reduction in performance of punctuation labels. Thus, the experiments presented in this paper only looks at suffix tokens in the prediction of punctuation marks, and all prefix tokens are masked.
+
+My experiments predict the four labels: Space, Period (.), Comma (,) and Question (?). The use of a no space label can be included to provide a means to account and train for certain transcription errors in the upstream pipelines (e.g. incorrect splitting or joining of sub-word tokens), but is excluded for my research due to its irrelevance to the problem of domain transfer. 
+
+The labels --- dash, emdash and colon are replaced by comma, and semicolon, ellipsis and exclamation are replaced by period. Only the last punctuation in the sequence of punctuation after each word is taken as the label, with all prefix sub-word tokens being masked in the calculation of the loss, and all leading punctuation being ignored. 
 
 
-%Optimization for Medical Image Segmentation: Theory and Practice When Evaluating With Dice Score or Jaccard Index 
+\subsection{Model}
+\begin{figure*}[htb]
+  \centering
+  \includegraphics[scale=0.6]{"DomainTransferModel".png}
+  \caption{Proposed model using domain features in punctuation classifier}
+\end{figure*}
+
+\subsubsection{Punctuation classifier}
+I experimented with various punctuation classifiers to convert the hidden states into the punctuation labels, evaluating the performance of the MLP, CRF, and the addition of a BiLSTM layer right above the transformer to help in capturing positional information. As mentioned in \ref{other ideas}, I did not utilise the sliding window with overlapping chunks in my experiments. However, I did use a stride of 0.25 in the training process to increase the number of training examples, which led to an improvement in performance. When using the MLP layer as the punctuation head, I considered the CEL, FL and DL with class weights, as well as the focal parameter $\alpha$ for FL and DL.
+
+My research into transfer learning led me to consider the concatenation of domain features with the transformer hidden states as the input of the punctuation classifier, to allow the model to capture differences in punctuation representation between domains. The domain features I worked with were the domain classifier logits, but a possible alternative would be the output of the first hidden layer of the domain classifier. Unlike the method used by \cite{keung2019adversarial}, where the model does not capture the differences between domains, the inclusion of the domain features in punctuation inference can be interpreted as evaluating the similarity of the test example to the different training domains, and prioritising the information learnt from similar domains more. I believe this has some advantage over having a separate classifier per domain as it allows the model to generalise to other domains, and handle domain labels of varying difficulty (some ambiguity between domains).
+
+\subsubsection{Domain classifier}
+The hidden state output of the transformer layer is first passed through a gradient reversal layer to maximise the learning of domain invariant features within shared layers. These outputs are then pooled to obtain a representation per sentence containing information across all tokens within the sentence.
+I considered a variety of approaches for the pooling of the hidden states for the domain classifier. This includes a mean / max / concatenation of mean and max pooling of the hidden states of each sentence into a single tensor (i.e. batch-size x sequence-length x hidden-states $\rightarrow$ batch-size x hidden-states for mean or max pooling). I also considered a self-attention layer as utilised by \cite{DATnet}, as well as no pooling, where the domain classifier considers each token separately. For the pooled outputs, The resulting tensor is then repeated along the second dimension before being concatenated with the original hidden states to be fed into the punctuation classifier.
+
+\subsubsection{Loss}
+After obtaining the punctuation and domain predictions in the form of soft probabilities, they are both evaluated with a loss function, with the punctuation loss function being one of CEL, FL and DL in the case of the MLP or the Negative log-likelihood for CRF, and the domain loss function being one of CEL, FL and DL. The domain loss is then multiplied by a factor dependant on the current punctuation loss and the training step number, to prevent either of the losses from overwhelming the training. The exact formula used in the calculation of the aggregate loss of the punctuation and domain loss is as follows: \[L_{total(n)}=L_{p(n)}+
+\left(\frac{2}{1+e^{-10 n/N}}-1\right)\cdot\gamma\cdot L_{p(n-1)} \cdot L_{d(n)}
+\]
+where $\gamma$ is the contribution ratio of the domain loss
+
+$n$ is the current step number within the epoch
+
+$N$ is the total step count of each epoch
+
+$p(n)$ is the punctuation loss at step n
+
+$d(n)$ is the domain loss at step n
+
+\subsubsection{Class Imbalance}
+Several components in my model were used to improve class imbalance of punctuation labels. The use of the macro-averaged DL mentioned above in section \ref{DL} gives equal contribution to each punctuation label. I also worked with punctuation class weights when working with the CEL, FL and DL, formulating the weights based on the following formula: \[
+w_k=\frac{n_k}{\sum_{i=1}^{K}{n_i}}^{\gamma}
+\] where K is the number of punctuation labels and $\gamma$ is a tunable parameter between 0 and 1 inclusive. For the domain imbalance, I made use of oversampling to obtain an equal representation of samples from each domain by repeating the entire training set from underrepresented domains. I also considered the use of class weights for the domain classifier to increase the loss contribution of low resource domains with the aim of increasing the contribution of high resource domains in inference. 
+\subsubsection{Training procedure}
+
+Initially, I tested different combinations of parameters with the transformer layers frozen, and the top layer unfreezed after 8 epochs. However, the performance of these experiments did not come close to the existing published research, and like many of the existing research conducted, training with the entire transformer unfrozen led to improved performance.
+I then proceeded to train for 4 epochs with 6 layers of the transformer unfrozen from the start, and it came closer to the published results on punctuation retrieval for the baseline iwslt task.
+For the rest of my experiments, I kept to the following settings:
+\begin{enumerate}
+    \item Use of Electra-base as transformer
+        \subitem 6 tranformer layers unfrozen
+    \item 2 MLP layers for Punctuation classifier
+        \subitem Dice Loss with $\alpha=2$ and class weight of 0
+        \subitem Dropout of 0.2
+    \item 2 MLP layers for Domain classifier
+        \subitem Total loss contribution of 0.005
+        \subitem Dice Loss with $\alpha=4$
+        \subitem Dropout of 0.6
+    \item Stride of 0.25 (32 tokens) to increase training examples
+    \item Random swap of sentences denoted by sentence boundaries (. ? ! ...)
+    \item Batch size of 4, learning rate of 4e-05
+    \item Accumulate gradient every 2 batches
+    \item Sequence length of 128
+    \item Differential learning rate with each transformer layer being 0.8 times the layer above it. 
+\end{enumerate}
+
+I then proceeded to test various combinations of the following additions to the model: 
+\begin{enumerate}
+    \item Concatenation of Domain logits to hidden state input to Punctuation classifier (concat)
+    \item Use of domain discriminator (adversarial)
+\end{enumerate}
+
+The various parameters such as the learning rate, the unfreezing strategy, the dropout rate, the dice loss $\alpha$ value for the domain classifier, the loss contribution of the domain classifier or the augmentation rates can be further tuned for better performance.
+
+\section{Results and discussion}
+I obtained some results demonstrating the effectiveness of the various additions to the model for Punctuation Retrieval.
+
+Firstly, I trained and tested a baseline model on just the IWSLT 2012 dataset, and another on just the TED Talks dataset (Table \ref{table:baseline} r1, 2). Both models performed similarly since they are both from the TED talks domain, but did not outperform existing published results on punctuation retrieval. For instance, \citet{noisy} achieved a overall f1 score of 76.9 with the BERT-base-uncased transformer, and \citet{nagy2021automatic} achieved 79.8, as compared to the 67.6 in my experiment (Table \ref{table:baseline} r7). This difference in performance might be due to several factors: training with fewer layers (6 instead of 12) unfrozen,  the use of a MLP layer instead of a CRF for the punctuation classifier, or the lack of the use of a sliding window to improve performance on boundary tokens with less contextual information. However, due to time constraints, I kept to my configuration to allow for faster experimentation, where each epoch for the TED baseline example without stride takes 2 minutes to complete.
+
+The use of a stride length of 32 on training data resulted in an increase in performance of the base model, likely due to the model being exposed to a greater number of training examples (Table \ref{table:baseline} r2, 4). However, augmentation using random insertion, deletion and substitution of tokens with a probability of 0.2 each resulted in a drop in performance of the base model (Table \ref{table:baseline} r2, 3). This might be due to the high rate of augmentation used resulting in the loss of important tokens. Possible developments include varying the augmentation rate and implementing rules when performing the augmentation, such as the use of synonyms or homophones for substitution. 
+
+\textbf{Pooling choice for domain classifier.} All methods of pooling were able to lead to an improvement in transfer performance over the baseline model, but using the attention pooling or CLS token to capture the domain information of each example performed better in my experiment (Table \ref{table:baseline} r11, 14). Further experiments can be conducted to explore the difference between both pooling strategies.
+
+\textbf{Class weights.} The use of class weights were ineffective in the case of three punctuation classes -- period, comma and question, when training using the Dice Loss (Table \ref{table:baseline} r5). However, when using the Cross-entropy loss, the use of class weights was necessary to overcome the significantly higher proportion of the space class (Table \ref{table:baseline} r6). This suggests that the Macro-averaged dice loss is able to handle the class imbalance well. In experiments predicting punctuation labels with significant imbalance such as the exclamation mark, increasing the gamma factor of the class weights slightly is able to improve the performance on the rare classes, but more research has to be conducted to observe its impact on the more common labels.
+
+\textbf{Choice of transformers.} All the results I obtained, apart from the three with different transformers, were conducted using the pre-trained Electra base discriminator. As expected, using a transformer with greater depth and pre-trained on a larger number of examples leads to higher performance (Table \ref{table:baseline} r7,8,9). My attempts using the Electra small discriminator were unsuccessful, being unable to predict any question marks.
+
+\textbf{Use of domain logits in punctuation classifier or domain discriminator.} The concatenation of domain logits with hidden states and the use of the domain discriminator both proved effective in improving transfer learning performance. This can be observed in the low-resource transfer experiments using the TED + 2 labelled Switchboard dataset, with the overall F1 score increasing from 52.6 to 57.2 when using the token pool with the domain discriminator for the domain classifier (Table \ref{table:baseline} r10, 14). Ablation studies performed on both the discriminator and the concatenation of domain features show that both factors are important. It also suggests that the discriminator is more important in improving the performance on the low resource domain (Table \ref{table:baseline} r12, 13), but more experiments have to be conducted to better understand the importance of each component in improving the performance of low-resource transfer learning.
+
+\textbf{Performance on zero-resource domain}
+I tested two variants of zero-shot learning with both components -- concatenation of the domain logits and use of the domain discriminator, the first only using two high-resource domains --- Ted talks and Open subtitles (Table \ref{table:baseline} r17), and the second with the addition of unlabelled switchboard domain examples (Table \ref{table:baseline} r18). Both models performed better than the baseline with no domain consideration (Table \ref{table:baseline} r16). The model with additional unlabelled zero-resource domain examples also saw a slight improvement in zero-resource domain performance from a f1 score of 53.1 to 53.8, but more experiments have to be conducted to support this observation.
+
+\subsection{Interpretation of results}
+
+The two added components --- backpropagating the negative gradient of the domain classifier and taking the domain logits as input into the punctuation classifier can be observed to improve the performance of both the high, and low-resource domains, with the greatest improvements observed in rarer punctuation classes (in this case the question mark). 
+
+Using either component alone also leads to a decent improvement over the baseline's performance, with the domain adversarial component appearing to be of greater importance than the concatenation component. 
+
+The use of the CLS token or the attention pooling for the domain classifier has similar performance in my results, so more experiments have to be conducted to compare the two methods of pooling.
+
+My last experiment conducted on the expanded punctuation set suggests that other punctuation marks such as the hyphen  or colon can potentially be considered in the punctuation retrieval pipeline. The better performance of the open subtitles dataset as compared to the other two datasets is possibly due to the inadequacy of oversampling in dealing with the domain imbalance, and future research can consider tuning the domain class weights or $\alpha$ for the Dice Loss to handle this issue.
+
+\section{Future Improvements}
+Here is a list of possible ideas that can be considered in future experiments.
+\begin{enumerate}
+    \item Use of a sliding window with aggregation of predictions for overlapping tokens. Can consider the idea of the Gaussian Filter for each prediction window when performing inference as a method of aggregation to minimise labelling errors at window boundaries.
+    
+    \item Attempt to get a working retrieval model using the CRF classifier, and perform the same experiments using that baseline
+    
+    \item Consider concatenating different domain representations with the hidden states, for instance the first layer hidden states of the domain classifier instead of the domain logits.
+    
+    \item Perform a study on the effect of the $\alpha$ term for the Dice Loss on the performance of the model and its robustness to class imbalance. Find out how its performance differs from the use of class weights. 
+    
+\end{enumerate}
 
 
-\citet{li2020dice} proposed the use of a self-adjusting soft dice loss as an alternative to cross-entropy loss. The Sørensen–Dice coefficient (DSC): $DSC(A,B)=\frac{2 \times\abs{A \cap B}}{\abs{A} + \abs{B}}$ is used to measure the similarity of the 2 sequences. The proposed loss function introduces a decaying factor to the DSC function to increase the importance of less confident classes and allowing the training process to focus on those classes. Their proposed loss function is as follows: \[
-DSC(x_i)=\frac{2{(1-p_{i1})}^{\alpha}p_{i1}\cdot y_{i1}+\lambda}{{(1-p_{i1})}^{\alpha}p_{i1}+ y_{i1}+\lambda} ,\] with $p$ being the probability of a token being assigned to a label $i$, and $y$ representing the actual label of the token matching label $i$.
-The model trained with the DSC loss achieved a higher F1 score across all evaluated tasks as compared to Focal Loss and Dice Loss. The results obtained when trained on datasets of varying levels of imbalance further supports the hypothesis that the DSC loss is effective in combating the issue of class imbalance. 
+\begin{table*}[t]
+% \tiny
+\centering
+\begin{tabular}{|c|c|c|c c c|c c c|c c c|c c c|}
+\hline
+ &Experiment & Test & \multicolumn{3}{|c|}{Comma} & \multicolumn{3}{|c|}{Period} & \multicolumn{3}{|c|}{Question} & \multicolumn{3}{|c|}{Overall}\\
+ \hline
+ &&&P&R&F&P&R&F&P&R&F&P&R&F\\
+ \hline
 
-% \citet{dicescorejaccardindex}
+\multicolumn{15}{|c|}{Electra base discriminator with 2 layer MLP punctuation classifier}\\\hline
+\multirow{2}{*}{1}&
+IWSLT baseline&IWSLT&69.1&74.0&71.5&79.9&87.7&83.6&63.9&84.0&72.6&71.0&81.9&75.9\\
+&\verb|2021-03-26_15-57-24|&SWI&64.7&61.2&62.9&51.9&65.7&58.0&16.8&66.7&26.9&44.5&64.5&49.3\\\hline
 
-\subsection{Transfer learning for unseen domain}
-\citet{medicalasr} demonstrated the effectiveness of fine-tuning the pretrained BERT model on medical-domain data in improving the performance of medical transcript punctuation retrieval. This has proven effective, but also highlighted the inability of the BERT model trained on non-medical data to generalise to the medical domain, obtaining a F1 score of 0.2 and 0.39 on the Period and Comma classes respectively. This shows the importance of selecting a training corpus similar to the target domain with fewer unknown tokens in the test set, to allow the model to learn surface features which will improve performance on the target domain. This section will look further into possible ways to improve performance on unseen domains, or domains with minimal training data, where the target-domain contains minimal out-of-vocabulary tokens.
+\multirow{2}{*}{2}&
+TED baseline&TED&67.6&78.6&72.7&82.6&86.0&84.3&65.2&83.1&73.1&71.8&82.6&76.7\\&
+\verb|2021-03-26_16-35-29|&SWI&65.5&61.1&63.2&49.9&64.9&56.4&12.8&69.3&21.6&42.8&65.1&47.1\\\hline
+\multirow{2}{*}{3}&
++augmentation&TED&69.1&76.7&72.7&82.0&86.2&84.1&61.6&84.1&71.1&70.9&82.4&76.0\\&
+\verb|2021-03-26_15-32-09|&SWI&64.9&53.8&58.8&50.5&57.9&53.9& 9.5&71.6&16.7&41.6&61.1&43.2\\\hline
 
-\subsubsection{Attaining linguistic generalisation}
-\citet{robertaAcquireLinguisticPreference} performs a study of the ability of RoBERTa in preferring linguistic over surface generalisations in the pretraining phase. They obtain the following results: 
-(1) models learn to represent both surface features and linguistic features with relatively little data; 
-(2) RoBERTa begins to acquire a linguistic bias with over 1B words of pretraining data; 
-(3) increasing pretraining data strengthens linguistic bias; 
-(4) there is considerable variation in models’ preferences between specific pairs of linguistic and surface features \citep{robertaAcquireLinguisticPreference}. 
-In addition, their inclusion of manually designed inoculation data ranging from 0\% to 1\% allowed the models to attain stronger linguistic generalisation. Thus, increasing the amount of training data and the inclusion of some inoculating data manually or programmatically are possible approaches for punctuation retrieval transfer learning.
+\multirow{2}{*}{4}&
+$-$ stride&TED&66.2&79.0&72.0&83.5&83.5&83.5&63.3&81.5&71.2&71.0&81.3&75.6\\&
+\verb|2021-03-26_17-52-48|&SWI&64.2&64.3&64.3&52.0&59.5&55.5&14.8&66.1&24.1&43.7&63.3&48.0\\\hline
 
-\textbf{Multi-task learning} An approach taken by various researchers \citep{adversarial,jointlearningcorrbirnn, dynamiccrf} use multi-task learning (i.e. POS tagging, Capitalisation prediction, Sentence boundary prediction) to guide the model towards a more linguistically generalised solution.
+\multirow{2}{*}{5}&
+Class weight 0.2&TED&66.6&78.4&72.0&81.4&86.5&83.8&59.2&86.6&70.3&69.0&83.8&75.4\\&
+\verb|2021-03-29_10-18-31|&SWI&63.4&57.3&60.2&51.8&63.2&57.0& 9.9&78.0&17.6&41.7&66.2&44.9\\\hline
+\multirow{2}{*}{6}&
+TED baseline using CEL&TED&55.9&84.1&67.1&77.3&85.7&81.3&35.2&92.4&51.0&56.1&87.4&66.5\\&
+\verb|2021-03-29_12-14-21|&SWI&57.8&61.6&59.6&48.6&54.9&51.6& 5.9&87.1&11.0&37.4&67.9&40.7\\\hline
 
-\citet{domainAdaptationBERT} presents a method to improve domain adaptation on unlabelled target data, but requires some examples of target data before training begins. The method features a BERT classifier to sort source data in decreasing order of similarity to target data. This sorted source data is then fed into the learning algorithm, allowing the model to learn examples of increasing difficulty.
+\multicolumn{15}{|c|}{Different transformers with TED baseline}\\\hline
+\multirow{2}{*}{7}&
+BERT base uncased&TED&60.8&70.0&65.1&74.6&78.8&76.7&52.2&73.8&61.2&62.6&74.2&67.6\\&
+\verb|2021-03-26_23-01-13|&SWI&58.7&56.2&57.5&43.8&52.8&47.9&17.5&59.5&27.0&40.0&56.2&44.1\\\hline
+\multirow{2}{*}{8}&
+Distilbert base uncased&TED&58.1&67.4&62.4&71.4&75.9&73.6&45.4&75.2&56.6&58.3&72.8&64.2\\&
+\verb|2021-03-27_14-09-56|&SWI&59.1&59.0&59.0&41.8&46.6&44.0&14.5&60.0&23.4&38.4&55.2&42.2\\\hline
 
-\citet{clim} tackles the same issue using a different approach. They propose 
+\multirow{2}{*}{9}&
+Electra large&TED&69.8&80.6&74.9&85.4&88.1&86.8&69.1&87.1&77.1&74.8&85.3&79.6\\&
+\verb|2021-03-27_15-13-29|&SWI&66.9&64.2&65.5&56.9&70.4&63.0&14.1&74.9&23.7&46.0&69.8&50.7\\\hline
 
-% \section*{}
+
+\multicolumn{15}{|c|}{Domain adversarial / concat logits baseline}\\\hline
+
+\multirow{2}{*}{10}&
+TED+2 SWI&TED&70.3&73.6&71.9&80.3&88.0&84.0&62.4&84.8&71.9&71.0&82.1&75.9\\&
+\verb|2021-03-27_07-41-03|&SWI&69.5&67.1&68.3&55.9&72.2&63.0&16.3&69.3&26.4&47.2&69.5&52.6\\\hline
+
+\multicolumn{15}{|c|}{Domain adversarial / concat domain logits (TED+2 labelled SWI + unlabelled (UL) SWI)}\\\hline
+
+\multirow{2}{*}{11}&
+Using Attn. pool&TED&71.1&73.4&72.2&79.4&89.2&84.0&66.9&83.0&74.1&72.5&81.9&76.8\\&
+\verb|2021-03-27_08-30-38|&SWI&68.1&72.9&70.4&58.7&68.6&63.2&26.7&62.6&37.4&51.2&68.0&57.0\\\hline
+
+\multirow{2}{*}{12}&
+- Concat&TED&72.6&70.7&71.6&78.4&90.4&84.0&66.8&83.6&74.2&72.6&81.6&76.6\\&
+\verb|2021-03-27_10-40-44|&SWI&69.7&69.4&69.6&57.4&71.8&63.8&25.9&64.2&36.9&51.0&68.5&56.8\\\hline
+
+\multirow{2}{*}{13}&
+- Adversarial&TED&71.1&73.4&72.3&80.1&88.6&84.2&62.8&84.4&72.0&71.4&82.1&76.2\\&
+\verb|2021-03-27_09-45-43|&SWI&68.8&70.9&69.8&58.6&71.1&64.3&24.0&65.9&35.2&50.5&69.3&56.4\\\hline
+
+
+\multirow{2}{*}{14}&
+Using Token pool&TED&71.3&72.7&72.0&78.6&90.0&84.0&66.5&83.0&73.9&72.2&81.9&76.6\\&
+\verb|2021-03-27_10-42-57|&SWI&68.7&71.2&69.9&57.8&71.9&64.1&26.6&63.6&37.5&51.0&68.9&57.2\\\hline
+
+\multirow{2}{*}{15}&
+Using Mean pool&TED&71.4&72.8&72.1&79.7&89.1&84.1&64.7&84.1&73.2&72.0&82.0&76.5\\&
+\verb|2021-03-27_11-44-59|&SWI&69.0&70.7&69.9&57.6&70.5&63.4&23.3&65.6&34.4&50.0&69.0&55.9\\\hline
+
+
+\multicolumn{15}{|c|}{Zero-shot}\\\hline
+\multirow{2}{*}{16}&
+TED+OPE baseline&OPE&64.0&70.7&67.2&78.3&80.7&79.5&65.6&72.5&68.9&69.3&74.6&71.8\\&
+\verb|2021-03-26_22-37-11|&TED&67.2&78.9&72.6&83.6&83.5&83.6&70.0&82.8&75.9&73.6&81.7&77.3\\
+&&SWI&67.7&69.2&68.5&52.5&65.1&58.1&19.9&73.5&31.3&46.7&69.3&52.6\\\hline
+
+\multirow{2}{*}{17}&
+TED+OPE both&OPE&63.6&71.7&67.4&78.7&80.4&79.5&66.4&72.3&69.2&69.6&74.8&72.0\\&
+\verb|2021-03-26_23-28-33|&TED&66.8&79.4&72.5&83.9&83.3&83.6&71.4&82.4&76.5&74.0&81.7&77.5\\
+&&SWI&67.2&69.9&68.5&53.5&65.1&58.7&20.4&73.8&32.0&47.1&69.6&53.1\\\hline
+
+\multirow{2}{*}{18}&
+TED+OPE+UL SWI&OPE&67.0&64.4&65.7&76.1&82.8&79.3&62.1&73.7&67.4&68.4&73.6&70.8\\&
+\verb|2021-03-27_11-38-32|&TED&70.3&73.6&71.9&80.8&86.7&83.7&66.0&84.0&73.9&72.4&81.5&76.5\\
+&&SWI&71.2&67.0&69.1&54.8&71.8&62.1&18.9&74.3&30.2&48.3&71.0&53.8\\\hline
+
+\multicolumn{15}{|c|}{Model trained on TED+OPE+SWI}\\\hline
+\multirow{2}{*}{19}&
+Middle 0.5 chunk TED&Full &69.7&74.7&72.1&81.2&86.7&83.9&70.9&82.4&76.2&73.9&81.3&77.4\\&
+\verb|2021-03-27_18-00-46|&Middle& 70.1&76.0&72.9&83.7&87.8&85.7&71.7&86.3&78.3&75.2&83.4&79.0\\\hline
+\end{tabular}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+\multicolumn{11}{|c|}{Expanded punctuation set}\\\hline
+&&&!&,&-&.&:&?&...&F1\\\hline
+\multirow{2}{*}{20}&
+TED+OPE+SWI&OPE&22.8 &49.2&   41.0&   61.1&   65.5&   62.7&   23.3&   46.5 \\&
+\verb|2021-03-28_11-56-37|&TED&11.0 &65.5&   60.7&   78.5&    2.9&   68.1&    3.5&   41.5   \\
+&&SWI& 0.00 &67.8&   88.4&   43.0&    0.0&   48.9&   29.0&   39.6\\\hline
+
+\end{tabular}
+
+\caption{Study of effect of different parameters on performance of transfer to Switchboard dataset}
+SWI: Switchboard, OPE: Open Subtitles, TED: Ted Talks, 
+TED+2 SWI: TED with 2 labelled examples from SWI, both: Concat + Adversarial, baseline: no domain consideration,
+UL SWI: unlabelled SWI train examples \\
+View the hyperparamaters and results by searching for the listed dates:  \href{https://github.com/ngxingyu/Transfer-Learning-for-Punctuation-Retrieval/tree/main/Punctuation_with_Domain_discriminator/results}{here.}\\
+\label{table:baseline}
+\end{table*}
+
+\begin{appendices}
+The accompanying code for this project can be found \href{https://github.com/ngxingyu/Transfer-Learning-for-Punctuation-Retrieval/}{here}.
+
+I am grateful to my mentor, Chieu Hai Leong, for his guidance throughout the course of this project
+\section{Preprocessing Pipeline} \label{preprocessing}
+The following preprocessing steps are taken to clean up each raw dataset
+\begin{enumerate}
+\item Remove speaker tags or tags that are added for better readability, such as sound effects e.g. (Narrator: ) or (Applause).
+\item Identify spoken text that are within square or round brackets and remove the brackets.
+\item Remove music lyrics bounded by music note symbols as they contain minimal punctuation information.
+\item Remove empty matching tags: square brackets, parentheses, single or double quotes as they are not covered under the scope of this research.
+\item Identify and convert ellipsis to Unicode.
+\item Remove Non-sentence punctuation (All punctuation that are non-readable (@\$\#\%\&+\textbullet= €$ ^2$£¥) subtract (. ? ! , ; : - – —).
+\item Replace en-dash with hyphen
+\item Combining repeated patterns of punctuation, i.e. [. .] to [.], [!!!!] to [!].
+\item Pronounce common symbols such as * to times, or 5.0 to 5 point 0
+\item Remove excess white-spaces
+\item Sort the entire corpus by chronological order
+\item Remove duplicate examples
+\item Perform train development test split of 0.8 0.1 0.1.
+\item Split large document into smaller size  (i.e. split large document into smaller chunks of ~1500 characters) to reduce the size difference of examples.
+\end{enumerate}
+
+\begin{table*}[t]
+% \tiny
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+
+\hline
+ \multicolumn{13}{|c|}{Count of punctuation labels per dataset} \\
+ \hline
+ Dataset & \multicolumn{3}{|c|}{IWSLT 2012} & \multicolumn{3}{|c|}{Ted} & \multicolumn{3}{|c|}{Open Subtitles} & \multicolumn{3}{|c|}{Switchboard}\\
+ \hline 
+label &  train   & dev   & test  & train   & dev    & test   & train     & dev      & test & train   & dev    & test  \\
+\hline
+% total &  2339217 & 17447 & 26781 & 5601245 & 674170 & 854116 & 398064763 & 46774228 & 44274036 \\
+,     &  162729  & 1124  & 2230  & 391670  & 45595  & 60974  & 24519706  & 3001818  & 2921821 & 192948 & 17282 & 25926 \\
+.     &  143020  & 923   & 1684  & 317959  & 39220  & 51692  & 47812347  & 5618205  & 5333118 &  94456 &  8163 & 13050 \\
+--- &  18295   & 106   & 46    & 25984   & 2799   & 4591   & 9077      & 1297     & 769     &      0 &     0 &     0 \\
+-     &  12298   & 57    & 94    & 29947   & 3717   & 4313   & 2235061   & 275756   & 265933  &  20789 &  1956 &  3285 \\
+?     &  11813   & 84    & 148   & 29134   & 3178   & 4462   & 13496823  & 1530633  & 1376747 &   6715 &   714 &   781 \\
+:     &  2763    & 12    & 20    & 7733    & 795    & 1186   & 286415    & 17439    & 24463   &     23 &    15 &     4 \\
+;     &  2845    & 6     & 18    & 4342    & 447    & 1057   & 60723     & 6072     & 5017    &     32 &     0 &     7 \\
+!     &  926     & 14    & 2     & 2742    & 241    & 298    & 6833770   & 692888   & 556099  &     75 &     1 &    11 \\
+…     &  603     & 1     & 9     & 1680    & 175    & 274    & 4237147   & 468868   & 457918  &  18307 &  2685 &  2761 \\
+
+
+\hline
+, & 0.46 & 0.48 & 0.52 & 0.48 & 0.47 & 0.47 & 0.25 & 0.26 & 0.27  &  0.58 & 0.56 & 0.57\\
+. & 0.40 & 0.40 & 0.40 & 0.39 & 0.41 & 0.40 & 0.48 & 0.48 & 0.49  &  0.28 & 0.26 & 0.288\\
+--- & 0.05 & 0.05 & 0.01 & 0.03 & 0.03 & 0.04 & 0.00 & 0.00 & 0.00  &  0.00 & 0.00 & 0.00\\
+- & 0.03 & 0.02 & 0.02 & 0.04 & 0.04 & 0.03 & 0.02 & 0.02 & 0.02  &  0.06 & 0.06 & 0.07\\
+? & 0.03 & 0.04 & 0.03 & 0.04 & 0.03 & 0.03 & 0.14 & 0.13 & 0.13  &  0.02 & 0.02 & 0.02\\
+: & 0.01 & 0.01 & 0.00 & 0.01 & 0.01 & 0.01 & 0.00 & 0.00 & 0.00  &  0.00 & 0.00 & 0.00\\
+; & 0.01 & 0.00 & 0.00 & 0.01 & 0.00 & 0.01 & 0.00 & 0.00 & 0.00  &  0.00 & 0.00 & 0.00\\
+! & 0.00 & 0.01 & 0.00 & 0.00 & 0.00 & 0.00 & 0.07 & 0.06 & 0.05  &  0.00 & 0.00 & 0.00\\
+… & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.00 & 0.04 & 0.04 & 0.04  &  0.05 & 0.09 & 0.06\\
+\hline
+\end{tabular}
+\caption{Distribution of punctuation labels.}
+\label{table:distribution}
+\end{table*}
+
+\end{appendices}
 
 \bibliography{asr.bib}
 \end{multicols}
