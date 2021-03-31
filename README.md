@@ -154,8 +154,9 @@ $ mv *.csv ~/data/
 Get *sample pretrained model* to try (extract to Punctuation_with_Domain_discriminator folder and set exp='pretrained' in testing.py and uncomment the relavant part to try)
 Pre-trained with domain method. **** Edit the hparams.yaml file in the pretrained folder, changing all mentions of nxingyu2 to your username.
 
-[4 punctuation](https://drive.google.com/uc?id=1e93ZnWChouoy4kC5CZ9gihZ4UPOAiUfY)
-[8 punctuation (not very good)](https://drive.google.com/uc?id=1sN-arbazKzauHSMtCcO3SdN1yiS_GU3Y)
+[4 punctuation (https://drive.google.com/uc?id=1e93ZnWChouoy4kC5CZ9gihZ4UPOAiUfY)](https://drive.google.com/uc?id=1e93ZnWChouoy4kC5CZ9gihZ4UPOAiUfY)
+
+[8 punctuation - Not as good as 4 (https://drive.google.com/uc?id=1sN-arbazKzauHSMtCcO3SdN1yiS_GU3Y)](https://drive.google.com/uc?id=1sN-arbazKzauHSMtCcO3SdN1yiS_GU3Y)
 
 ```bash
 $ cd ???/Punctuation_with_Domain_discriminator
