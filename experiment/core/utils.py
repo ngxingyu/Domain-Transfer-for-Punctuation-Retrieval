@@ -7,7 +7,7 @@ from copy import deepcopy
 import itertools
 from scipy.stats import norm,trapezoid,uniform
 
-__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform','get_mask']
+__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform','get_mask','combine_preds']
 
 def get_mask(type='normal',max_seq_length=126,sigma=0.1):
     '''normal, trapezoid, uniform'''
@@ -18,6 +18,22 @@ def get_mask(type='normal',max_seq_length=126,sigma=0.1):
     elif type=='uniform':
         dist= uniform.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),-sigma*max_seq_length/2,sigma*max_seq_length)
     return torch.tensor(dist*max_seq_length/sum(dist))
+
+def combine_preds(preds,input_ids,subtoken_mask,mask,stride,labels=None,num_labels=8):
+    '''merge overlapping entries with stride'''
+    if stride==0:
+        stride=len(mask)
+    combined_mask=torch.zeros((len(preds)-1)*stride+len(mask))
+    combined_result=torch.zeros(len(combined_mask),num_labels)
+    combined_labels=torch.zeros(len(combined_mask)) if labels is not None else None
+    offset=0
+    for i in range(len(preds)):
+        combined_result[offset:offset+len(mask)]+=preds[i][1:-1]*mask
+        if labels is not None:
+            combined_labels[offset:offset+len(mask)]=labels[i][1:-1]
+        combined_mask[offset:offset+len(mask)]=subtoken_mask[i][1:-1]
+        offset+=stride
+    return combined_result,combined_labels,combined_mask.bool()
 
 def flatten(list_of_lists):
     for l in list_of_lists:
