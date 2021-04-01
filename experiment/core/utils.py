@@ -5,7 +5,7 @@ import regex as re
 import snoop
 from copy import deepcopy
 
-__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'chunk_to_len', 'view_aligned']
+__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned']
 
 def flatten(list_of_lists):
     for l in list_of_lists:
@@ -127,16 +127,25 @@ def subword_tokenize(tokenizer,tokens, pad_start):
     subwords = list(flatten(subwords))
     token_start_idxs = np.cumsum([pad_start]+subword_lengths[:-1])
     token_end_idxs = np.cumsum([pad_start]+subword_lengths[:-1])+np.array(subword_lengths)-1
-    return ["[PAD]"]*pad_start+subwords, token_start_idxs, token_end_idxs
+    padding=np.arange(pad_start)
+    return ["[PAD]"]*pad_start+subwords+["[PAD]"]*pad_start, np.concatenate([padding,token_start_idxs,padding]), np.concatenate([padding,token_end_idxs,padding])
 
 def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stride, tokens, labels=None):
     if stride==None:
         stride=max_seq_length-2
+    assert((max_seq_length-2)%stride==0)
+    numstrides=(max_seq_length-2)//stride
     subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens, pad_start)
+    labels=[0]*(max_seq_length-2-stride)+labels+[0]*(max_seq_length-2-stride) # pad start and end of labels so first example only sees stride tokens.
     teim=token_end_idxs%(stride) if attach_label_to_end else token_start_idxs%(stride)
     stridecount=token_end_idxs//stride if attach_label_to_end else token_start_idxs//stride
-    breakpoints=(np.argwhere(stridecount[1:]<stridecount[:-1]).flatten()+1).tolist()
+    breakpoints=(np.argwhere(stridecount[1:]>stridecount[:-1]).flatten()+1).tolist()
     split_token_idxs=np.array_split(token_end_idxs,breakpoints) if attach_label_to_end else np.array_split(token_start_idxs,breakpoints)
+    assert(sum(len(_) for _ in split_token_idxs)==len(labels))
+    print(len(subwords),numstrides)
+    # print([np.split(subwords,np.arange(stride*x,len(labels),max_seq_length-2)) for x in range(1,1+numstrides)])
+    split_subwords=list(flatten(zip(*[np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])))[numstrides-1:]
+    print(split_subwords)
     split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
     ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords]
     masks=[]
