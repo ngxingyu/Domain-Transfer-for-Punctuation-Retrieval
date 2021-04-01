@@ -128,7 +128,29 @@ def subword_tokenize(tokenizer,tokens, pad_start):
     token_start_idxs = np.cumsum([pad_start]+subword_lengths[:-1])
     token_end_idxs = np.cumsum([pad_start]+subword_lengths[:-1])+np.array(subword_lengths)-1
     padding=np.arange(pad_start)
-    return ["[PAD]"]*pad_start+subwords+["[PAD]"]*pad_start, np.concatenate([padding,token_start_idxs,padding]), np.concatenate([padding,token_end_idxs,padding])
+    endpad=(token_end_idxs[-1]+1)*np.ones_like(padding)
+    return ["[PAD]"]*pad_start+subwords+["[PAD]"]*pad_start, np.concatenate([padding,token_start_idxs]), np.concatenate([padding,token_end_idxs])
+
+def trim(filt, trim_value='[PAD]', trim='fb'):
+    """
+    Copied from np.trim_zeros, but allows the trim value to be specified
+    """
+    first = 0
+    trim = trim.upper()
+    if 'F' in trim:
+        for i in filt:
+            if i != trim_value:
+                break
+            else:
+                first = first + 1
+    last = len(filt)
+    if 'B' in trim:
+        for i in filt[::-1]:
+            if i != trim_value:
+                break
+            else:
+                last = last - 1
+    return filt[first:last]
 
 def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stride, tokens, labels=None):
     if stride==None:
@@ -136,21 +158,31 @@ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stri
     assert((max_seq_length-2)%stride==0)
     numstrides=(max_seq_length-2)//stride
     subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens, pad_start)
-    labels=[0]*(max_seq_length-2-stride)+labels+[0]*(max_seq_length-2-stride) # pad start and end of labels so first example only sees stride tokens.
-    teim=token_end_idxs%(stride) if attach_label_to_end else token_start_idxs%(stride)
-    stridecount=token_end_idxs//stride if attach_label_to_end else token_start_idxs//stride
+    token_idxs=token_end_idxs if attach_label_to_end else token_start_idxs
+    labels=[0]*(max_seq_length-2-stride)+labels#+[0]*(max_seq_length-2-stride) # pad start and end of labels so first example only sees stride tokens.
+    teim=token_idxs%(stride)
+    stridecount=token_idxs//stride
     breakpoints=(np.argwhere(stridecount[1:]>stridecount[:-1]).flatten()+1).tolist()
-    split_token_idxs=np.array_split(token_end_idxs,breakpoints) if attach_label_to_end else np.array_split(token_start_idxs,breakpoints)
-    assert(sum(len(_) for _ in split_token_idxs)==len(labels))
-    print(len(subwords),numstrides)
+    # split_token_idxs=np.array_split(token_idxs,breakpoints)
+    # assert(sum(len(_) for _ in split_token_idxs)==len(labels))
     # print([np.split(subwords,np.arange(stride*x,len(labels),max_seq_length-2)) for x in range(1,1+numstrides)])
-    split_subwords=list(flatten(zip(*[np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])))[numstrides-1:]
-    print(split_subwords)
-    split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
-    ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(_)+['[SEP]'])) for _ in split_subwords]
+    split_subwords=list(flatten(zip(*[np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])))[numstrides-1:-1]
+    # split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
+    ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(trim(_,'[PAD]','b'))+['[SEP]'])) for _ in split_subwords]
+    print(token_idxs,split_subwords)
+    stridecount=[(token_idxs-stride*i)//(max_seq_length-2) for i in range(1,1+numstrides)]
+    breakpoints=[(np.argwhere(_[1:]>_[:-1]).flatten()+1).tolist() for _ in stridecount]
+    split_token_idxs=list(flatten(zip(*[np.array_split((token_idxs-(i+1)*stride)%(max_seq_length-2),v) for i,v in enumerate(breakpoints)])))[numstrides-1:-1]
+    # print(list(zip(split_token_idxs,split_subwords)))
+    assert(len(split_subwords)==len(split_token_idxs))
+
     masks=[]
     for _ in split_token_idxs:
         masks.append(position_to_mask(max_seq_length,_).copy())
+
+    # print(list(zip(split_subwords,masks)))
+    assert(len(masks)==len(split_subwords))
+    
     padded_labels=None
     if labels!=None:
         split_labels=np.array_split(labels,breakpoints)
