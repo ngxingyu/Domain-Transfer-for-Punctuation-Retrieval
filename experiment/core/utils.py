@@ -5,8 +5,19 @@ import regex as re
 import snoop
 from copy import deepcopy
 import itertools
+from scipy.stats import norm,trapezoid,uniform
 
-__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform']
+__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform','get_mask']
+
+def get_mask(type='normal',max_seq_length=126,sigma=0.1):
+    '''normal, trapezoid, uniform'''
+    if type=='normal':
+        dist= norm.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0,sigma*max_seq_length)
+    elif type=='trapezoid':
+        dist= trapezoid.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0.5-sigma/2,0.5+sigma/2,-max_seq_length/2,max_seq_length)
+    elif type=='uniform':
+        dist= uniform.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),-sigma*max_seq_length/2,sigma*max_seq_length)
+    return torch.tensor(dist*max_seq_length/sum(dist))
 
 def flatten(list_of_lists):
     for l in list_of_lists:
