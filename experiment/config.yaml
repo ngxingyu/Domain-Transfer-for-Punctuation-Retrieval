@@ -45,7 +45,7 @@ log_dir: null
 
 model:
     nemo_path: null
-    transformer_path: google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
+    transformer_path: bert-base-uncased # google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 6                 # Initial number of layers unfrozen
     maximum_unfrozen: 6         # Maximum number of layers unfrozen.
     unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
@@ -83,8 +83,8 @@ model:
     dataset:
         data_dir: /home/${env:USER}/data # /root/data # 
         labelled:
-            # - ${base_path}/ted2010_processed  #### IWSLT dataset
-            - ${base_path}/ted_talks_processed #
+            - ${base_path}/ted2010_processed  #### IWSLT dataset
+            # - ${base_path}/ted_talks_processed #
             # - ${base_path}/open_subtitles_processed #  
             # - ${base_path}/switchboardutt_processed
             # - ${base_path}/switchboardutt_processedlow #### Switchboard with just (2 or userdefined) examples in train set.
