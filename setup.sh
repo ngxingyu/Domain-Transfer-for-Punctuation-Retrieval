@@ -7,4 +7,4 @@ pip install snoop nemo_toolkit[all]==1.0.0b2 transformers datasets hydra-core gi
 # conda install -c conda-forge pytorch-lightning=1.1.5
 pip install pytorch-lightning==1.1.5
 # Set cudatoolkit version based on gpu version.
-conda install pytorch cudatoolkit=11.1 -c pytorch #10.1
+conda install pytorch cudatoolkit=11.0 -c pytorch #10.1
