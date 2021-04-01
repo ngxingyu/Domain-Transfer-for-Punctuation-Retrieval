@@ -23,9 +23,10 @@ def combine_preds(preds,input_ids,subtoken_mask,mask,stride,labels=None,num_labe
     '''merge overlapping entries with stride'''
     if stride==0:
         stride=len(mask)
-    combined_mask=torch.zeros((len(preds)-1)*stride+len(mask))
-    combined_result=torch.zeros(len(combined_mask),num_labels)
-    combined_labels=torch.zeros(len(combined_mask)) if labels is not None else None
+    combined_mask=torch.zeros((len(preds)-1)*stride+len(mask)).type_as(mask)
+    combined_result=torch.zeros(len(combined_mask),num_labels).type_as(mask)
+    combined_labels=torch.zeros(len(combined_mask)).type_as(input_ids) if labels is not None else None
+    pp(combined_mask.type(),combined_result.type(),combined_labels.type())
     offset=0
     for i in range(len(preds)):
         combined_result[offset:offset+len(mask)]+=preds[i][1:-1]*mask

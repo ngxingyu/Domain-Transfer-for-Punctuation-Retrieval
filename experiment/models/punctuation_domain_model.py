@@ -322,12 +322,12 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
 
         val_loss, punct_logits, domain_logits = self._make_step(batch)
         # attention_mask = attention_mask > 0.5
-        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, subtoken_mask),len(self.labels_to_ids)) \
+        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, subtoken_mask),len(self.labels_to_ids)).double() \
             if self.hparams.model.punct_head.loss == 'crf' else punct_logits
 
         # punct_labels = punct_labels[labelled_mask]
 
-        pred,label,combinedmask=combine_preds(punct_preds,input_ids,subtoken_mask,self.mask.unsqueeze(-1),self.stride,punct_labels,len(self.labels_to_ids))
+        pred,label,combinedmask=combine_preds(punct_preds,input_ids,subtoken_mask,self.mask.type_as(punct_preds).unsqueeze(-1),self.stride,punct_labels,len(self.labels_to_ids))
         punct_preds=torch.argmax(pred[combinedmask],dim=1)
         punct_labels=label[combinedmask]
 
@@ -372,10 +372,10 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # if chunk is not None: chunked_punct_labels = punct_labels[chunk_mask]
 
 
-        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, subtoken_mask),len(self.labels_to_ids)) \
+        punct_preds = F.one_hot(self.punctuation_loss.decode(punct_logits, subtoken_mask),len(self.labels_to_ids)).double() \
             if self.hparams.model.punct_head.loss == 'crf' else punct_logits
 
-        pred,label,combinedmask=combine_preds(punct_preds,input_ids,subtoken_mask,self.mask.unsqueeze(-1),self.stride,punct_labels,len(self.labels_to_ids))
+        pred,label,combinedmask=combine_preds(punct_preds,input_ids,subtoken_mask,self.mask.type_as(punct_preds).unsqueeze(-1),self.stride,punct_labels,len(self.labels_to_ids))
         punct_preds=torch.argmax(pred[combinedmask],dim=1)
         punct_labels=label[combinedmask]
 
