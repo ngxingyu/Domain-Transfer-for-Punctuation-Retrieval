@@ -4,6 +4,7 @@ from torch import nn
 import regex as re
 import snoop
 from copy import deepcopy
+import itertools
 
 __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned']
 
@@ -36,7 +37,7 @@ def align_labels_to_mask(mask,labels):
     m1[mask>0]=torch.tensor(labels)
     return m1.tolist()
 
-def view_aligned(texts,tags,tokenizer,labels_to_ids):
+def view_aligned(texts,tags,tokenizer,ids_to_labels):
     '''Convert tokens ids and labels into readable text'''
     output=[re.sub(r'( ?\[((CLS))\] ?)',' ',
         re.sub(" \' ","\'",
@@ -45,7 +46,7 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
                     ' '.join( #[.?!,;:\-—… ]+
                         [_[0]+_[1] for _ in list(
                             zip(tokenizer.convert_ids_to_tokens(_[0]),
-                                [labels_to_ids[id] for id in _[1].tolist()])
+                                [ids_to_labels[id] for id in _[1].tolist()])
                             )
                         ]
                     )
@@ -55,8 +56,9 @@ def view_aligned(texts,tags,tokenizer,labels_to_ids):
     ) for _ in zip(texts,tags)]
     newoutput=[]
     prevappend=False
+    print(len(output))
     for value in output:
-        if value[-5:]!='[PAD]':
+        if value[:5]!='[PAD]':
             append=True
         else:
             append=False
@@ -152,6 +154,9 @@ def trim(filt, trim_value='[PAD]', trim='fb'):
                 last = last - 1
     return filt[first:last]
 
+def mergelists(l):
+    return [x for x in itertools.chain.from_iterable(itertools.zip_longest(*l)) if x is not None]
+
 def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stride, tokens, labels=None):
     if stride==None:
         stride=max_seq_length-2
@@ -162,32 +167,35 @@ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stri
     labels=[0]*(max_seq_length-2-stride)+labels#+[0]*(max_seq_length-2-stride) # pad start and end of labels so first example only sees stride tokens.
     teim=token_idxs%(stride)
     stridecount=token_idxs//stride
-    breakpoints=(np.argwhere(stridecount[1:]>stridecount[:-1]).flatten()+1).tolist()
+    # breakpoints=(np.argwhere(stridecount[1:]>stridecount[:-1]).flatten()+1).tolist()
     # split_token_idxs=np.array_split(token_idxs,breakpoints)
     # assert(sum(len(_) for _ in split_token_idxs)==len(labels))
     # print([np.split(subwords,np.arange(stride*x,len(labels),max_seq_length-2)) for x in range(1,1+numstrides)])
-    split_subwords=list(flatten(zip(*[np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])))[numstrides-1:-1]
+    split_subwords=mergelists([np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])[numstrides-1:]
     # split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
     ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(trim(_,'[PAD]','b'))+['[SEP]'])) for _ in split_subwords]
     print(token_idxs,split_subwords)
     stridecount=[(token_idxs-stride*i)//(max_seq_length-2) for i in range(1,1+numstrides)]
     breakpoints=[(np.argwhere(_[1:]>_[:-1]).flatten()+1).tolist() for _ in stridecount]
-    split_token_idxs=list(flatten(zip(*[np.array_split((token_idxs-(i+1)*stride)%(max_seq_length-2),v) for i,v in enumerate(breakpoints)])))[numstrides-1:-1]
-    # print(list(zip(split_token_idxs,split_subwords)))
+    print([len(x) for x in breakpoints],breakpoints,stridecount)
+    split_token_idxs=mergelists([np.array_split((token_idxs-(i+1)*stride)%(max_seq_length-2),v) for i,v in enumerate(breakpoints)])[numstrides-1:]
+    split_subwords=split_subwords[:len(split_token_idxs)]
+    print(len(split_subwords),len(split_token_idxs))
+    # print(mergelists([split_token_idxs,split_subwords]))
     assert(len(split_subwords)==len(split_token_idxs))
 
     masks=[]
     for _ in split_token_idxs:
         masks.append(position_to_mask(max_seq_length,_).copy())
 
-    # print(list(zip(split_subwords,masks)))
+    # print(list(zip(split_subwords,masks))[0])
     assert(len(masks)==len(split_subwords))
-    
     padded_labels=None
     if labels!=None:
-        split_labels=np.array_split(labels,breakpoints)
+        split_labels=mergelists([np.array_split(labels,v) for v in breakpoints])[numstrides-1:]
+        assert(len(split_labels)==len(split_subwords))
         padded_labels=[pad_to_len(max_seq_length,align_labels_to_mask(*_)) for _ in zip(masks,split_labels)]
-    
+    # print(list(zip(*[ids,masks,padded_labels])))
     return ids,masks,padded_labels
     
 def chunk_to_len_batch(max_seq_length,
@@ -220,6 +228,7 @@ def chunk_to_len_batch(max_seq_length,
         output['labels']=torch.as_tensor(batch_labels,dtype=torch.long)
     else:
         output['labels']=torch.zeros_like(output['input_ids'],dtype=torch.long)
+    # print(torch.logical_xor(output['attention_mask'],output['subtoken_mask']))
     if no_mask:
         if (labelled==True and attach_label_to_end and no_space_label is not None):
             # no_space_label is 2
