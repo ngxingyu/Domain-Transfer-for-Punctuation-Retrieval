@@ -9,14 +9,14 @@ from scipy.stats import norm,trapezoid,uniform
 
 __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform','get_mask','combine_preds']
 
-def get_mask(type='normal',max_seq_length=126,sigma=0.1):
+def get_mask(type='normal',max_seq_length=126,sigma=10):
     '''normal, trapezoid, uniform'''
     if type=='normal':
-        dist= norm.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0,sigma*max_seq_length)
+        dist= norm.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0,max_seq_length/sigma)
     elif type=='trapezoid':
-        dist= trapezoid.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0.5-sigma/2,0.5+sigma/2,-max_seq_length/2,max_seq_length)
+        dist= trapezoid.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0.5-1/(2*sigma),0.5+1/(2*sigma),-max_seq_length/2,max_seq_length)
     elif type=='uniform':
-        dist= uniform.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),-sigma*max_seq_length/2,sigma*max_seq_length)
+        dist= uniform.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),-max_seq_length/(2*sigma),max_seq_length/sigma)
     return torch.tensor(dist*max_seq_length/sum(dist))
 
 def combine_preds(preds,input_ids,subtoken_mask,mask,stride,labels=None,num_labels=8):
@@ -26,7 +26,7 @@ def combine_preds(preds,input_ids,subtoken_mask,mask,stride,labels=None,num_labe
     combined_mask=torch.zeros((len(preds)-1)*stride+len(mask)).type_as(mask)
     combined_result=torch.zeros(len(combined_mask),num_labels).type_as(mask)
     combined_labels=torch.zeros(len(combined_mask)).type_as(input_ids) if labels is not None else None
-    pp(combined_mask.type(),combined_result.type(),combined_labels.type())
+    # pp(combined_mask.type(),combined_result.type(),combined_labels.type())
     offset=0
     for i in range(len(preds)):
         combined_result[offset:offset+len(mask)]+=preds[i][1:-1]*mask

@@ -350,6 +350,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         Lightning calls this inside the validation loop with the data from the validation dataloader
         passed in as `batch`.
         """
+        input_ids = batch['input_ids']
         attention_mask = batch['attention_mask']
         subtoken_mask = batch['subtoken_mask']
         punct_labels = batch['labels']

@@ -21,42 +21,42 @@ import snoop
 snoop.install()
 
 ## 1. Set experiment path here
-exp='results/2021-03-27_18-00-46'
-exp='pretrained'
+exp='2021-04-01_16-09-24'
+# exp='pretrained'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
 # @hydra.main(config_name="config.yaml")
 def main(cfg : DictConfig) -> None:
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     pl.seed_everything(cfg.seed)
     torch.set_printoptions(sci_mode=False)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = PunctuationDomainModel.load_from_checkpoint(
-    checkpoint_path=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt",
-    hparams_file=f"/home/nxingyu/project/Punctuation_with_Domain_discriminator/{exp}/hparams.yaml")
+    checkpoint_path=f"/root/project/Punctuation_with_Domain_discriminator/{exp}/checkpoints/Punctuation_with_Domain_discriminator-last.ckpt",
+    hparams_file=f"/root/project/Punctuation_with_Domain_discriminator/{exp}/hparams.yaml")
 
     ## 2. Override labelled dataset for testing (If performing testing)
     # model._cfg.model.dataset.labelled=['/home/nxingyu/data/switchboardutt_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted_talks_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/open_subtitles_processed']
     # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/lrec_processed']
-    # model._cfg.model.dataset.labelled=['/home/nxingyu2/data/ted2010_processed']
-    model._cfg.model.dataset.labelled=[]
+    model._cfg.model.dataset.labelled=['/root/data/ted2010_processed']
+    # model._cfg.model.dataset.labelled=[]
 
     model._cfg.model.dataset.unlabelled=[]  # Override unlabelled datasets
     # model._cfg.model.test_chunk_percent=0.5  ## <- Uncomment to set chunk percentage for testing
-
     ## Uncomment 4 lines if testing test datasets
-    # model.setup_datamodule()
-    # model.hparams.log_dir=f"/home/nxingyu2/project/Punctuation_with_Domain_discriminator/{exp}/"
-    # trainer = pl.Trainer(**cfg.trainer)
-    # trainer.test(model,ckpt_path=None)
+    model.setup_datamodule()
+    model.hparams.log_dir=f"/root/project/Punctuation_with_Domain_discriminator/{exp}/"
+    trainer = pl.Trainer(**cfg.trainer)
+    trainer.test(model,ckpt_path=None)
 
     ## Uncomment 4 lines to perform inference on queries list below
-    inference_results = model.to(device).add_punctuation(queries)
-    for query, result in zip(queries, inference_results):
-        print(f'Query : {query}\n')
-        print(f'Result: {result.strip()}\n\n')
+    # inference_results = model.to(device).add_punctuation(queries)
+    # for query, result in zip(queries, inference_results):
+    #     print(f'Query : {query}\n')
+    #     print(f'Result: {result.strip()}\n\n')
 
     ## Uncomment 20 lines to perform inference on user input in terminal
     # import pandas as pd
