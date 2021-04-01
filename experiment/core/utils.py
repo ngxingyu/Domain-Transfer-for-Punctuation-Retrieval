@@ -6,7 +6,7 @@ import snoop
 from copy import deepcopy
 import itertools
 
-__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned']
+__all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk_to_len', 'view_aligned', 'all_transform']
 
 def flatten(list_of_lists):
     for l in list_of_lists:
@@ -56,7 +56,7 @@ def view_aligned(texts,tags,tokenizer,ids_to_labels):
     ) for _ in zip(texts,tags)]
     newoutput=[]
     prevappend=False
-    print(len(output))
+    # print(len(output))
     for value in output:
         if value[:5]!='[PAD]':
             append=True
@@ -157,9 +157,10 @@ def trim(filt, trim_value='[PAD]', trim='fb'):
 def mergelists(l):
     return [x for x in itertools.chain.from_iterable(itertools.zip_longest(*l)) if x is not None]
 
-def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stride, tokens, labels=None):
-    if stride==None:
+def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,stride, tokens, labels=None):
+    if (stride==None) or (stride==0):
         stride=max_seq_length-2
+    pad_start=max_seq_length-2-stride
     assert((max_seq_length-2)%stride==0)
     numstrides=(max_seq_length-2)//stride
     subwords,token_start_idxs,token_end_idxs = subword_tokenize(tokenizer,tokens, pad_start)
@@ -174,13 +175,13 @@ def chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start:int,stri
     split_subwords=mergelists([np.split(subwords,np.arange(stride*x,len(subwords),max_seq_length-2)) for x in range(1,1+numstrides)])[numstrides-1:]
     # split_subwords=np.array_split(subwords,np.arange(max_seq_length-2,len(subwords),max_seq_length-2))
     ids=[pad_to_len(max_seq_length,tokenizer.convert_tokens_to_ids(['[CLS]']+list(trim(_,'[PAD]','b'))+['[SEP]'])) for _ in split_subwords]
-    print(token_idxs,split_subwords)
+    # print(token_idxs,split_subwords)
     stridecount=[(token_idxs-stride*i)//(max_seq_length-2) for i in range(1,1+numstrides)]
     breakpoints=[(np.argwhere(_[1:]>_[:-1]).flatten()+1).tolist() for _ in stridecount]
-    print([len(x) for x in breakpoints],breakpoints,stridecount)
+    # print([len(x) for x in breakpoints],breakpoints,stridecount)
     split_token_idxs=mergelists([np.array_split((token_idxs-(i+1)*stride)%(max_seq_length-2),v) for i,v in enumerate(breakpoints)])[numstrides-1:]
     split_subwords=split_subwords[:len(split_token_idxs)]
-    print(len(split_subwords),len(split_token_idxs))
+    # print(len(split_subwords),len(split_token_idxs))
     # print(mergelists([split_token_idxs,split_subwords]))
     assert(len(split_subwords)==len(split_token_idxs))
 
@@ -206,7 +207,6 @@ def chunk_to_len_batch(max_seq_length,
     ignore_index=-100, 
     attach_label_to_end=None,
     no_space_label=None,
-    pad_start=0,
     stride=None):
     no_mask=False
     if attach_label_to_end is None:
@@ -216,7 +216,7 @@ def chunk_to_len_batch(max_seq_length,
     batch_masks=[]
     batch_labels=[]
     for i,_ in enumerate(zip(tokens,tokens) if labels==None else zip(tokens,labels)):
-        a,b,c=chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start,stride,*_) if labels else chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,pad_start,stride,_[0])
+        a,b,c=chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,stride,*_) if labels else chunk_to_len(max_seq_length,tokenizer,attach_label_to_end,stride,_[0])
         batch_ids.extend(a[:min(len(a),len(b))])
         batch_masks.extend(b[:min(len(a),len(b))])
         if labelled==True:

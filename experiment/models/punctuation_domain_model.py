@@ -312,6 +312,11 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # attention_mask = attention_mask > 0.5
         punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask]) \
             if self.hparams.model.punct_head.loss == 'crf' else torch.argmax(punct_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]]
+        if self.stride!=0:
+            if self.hparams.model.punct_head.loss == 'crf':
+                punct_preds = self.punctuation_loss.decode(punct_logits[labelled_mask], subtoken_mask[labelled_mask])
+
+
         punct_labels = punct_labels[labelled_mask][subtoken_mask[labelled_mask]]
         self.punct_class_report.update(punct_preds, punct_labels)
         domain_preds = torch.argmax(domain_logits[labelled_mask], axis=-1)[subtoken_mask[labelled_mask]] if self.hparams.model.domain_head.pooling is None else torch.argmax(domain_logits, axis=1)
@@ -681,6 +686,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
         # data_config.labelled = OmegaConf.create([] if data_config.labelled==None else data_config.labelled)
         # data_config.unlabelled = OmegaConf.create([] if data_config.unlabelled==None else data_config.unlabelled)
         data_config.num_domains = len(data_config.labelled)+len(data_config.unlabelled)
+        self.stride=0 if data_config.stride is None else data_config.stride
         self.dm=PunctuationDataModule(
             tokenizer= self._cfg.model.transformer_path,
             labelled= list(data_config.labelled),
@@ -702,7 +708,6 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             attach_label_to_end=data_config.attach_label_to_end,
             manual_len=data_config.train_ds.manual_len,
             no_space_label=self._cfg.model.no_space_label,
-            pad_start=data_config.pad_start,
             low_resource_labelled_count=data_config.low_resource_labelled_count,
             alpha_sub=data_config.alpha_sub,
             alpha_del=data_config.alpha_del,

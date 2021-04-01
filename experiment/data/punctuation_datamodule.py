@@ -15,8 +15,8 @@ class PunctuationDataModule(LightningDataModule):
             punct_label_ids: Dict[str,int],
             label_map:Dict[str,str],
             train_batch_size: int = 16,
-            max_seq_length:int = 256,
-            val_batch_size:int = 256, 
+            max_seq_length:int = 128,
+            val_batch_size:int = 128, 
             num_workers:int = 1,
             pin_memory:bool = False,
             drop_last:bool = False, #Not Implemented
@@ -30,14 +30,13 @@ class PunctuationDataModule(LightningDataModule):
             attach_label_to_end:bool = None,
             manual_len:int = 0,
             no_space_label: str = None,
-            pad_start:int = 0,
             low_resource_labelled_count: int = 0,
             alpha_sub:float=0.4,
             alpha_del:float=0.4,
             alpha_ins:float=0.4,
             alpha_swp:float=0,
             alpha_spl:float=0.4,
-            stride:int=32,
+            stride:int=42,
             ):
         #unlabelled=[], batch_size = 256, max_seq_length = 256, num_workers=1):
         super().__init__()
@@ -69,7 +68,6 @@ class PunctuationDataModule(LightningDataModule):
         self.test_unlabelled=test_unlabelled
         self.attach_label_to_end=attach_label_to_end
         self.manual_len=manual_len
-        self.pad_start=pad_start
         self.alpha_sub=alpha_sub
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
@@ -104,7 +102,6 @@ class PunctuationDataModule(LightningDataModule):
                     attach_label_to_end=self.attach_label_to_end,
                     manual_len=self.manual_len,
                     no_space_label=self.no_space_label,
-                    pad_start=self.pad_start,
                     low_resource_labelled_count=self.low_resource_labelled_count,
                     alpha_sub=self.alpha_sub,
                     alpha_del=self.alpha_del,
@@ -127,7 +124,7 @@ class PunctuationDataModule(LightningDataModule):
                         tmp_path=self.tmp_path,
                         attach_label_to_end=self.attach_label_to_end,
                         no_space_label=self.no_space_label,
-                        pad_start=self.pad_start,
+                        stride=self.stride,
                         )
             else:
                 self.val_dataset = PunctuationDomainDatasets(split='dev',
@@ -143,7 +140,7 @@ class PunctuationDataModule(LightningDataModule):
                         tmp_path=self.tmp_path,
                         attach_label_to_end=self.attach_label_to_end,
                         no_space_label=self.no_space_label,
-                        pad_start=self.pad_start,
+                        stride=self.stride,
                         )
         if stage=='test' or stage is None:
             if (len(self.unlabelled)>0) and self.test_unlabelled:
@@ -160,7 +157,7 @@ class PunctuationDataModule(LightningDataModule):
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
                     no_space_label=self.no_space_label,
-                    pad_start=self.pad_start,
+                    stride=self.stride,
                     )
             else: self.test_dataset = PunctuationDomainDatasets(split='test',
                     num_samples=self.val_batch_size,
@@ -175,7 +172,7 @@ class PunctuationDataModule(LightningDataModule):
                     tmp_path=self.tmp_path,
                     attach_label_to_end=self.attach_label_to_end,
                     no_space_label=self.no_space_label,
-                    pad_start=self.pad_start,
+                    stride=self.stride,
                     )
 
         logging.info(f"shuffling train set")

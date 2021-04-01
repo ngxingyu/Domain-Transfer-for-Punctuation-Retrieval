@@ -110,14 +110,12 @@ model:
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
-        pad_start: 0
-
         alpha_sub: 0.0
         alpha_del: 0.0
         alpha_ins: 0.0
         alpha_swp: 0
         alpha_spl: 0.0
-        stride: 32 # 0 if no stride. stride length e.g. 32 if stride 
+        stride: 42 # 0 or blank if no stride. Ensure stride divides max_seq_length-2
         train_ds:
             shuffle: true
             num_samples: -1

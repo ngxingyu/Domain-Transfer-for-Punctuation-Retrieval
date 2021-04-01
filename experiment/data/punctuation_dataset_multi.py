@@ -88,25 +88,26 @@ class PunctuationDomainDataset(IterableDataset):
 
     def __next__(self):
         batch = next(self.dataset)[1]
-        complete=batch
-        if self.stride>0:
-            for i in range(1,self.max_seq_length//self.stride):
-                l=batch.str.split().map(len).values
-                a=self.stride*i*np.ones_like(l)
-                b=l
-                complete=complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
-            # pp(batch.shape,complete.shape)
-        batch=complete
+        # complete=batch
+        # if self.stride>0:
+        #     for i in range(1,self.max_seq_length//self.stride):
+        #         l=batch.str.split().map(len).values
+        #         a=self.stride*i*np.ones_like(l)
+        #         b=l
+        #         complete=complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
+        #     # pp(batch.shape,complete.shape)
+        # batch=complete
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp,self.alpha_spl)(batch)
-        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, pad_start=self.pad_start)
+        batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, stride=self.stride)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
         gc.collect()
-        if self.randomize:
-            rand=torch.randperm(num_samples)
-            return {k:v[rand] for k,v in batched.items()}
-        else:
-            return batched
+        # if self.randomize:
+        #     rand=torch.randperm(num_samples)
+        #     return {k:v[rand] for k,v in batched.items()}
+        # else:
+        #     return batched
+        return batched
 
     def set_num_samples(self,csv_file,num_samples, manual_len):
         self.num_samples = num_samples
@@ -366,14 +367,14 @@ class PunctuationInferenceDataset(Dataset):
         degree:int = 0, 
         attach_label_to_end:bool=None,
         no_space_label=None,
-        pad_start:int=0,
+        stride:int=0,
     ):
         """ Initializes BertPunctuationInferDataset. """
         self.degree=degree
         self.punct_label_ids=punct_label_ids
         self.label_map = label_map
         chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map,)(queries)
-        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,pad_start=pad_start)
+        self.features = chunk_to_len_batch(max_seq_length, tokenizer,chunked['texts'],chunked['tags'],attach_label_to_end=attach_label_to_end,no_space_label=no_space_label,stride=stride)
         self.attach_label_to_end=attach_label_to_end
         self.num_samples=num_samples
 
