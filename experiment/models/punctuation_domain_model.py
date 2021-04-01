@@ -21,7 +21,7 @@ from os import path
 import tempfile
 from core.common import Serialization, FileIO
 from time import time
-from core.utils import view_aligned
+from core.utils import view_aligned, combine_preds
 from core.utils_test import test_mask
 
 __all__ = ['PunctuationDomainModel']

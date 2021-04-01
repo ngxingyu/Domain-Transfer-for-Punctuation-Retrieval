@@ -33,7 +33,7 @@ def combine_preds(preds,input_ids,subtoken_mask,mask,stride,labels=None,num_labe
             combined_labels[offset:offset+len(mask)]=labels[i][1:-1]
         combined_mask[offset:offset+len(mask)]=subtoken_mask[i][1:-1]
         offset+=stride
-    return combined_result,combined_labels,combined_mask.bool()
+    return combined_result,combined_labels.long(),combined_mask.bool()
 
 def flatten(list_of_lists):
     for l in list_of_lists:
