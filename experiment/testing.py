@@ -21,7 +21,7 @@ import snoop
 snoop.install()
 
 ## 1. Set experiment path here
-exp='2021-04-01_16-09-24'
+exp='2021-04-02_06-27-01'
 # exp='pretrained'
 
 @hydra.main(config_path=f"../Punctuation_with_Domain_discriminator/{exp}/",config_name="hparams.yaml")
