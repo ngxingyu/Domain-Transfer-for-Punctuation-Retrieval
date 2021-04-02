@@ -11,1232 +11,1232 @@ Parameter Group 0
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 1
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 2
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 3
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 4
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 5
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 6
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 7
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 8
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 9
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 10
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 11
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 12
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 13
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 14
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 15
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.0883911679999996e-07
+    lr: 9.414317882700003e-06
     weight_decay: 0.0
 
 Parameter Group 16
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 17
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 18
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 19
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 20
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 21
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 22
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 23
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 24
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 25
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 26
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 27
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 28
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 29
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 30
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 31
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8139852799999992e-07
+    lr: 1.0460353203000003e-05
     weight_decay: 0.0
 
 Parameter Group 32
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 33
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 34
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 35
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 36
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 37
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 38
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 39
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 40
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 41
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 42
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 43
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 44
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 45
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 46
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 47
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.0233087999999994e-07
+    lr: 1.1622614670000003e-05
     weight_decay: 0.0
 
 Parameter Group 48
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 49
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 50
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 51
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 52
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 53
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 54
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 55
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 56
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 57
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 58
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 59
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 60
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 61
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 62
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 63
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 5.038847999999999e-07
+    lr: 1.2914016300000004e-05
     weight_decay: 0.0
 
 Parameter Group 64
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 65
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 66
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 67
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 68
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 69
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 70
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 71
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 72
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 73
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 74
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 75
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 76
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 77
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 78
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 79
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 8.398079999999998e-07
+    lr: 1.4348907000000003e-05
     weight_decay: 0.0
 
 Parameter Group 80
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 81
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 82
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 83
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 84
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 85
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 86
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 87
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 88
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 89
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 90
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 91
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 92
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 93
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 94
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 95
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.3996799999999998e-06
+    lr: 1.5943230000000002e-05
     weight_decay: 0.0
 
 Parameter Group 96
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 97
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 98
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 99
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 100
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 101
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 102
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 103
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 104
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 105
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 106
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 107
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 108
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 109
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 110
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 111
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 2.3327999999999995e-06
+    lr: 1.77147e-05
     weight_decay: 0.0
 
 Parameter Group 112
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 113
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 114
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 115
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 116
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 117
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 118
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 119
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 120
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 121
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 122
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 123
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 124
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 125
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 126
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 127
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 3.888e-06
+    lr: 1.9683e-05
     weight_decay: 0.0
 
 Parameter Group 128
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 129
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 130
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 131
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 132
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 133
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 134
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 135
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 136
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 137
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 138
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 139
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 140
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 141
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 142
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 143
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 6.479999999999999e-06
+    lr: 2.1870000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 144
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 145
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 146
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 147
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 148
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 149
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 150
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 151
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 152
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 153
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 154
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 155
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 156
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 157
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 158
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 159
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.08e-05
+    lr: 2.43e-05
     weight_decay: 0.0
 
 Parameter Group 160
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 161
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 162
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 163
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 164
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 165
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 166
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 167
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 168
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 169
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 170
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 171
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 172
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 173
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 174
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 175
     amsgrad: False
     betas: (0.9, 0.999)
     eps: 1e-08
-    lr: 1.8e-05
+    lr: 2.7000000000000002e-05
     weight_decay: 0.0
 
 Parameter Group 176
@@ -1358,14 +1358,14 @@ Parameter Group 192
     lr: 3e-05
     weight_decay: 0.0
 )
-[INFO] - Scheduler "<core.optim.lr_scheduler.CosineAnnealing object at 0x7f2524a28b20>" 
-will be used during training (effective maximum steps = 3750) - 
+[INFO] - Scheduler "<core.optim.lr_scheduler.WarmupAnnealing object at 0x7f9cf4e7cd00>" 
+will be used during training (effective maximum steps = 8736) - 
 Parameters : 
 (warmup_steps: null
 warmup_ratio: 0.1
 min_lr: 1.0e-08
 last_epoch: -1
-max_steps: 3750
+max_steps: 8736
 )
 [INFO] - 
   | Name                | Type                 | Params
@@ -1384,21 +1384,21 @@ max_steps: 3750
 112 M     Total params
 [INFO] - Punctuation report: 
 label                                                precision    recall       f1           support   
- (label_id: 0)                                          87.32       4.90       9.27       9842
-, (label_id: 1)                                          5.36      49.48       9.67        578
-. (label_id: 2)                                          3.84      31.47       6.84        394
-? (label_id: 3)                                          0.12       9.09       0.23         22
+ (label_id: 0)                                          84.38       4.27       8.13       8854
+, (label_id: 1)                                          6.33      49.48      11.23        578
+. (label_id: 2)                                          4.09      31.47       7.24        394
+? (label_id: 3)                                          0.11       9.09       0.21         22
 -------------------
-micro avg                                                8.25       8.25       8.25      10836
-macro avg                                                3.10      30.01       5.58      10836
-weighted avg                                            79.73       8.25       9.19      10836
+micro avg                                                8.02       8.02       8.02       9848
+macro avg                                                3.51      30.01       6.23       9848
+weighted avg                                            76.39       8.02       8.26       9848
 
 -------------------
                        ,           .           ?
-      482.00        44.00        24.00         2.00
-     4852.00       286.00       186.00        16.00
-     2942.00       164.00       124.00         2.00
-     1566.00        84.00        60.00         2.00
+      378.00        44.00        24.00         2.00
+     4028.00       286.00       186.00        16.00
+     2740.00       164.00       124.00         2.00
+     1708.00        84.00        60.00         2.00
 -------------------
 
 [INFO] - Domain report: 
@@ -1414,140 +1414,3 @@ weighted avg                                           100.00     100.00     100
       206.00
 -------------------
 
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          98.59      92.34      95.36      23797
-, (label_id: 1)                                         27.14      47.05      34.42       1371
-. (label_id: 2)                                         56.52      66.44      61.08       1180
-? (label_id: 3)                                         18.28      89.47      30.36         76
--------------------
-micro avg                                               88.82      88.82      88.82      26424
-macro avg                                               33.98      67.65      41.95      26424
-weighted avg                                            92.77      88.82      90.48      26424
-
--------------------
-                       ,           .           ?
-    21974.00       281.00        31.00         2.00
-     1475.00       645.00       255.00         2.00
-      234.00       365.00       784.00         4.00
-      114.00        80.00       110.00        68.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        489
--------------------
-micro avg                                              100.00     100.00     100.00        489
-macro avg                                              100.00     100.00     100.00        489
-weighted avg                                           100.00     100.00     100.00        489
-
--------------------
-           0
-      489.00
--------------------
-
-[INFO] - Epoch 0, global step 374: val_loss reached 0.15353 (best 0.15353), saving model to "/content/Domain-Transfer-for-Punctuation-Retrieval/Punctuation_with_Domain_discriminator/2021-04-02_03-23-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.15-epoch=0.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          99.13      89.74      94.20      23797
-, (label_id: 1)                                         24.81      50.33      33.24       1371
-. (label_id: 2)                                         53.82      84.83      65.86       1180
-? (label_id: 3)                                         28.22      89.47      42.90         76
--------------------
-micro avg                                               87.47      87.47      87.47      26424
-macro avg                                               35.61      74.88      47.33      26424
-weighted avg                                            93.05      87.47      89.62      26424
-
--------------------
-                       ,           .           ?
-    21355.00       174.00        11.00         2.00
-     1962.00       690.00       127.00         2.00
-      406.00       449.00      1001.00         4.00
-       74.00        58.00        41.00        68.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        489
--------------------
-micro avg                                              100.00     100.00     100.00        489
-macro avg                                              100.00     100.00     100.00        489
-weighted avg                                           100.00     100.00     100.00        489
-
--------------------
-           0
-      489.00
--------------------
-
-[INFO] - Epoch 1, global step 749: val_loss reached 0.14849 (best 0.14849), saving model to "/content/Domain-Transfer-for-Punctuation-Retrieval/Punctuation_with_Domain_discriminator/2021-04-02_03-23-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.15-epoch=1.ckpt" as top 3
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          99.05      92.55      95.69      23797
-, (label_id: 1)                                         35.35      68.27      46.58       1371
-. (label_id: 2)                                         67.68      77.54      72.27       1180
-? (label_id: 3)                                         37.04      92.11      52.83         76
--------------------
-micro avg                                               90.61      90.61      90.61      26424
-macro avg                                               46.69      79.31      57.23      26424
-weighted avg                                            94.16      90.61      91.97      26424
-
--------------------
-                       ,           .           ?
-    22023.00       189.00        21.00         2.00
-     1497.00       936.00       214.00         1.00
-      223.00       211.00       915.00         3.00
-       54.00        35.00        30.00        70.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        489
--------------------
-micro avg                                              100.00     100.00     100.00        489
-macro avg                                              100.00     100.00     100.00        489
-weighted avg                                           100.00     100.00     100.00        489
-
--------------------
-           0
-      489.00
--------------------
-
-[INFO] - Epoch 2, global step 1124: val_loss reached 0.14298 (best 0.14298), saving model to "/content/Domain-Transfer-for-Punctuation-Retrieval/Punctuation_with_Domain_discriminator/2021-04-02_03-23-02/checkpoints/Punctuation_with_Domain_discriminator---val_loss=0.14-epoch=2.ckpt" as top 3
-[INFO] - Saving latest checkpoint...
-[INFO] - GPU available: True, used: True
-[INFO] - TPU available: None, using: 0 TPU cores
-[INFO] - Using environment variable NODE_RANK for node rank (0).
-[INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
-[INFO] - Punctuation report: 
-label                                                precision    recall       f1           support   
- (label_id: 0)                                          98.62      93.19      95.83      33771
-, (label_id: 1)                                         42.53      65.80      51.66       2690
-. (label_id: 2)                                         66.36      70.92      68.56       1919
-? (label_id: 3)                                         32.26      87.84      47.19        148
--------------------
-micro avg                                               90.15      90.15      90.15      38528
-macro avg                                               47.05      74.85      55.80      38528
-weighted avg                                            92.84      90.15      91.20      38528
-
--------------------
-                       ,           .           ?
-    31471.00       393.00        40.00         8.00
-     1957.00      1770.00       430.00         5.00
-      232.00       453.00      1361.00         5.00
-      111.00        74.00        88.00       130.00
--------------------
-
-[INFO] - Domain report: 
-label                                                precision    recall       f1           support   
-0 (label_id: 0)                                        100.00     100.00     100.00        706
--------------------
-micro avg                                              100.00     100.00     100.00        706
-macro avg                                              100.00     100.00     100.00        706
-weighted avg                                           100.00     100.00     100.00        706
-
--------------------
-           0
-      706.00
--------------------
-
-[INFO] - saving to /root/project/Punctuation_with_Domain_discriminator/2021-04-02_03-23-02/test-ted-4.txt
