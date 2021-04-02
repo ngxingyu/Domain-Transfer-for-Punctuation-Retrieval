@@ -31,6 +31,7 @@ class PunctuationDataModule(LightningDataModule):
             manual_len:int = 0,
             no_space_label: str = None,
             low_resource_labelled_count: int = 0,
+            alpha:float=0.3,
             alpha_sub:float=0.4,
             alpha_del:float=0.4,
             alpha_ins:float=0.4,
@@ -68,6 +69,7 @@ class PunctuationDataModule(LightningDataModule):
         self.test_unlabelled=test_unlabelled
         self.attach_label_to_end=attach_label_to_end
         self.manual_len=manual_len
+        self.alpha=alpha
         self.alpha_sub=alpha_sub
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
@@ -103,6 +105,7 @@ class PunctuationDataModule(LightningDataModule):
                     manual_len=self.manual_len,
                     no_space_label=self.no_space_label,
                     low_resource_labelled_count=self.low_resource_labelled_count,
+                    alpha=self.alpha,
                     alpha_sub=self.alpha_sub,
                     alpha_del=self.alpha_del,
                     alpha_ins=self.alpha_ins,

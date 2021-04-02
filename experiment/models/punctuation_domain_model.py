@@ -729,6 +729,7 @@ class PunctuationDomainModel(pl.LightningModule, Serialization, FileIO):
             manual_len=data_config.train_ds.manual_len,
             no_space_label=self._cfg.model.no_space_label,
             low_resource_labelled_count=data_config.low_resource_labelled_count,
+            alpha=data_config.alpha,
             alpha_sub=data_config.alpha_sub,
             alpha_del=data_config.alpha_del,
             alpha_ins=data_config.alpha_ins,

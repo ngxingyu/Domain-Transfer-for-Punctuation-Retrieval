@@ -132,7 +132,7 @@ def text2masks(n, labels_to_ids,label_map):
         return(wordlist,punctlist)
     return text2masks
 
-def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0,alpha_spl=0):
+def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha=0.3,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0,alpha_spl=0):
     '''Ensure batched=True if using dataset.map or ensure the examples are wrapped in lists.'''
     def chunk_examples(examples):
         output={}
@@ -140,7 +140,7 @@ def chunk_examples_with_degree(n, labels_to_ids,label_map,tokenizer=None,alpha_s
         output['tags']=[]
         for sentence in examples:
             if tokenizer is not None:
-                sentence=all_transform(sentence,tokenizer,alpha_sub, alpha_del, alpha_ins,alpha_swp,alpha_spl)
+                sentence=all_transform(sentence,tokenizer,alpha, alpha_sub, alpha_del, alpha_ins,alpha_swp,alpha_spl)
             text,tag=text2masks(n, labels_to_ids, label_map)(sentence)
             output['texts'].append(text)
             output['tags'].append(tag)
@@ -426,18 +426,19 @@ def split_transform(data, probability=0.05, always_apply=False, p=0.5):
     return ' '.join(new_words)
 
 
-def all_transform(text,tokenizer,alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0, alpha_split=0.1):
+def all_transform(text,tokenizer,alpha=0.3, alpha_sub=0.4, alpha_del=0.4, alpha_ins=0.4,alpha_swp=0, alpha_split=0.1):
     '''wrapper for all defined random transformations. Have to reduce and fix the maximum probability of transform.'''  
-    r=np.random.rand(5)
-    text=shuffle_sentence_transform(text)
-    if r[0] < alpha_sub:
-        substitute_transform(text,tokenizer)
-    if r[1] < alpha_del:
-        text=delete_transform(text)
-    if r[2] < alpha_ins:
-        text=insert_transform(text,tokenizer)
-    if r[3] < alpha_swp:
-        text=swap_transform(text)
-    if r[4] < alpha_split:
-        text=split_transform(text)
+    r=np.random.rand(6)
+    if r[0] < alpha:
+        text=shuffle_sentence_transform(text)
+        if r[1] < alpha_sub:
+            substitute_transform(text,tokenizer)
+        if r[2] < alpha_del:
+            text=delete_transform(text)
+        if r[3] < alpha_ins:
+            text=insert_transform(text,tokenizer)
+        if r[4] < alpha_swp:
+            text=swap_transform(text)
+        if r[5] < alpha_split:
+            text=split_transform(text)
     return text

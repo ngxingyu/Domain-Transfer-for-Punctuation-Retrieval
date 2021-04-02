@@ -18,7 +18,7 @@ def test_mask(type,sigma,tokenizer,labels_to_ids,label_map,max_seq_length,stride
     print('mask:',mask)
     num_classes=len(labels_to_ids)
     result,label,combinedmask=combine_preds(F.one_hot(batched['labels'],num_classes),batched['input_ids'],batched['subtoken_mask'],mask.unsqueeze(-1),stride,batched['labels'],num_classes)
-    assert((torch.argmax(result[combinedmask],dim=1)==label[combinedmask]).all())
+    assert((torch.argmax(result[combinedmask],dim=1)==label[combinedmask]).all(),(torch.argmax(result[combinedmask],dim=1),label[combinedmask]))
     return mask
 # if max_seq_length is of the form 2^(odd integer): supports 1/2 and 1/3 stride
 # if max_seq_length is of the form 2^(even integer): supports 1/2 stride

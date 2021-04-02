@@ -33,6 +33,7 @@ class PunctuationDomainDataset(IterableDataset):
         no_space_label=None,
         manual_len=0,
         pad_start=0,
+        alpha=0.3,
         alpha_sub=0.4, 
         alpha_del=0.4,
         alpha_ins=0.4,
@@ -66,6 +67,7 @@ class PunctuationDomainDataset(IterableDataset):
         self.attach_label_to_end=attach_label_to_end
         self.no_space_label=no_space_label
         self.pad_start=pad_start
+        self.alpha=alpha
         self.alpha_sub=alpha_sub
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
@@ -97,7 +99,7 @@ class PunctuationDomainDataset(IterableDataset):
         #         complete=complete.append(pd.DataFrame({'t':batch,'a':a,'b':b}).apply(lambda row: ' '.join(row.t.split()[row.a:row.b]),axis=1))
         #     # pp(batch.shape,complete.shape)
         # batch=complete
-        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp,self.alpha_spl)(batch)
+        chunked=chunk_examples_with_degree(self.degree, self.punct_label_ids, self.label_map, self.tokenizer,self.alpha,self.alpha_sub, self.alpha_del,self.alpha_ins,self.alpha_swp,self.alpha_spl)(batch)
         batched=chunk_to_len_batch(self.max_seq_length,self.tokenizer,chunked['texts'],chunked['tags'],self.labelled,attach_label_to_end=self.attach_label_to_end,no_space_label=self.no_space_label, stride=self.stride)
         num_samples=batched['labels'].shape[0]
         batched['domain']=self.domain*torch.ones(num_samples,1,dtype=torch.long)
@@ -165,6 +167,7 @@ class PunctuationDomainDatasets(IterableDataset):
                  no_space_label:int=None,
                  pad_start:int=0,
                  low_resource_labelled_count:int = 0,
+                 alpha=0,
                  alpha_sub=0,
                  alpha_del=0,
                  alpha_ins=0,
@@ -205,7 +208,7 @@ class PunctuationDomainDatasets(IterableDataset):
         self.per_worker=int(self.max_length/self.num_workers)
         self.len=max(1,ceil(self.per_worker/num_samples))
         self.class_weights=None
-
+        self.alpha=alpha
         self.alpha_sub=alpha_sub
         self.alpha_del=alpha_del
         self.alpha_ins=alpha_ins
@@ -228,6 +231,7 @@ class PunctuationDomainDatasets(IterableDataset):
                     no_space_label=no_space_label,
                     manual_len=manual_len,
                     pad_start=pad_start,
+                    alpha=self.alpha,
                     alpha_sub=self.alpha_sub,
                     alpha_del=self.alpha_del,
                     alpha_ins=self.alpha_ins,
@@ -252,6 +256,7 @@ class PunctuationDomainDatasets(IterableDataset):
                         no_space_label=no_space_label,
                         manual_len=manual_len,
                         pad_start=pad_start,
+                        alpha=self.alpha,
                         alpha_sub=self.alpha_sub,
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
@@ -272,6 +277,7 @@ class PunctuationDomainDatasets(IterableDataset):
                         no_space_label=no_space_label,
                         manual_len=manual_len,
                         pad_start=pad_start,
+                        alpha=self.alpha,
                         alpha_sub=self.alpha_sub,
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
@@ -293,6 +299,7 @@ class PunctuationDomainDatasets(IterableDataset):
                         no_space_label=no_space_label,
                         manual_len=manual_len,
                         pad_start=pad_start,
+                        alpha=self.alpha,
                         alpha_sub=self.alpha_sub,
                         alpha_del=self.alpha_del,
                         alpha_ins=self.alpha_ins,
