@@ -4,7 +4,7 @@ trainer:
     # For GPU
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 6 # Number of epoch every unfreeze
+    max_epochs: 10 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 4 # accumulates grads every k batches
     gradient_clip_val: 10
@@ -47,8 +47,8 @@ log_dir: null
 model:
     nemo_path: null
     transformer_path: bert-base-uncased # google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
-    unfrozen: 8                 # Initial number of layers unfrozen
-    maximum_unfrozen: 8         # Maximum number of layers unfrozen.
+    unfrozen: 6                 # Initial number of layers unfrozen
+    maximum_unfrozen: 6         # Maximum number of layers unfrozen.
     unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
@@ -77,7 +77,7 @@ model:
         
     no_space_label: '' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0 # 0 if don't weight
+    punct_class_weight_factor: 0.4 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -111,18 +111,18 @@ model:
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: true #None # false if attach to start none if dont mask
-        alpha: 0.3
+        alpha: 0.2
         alpha_sub: 0.1
         alpha_del: 0.1
         alpha_ins: 0.1
-        alpha_swp: 0.05
-        alpha_spl: 0.2
-        stride: 42 # 0 or blank if no stride. Ensure stride divides max_seq_length-2
+        alpha_swp: 0.1
+        alpha_spl: 0.1
+        stride: 63 # 0 or blank if no stride. Ensure stride divides max_seq_length-2
         train_ds:
             shuffle: false
             num_samples: -1
-            batch_size: 8
-            manual_len: 500 #default 0 84074
+            batch_size: 4
+            manual_len: 6000 #default 0 84074
 
         validation_ds:
             # if evaluation data is not in the model.dataset.data_dir as the training data or multiple datasets are used for
@@ -133,8 +133,9 @@ model:
             batch_size: 16 #4
 
     mask:
-        type: uniform #uniform, #, normal, trapezoid, 
-        sigma: 0.5 # If uniform, set as stride/(max_seq_length-2) else define it.
+        type: trapezoid #uniform, #, normal, trapezoid, 
+        sigma: 3 # If uniform, set as (max_seq_length-2)/stride else define it.
+        # A positive number, perhaps ~2-3. check it with the get_mask function.
 
     tokenizer:
         tokenizer_name: ${model.language_model.pretrained_model_name} # or sentencepiece
@@ -154,7 +155,7 @@ model:
         # attn_layer_dropout: 0.1
     
     punct_head:
-        punct_num_fc_layers: 2
+        punct_num_fc_layers: 5
         fc_dropout: 0.4
         activation: 'gelu'
         log_softmax: false
@@ -164,7 +165,7 @@ model:
 
         dice_loss:
             epsilon: 0.01
-            alpha: 6
+            alpha: 8
             macro_average: true
 
         focal_loss: 
@@ -241,7 +242,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.8 # base layers multiplied by this
+    differential_lr: 0.7 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3

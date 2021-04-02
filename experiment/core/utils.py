@@ -12,7 +12,7 @@ __all__ = ['chunk_examples_with_degree', 'chunk_to_len_batch', 'flatten', 'chunk
 def get_mask(type='normal',max_seq_length=126,sigma=10):
     '''normal, trapezoid, uniform'''
     if type=='normal':
-        dist= norm.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0,max_seq_length/sigma)
+        dist= norm.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0,max_seq_length/(2*sigma))
     elif type=='trapezoid':
         dist= trapezoid.pdf(torch.arange(-max_seq_length/2,max_seq_length/2,1),0.5-1/(2*sigma),0.5+1/(2*sigma),-max_seq_length/2,max_seq_length)
     elif type=='uniform':

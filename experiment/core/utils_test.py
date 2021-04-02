@@ -65,10 +65,9 @@ def test_mask(type,sigma,tokenizer,labels_to_ids,label_map,max_seq_length,stride
 #     return combined_result,combined_labels,combined_mask.bool()
 # '''
 
-# mask=get_mask('normal',max_seq_length-2,0.1)
-# # mask=get_mask('uniform',max_seq_length-2,0.5)
-# print(mask)
-# # mask[(max_seq_length-2)//3:(max_seq_length-2)//3*2]=1
+# mask=get_mask('uniform',126,3)
+# print(mask,sum(mask),sum(mask[42:84]))
+
 # num_classes=len(labels_to_ids)
 # print(F.one_hot(batched['labels'],num_classes).shape)
 # result,label,combinedmask=combine_preds(F.one_hot(batched['labels'],num_classes),batched['input_ids'],batched['subtoken_mask'],mask.unsqueeze(-1),stride,batched['labels'],num_classes)
