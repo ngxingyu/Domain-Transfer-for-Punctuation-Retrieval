@@ -77,7 +77,7 @@ model:
         
     no_space_label: '' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0.4 # 0 if don't weight
+    punct_class_weight_factor: 0 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -134,7 +134,7 @@ model:
 
     mask:
         type: trapezoid #uniform, #, normal, trapezoid, 
-        sigma: 3 # If uniform, set as (max_seq_length-2)/stride else define it.
+        sigma: 2 # If uniform, set as (max_seq_length-2)/stride else define it.
         # A positive number, perhaps ~2-3. check it with the get_mask function.
 
     tokenizer:
@@ -222,7 +222,7 @@ model:
         # - 5e-4
         # - 5e-4
         # - 1e-4
-        # - 3e-5
+        - 3e-5
         - 1e-5
         - 5e-6
         - 1e-6
@@ -242,7 +242,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.7 # base layers multiplied by this
+    differential_lr: 0.6 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
