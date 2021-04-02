@@ -4,7 +4,7 @@ trainer:
     # For GPU
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 4 # Number of epoch every unfreeze
+    max_epochs: 6 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 2 # accumulates grads every k batches
     gradient_clip_val: 10
@@ -48,7 +48,7 @@ model:
     nemo_path: null
     transformer_path: bert-base-uncased # google/electra-base-discriminator # distilbert-base-uncased # filename to save the model and associated artifacts to .nemo file
     unfrozen: 8                 # Initial number of layers unfrozen
-    maximum_unfrozen: 8         # Maximum number of layers unfrozen.
+    maximum_unfrozen: 12         # Maximum number of layers unfrozen.
     unfreeze_step: 2            # Number of layers unfreezed at once after each epoch
     punct_label_ids:
         - ""
@@ -97,7 +97,7 @@ model:
             # - ${base_path}/switchboardutt_processed
         # parameters for dataset preprocessing
         low_resource_labelled_count: 2
-        max_seq_length: 128
+        max_seq_length: 512
         pad_label: ''  # Unused
         ignore_extra_tokens: false
         ignore_start_end: false
@@ -117,7 +117,7 @@ model:
         alpha_ins: 0.1
         alpha_swp: 0.1
         alpha_spl: 0.1
-        stride: 63 # 0 or blank if no stride. Ensure stride divides max_seq_length-2
+        stride: 255 # 0 or blank if no stride. Ensure stride divides max_seq_length-2
         train_ds:
             shuffle: false
             num_samples: -1
@@ -133,8 +133,8 @@ model:
             batch_size: 16 #4
 
     mask:
-        type: trapezoid #uniform, #, normal, trapezoid, 
-        sigma: 2 # If uniform, set as (max_seq_length-2)/stride else define it.
+        type: normal #uniform, #, normal, trapezoid, 
+        sigma: 1 # If uniform, set as (max_seq_length-2)/stride else define it.
         # A positive number, perhaps ~2-3. check it with the get_mask function.
 
     tokenizer:
@@ -155,7 +155,7 @@ model:
         # attn_layer_dropout: 0.1
     
     punct_head:
-        punct_num_fc_layers: 4
+        punct_num_fc_layers: 3
         fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
@@ -164,7 +164,7 @@ model:
         bilstm: false
 
         dice_loss:
-            epsilon: 0.01
+            epsilon: 0.05
             alpha: 4
             macro_average: true
 
@@ -242,7 +242,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.95 # base layers multiplied by this
+    differential_lr: 0.97 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
@@ -254,7 +254,7 @@ model:
             # mode: 'triangular2'
             # last_epoch: -1
 
-            name: WarmupAnnealing #CosineAnneali3ng #WarmupAnnealing #CyclicLR
+            name: CosineAnnealing #CosineAnnealing #WarmupAnnealing #CyclicLR
             # Scheduler params
             warmup_steps: null
             warmup_ratio: 0.1
