@@ -4,7 +4,7 @@ trainer:
     # For GPU
     gpus: 1 # the number of gpus, 0 for CPU
     num_nodes: 1
-    max_epochs: 6 # Number of epoch every unfreeze
+    max_epochs: 8 # Number of epoch every unfreeze
     max_steps: null # precedence over max_epochs
     accumulate_grad_batches: 2 # accumulates grads every k batches
     gradient_clip_val: 10
@@ -77,7 +77,7 @@ model:
         
     no_space_label: '' # default to #, will be appended to punct_label_ids
     test_chunk_percent: # Leave blank unless you want to test with x% chunked on test_epoch
-    punct_class_weight_factor: 0 # 0 if don't weight
+    punct_class_weight_factor: 0.2 # 0 if don't weight
     punct_class_weights:  # Leave blank.
     cat_domain_and_states: false # concat the domain pooled outputs with each hidden_state to feed into Punctuation Classifier.
     cat_domain_logits: true # concat the domain logits. if false, concat the pooled output.
@@ -111,7 +111,7 @@ model:
         val_unlabelled: true    # validation check unlabelled if theres unlabelled else labelled
         test_unlabelled: true   # test check unlabelled if theres unlabelled else labelled
         attach_label_to_end: #None # false if attach to start none if dont mask
-        alpha: 0
+        alpha: 0.2
         alpha_sub: 0.1
         alpha_del: 0.1
         alpha_ins: 0.1
@@ -156,7 +156,7 @@ model:
     
     punct_head:
         punct_num_fc_layers: 3
-        fc_dropout: 0.4
+        fc_dropout: 0.3
         activation: 'gelu'
         log_softmax: false
         use_transformer_init: true
@@ -166,7 +166,7 @@ model:
         dice_loss:
             epsilon: 0.05
             alpha: 4
-            beta: 1
+            beta: 0.2 #0.5
             macro_average: true
 
         focal_loss: 
@@ -223,8 +223,8 @@ model:
         # - 1e-3
         # - 5e-4
         # - 5e-4
-        - 1e-4
-        - 2e-5
+        # - 1e-4
+        - 4e-5
         - 1e-5
         - 5e-6
         - 1e-6
@@ -244,7 +244,7 @@ model:
         # - 4e-1
         # - 1e-4
         # - 1e-5
-    differential_lr: 0.97 # base layers multiplied by this
+    differential_lr: 0.9 # base layers multiplied by this
     optim:
         name: adamw #novograd #adamw
         lr: 1e-2 #1e-3
